@@ -1,0 +1,122 @@
+#include "port/thread.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include "util/logging.h"
+#include "port/currentthread.h"
+
+namespace mirants {
+namespace port {
+
+namespace CureentThread {
+
+__thread int  cached_tid = 0;
+__thread const char* thread_name = "unknow";
+
+}  // namespace CurrentThread
+
+namespace {
+
+pid_t GetTid() {
+  return static_cast<pid_t>(::syscall(SYS_gettid))
+}
+
+struct StartThreadState {
+  typedef mirants::port::Thread::ThreadFunc ThreadFunc;
+  ThreadFunc thread_func;
+  std::string thread_name;
+  pid_t* thread_tid;
+  StartThreadState(const ThreadFunc& func,
+                   const std::string& name,
+                   pid_t* tid) 
+      : thread_func(func),
+        thread_name(name),
+        thread_tid(tid) 
+  { }
+};
+
+static void* StartThreadWrapper(void* arg) {
+  StartThreadState* state = reinterpret_cast<StartThreadState*>(arg);
+  CureentThread::thread_name = state->thread_name.c_str(); 
+  *(state->thread_tid) = CureentThread::Tid();
+  state->thread_func();
+  CureentThread::thread_name = "finished";
+  delete state;
+  return NULL;
+}
+
+}  // anonymous namespace
+
+void CurrentThread::CacheTid() {
+  if (cached_tid == 0) {
+    cached_tid = GetTid();
+  }
+}
+
+bool CurrentThread::IsMainThread() {
+  return Tid() == ::getpid();
+}
+
+Atomic32 Thread::thread_created_num_ = 0;
+
+Thread::Thread(const ThreadFunc& func, const std::string& name)
+     : started_(false),
+       joined_(false),
+       pthread_id_(0),
+       tid_(new pid_t(0)),
+       func_(func),
+       name_(name) 
+{
+  SetDefaultName();
+}
+
+Thread::Thread(ThreadFunc&& func, const std::string& name) 
+     : started_(false),
+       joined_(false),
+       pthread_id_(0),
+       tid_(new pid_t(0)),
+       func_(std::move(func)),
+       name_(name)
+{
+  SetDefaultName();
+}
+
+Thread::~Thread() {
+  if (started_ && !joined_) {
+    pthread_detach(pthread_id_);
+  }
+}
+
+void Thread::SetDefaultName() {
+  int num = mirants::port::AtomicIncr(num_, 1);
+  if (name_.empty()) {
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "Thread %d", num);
+    name_ = buffer;
+  }
+}
+
+void Thread::PthreadCall(const char* label, int result) {
+  if (result != 0) {
+    MIRANTS_LOG(FATAL) << label << strerror(result);
+  }
+}
+
+void Thread::Start() {
+  assert(!started_);
+  started_ = true;
+  StartThreadState* state = new StartThreadState(func_, name_, &tid_);
+  PthreadCall("start thread: ", 
+              pthread_create(&pthread_, NULL, &StartThreadWrapper, state));
+}
+
+void Thread::Join() {
+  assert(started_);
+  assert(!joined_);
+  joined_ = true;
+  PthreadCall("join thread: ", pthread_join(pthread_, NULL);
+}
+
+}  // namespace port
+}  // namespace mirants
