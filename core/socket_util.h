@@ -11,10 +11,10 @@ namespace sockets {
   
 int CreateSocket(int domain);
 void CloseFd(int socketfd);
-void BindAddress(int socketfd, const struct sockaddr_in* addr);
+void BindAddress(int socketfd, const struct sockaddr_in* sa);
 void Listen(int socketfd);
-void Accept(int socketfd, struct sockaddr_in* addr);
-int Connect(int socketfd, const struct sockaddr_in* addr);
+void Accept(int socketfd, struct sockaddr_in* sa);
+int Connect(int socketfd, const struct sockaddr_in* sa);
 
 Status SetBlocking(int socketfd, bool blocking);
 Status SetReuseAddr(int socketfd, bool reuse);
@@ -25,6 +25,9 @@ Status CheckSocketError(int socketfd);
 
 Status Resolve(char* hostname, char* ipbuf, size_t ipbuf_size);
 Status ResolveIP(char* hostname, char* ipbuf, size_t ipbuf_size);
+int FormatAddr(const char* ip, int port, char* buf, size_t buf_size);
+int FormatPeer(int socketfd, char* buf, size_t buf_size);
+
 
 inline uint16_t HostToNetworkOrder16(uint16_t host_16bits) { 
   return htobe16(host_16bits); 
@@ -149,6 +152,16 @@ inline uint64_t NetworkToHostOrder64(uint64_t net_64bits) {
 //                 const struct addrinfo *hints,
 //                 struct addrinfo **res);
 
+// hostname:一个主机名或者地址串(IPv4的点分十进制串或者IPv6的16进制串)
+// service：服务名可以是十进制的端口号，也可以是已定义的服务名称，如ftp、http等
+// hints：可以是一个空指针，也可以是一个指向某个addrinfo结构体的指针，调用者在
+//        这个结构中填入关于期望返回的信息类型的暗示。举例来说：如果指定的服务
+//        既支持TCP也支持UDP，那么调用者可以把hints结构中的ai_socktype成员设置
+//        成SOCK_DGRAM使得返回的仅仅是适用于数据报套接口的信息。
+// result：本函数通过result指针参数返回一个指向addrinfo结构体链表的指针。
+// 返回值：0——成功，非0——出错
+
+
 // #include <sys/socket.h>
 // #include <netdb.h>
 
@@ -161,6 +174,9 @@ inline uint64_t NetworkToHostOrder64(uint64_t net_64bits) {
 // #include <netdb.h>
 
 // void freeaddrinfo(struct addrinfo *ai);
+// ai参数应指向由getaddrinfo返回的第一个addrinfo结构。这个连表中的所有结构以及
+// 它们指向的任何动态存储空间都被释放掉。
+
 
 // int status;
 // struct addrinfo hints;
@@ -170,6 +186,11 @@ inline uint64_t NetworkToHostOrder64(uint64_t net_64bits) {
 // hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
 // hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
 // hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+// #include<netdb.h>
+// const char *gai_strerror( int error );
+// 该函数以getaddrinfo返回的非0错误值的名字和含义为他的唯一参数，返回一个指向对应的出错信息串的指针。
+
 
 // if ((status = getaddrinfo(NULL, "3490", &hints, &servinfo)) != 0) {
 //     fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
