@@ -47,6 +47,10 @@ class Timestamp {
   int64_t microseconds_since_epoch_;
 };
 
+inline Timestamp AddTime(Timestamp timestamp, int64_t microseconds) {
+  return Timestamp(timestamp.MicroSecondsSinceEpoch() + diff);
+}
+
 inline bool operator==(const Timestamp& x, const Timestamp& y) {
   return x.MicroSecondsSinceEpoch() == y.MicroSecondsSinceEpoch();
 }

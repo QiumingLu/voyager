@@ -1,7 +1,7 @@
 #include "util/stringprintf.h"
 
 void StringAppendV(std::string* dst, const char* format, va_list ap) {
-  static const int kSpaceLength = 1024;
+  static const int kSpaceLength = 128;
   char space[kSpaceLength];
 
   va_list backup_ap;

@@ -8,25 +8,24 @@ namespace mirants {
 
 class TcpSocket {
  public:
-  explicit TcpSocket(int sockfd) : sockfd_(sockfd) { }
+  explicit TcpSocket(int socketfd) : socketfd_(socketfd) { }
   ~TcpSocket();
 
-  int SocketFd() const { return sockfd_; }
+  int SocketFd() const { return socketfd_; }
 
-  void BindAddress(const struct sockaddr* addr);
+  void BindAddress(const struct sockaddr_in* local_sa4);
+  void BindAddress(const struct sockaddr_in6* local_sa6);
   void Listen();
-  void Accept();
+  void Accept(struct sockaddr_in* peer_sa4);
+  void Accept(struct sockaddr_in6* peer_sa6);
   
   void SetReuseAddr(bool on);
-
   void SetReusePort(bool on);
-
   void SetKeepAlive(bool on);
-
   void SetTcpNoDelay(bool on);
 
  private:
-  const int sockfd_;
+  const int socketfd_;
 
   // No copying allow
   TcpSocket(const TcpSocket&);

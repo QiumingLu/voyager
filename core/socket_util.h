@@ -11,10 +11,10 @@ namespace sockets {
   
 int CreateSocket(int domain);
 void CloseFd(int socketfd);
-void BindAddress(int socketfd, const struct sockaddr_in* sa);
-void Listen(int socketfd);
-void Accept(int socketfd, struct sockaddr_in* sa);
-int Connect(int socketfd, const struct sockaddr_in* sa);
+void BindAddress(int socketfd, const struct sockaddr* sa, socklen_t salen);
+void Listen(int socketfd, int backlog = SOMAXCONN);
+int Accept(int socketfd, struct sockaddr* sa, socklen_t salen);
+int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen);
 
 Status SetBlocking(int socketfd, bool blocking);
 Status SetReuseAddr(int socketfd, bool reuse);
@@ -28,9 +28,12 @@ Status ResolveIP(char* hostname, char* ipbuf, size_t ipbuf_size);
 
 int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size);
 int FormatPeer(int socketfd, char* buf, size_t buf_size);
+int FormatLocal(int socketfd, char* buf, size_t buf_size);
 
 void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size);
 void SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size);
+void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4);
+void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6);
 
 struct sockaddr_storage PeerSockAddr(int socketfd);
 struct sockaddr_storage LocalSockAddr(int socketfd);
