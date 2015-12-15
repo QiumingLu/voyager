@@ -25,28 +25,15 @@ Status CheckSocketError(int socketfd);
 
 Status Resolve(char* hostname, char* ipbuf, size_t ipbuf_size);
 Status ResolveIP(char* hostname, char* ipbuf, size_t ipbuf_size);
-int FormatAddr(const char* ip, int port, char* buf, size_t buf_size);
+
+int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size);
 int FormatPeer(int socketfd, char* buf, size_t buf_size);
 
+void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size);
+void SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size);
 
-inline uint16_t HostToNetworkOrder16(uint16_t host_16bits) { 
-  return htobe16(host_16bits); 
-}
-inline uint32_t HostToNetworkOrder32(uint32_t host_32bits) {
-  return htobe32(host_32bits);
-}
-inline uint64_t HostToNetworkOrder64(uint64_t host_64bits) {
-  return htobe64(host_64bits);
-}
-inline uint16_t NetworkToHostOrder16(uint16_t net_16bits) {
-  return be16toh(net_16bits);
-}
-inline uint32_t NetworkToHostOrder32(uint32_t net_32bits) {
-  return be32toh(net_32bits);
-}
-inline uint64_t NetworkToHostOrder64(uint64_t net_64bits) {
-  return be64toh(net_64bits);
-}
+struct sockaddr_storage PeerSockAddr(int socketfd);
+struct sockaddr_storage LocalSockAddr(int socketfd);
 
 }  // namespace sockets
 }  // namespace mirants 

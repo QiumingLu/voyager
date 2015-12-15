@@ -214,36 +214,20 @@ Status Resolve(const char* hostname, char* ipbuf, size_t ipbuf_size) {
 }
 
 Status ResolveIP(const char* host, char* ipbuf, size_t ipbuf_size) {
-  return GenericResolve(hostname, ipbuf, ipbuf_sizem true);
+  return GenericResolve(hostname, ipbuf, ipbuf_size, true);
 }
 
-int FormatAddr(const char* ip, int port, char* buf, size_t buf_size) {
+int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size) {
   return snprintf(buf, buf_size, strchr(ip, ':') ?
-                  "[%s]:%d" : "%s:%d", ip, port);
-}
-
-static void PeerToString(int socketfd, char* ip, size_t ip_size, int* port) {
-  struct sockaddr_storage sa = std::move(PeerSockAddr(socketfd));
-
-  if (sa.ss_family == AF_INET) {
-    struct sockaddr_in* sa4 = static_cast<struct sockaddr_in*>(&sa);
-    if (ip) inet_ntop(AF_INET, &sa4->sin_addr, ip, ip_size);
-    if (port) *port = ::ntohs(sa4->sin_port);
-  } else if (sa.ss_family == AF_INET6) {
-    struct sockaddr_in6* sa6 = static_cast<struct sockaddr_in6*>(&sa);
-    if (ip) inet_ntop(AF_INET6, &sa6->sin6_addr, ip, ip_size);
-    if (port) *port = ::ntohs(sa6->sin6_port);
-  }
+                  "[%s]:%d" : "%s:%u", ip, port);
 }
 
 int FormatPeer(int socketfd, char* buf, char buf_size) {
-  char  ip[INET6_ADDRSTRLEN];
-  int   port;
-  PeerToString(socketfd, ip, sizeof(ip), &port);
-  return FormatAddr(buf, buf_size, ip, port);
+  struct sockaddr_storage sa(std::move(PeerSockAddr(socketfd)));
+  return SockAddrToIPPort(static_cast<struct sockaddr*>(&sa), buf, buf_size);
 }
 
-void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size {
+void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
   if (sa->ai_family == AF_INET) {
     assert(ipbuf_size >= INET_ADDRSTRLEN);
     struct sockaddr_in* sa4 = 
@@ -259,10 +243,10 @@ void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size {
 
 int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size) {
   char ip[INET6_ADDRSTRLEN];
-  SockAddrToIP(sa, ip, size_t(ip));
+  SockAddrToIP(sa, ip, sizeof(ip));
   const struct sockaddr_in* sa4 = static_cast<struct sockaddr_in*>(sa);
   uint16_t port = ::ntohs(sa4->sin_port);
-  return FormatAddr(ip, static_cast<int>(port), buf, buf_size);
+  return FormatAddr(ip, port, buf, buf_size);
 }
 
 struct sockaddr_storage PeerSockAddr(int socketfd) {
