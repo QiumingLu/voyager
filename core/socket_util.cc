@@ -23,6 +23,15 @@ int CreateSocket(int domain) {
   return socketfd;
 }
 
+int CreateSocketAndSetNonBlock(int domain) {
+  int socketfd = CreateSocket(domain);
+  Status st = SetBlocking(socketfd, false);
+  if (!st.ok()) {
+    MIRANTS_LOG(FATAL) << st;
+  }
+  return socketfd;
+}
+
 void CloseFd(int socketfd) {
   if (::close(socketfd) == -1) {
     MIRANTS_LOG(ERROR) << "close: " << strerror(errno);
@@ -184,7 +193,7 @@ static Status GenericResolve(const char* hostname, char* ipbuf, size_t ipbuf_siz
   hints/ai_socktype = SOCK_STREAM;
 
   error = ::getaddrinfo(hostname, NULL, &hints, &result);
-  if (err != 0) {
+  if (error != 0) {
     std::string str;
     StringAppendF(&str, "getaddrinfo: %s", gai_strerror(error));
     return Status::IOError(str);

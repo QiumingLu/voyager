@@ -1,26 +1,26 @@
 #ifndef MIRANTS_CORE_SOCKADDR_H_
 #define MIRANTS_CORE_SOCKADDR_H_
 
+#include <netdb.h>
 #include "util/slice.h"
+#include "util/status.h"
 
 namespace mirants {
 
 class SockAddr {
  public:
-  SockAddr(const Slice& ipbuf, uint16_t port, bool ipv6 = false);
-  explicit SockAddr(const struct sockaddr_in& sa4) : sa4_(sa4) { }
-  explicit SockAddr(const struct sockaddr_in6& sa6) : sa6_(sa6) { }
+  explicit SockAddr(uint16_t port, bool ipv6 = false);
+  SockAddr(Slice host, uint16_t port, bool ipv6 = false);
 
-  const struct sockaddr* getSockAddr() { return static_cast<struct sockaddr*>(&sockaddr_in6); }
-
-  Slice ToIP() const;
-  Slice ToIPPort() const;
-
+  const struct addrinfo* AddInfo() const { return addinfo_; }
+  bool IsIpv6() const { return ipv6_; }
  private:
-  union {
-    struct sockaddr_in  sa4_;
-    struct sockaddr_in6 sa6_;
-  };
+  Status GetAddrInfo(const char* host, uint16_t port);
+
+  Slice host_;
+  uint16_t port_;
+  bool ipv6_;
+  struct addrinfo *addinfo_;
 
   // No copying allow
   SockAddr(const SockAddr&);

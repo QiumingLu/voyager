@@ -1,8 +1,7 @@
 #ifndef MIRANTS_CORE_TCP_SOCKET_H_
 #define MIRANTS_CORE_TCP_SOCKET_H_
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <netinet/in.h>
 
 namespace mirants {
 
@@ -13,11 +12,9 @@ class TcpSocket {
 
   int SocketFd() const { return socketfd_; }
 
-  void BindAddress(const struct sockaddr_in* local_sa4);
-  void BindAddress(const struct sockaddr_in6* local_sa6);
-  void Listen();
-  void Accept(struct sockaddr_in* peer_sa4);
-  void Accept(struct sockaddr_in6* peer_sa6);
+  void BindAddress(const struct sockaddr* sa, socklen_t salen);
+  void Listen(int backlog = SOMAXCONN);
+  int Accept(struct sockaddr* peer_sa, socklen_t salen);
   
   void SetReuseAddr(bool on);
   void SetReusePort(bool on);

@@ -10,11 +10,16 @@ namespace mirants {
 namespace sockets {
   
 int CreateSocket(int domain);
+int CreateSocketAndSetNonBlock(int domain);
 void CloseFd(int socketfd);
 void BindAddress(int socketfd, const struct sockaddr* sa, socklen_t salen);
 void Listen(int socketfd, int backlog = SOMAXCONN);
 int Accept(int socketfd, struct sockaddr* sa, socklen_t salen);
 int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen);
+
+void Read(int socketfd);
+void Write(int socketfd);
+void ShutDownWrite(int socketfd);
 
 Status SetBlocking(int socketfd, bool blocking);
 Status SetReuseAddr(int socketfd, bool reuse);
