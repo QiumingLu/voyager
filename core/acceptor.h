@@ -17,6 +17,7 @@ class Acceptor {
 
  private:
   TcpSocket tcpsocket_;
+  int  backlog_;
   bool listenning_;
 
   // No copying allow

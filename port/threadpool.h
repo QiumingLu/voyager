@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <string>
-#include <vector>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <deque>
 #include "port/mutex.h"
 #include "port/thread.h"
@@ -30,13 +30,14 @@ class ThreadPool {
 
  private:
   void ThreadEntry();
-  void Task Take();
+  Task TakeTask();
+
 
   mutable Mutex mutex_;
   Condition cond_;
   int poolsize_;
   std::string poolname_;
-  std::vector<Thread> threads_;
+  boost::ptr_vector<Thread> threads_;
   std::deque<Task> tasks_;
   bool running_;
 

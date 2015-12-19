@@ -28,12 +28,12 @@ ThreadPool::~ThreadPool() {
 void ThreadPool::Start() {
   assert(threads_.empty());
   running_ = true;
-  threads_.reverse(poolsize_);
+  threads_.reserve(poolsize_);
   for (int i = 0; i < poolsize_; ++i) {
     char name[32] = { 0 };
     snprintf(name, sizeof(name), ": thread %d", i+1);
     threads_.push_back(new Thread(
-        std::bind(&ThreadPool::ThreadEntry(), this), poolname_ + name));
+        std::bind(&ThreadPool::ThreadEntry, this), poolname_ + name));
     threads_[i].Start();
   }
 }
@@ -42,7 +42,7 @@ void ThreadPool::Stop() {
   {
     MutexLock lock(&mutex_);
     running_ = false;
-    not_empty_.Signal();
+    cond_.Signal();
   }
   using namespace std::placeholders;
   for_each(threads_.begin(), threads_.end(), std::bind(&Thread::Join, _1));
@@ -55,7 +55,7 @@ void ThreadPool::AddTask(const Task& task) {
     MutexLock lock(&mutex_);
     if (running_) {
       tasks_.push_back(task);
-      not_empty_.Signal();
+      cond_.Signal();
     }
   }
 } 
@@ -67,19 +67,19 @@ void ThreadPool::AddTask(Task&& task) {
     MutexLock lock(&mutex_);
     if (running_) {
       tasks_.push_back(std::move(task));
-      not_empty_.Signal();
+      cond_.Signal();
     }
   }
 }
 
-Task ThreadPool::TakeTask() {
+ThreadPool::Task ThreadPool::TakeTask() {
   MutexLock lock(&mutex_);
   while (tasks_.empty() && running_) {
-    not_empty_.Wait();
+    cond_.Wait();
   }
   Task t;
   if (!tasks_.empty()) {
-    t(std::move(tasks_.front()));
+    t = std::move(tasks_.front());
     tasks_.pop_front();
   }
   return t;
@@ -94,7 +94,7 @@ void ThreadPool::ThreadEntry() {
   }
 }
 
-size_t TaskSize() const {
+size_t ThreadPool::TaskSize() const {
   MutexLock lock(&mutex_);
   return tasks_.size();
 }

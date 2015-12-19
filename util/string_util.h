@@ -28,6 +28,7 @@ inline bool ascii_isupper(char c) {
 
 inline bool ascii_islower(char c) {
   return c >= 'a' && c <= 'z';
+}
 
 inline bool ascii_toupper(char c) {
   return ascii_islower(c) ? c -('a' - 'A') : c;
@@ -55,7 +56,7 @@ inline bool HasPrefixString(const std::string& str,
 inline std::string StripPrefixString(const std::string& str,
                                      const std::string& prefix) {
   if (HasPrefixString(str, prefix)) {
-    return str.substr(prefix.size();
+    return str.substr(prefix.size());
   } else {
     return str;
   }
@@ -63,7 +64,7 @@ inline std::string StripPrefixString(const std::string& str,
 
 inline bool HasSuffixString(const std::string& str,
                             const std::string& suffix) {
-  return str.size() >= prefix.size() &&
+  return str.size() >= suffix.size() &&
          str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
@@ -124,7 +125,7 @@ void SplitStringAllowEmpty(const std::string& full,
 // Split a string using a character delimiter.
 inline std::vector<std::string> Split(std::string& full,
                                       const char* delim,
-                                      const skip_empty = true) {
+                                      const bool skip_empty = true) {
   std::vector<std::string> result;
   if (skip_empty) {
     SplitStringUsing(full, delim, &result);

@@ -2,7 +2,7 @@
 #define MIRANTS_CORE_SOCKET_UTIL_H_
 
 #include <stdint.h>
-#include <endian.h>
+#include <sys/uio.h>
 #include <netinet/in.h>
 #include "util/status.h"
 
@@ -13,12 +13,14 @@ int CreateSocket(int domain);
 int CreateSocketAndSetNonBlock(int domain);
 void CloseFd(int socketfd);
 void BindAddress(int socketfd, const struct sockaddr* sa, socklen_t salen);
-void Listen(int socketfd, int backlog = SOMAXCONN);
+void Listen(int socketfd, int backlog);
 int Accept(int socketfd, struct sockaddr* sa, socklen_t salen);
 int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen);
 
-void Read(int socketfd);
-void Write(int socketfd);
+ssize_t Read(int socketfd, void* buf, size_t count);
+ssize_t ReadV(int socketfd, const struct iovec* iov, int count);
+ssize_t Write(int socketfd, void* buf, size_t count);
+ssize_t WriteV(int socketfd, const struct iovec* iov, int count);
 void ShutDownWrite(int socketfd);
 
 Status SetBlocking(int socketfd, bool blocking);

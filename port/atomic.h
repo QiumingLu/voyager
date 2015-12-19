@@ -10,12 +10,18 @@ typedef int32_t Atomic32;
 typedef int64_t Atomic64;
 
 
-#define AtomicIncr(var,count) __atomic_add_fetch(&var,(count),__ATOMIC_RELAXED)
-#define AtomicDecr(var,count) __atomic_sub_fetch(&var,(count),__ATOMIC_RELAXED)
-#define AtomicGet(var,dstvar) do { \
-    dstvar = __atomic_load_n(&var,__ATOMIC_RELAXED); \
-} while(0)
+inline Atomic32 AtomicIncr(volatile Atomic32* ptr, Atomic32 increment) {
+  return __atomic_add_fetch(ptr, increment, __ATOMIC_RELAXED);
+}
 
+inline Atomic32 AtomicDecr(volatile Atomic32* ptr, Atomic32 decrement) {
+  return __atomic_sub_fetch(ptr, decrement, __ATOMIC_RELAXED);
+}
+       
+
+inline Atomic32 AtomicGet(volatile Atomic32* ptr) {
+  return __atomic_load_n(ptr,__ATOMIC_RELAXED);
+}
 
 inline Atomic32 AtomicAddAndGet(volatile Atomic32* ptr, Atomic32 increment) {
   return __sync_add_and_fetch(ptr, increment);

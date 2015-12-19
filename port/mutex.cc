@@ -18,7 +18,7 @@ Mutex::Mutex() {
 }
 
 Mutex::~Mutex() { 
-  PthreadCall("pthread_mutex_destory: ", pthread_mutex_destory(&mutex_));
+  PthreadCall("pthread_mutex_destory: ", pthread_mutex_destroy(&mutex_));
 }
 
 void Mutex::Lock() {
@@ -34,7 +34,7 @@ Condition::Condition(Mutex* mutex) : mutex_(mutex) {
 }
 
 Condition::~Condition() {
-  PthreadCall("pthread_cond_destory: ", pthread_cond_destory(&cond_));
+  PthreadCall("pthread_cond_destory: ", pthread_cond_destroy(&cond_));
 }
 
 void Condition::Wait() {

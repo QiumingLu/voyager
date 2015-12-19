@@ -48,7 +48,7 @@ class Timestamp {
 };
 
 inline Timestamp AddTime(Timestamp timestamp, int64_t microseconds) {
-  return Timestamp(timestamp.MicroSecondsSinceEpoch() + diff);
+  return Timestamp(timestamp.MicroSecondsSinceEpoch() + microseconds);
 }
 
 inline bool operator==(const Timestamp& x, const Timestamp& y) {
@@ -64,7 +64,7 @@ inline bool operator>(const Timestamp& x, const Timestamp& y) {
 }
 
 inline bool operator<(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() < y.MicroSecondsSinceEpoch()
+  return x.MicroSecondsSinceEpoch() < y.MicroSecondsSinceEpoch();
 }
 
 inline bool operator>=(const Timestamp& x, const Timestamp& y) {
@@ -72,7 +72,7 @@ inline bool operator>=(const Timestamp& x, const Timestamp& y) {
 }
 
 inline bool operator<=(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() <= y.MicroSecondsSinceEpoch()
+  return x.MicroSecondsSinceEpoch() <= y.MicroSecondsSinceEpoch();
 }
 
 }  // namespace mirants

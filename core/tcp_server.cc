@@ -4,9 +4,9 @@
 
 namespace mirants {
 
-TcpServer::TcpServer(const SockAddr& addr) 
+TcpServer::TcpServer(const SockAddr& addr, int backlog) 
     : servinfo_(addr.AddInfo()),
-      acceptor_ptr_(new Acceptor(servinfo_)) {
+      acceptor_ptr_(new Acceptor(servinfo_, backlog)) {
 }
 
 }  // namespace mirants

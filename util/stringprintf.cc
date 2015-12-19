@@ -6,7 +6,7 @@ void StringAppendV(std::string* dst, const char* format, va_list ap) {
 
   va_list backup_ap;
   va_copy(backup_ap, ap);
-  int result = vsprintf(space, kSpaceLength, format, backup_ap);
+  int result = vsnprintf(space, kSpaceLength, format, backup_ap);
   va_end(backup_ap);
 
   if (result < kSpaceLength) {
@@ -24,7 +24,7 @@ void StringAppendV(std::string* dst, const char* format, va_list ap) {
   char* buf = new char[length];
 
   va_copy(backup_ap, ap);
-  result = vnsprintf(buf, length, format, backup_ap);
+  result = vsnprintf(buf, length, format, backup_ap);
   va_end(backup_ap);
 
   if (result >= 0 && result < length) {

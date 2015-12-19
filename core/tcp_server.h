@@ -12,11 +12,11 @@ class SockAddr;
 
 class TcpServer {
  public:
-  TcpServer(const SockAddr& addr);
+  TcpServer(const SockAddr& addr, int backlog = SOMAXCONN);
   ~TcpServer();
 
  private:
-  struct addrinfo* servinfo_;
+  const struct addrinfo* servinfo_;
   scoped_ptr<Acceptor> acceptor_ptr_;
 
   // No copying allow

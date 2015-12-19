@@ -16,7 +16,7 @@ void StripString(std::string* s, const char* remove, char replacewith) {
   }
 }
 
-void StripWhitespace(std::string* s) {
+void StripWhitespace(std::string* str) {
   int str_length = str->length();
 
   // Strip off leading whitespace.
@@ -68,13 +68,13 @@ void StringReplace(const std::string& s, const std::string& oldsub,
 std::string StringReplace(const std::string& s, const std::string& oldsub,
                           const std::string& newsub, bool replace_all) {
   std::string result;
-  StringReplace(s, oldsub, newsub, replace_all, result);
+  StringReplace(s, oldsub, newsub, replace_all, &result);
   return result;
 }
 
 template<typename ITR>
 static inline void SplitStringToIteratorUsing(const std::string& full,
-                                              const char* dleim,
+                                              const char* delim,
                                               ITR& result) {
   // Optimize the common case where delim is a single character.
   if (delim[0] != '\0' && delim[1] == '\0') {

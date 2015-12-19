@@ -1,0 +1,2 @@
+add_executable(logging_test logging_test.cc)
+target_link_libraries(logging_test mirants_util)

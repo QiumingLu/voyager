@@ -91,6 +91,43 @@ int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen) {
   return ret;
 }
 
+ssize_t Read(int socketfd, void* buf, size_t count) {
+  ssize_t nread, totlen = 0;
+  while (totlen != count) {
+    nread = ::read(socketfd, buf, count - totlen);
+    if (nread == 0) return totlen;
+    if (nread == -1) return -1;
+    totlen += nread;
+    buf += nread;
+  }
+  return totlen;
+}
+
+ssize_t ReadV(int socketfd, const struct iovec* iov, int count) {
+  return ::readv(socketfd, iov, count);
+}
+
+ssize_t Write(int socketfd, const void* buf, size_t count) {
+  ssize_t nwritten, totlen = 0;
+  while (totlen != count) {
+    nwritten = ::write(socketfd, buf, count - totlen);
+      if (nwritten == 0) return totlen;
+      if (nwritten == -1) return -1;
+      totlen += nwritten;
+      buf += nwritten;
+  }
+  return totlen;
+}
+
+ssize_t WriteV(int socketfd, const struct iovec* iov, int count) {
+  return ::writev(socketfd, iov, count);
+}
+
+void ShutDownWrite(int socketfd) {
+  if (::shutdown(socketfd, SHUT_WR) == -1) {
+    MIRANTS_LOG(ERROR) << "shutdown: " << strerror(errno);
+  }
+}
 
 Status SetBlocking(int socketfd, bool blocking) {
   int flags = ::fcntl(socketfd, F_GETFL, 0);

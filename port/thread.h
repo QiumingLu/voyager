@@ -24,9 +24,8 @@ class Thread {
   bool Joined() const { return joined_; }
   pid_t Tid() const { return tid_; }
   const std::string& Name() const { return name_; }
-  static int ThreadCreatedNum() { 
-    int32_t desnum_;
-    return mirants::port::AtomicGet(num_, desnum_);
+  static Atomic32 ThreadCreatedNum() { 
+    return mirants::port::AtomicGet(&num_);
   }
 
  private:
@@ -39,7 +38,6 @@ class Thread {
   pid_t tid_;
   ThreadFunc func_;
   std::string name_;
-  ThreadFunc func_;
   static Atomic32 num_;
 
   // No copying allow

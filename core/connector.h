@@ -12,7 +12,7 @@ class Connector {
  private:
   void TcpNonBlockConnect();
 
-  struct addrinfo* servinfo_;
+  const struct addrinfo* servinfo_;
 
   // No copying allow
   Connector(const Connector&);

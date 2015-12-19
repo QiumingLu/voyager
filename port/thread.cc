@@ -1,8 +1,12 @@
 #include "port/thread.h"
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+
+#include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+
 #include "util/logging.h"
 #include "port/currentthread.h"
 
@@ -19,7 +23,7 @@ __thread const char* thread_name = "unknow";
 namespace {
 
 pid_t GetTid() {
-  return static_cast<pid_t>(::syscall(SYS_gettid))
+  return static_cast<pid_t>(::syscall(SYS_gettid));
 }
 
 struct StartThreadState {
@@ -58,7 +62,7 @@ bool CurrentThread::IsMainThread() {
   return Tid() == ::getpid();
 }
 
-Atomic32 Thread::thread_created_num_ = 0;
+Atomic32 Thread::thread_created_num_;
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
      : started_(false),
@@ -89,7 +93,7 @@ Thread::~Thread() {
 }
 
 void Thread::SetDefaultName() {
-  int num = mirants::port::AtomicIncr(num_, 1);
+  int num = mirants::port::AtomicIncr(&num_, 1);
   if (name_.empty()) {
     char buffer[32];
     snprintf(buffer, sizeof(buffer), "Thread %d", num);
@@ -108,14 +112,14 @@ void Thread::Start() {
   started_ = true;
   StartThreadState* state = new StartThreadState(func_, name_, &tid_);
   PthreadCall("start thread: ", 
-              pthread_create(&pthread_, NULL, &StartThreadWrapper, state));
+              pthread_create(&pthread_id_, NULL, &StartThreadWrapper, state));
 }
 
 void Thread::Join() {
   assert(started_);
   assert(!joined_);
   joined_ = true;
-  PthreadCall("join thread: ", pthread_join(pthread_, NULL);
+  PthreadCall("join thread: ", pthread_join(pthread_id_, NULL));
 }
 
 }  // namespace port

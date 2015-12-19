@@ -16,7 +16,7 @@ class MutexLock {
   ~MutexLock() { mutex_->UnLock(); }
 
  private:
-  const Mutex* mutex_;
+  Mutex* const mutex_;
 
   // No copying allow
   MutexLock(const MutexLock&);
