@@ -4,10 +4,12 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #include "util/logging.h"
 #include "util/stringprintf.h"
@@ -45,14 +47,14 @@ void BindAddress(int socketfd, const struct sockaddr* sa, socklen_t salen) {
   }
 }
 
-void Listen(int socketfd, backlog) {
+void Listen(int socketfd, int backlog) {
   int ret = ::listen(socketfd, backlog);
   if (ret == -1) {
     MIRANTS_LOG(FATAL) << "listen: " << strerror(errno);
   }
 }
 
-int Accept(int socketfd, struct sockaddr* sa, socklen_t salen) {
+int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
   int connectfd = ::accept(socketfd, sa, salen);
   if (connectfd == -1) {
     int err = errno;
@@ -77,6 +79,7 @@ int Accept(int socketfd, struct sockaddr* sa, socklen_t salen) {
         break;
       default:
         MIRANTS_LOG(FATAL) << "Accept unkown error " << strerror(err);      
+    }
   }
 
   Status status = SetBlocking(connectfd, false);
@@ -92,15 +95,7 @@ int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen) {
 }
 
 ssize_t Read(int socketfd, void* buf, size_t count) {
-  ssize_t nread, totlen = 0;
-  while (totlen != count) {
-    nread = ::read(socketfd, buf, count - totlen);
-    if (nread == 0) return totlen;
-    if (nread == -1) return -1;
-    totlen += nread;
-    buf += nread;
-  }
-  return totlen;
+  return ::read(socketfd, buf, count);
 }
 
 ssize_t ReadV(int socketfd, const struct iovec* iov, int count) {
@@ -108,15 +103,7 @@ ssize_t ReadV(int socketfd, const struct iovec* iov, int count) {
 }
 
 ssize_t Write(int socketfd, const void* buf, size_t count) {
-  ssize_t nwritten, totlen = 0;
-  while (totlen != count) {
-    nwritten = ::write(socketfd, buf, count - totlen);
-      if (nwritten == 0) return totlen;
-      if (nwritten == -1) return -1;
-      totlen += nwritten;
-      buf += nwritten;
-  }
-  return totlen;
+  return ::write(socketfd, buf, count);
 }
 
 ssize_t WriteV(int socketfd, const struct iovec* iov, int count) {
@@ -227,7 +214,7 @@ static Status GenericResolve(const char* hostname, char* ipbuf, size_t ipbuf_siz
     hints.ai_flags = AI_NUMERICHOST;
   }
   hints.ai_family = AF_UNSPEC;
-  hints/ai_socktype = SOCK_STREAM;
+  hints.ai_socktype = SOCK_STREAM;
 
   error = ::getaddrinfo(hostname, NULL, &hints, &result);
   if (error != 0) {
@@ -239,12 +226,12 @@ static Status GenericResolve(const char* hostname, char* ipbuf, size_t ipbuf_siz
     assert(ipbuf_size >= INET_ADDRSTRLEN);
     struct sockaddr_in* sa4 = 
         reinterpret_cast<struct sockaddr_in*>(result->ai_addr);
-    ::inet_ntop(AF_INET, &(sa4->sin_addr), ipbuf, ipbuf_size);
+    ::inet_ntop(AF_INET, &(sa4->sin_addr), ipbuf, static_cast<socklen_t>(ipbuf_size));
   } else if (result->ai_family == AF_INET6){
     assert(ipbuf_size >= INET6_ADDRSTRLEN);
     struct sockaddr_in6* sa6 =
         reinterpret_cast<struct sockaddr_in6*>(result->ai_addr);
-    ::inet_ntop(AF_INET6, &(sa6->sin6_addr), ipbuf, ipbuf_size);
+    ::inet_ntop(AF_INET6, &(sa6->sin6_addr), ipbuf, static_cast<socklen_t>(ipbuf_size));
   }
 
   ::freeaddrinfo(result);
@@ -264,41 +251,41 @@ int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size) {
                   "[%s]:%d" : "%s:%u", ip, port);
 }
 
-int FormatPeer(int socketfd, char* buf, char buf_size) {
+int FormatPeer(int socketfd, char* buf, size_t buf_size) {
   struct sockaddr_storage sa(std::move(PeerSockAddr(socketfd)));
   return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), buf, buf_size);
 }
 
-int FormatLocal(int socketfd, char* buf, char buf_size) {
+int FormatLocal(int socketfd, char* buf, size_t buf_size) {
   struct  sockaddr_storage sa(std::move(LocalSockAddr(socketfd)));
   return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), buf, buf_size);
 }
 
 void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
-  if (sa->ai_family == AF_INET) {
+  if (sa->sa_family == AF_INET) {
     assert(ipbuf_size >= INET_ADDRSTRLEN);
-    struct sockaddr_in* sa4 = 
-        reinterpret_cast<struct sockaddr_in*>(sa);
-    ::inet_ntop(AF_INET, &sa4->sin_addr, ipbuf, ipbuf_size);
-  } else if (sa->ai_family == AF_INET6) {
-    assert(sa->ai_family >= INET6_ADDRSTRLEN);
-    struct sockaddr_in6* sa6 = 
-        reinterpret_cast<struct sockaddr_in6*>(sa);
-    ::inet_ntop(AF_INET6, &sa6->sin6_addr, ipbuf, ipbuf_size);
+    const struct sockaddr_in* sa4 = 
+        reinterpret_cast<const struct sockaddr_in*>(sa);
+    ::inet_ntop(AF_INET, &sa4->sin_addr, ipbuf, static_cast<socklen_t>(ipbuf_size));
+  } else if (sa->sa_family == AF_INET6) {
+    assert(sa->sa_family >= INET6_ADDRSTRLEN);
+    const struct sockaddr_in6* sa6 = 
+        reinterpret_cast<const struct sockaddr_in6*>(sa);
+    ::inet_ntop(AF_INET6, &sa6->sin6_addr, ipbuf, static_cast<socklen_t>(ipbuf_size));
   }
 }
 
 int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size) {
   char ip[INET6_ADDRSTRLEN];
   SockAddrToIP(sa, ip, sizeof(ip));
-  const struct sockaddr_in* sa4 = reinterpret_cast<struct sockaddr_in*>(sa);
+  const struct sockaddr_in* sa4 = reinterpret_cast<const struct sockaddr_in*>(sa);
   uint16_t port = ::ntohs(sa4->sin_port);
   return FormatAddr(ip, port, buf, buf_size);
 }
 
 void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4) {
   sa4->sin_family = AF_INET;
-  sa4->sin_port = ::inet_htons(port);
+  sa4->sin_port = ::htons(port);
   if (::inet_pton(AF_INET, ip, &sa4->sin_addr) <= 0) {
     MIRANTS_LOG(ERROR) << "inet_pton failed";
   }
@@ -306,7 +293,7 @@ void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4) {
 
 void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6) {
   sa6->sin6_family = AF_INET6;
-  sa6->sin6_port = ::inet_htons(port);
+  sa6->sin6_port = ::htons(port);
   if (::inet_pton(AF_INET6, ip, &sa6->sin6_addr) <= 0) {
     MIRANTS_LOG(ERROR) << "inet_pton failed";
   }

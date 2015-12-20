@@ -11,16 +11,18 @@ class SockAddr {
  public:
   explicit SockAddr(uint16_t port, bool ipv6 = false);
   SockAddr(Slice host, uint16_t port, bool ipv6 = false);
+  ~SockAddr();
 
-  const struct addrinfo* AddInfo() const { return addinfo_; }
+  const struct addrinfo* AddInfo() const { return addrinfo_; }
   bool IsIpv6() const { return ipv6_; }
+
  private:
-  Status GetAddrInfo(const char* host, uint16_t port);
+  Status GetAddrInfo(const char* host, uint16_t port, bool ipv6);
 
   Slice host_;
   uint16_t port_;
   bool ipv6_;
-  struct addrinfo *addinfo_;
+  struct addrinfo *addrinfo_;
 
   // No copying allow
   SockAddr(const SockAddr&);

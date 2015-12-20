@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../util/logging.h
+string
+-
+
+../../util/slice.h
+string
+-
+assert.h
+-
+string.h
+-
+stddef.h
+-
+
+../../util/status.h
+string
+-
+util/slice.h
+../../util/util/slice.h
+
+../../util/testharness.h
+sstream
+-
+stdio.h
+-
+stdlib.h
+-
+util/status.h
+../../util/util/status.h
+
+/home/ming/GitHub/mirants/util/tests/logging_test.cc
+util/logging.h
+-
+util/testharness.h
+/home/ming/GitHub/mirants/util/tests/util/testharness.h
+

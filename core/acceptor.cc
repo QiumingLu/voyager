@@ -4,7 +4,7 @@
 namespace mirants {
 
 Acceptor::Acceptor(const struct addrinfo* addr, int backlog, bool reuseport)
-    : tcpsocket_(sockets::CreateSocketAndSetNonBlock(addr->ai_family),
+    : tcpsocket_(sockets::CreateSocketAndSetNonBlock(addr->ai_family)),
       backlog_(backlog),
       listenning_(false) {
   tcpsocket_.SetReuseAddr(true);

@@ -6,9 +6,10 @@ namespace mirants {
 
 TcpClient::TcpClient(const SockAddr& addr)
     : servinfo_(addr.AddInfo()),
-    : connector_ptr_(new Connector(servinfo_)) {
+      connector_ptr_(new Connector(servinfo_)) {
 }
 
-TcpClient::TcpConnect() {
-  connector_ptr_->TcpNonBlockConnect();
+void TcpClient::TcpConnect() {
 }
+
+}  // namespace mirants

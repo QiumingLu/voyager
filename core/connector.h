@@ -7,7 +7,7 @@ namespace mirants {
 
 class Connector {
  public:
-  Connector();
+  Connector(const struct addrinfo* addr);
 
  private:
   void TcpNonBlockConnect();

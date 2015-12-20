@@ -18,7 +18,7 @@ class TcpClient {
   void TcpConnect();
 
  private:
-  struct addrinfo* servinfo_;
+  const struct addrinfo* servinfo_;
   ConnectorPtr connector_ptr_;
 
   // No copying allow

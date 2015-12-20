@@ -14,27 +14,28 @@ Connector::Connector(const struct addrinfo* addr) : servinfo_(addr) {
 }
 
 void Connector::TcpNonBlockConnect() {
+  const struct  addrinfo* p;
 
   for (p = servinfo_; p != NULL; p = p->ai_next) {
     int socketfd = sockets::CreateSocketAndSetNonBlock(p->ai_family);
-    int ret = sockets::connect(socketfd, p0>ai_addr, p->ai_addrlen);
+    int ret = sockets::Connect(socketfd, p->ai_addr, p->ai_addrlen);
     int err = (ret == 0) ? 0 : errno;
     switch (err) {
       case 0:
       case EINPROGRESS:
       case EINTR:
-        connecting(socketfd);
+      //  connecting(socketfd);
         break;
 
       case EAGAIN:
       case EADDRINUSE:
       case EADDRNOTAVAIL:
-      case ECONNRESUSED:
+      case ECONNREFUSED:
       case ENETUNREACH:
-        retry(socketfd);
+      //  retry(socketfd);
         break;
 
-      case EACESS:
+      case EACCES:
       case EPERM:
       case EAFNOSUPPORT:
       case EALREADY:

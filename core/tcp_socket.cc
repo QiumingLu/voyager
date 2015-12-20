@@ -6,7 +6,7 @@
 namespace mirants {
 
 TcpSocket::~TcpSocket() {
-  SocketsUtil::CloseFd(socketfd_);
+  sockets::CloseFd(socketfd_);
 }
 
 void TcpSocket::BindAddress(const struct sockaddr* sa, socklen_t salen) {

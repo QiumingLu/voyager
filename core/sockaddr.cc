@@ -38,7 +38,7 @@ Status SockAddr::GetAddrInfo(const char* host, uint16_t port, bool ipv6) {
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;  // No effect if bindaddr != NULL */
 
-  int ret = ::getaddrinfo(host, &hints, &addrinfo_);
+  int ret = ::getaddrinfo(host, portstr, &hints, &addrinfo_);
   if (ret != 0) {
     std::string str;
     StringAppendF(&str, "getaddrinfo: %s", gai_strerror(ret));

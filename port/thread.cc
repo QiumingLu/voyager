@@ -3,9 +3,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include <sys/prctl.h>
+//#include <sys/prctl.h>
 #include <sys/syscall.h>
-#include <sys/types.h>
+#include <unistd.h>
+//#include <sys/types.h>
 
 #include "util/logging.h"
 #include "port/currentthread.h"
@@ -13,7 +14,7 @@
 namespace mirants {
 namespace port {
 
-namespace CureentThread {
+namespace CurrentThread {
 
 __thread int  cached_tid = 0;
 __thread const char* thread_name = "unknow";
@@ -40,12 +41,12 @@ struct StartThreadState {
   { }
 };
 
-static void* StartThreadWrapper(void* arg) {
+void* StartThreadWrapper(void* arg) {
   StartThreadState* state = reinterpret_cast<StartThreadState*>(arg);
-  CureentThread::thread_name = state->thread_name.c_str(); 
-  *(state->thread_tid) = CureentThread::Tid();
+  CurrentThread::thread_name = state->thread_name.c_str(); 
+  *(state->thread_tid) = CurrentThread::Tid();
   state->thread_func();
-  CureentThread::thread_name = "finished";
+  CurrentThread::thread_name = "finished";
   delete state;
   return NULL;
 }
@@ -62,13 +63,13 @@ bool CurrentThread::IsMainThread() {
   return Tid() == ::getpid();
 }
 
-Atomic32 Thread::thread_created_num_;
+Atomic32 Thread::num_;
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
      : started_(false),
        joined_(false),
        pthread_id_(0),
-       tid_(new pid_t(0)),
+       tid_(0),
        func_(func),
        name_(name) 
 {
@@ -79,9 +80,9 @@ Thread::Thread(ThreadFunc&& func, const std::string& name)
      : started_(false),
        joined_(false),
        pthread_id_(0),
-       tid_(new pid_t(0)),
+       tid_(0),
        func_(std::move(func)),
-       name_(name)
+       name_(std::move(name))
 {
   SetDefaultName();
 }

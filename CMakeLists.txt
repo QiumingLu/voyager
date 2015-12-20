@@ -14,11 +14,12 @@ set(CXX_FLAGS
   -D_FILE_OFFSET_BITS=64
   -Wall
   -Wextra
-  #  -Werror
+  #-Werror
   -Wconversion
   -Wno-unused-parameter
   -Woverloaded-virtual
   -Wpointer-arith
+  -Wwrite-strings
   -Wshadow
   -march=native
   -std=c++0x

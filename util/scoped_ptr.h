@@ -86,7 +86,7 @@ class scoped_array {
    }
   }
 
-  T& operator[](std::ptrdiff_t i) const {
+  T& operator[](ptrdiff_t i) const {
     assert(i >= 0);
     assert(array_ != NULL);
     return array_[i];

@@ -17,7 +17,7 @@ void StripString(std::string* s, const char* remove, char replacewith) {
 }
 
 void StripWhitespace(std::string* str) {
-  int str_length = str->length();
+  int str_length = static_cast<int>(str->length());
 
   // Strip off leading whitespace.
   int first = 0;
@@ -146,10 +146,10 @@ static void JoinStringsIterator(const ITERATOR& start,
                                 std::string* result) {
   assert(result != NULL);
   result->clear();
-  int delim_length = strlen(delim);
+  size_t delim_length = strlen(delim);
 
   // Precompute resulting length so we can reserve() memory in one shot.
-  int length = 0;
+  size_t length = 0;
   for (ITERATOR iter = start; iter != end; ++iter) {
     if (iter != start) {
       length += delim_length;

@@ -1,0 +1,1 @@
+g++   -g -DCHECK_PTHREAD_RETURN_VALUE -D_FILE_OFFSET_BITS=64 -Wall -Wextra -Wconversion -Wno-unused-parameter -Woverloaded-virtual -Wpointer-arith -Wwrite-strings -Wshadow -march=native -std=c++0x -rdynamic -O0   CMakeFiles/logging_test.dir/logging_test.cc.o  -o ../../bin/logging_test -rdynamic ../libmirants_util.a 

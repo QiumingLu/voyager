@@ -8,6 +8,6 @@ class LoggingTest {
 
 }  // namespace mirants
 
-int main(int argc, char* argv) {
+int main(int argc, char** argv) {
   return mirants::test::RunAllTests();
 }
