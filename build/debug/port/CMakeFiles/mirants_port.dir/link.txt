@@ -1,2 +1,0 @@
-/usr/bin/ar cq libmirants_port.a  CMakeFiles/mirants_port.dir/mutex.cc.o CMakeFiles/mirants_port.dir/thread.cc.o CMakeFiles/mirants_port.dir/threadpool.cc.o
-/usr/bin/ranlib libmirants_port.a

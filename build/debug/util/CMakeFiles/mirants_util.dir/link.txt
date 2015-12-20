@@ -1,2 +1,0 @@
-/usr/bin/ar cq libmirants_util.a  CMakeFiles/mirants_util.dir/fileutil.cc.o CMakeFiles/mirants_util.dir/logfile.cc.o CMakeFiles/mirants_util.dir/logging.cc.o CMakeFiles/mirants_util.dir/status.cc.o CMakeFiles/mirants_util.dir/string_util.cc.o CMakeFiles/mirants_util.dir/stringprintf.cc.o CMakeFiles/mirants_util.dir/testharness.cc.o CMakeFiles/mirants_util.dir/time.cc.o CMakeFiles/mirants_util.dir/timestamp.cc.o
-/usr/bin/ranlib libmirants_util.a
