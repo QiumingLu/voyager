@@ -166,6 +166,20 @@ logging_test/fast:
 	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/logging_test.dir/build.make util/tests/CMakeFiles/logging_test.dir/build
 .PHONY : logging_test/fast
 
+# Convenience name for target.
+util/tests/CMakeFiles/util_test.dir/rule:
+	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f CMakeFiles/Makefile2 util/tests/CMakeFiles/util_test.dir/rule
+.PHONY : util/tests/CMakeFiles/util_test.dir/rule
+
+# Convenience name for target.
+util_test: util/tests/CMakeFiles/util_test.dir/rule
+.PHONY : util_test
+
+# fast build rule for target.
+util_test/fast:
+	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/util_test.dir/build.make util/tests/CMakeFiles/util_test.dir/build
+.PHONY : util_test/fast
+
 logging_test.o: logging_test.cc.o
 .PHONY : logging_test.o
 
@@ -190,6 +204,30 @@ logging_test.cc.s:
 	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/logging_test.dir/build.make util/tests/CMakeFiles/logging_test.dir/logging_test.cc.s
 .PHONY : logging_test.cc.s
 
+util_test.o: util_test.cc.o
+.PHONY : util_test.o
+
+# target to build an object file
+util_test.cc.o:
+	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/util_test.dir/build.make util/tests/CMakeFiles/util_test.dir/util_test.cc.o
+.PHONY : util_test.cc.o
+
+util_test.i: util_test.cc.i
+.PHONY : util_test.i
+
+# target to preprocess a source file
+util_test.cc.i:
+	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/util_test.dir/build.make util/tests/CMakeFiles/util_test.dir/util_test.cc.i
+.PHONY : util_test.cc.i
+
+util_test.s: util_test.cc.s
+.PHONY : util_test.s
+
+# target to generate assembly for a file
+util_test.cc.s:
+	cd /home/ming/GitHub/mirants/build/debug && $(MAKE) -f util/tests/CMakeFiles/util_test.dir/build.make util/tests/CMakeFiles/util_test.dir/util_test.cc.s
+.PHONY : util_test.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -202,11 +240,15 @@ help:
 	@echo "... logging_test"
 	@echo "... install"
 	@echo "... list_install_components"
+	@echo "... util_test"
 	@echo "... test"
 	@echo "... install/local"
 	@echo "... logging_test.o"
 	@echo "... logging_test.i"
 	@echo "... logging_test.s"
+	@echo "... util_test.o"
+	@echo "... util_test.i"
+	@echo "... util_test.s"
 .PHONY : help
 
 

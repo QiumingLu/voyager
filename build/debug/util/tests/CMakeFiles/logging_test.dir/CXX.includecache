@@ -38,7 +38,7 @@ util/status.h
 
 /home/ming/GitHub/mirants/util/tests/logging_test.cc
 util/logging.h
--
+/home/ming/GitHub/mirants/util/tests/util/logging.h
 util/testharness.h
 /home/ming/GitHub/mirants/util/tests/util/testharness.h
 

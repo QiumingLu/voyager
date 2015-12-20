@@ -179,6 +179,19 @@ logging_test/fast:
 .PHONY : logging_test/fast
 
 #=============================================================================
+# Target rules for targets named util_test
+
+# Build rule for target.
+util_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 util_test
+.PHONY : util_test
+
+# fast build rule for target.
+util_test/fast:
+	$(MAKE) -f util/tests/CMakeFiles/util_test.dir/build.make util/tests/CMakeFiles/util_test.dir/build
+.PHONY : util_test/fast
+
+#=============================================================================
 # Target rules for targets named mirants_port
 
 # Build rule for target.
@@ -219,6 +232,7 @@ help:
 	@echo "... install/local"
 	@echo "... mirants_util"
 	@echo "... logging_test"
+	@echo "... util_test"
 	@echo "... mirants_port"
 	@echo "... mirants_core"
 .PHONY : help

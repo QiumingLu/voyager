@@ -49,32 +49,9 @@ include port/CMakeFiles/mirants_port.dir/progress.make
 # Include the compile flags for this target's objects.
 include port/CMakeFiles/mirants_port.dir/flags.make
 
-port/CMakeFiles/mirants_port.dir/threadpool.cc.o: port/CMakeFiles/mirants_port.dir/flags.make
-port/CMakeFiles/mirants_port.dir/threadpool.cc.o: ../../port/threadpool.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object port/CMakeFiles/mirants_port.dir/threadpool.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/port && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_port.dir/threadpool.cc.o -c /home/ming/GitHub/mirants/port/threadpool.cc
-
-port/CMakeFiles/mirants_port.dir/threadpool.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_port.dir/threadpool.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/port && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/port/threadpool.cc > CMakeFiles/mirants_port.dir/threadpool.cc.i
-
-port/CMakeFiles/mirants_port.dir/threadpool.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_port.dir/threadpool.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/port && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/port/threadpool.cc -o CMakeFiles/mirants_port.dir/threadpool.cc.s
-
-port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires:
-.PHONY : port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
-
-port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides: port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
-	$(MAKE) -f port/CMakeFiles/mirants_port.dir/build.make port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides.build
-.PHONY : port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides
-
-port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides.build: port/CMakeFiles/mirants_port.dir/threadpool.cc.o
-
 port/CMakeFiles/mirants_port.dir/mutex.cc.o: port/CMakeFiles/mirants_port.dir/flags.make
 port/CMakeFiles/mirants_port.dir/mutex.cc.o: ../../port/mutex.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object port/CMakeFiles/mirants_port.dir/mutex.cc.o"
 	cd /home/ming/GitHub/mirants/build/debug/port && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_port.dir/mutex.cc.o -c /home/ming/GitHub/mirants/port/mutex.cc
 
@@ -97,7 +74,7 @@ port/CMakeFiles/mirants_port.dir/mutex.cc.o.provides.build: port/CMakeFiles/mira
 
 port/CMakeFiles/mirants_port.dir/thread.cc.o: port/CMakeFiles/mirants_port.dir/flags.make
 port/CMakeFiles/mirants_port.dir/thread.cc.o: ../../port/thread.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_3)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object port/CMakeFiles/mirants_port.dir/thread.cc.o"
 	cd /home/ming/GitHub/mirants/build/debug/port && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_port.dir/thread.cc.o -c /home/ming/GitHub/mirants/port/thread.cc
 
@@ -118,18 +95,41 @@ port/CMakeFiles/mirants_port.dir/thread.cc.o.provides: port/CMakeFiles/mirants_p
 
 port/CMakeFiles/mirants_port.dir/thread.cc.o.provides.build: port/CMakeFiles/mirants_port.dir/thread.cc.o
 
+port/CMakeFiles/mirants_port.dir/threadpool.cc.o: port/CMakeFiles/mirants_port.dir/flags.make
+port/CMakeFiles/mirants_port.dir/threadpool.cc.o: ../../port/threadpool.cc
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_3)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object port/CMakeFiles/mirants_port.dir/threadpool.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/port && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_port.dir/threadpool.cc.o -c /home/ming/GitHub/mirants/port/threadpool.cc
+
+port/CMakeFiles/mirants_port.dir/threadpool.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_port.dir/threadpool.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/port && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/port/threadpool.cc > CMakeFiles/mirants_port.dir/threadpool.cc.i
+
+port/CMakeFiles/mirants_port.dir/threadpool.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_port.dir/threadpool.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/port && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/port/threadpool.cc -o CMakeFiles/mirants_port.dir/threadpool.cc.s
+
+port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires:
+.PHONY : port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
+
+port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides: port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
+	$(MAKE) -f port/CMakeFiles/mirants_port.dir/build.make port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides.build
+.PHONY : port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides
+
+port/CMakeFiles/mirants_port.dir/threadpool.cc.o.provides.build: port/CMakeFiles/mirants_port.dir/threadpool.cc.o
+
 # Object files for target mirants_port
 mirants_port_OBJECTS = \
-"CMakeFiles/mirants_port.dir/threadpool.cc.o" \
 "CMakeFiles/mirants_port.dir/mutex.cc.o" \
-"CMakeFiles/mirants_port.dir/thread.cc.o"
+"CMakeFiles/mirants_port.dir/thread.cc.o" \
+"CMakeFiles/mirants_port.dir/threadpool.cc.o"
 
 # External object files for target mirants_port
 mirants_port_EXTERNAL_OBJECTS =
 
-port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/threadpool.cc.o
 port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/mutex.cc.o
 port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/thread.cc.o
+port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/threadpool.cc.o
 port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/build.make
 port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX static library libmirants_port.a"
@@ -140,9 +140,9 @@ port/libmirants_port.a: port/CMakeFiles/mirants_port.dir/link.txt
 port/CMakeFiles/mirants_port.dir/build: port/libmirants_port.a
 .PHONY : port/CMakeFiles/mirants_port.dir/build
 
-port/CMakeFiles/mirants_port.dir/requires: port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
 port/CMakeFiles/mirants_port.dir/requires: port/CMakeFiles/mirants_port.dir/mutex.cc.o.requires
 port/CMakeFiles/mirants_port.dir/requires: port/CMakeFiles/mirants_port.dir/thread.cc.o.requires
+port/CMakeFiles/mirants_port.dir/requires: port/CMakeFiles/mirants_port.dir/threadpool.cc.o.requires
 .PHONY : port/CMakeFiles/mirants_port.dir/requires
 
 port/CMakeFiles/mirants_port.dir/clean:

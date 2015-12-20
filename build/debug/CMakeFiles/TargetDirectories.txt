@@ -1,4 +1,5 @@
 /home/ming/GitHub/mirants/build/debug/util/tests/CMakeFiles/logging_test.dir
 /home/ming/GitHub/mirants/build/debug/core/CMakeFiles/mirants_core.dir
+/home/ming/GitHub/mirants/build/debug/util/tests/CMakeFiles/util_test.dir
 /home/ming/GitHub/mirants/build/debug/util/CMakeFiles/mirants_util.dir
 /home/ming/GitHub/mirants/build/debug/port/CMakeFiles/mirants_port.dir

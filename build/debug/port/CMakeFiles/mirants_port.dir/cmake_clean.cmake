@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/mirants_port.dir/threadpool.cc.o"
   "CMakeFiles/mirants_port.dir/mutex.cc.o"
   "CMakeFiles/mirants_port.dir/thread.cc.o"
+  "CMakeFiles/mirants_port.dir/threadpool.cc.o"
   "libmirants_port.pdb"
   "libmirants_port.a"
 )

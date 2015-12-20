@@ -49,55 +49,78 @@ include core/CMakeFiles/mirants_core.dir/progress.make
 # Include the compile flags for this target's objects.
 include core/CMakeFiles/mirants_core.dir/flags.make
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o: ../../core/tcp_socket.cc
+core/CMakeFiles/mirants_core.dir/acceptor.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/acceptor.cc.o: ../../core/acceptor.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_socket.cc.o -c /home/ming/GitHub/mirants/core/tcp_socket.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/acceptor.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/acceptor.cc.o -c /home/ming/GitHub/mirants/core/acceptor.cc
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_socket.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_socket.cc > CMakeFiles/mirants_core.dir/tcp_socket.cc.i
+core/CMakeFiles/mirants_core.dir/acceptor.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/acceptor.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/acceptor.cc > CMakeFiles/mirants_core.dir/acceptor.cc.i
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_socket.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_socket.cc -o CMakeFiles/mirants_core.dir/tcp_socket.cc.s
+core/CMakeFiles/mirants_core.dir/acceptor.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/acceptor.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/acceptor.cc -o CMakeFiles/mirants_core.dir/acceptor.cc.s
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
+core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides
+core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides: core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o
+core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/acceptor.cc.o
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.o: ../../core/tcp_client.cc
+core/CMakeFiles/mirants_core.dir/connector.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/connector.cc.o: ../../core/connector.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_2)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_client.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_client.cc.o -c /home/ming/GitHub/mirants/core/tcp_client.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/connector.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/connector.cc.o -c /home/ming/GitHub/mirants/core/connector.cc
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_client.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_client.cc > CMakeFiles/mirants_core.dir/tcp_client.cc.i
+core/CMakeFiles/mirants_core.dir/connector.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/connector.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/connector.cc > CMakeFiles/mirants_core.dir/connector.cc.i
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_client.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_client.cc -o CMakeFiles/mirants_core.dir/tcp_client.cc.s
+core/CMakeFiles/mirants_core.dir/connector.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/connector.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/connector.cc -o CMakeFiles/mirants_core.dir/connector.cc.s
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
+core/CMakeFiles/mirants_core.dir/connector.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides
+core/CMakeFiles/mirants_core.dir/connector.cc.o.provides: core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/connector.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/connector.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o
+core/CMakeFiles/mirants_core.dir/connector.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/connector.cc.o
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o: ../../core/event_defaultpoller.cc
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_3)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o -c /home/ming/GitHub/mirants/core/event_defaultpoller.cc
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_defaultpoller.cc > CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_defaultpoller.cc -o CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides
+
+core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o
 
 core/CMakeFiles/mirants_core.dir/event_epoll.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
 core/CMakeFiles/mirants_core.dir/event_epoll.cc.o: ../../core/event_epoll.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_3)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_epoll.cc.o"
 	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_epoll.cc.o -c /home/ming/GitHub/mirants/core/event_epoll.cc
 
@@ -118,51 +141,28 @@ core/CMakeFiles/mirants_core.dir/event_epoll.cc.o.provides: core/CMakeFiles/mira
 
 core/CMakeFiles/mirants_core.dir/event_epoll.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_epoll.cc.o
 
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.o: ../../core/tcp_server.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_4)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_server.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_server.cc.o -c /home/ming/GitHub/mirants/core/tcp_server.cc
-
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_server.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_server.cc > CMakeFiles/mirants_core.dir/tcp_server.cc.i
-
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_server.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_server.cc -o CMakeFiles/mirants_core.dir/tcp_server.cc.s
-
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
-
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides
-
-core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o
-
-core/CMakeFiles/mirants_core.dir/eventloop.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/eventloop.cc.o: ../../core/eventloop.cc
+core/CMakeFiles/mirants_core.dir/event_poll.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/event_poll.cc.o: ../../core/event_poll.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_5)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/eventloop.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/eventloop.cc.o -c /home/ming/GitHub/mirants/core/eventloop.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_poll.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_poll.cc.o -c /home/ming/GitHub/mirants/core/event_poll.cc
 
-core/CMakeFiles/mirants_core.dir/eventloop.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/eventloop.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/eventloop.cc > CMakeFiles/mirants_core.dir/eventloop.cc.i
+core/CMakeFiles/mirants_core.dir/event_poll.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_poll.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_poll.cc > CMakeFiles/mirants_core.dir/event_poll.cc.i
 
-core/CMakeFiles/mirants_core.dir/eventloop.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/eventloop.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/eventloop.cc -o CMakeFiles/mirants_core.dir/eventloop.cc.s
+core/CMakeFiles/mirants_core.dir/event_poll.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_poll.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_poll.cc -o CMakeFiles/mirants_core.dir/event_poll.cc.s
 
-core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
+core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides: core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides
+core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/eventloop.cc.o
+core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_poll.cc.o
 
 core/CMakeFiles/mirants_core.dir/event_poller.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
 core/CMakeFiles/mirants_core.dir/event_poller.cc.o: ../../core/event_poller.cc
@@ -187,32 +187,55 @@ core/CMakeFiles/mirants_core.dir/event_poller.cc.o.provides: core/CMakeFiles/mir
 
 core/CMakeFiles/mirants_core.dir/event_poller.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_poller.cc.o
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/acceptor.cc.o: ../../core/acceptor.cc
+core/CMakeFiles/mirants_core.dir/event_select.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/event_select.cc.o: ../../core/event_select.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_7)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/acceptor.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/acceptor.cc.o -c /home/ming/GitHub/mirants/core/acceptor.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_select.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_select.cc.o -c /home/ming/GitHub/mirants/core/event_select.cc
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/acceptor.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/acceptor.cc > CMakeFiles/mirants_core.dir/acceptor.cc.i
+core/CMakeFiles/mirants_core.dir/event_select.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_select.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_select.cc > CMakeFiles/mirants_core.dir/event_select.cc.i
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/acceptor.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/acceptor.cc -o CMakeFiles/mirants_core.dir/acceptor.cc.s
+core/CMakeFiles/mirants_core.dir/event_select.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_select.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_select.cc -o CMakeFiles/mirants_core.dir/event_select.cc.s
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires
+core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides: core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides
+core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/acceptor.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/acceptor.cc.o
+core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_select.cc.o
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/eventloop.cc.o: ../../core/eventloop.cc
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_8)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/eventloop.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/eventloop.cc.o -c /home/ming/GitHub/mirants/core/eventloop.cc
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/eventloop.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/eventloop.cc > CMakeFiles/mirants_core.dir/eventloop.cc.i
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/eventloop.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/eventloop.cc -o CMakeFiles/mirants_core.dir/eventloop.cc.s
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides: core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides
+
+core/CMakeFiles/mirants_core.dir/eventloop.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/eventloop.cc.o
 
 core/CMakeFiles/mirants_core.dir/sockaddr.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
 core/CMakeFiles/mirants_core.dir/sockaddr.cc.o: ../../core/sockaddr.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_8)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_9)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/sockaddr.cc.o"
 	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/sockaddr.cc.o -c /home/ming/GitHub/mirants/core/sockaddr.cc
 
@@ -235,7 +258,7 @@ core/CMakeFiles/mirants_core.dir/sockaddr.cc.o.provides.build: core/CMakeFiles/m
 
 core/CMakeFiles/mirants_core.dir/socket_util.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
 core/CMakeFiles/mirants_core.dir/socket_util.cc.o: ../../core/socket_util.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_9)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_10)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/socket_util.cc.o"
 	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/socket_util.cc.o -c /home/ming/GitHub/mirants/core/socket_util.cc
 
@@ -256,130 +279,107 @@ core/CMakeFiles/mirants_core.dir/socket_util.cc.o.provides: core/CMakeFiles/mira
 
 core/CMakeFiles/mirants_core.dir/socket_util.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/socket_util.cc.o
 
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o: ../../core/event_defaultpoller.cc
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_10)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o -c /home/ming/GitHub/mirants/core/event_defaultpoller.cc
-
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_defaultpoller.cc > CMakeFiles/mirants_core.dir/event_defaultpoller.cc.i
-
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_defaultpoller.cc -o CMakeFiles/mirants_core.dir/event_defaultpoller.cc.s
-
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
-
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides
-
-core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o
-
-core/CMakeFiles/mirants_core.dir/event_select.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/event_select.cc.o: ../../core/event_select.cc
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.o: ../../core/tcp_client.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_11)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_select.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_select.cc.o -c /home/ming/GitHub/mirants/core/event_select.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_client.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_client.cc.o -c /home/ming/GitHub/mirants/core/tcp_client.cc
 
-core/CMakeFiles/mirants_core.dir/event_select.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_select.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_select.cc > CMakeFiles/mirants_core.dir/event_select.cc.i
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_client.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_client.cc > CMakeFiles/mirants_core.dir/tcp_client.cc.i
 
-core/CMakeFiles/mirants_core.dir/event_select.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_select.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_select.cc -o CMakeFiles/mirants_core.dir/event_select.cc.s
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_client.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_client.cc -o CMakeFiles/mirants_core.dir/tcp_client.cc.s
 
-core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/event_select.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_select.cc.o
+core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o
 
-core/CMakeFiles/mirants_core.dir/connector.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/connector.cc.o: ../../core/connector.cc
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.o: ../../core/tcp_server.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_12)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/connector.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/connector.cc.o -c /home/ming/GitHub/mirants/core/connector.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_server.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_server.cc.o -c /home/ming/GitHub/mirants/core/tcp_server.cc
 
-core/CMakeFiles/mirants_core.dir/connector.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/connector.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/connector.cc > CMakeFiles/mirants_core.dir/connector.cc.i
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_server.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_server.cc > CMakeFiles/mirants_core.dir/tcp_server.cc.i
 
-core/CMakeFiles/mirants_core.dir/connector.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/connector.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/connector.cc -o CMakeFiles/mirants_core.dir/connector.cc.s
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_server.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_server.cc -o CMakeFiles/mirants_core.dir/tcp_server.cc.s
 
-core/CMakeFiles/mirants_core.dir/connector.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/connector.cc.o.provides: core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/connector.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/connector.cc.o.provides
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/connector.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/connector.cc.o
+core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
-core/CMakeFiles/mirants_core.dir/event_poll.cc.o: ../../core/event_poll.cc
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o: core/CMakeFiles/mirants_core.dir/flags.make
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o: ../../core/tcp_socket.cc
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/ming/GitHub/mirants/build/debug/CMakeFiles $(CMAKE_PROGRESS_13)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/event_poll.cc.o"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/event_poll.cc.o -c /home/ming/GitHub/mirants/core/event_poll.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mirants_core.dir/tcp_socket.cc.o -c /home/ming/GitHub/mirants/core/tcp_socket.cc
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/event_poll.cc.i"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/event_poll.cc > CMakeFiles/mirants_core.dir/event_poll.cc.i
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mirants_core.dir/tcp_socket.cc.i"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/ming/GitHub/mirants/core/tcp_socket.cc > CMakeFiles/mirants_core.dir/tcp_socket.cc.i
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/event_poll.cc.s"
-	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/event_poll.cc -o CMakeFiles/mirants_core.dir/event_poll.cc.s
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mirants_core.dir/tcp_socket.cc.s"
+	cd /home/ming/GitHub/mirants/build/debug/core && g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/ming/GitHub/mirants/core/tcp_socket.cc -o CMakeFiles/mirants_core.dir/tcp_socket.cc.s
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires:
-.PHONY : core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires:
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides: core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
-	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides.build
-.PHONY : core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
+	$(MAKE) -f core/CMakeFiles/mirants_core.dir/build.make core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides.build
+.PHONY : core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides
 
-core/CMakeFiles/mirants_core.dir/event_poll.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/event_poll.cc.o
+core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.provides.build: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o
 
 # Object files for target mirants_core
 mirants_core_OBJECTS = \
-"CMakeFiles/mirants_core.dir/tcp_socket.cc.o" \
-"CMakeFiles/mirants_core.dir/tcp_client.cc.o" \
-"CMakeFiles/mirants_core.dir/event_epoll.cc.o" \
-"CMakeFiles/mirants_core.dir/tcp_server.cc.o" \
-"CMakeFiles/mirants_core.dir/eventloop.cc.o" \
-"CMakeFiles/mirants_core.dir/event_poller.cc.o" \
 "CMakeFiles/mirants_core.dir/acceptor.cc.o" \
+"CMakeFiles/mirants_core.dir/connector.cc.o" \
+"CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o" \
+"CMakeFiles/mirants_core.dir/event_epoll.cc.o" \
+"CMakeFiles/mirants_core.dir/event_poll.cc.o" \
+"CMakeFiles/mirants_core.dir/event_poller.cc.o" \
+"CMakeFiles/mirants_core.dir/event_select.cc.o" \
+"CMakeFiles/mirants_core.dir/eventloop.cc.o" \
 "CMakeFiles/mirants_core.dir/sockaddr.cc.o" \
 "CMakeFiles/mirants_core.dir/socket_util.cc.o" \
-"CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o" \
-"CMakeFiles/mirants_core.dir/event_select.cc.o" \
-"CMakeFiles/mirants_core.dir/connector.cc.o" \
-"CMakeFiles/mirants_core.dir/event_poll.cc.o"
+"CMakeFiles/mirants_core.dir/tcp_client.cc.o" \
+"CMakeFiles/mirants_core.dir/tcp_server.cc.o" \
+"CMakeFiles/mirants_core.dir/tcp_socket.cc.o"
 
 # External object files for target mirants_core
 mirants_core_EXTERNAL_OBJECTS =
 
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_epoll.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/eventloop.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_poller.cc.o
 core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/acceptor.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/connector.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_epoll.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_poll.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_poller.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_select.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/eventloop.cc.o
 core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/sockaddr.cc.o
 core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/socket_util.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_select.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/connector.cc.o
-core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/event_poll.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o
+core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o
 core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/build.make
 core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX static library libmirants_core.a"
@@ -390,19 +390,19 @@ core/libmirants_core.a: core/CMakeFiles/mirants_core.dir/link.txt
 core/CMakeFiles/mirants_core.dir/build: core/libmirants_core.a
 .PHONY : core/CMakeFiles/mirants_core.dir/build
 
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_epoll.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_poller.cc.o.requires
 core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/acceptor.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_epoll.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_poller.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/eventloop.cc.o.requires
 core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/sockaddr.cc.o.requires
 core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/socket_util.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_defaultpoller.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_select.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/connector.cc.o.requires
-core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/event_poll.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_client.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_server.cc.o.requires
+core/CMakeFiles/mirants_core.dir/requires: core/CMakeFiles/mirants_core.dir/tcp_socket.cc.o.requires
 .PHONY : core/CMakeFiles/mirants_core.dir/requires
 
 core/CMakeFiles/mirants_core.dir/clean:
