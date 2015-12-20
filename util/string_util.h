@@ -30,11 +30,11 @@ inline bool ascii_islower(char c) {
   return c >= 'a' && c <= 'z';
 }
 
-inline bool ascii_toupper(char c) {
+inline char ascii_toupper(char c) {
   return ascii_islower(c) ? c -('a' - 'A') : c;
 }
 
-inline bool ascii_tolower(char c) {
+inline char ascii_tolower(char c) {
   return ascii_isupper(c) ? c + ('a' - 'A') : c;
 }
 

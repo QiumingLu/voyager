@@ -55,7 +55,7 @@ class LogFinisher {
 };
 
 #define MIRANTS_LOG(LEVEL)                                \
-  LogFinisher() =                                         \
+  ::mirants::LogFinisher() =                             \
     ::mirants::Logger(                                    \
       ::mirants::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
 
@@ -65,6 +65,7 @@ T* CheckNotNull(const char* /* filename */, int /* line */,
   if (ptr == NULL) {
     MIRANTS_LOG(FATAL) << logmessage;
   }
+  return ptr;
 }
 
 #define CHECK_NOTNULL(value)  \
@@ -74,6 +75,15 @@ T* CheckNotNull(const char* /* filename */, int /* line */,
 
 typedef void LogHandler(LogLevel level, const char* filename, 
                         int line, const std::string& message_);
+
+
+extern void DefaultLogHandler(LogLevel level, const char* filename, int line,
+                       const std::string& message);
+
+
+extern void NullLogHandler(LogLevel /* level */, const char* /* filename */,
+                    int /* line */, const std::string& /* message */);
+
 LogHandler* SetLogHandler(LogHandler* new_func);
 
 

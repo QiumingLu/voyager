@@ -11,7 +11,7 @@ namespace mirants {
 void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
   static const char* loglevel_names[] = {
-    "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL" };
+    "TRACE", "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
   std::string log_time = Timestamp::Now().FormatTimestamp();
 
   fprintf(stderr, "[%s][%s %s:%d] %s\n",
@@ -37,7 +37,7 @@ Logger& Logger::operator<<(const char* value) {
 }
 
 Logger& Logger::operator<<(const Slice& value) {
-//  message_ += value.ToString();
+  message_ += value.ToString();
   return *this;
 }
 
@@ -47,7 +47,7 @@ Logger& Logger::operator<<(const std::string& value) {
 }
 
 Logger& Logger::operator<<(const Status& value) {
- // message_ += value.ToString();
+  message_ += value.ToString();
   return *this;
 }
 

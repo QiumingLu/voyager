@@ -1,5 +1,7 @@
 #include "util/stringprintf.h"
 
+namespace mirants {
+
 void StringAppendV(std::string* dst, const char* format, va_list ap) {
   static const int kSpaceLength = 128;
   char space[kSpaceLength];
@@ -42,7 +44,7 @@ std::string StringPrintf(const char* format, ...) {
   return result;
 }
 
-std::string& SStringPrintf(std::string* dst, const char* format, ...) {
+const std::string& SStringPrintf(std::string* dst, const char* format, ...) {
   va_list ap;
   va_start(ap, format);
   dst->clear();
@@ -57,3 +59,5 @@ void StringAppendF(std::string* dst, const char* format, ...) {
   StringAppendV(dst, format, ap);
   va_end(ap);
 }
+
+}  // namespace mirants

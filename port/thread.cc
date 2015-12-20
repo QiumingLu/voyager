@@ -3,10 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
-//#include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-//#include <sys/types.h>
 
 #include "util/logging.h"
 #include "port/currentthread.h"

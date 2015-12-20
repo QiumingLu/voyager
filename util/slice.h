@@ -19,7 +19,7 @@ class Slice {
   
   size_t size() const { return size_; }
   
-  bool emprt() const { return size_ == 0; }
+  bool empty() const { return size_ == 0; }
   
   char operator[](size_t n) const {
     assert(n < size());
