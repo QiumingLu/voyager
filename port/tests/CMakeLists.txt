@@ -1,3 +1,5 @@
+add_executable(atomic_test atomic_test.cc)
 add_executable(thread_test thread_test.cc)
 
+target_link_libraries(atomic_test mirants_port)
 target_link_libraries(thread_test mirants_port)
