@@ -40,6 +40,7 @@ pthread_once_t Singleton<T>::once_ = PTHREAD_ONCE_INIT;
 template<typename T>
 T* Singleton<T>::instance_ = NULL;
 
+}  // namespace port
 }  // namespace mirants
 
 #endif  // MIRANTS_PORT_SINGLETON_H_
