@@ -204,7 +204,9 @@ Status CheckSocketError(int socketfd) {
   return Status::OK();
 }
 
-static Status GenericResolve(const char* hostname, char* ipbuf, size_t ipbuf_size, 
+static Status GenericResolve(const char* hostname, 
+                             char* ipbuf, 
+                             size_t ipbuf_size, 
                              bool ip_only) {
   struct addrinfo hints, *result;
   int error;
@@ -226,12 +228,18 @@ static Status GenericResolve(const char* hostname, char* ipbuf, size_t ipbuf_siz
     assert(ipbuf_size >= INET_ADDRSTRLEN);
     struct sockaddr_in* sa4 = 
         reinterpret_cast<struct sockaddr_in*>(result->ai_addr);
-    ::inet_ntop(AF_INET, &(sa4->sin_addr), ipbuf, static_cast<socklen_t>(ipbuf_size));
+    ::inet_ntop(AF_INET, 
+                &(sa4->sin_addr), 
+                ipbuf, 
+                static_cast<socklen_t>(ipbuf_size));
   } else if (result->ai_family == AF_INET6){
     assert(ipbuf_size >= INET6_ADDRSTRLEN);
     struct sockaddr_in6* sa6 =
         reinterpret_cast<struct sockaddr_in6*>(result->ai_addr);
-    ::inet_ntop(AF_INET6, &(sa6->sin6_addr), ipbuf, static_cast<socklen_t>(ipbuf_size));
+    ::inet_ntop(AF_INET6, 
+                &(sa6->sin6_addr), 
+                ipbuf, 
+                static_cast<socklen_t>(ipbuf_size));
   }
 
   ::freeaddrinfo(result);
@@ -253,12 +261,16 @@ int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size) {
 
 int FormatPeer(int socketfd, char* buf, size_t buf_size) {
   struct sockaddr_storage sa(std::move(PeerSockAddr(socketfd)));
-  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), buf, buf_size);
+  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
+                          buf, 
+                          buf_size);
 }
 
 int FormatLocal(int socketfd, char* buf, size_t buf_size) {
   struct  sockaddr_storage sa(std::move(LocalSockAddr(socketfd)));
-  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), buf, buf_size);
+  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
+                          buf, 
+                          buf_size);
 }
 
 void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
@@ -266,19 +278,22 @@ void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
     assert(ipbuf_size >= INET_ADDRSTRLEN);
     const struct sockaddr_in* sa4 = 
         reinterpret_cast<const struct sockaddr_in*>(sa);
-    ::inet_ntop(AF_INET, &sa4->sin_addr, ipbuf, static_cast<socklen_t>(ipbuf_size));
+    ::inet_ntop(AF_INET, &sa4->sin_addr, 
+                ipbuf, static_cast<socklen_t>(ipbuf_size));
   } else if (sa->sa_family == AF_INET6) {
     assert(sa->sa_family >= INET6_ADDRSTRLEN);
     const struct sockaddr_in6* sa6 = 
         reinterpret_cast<const struct sockaddr_in6*>(sa);
-    ::inet_ntop(AF_INET6, &sa6->sin6_addr, ipbuf, static_cast<socklen_t>(ipbuf_size));
+    ::inet_ntop(AF_INET6, &sa6->sin6_addr, 
+                ipbuf, static_cast<socklen_t>(ipbuf_size));
   }
 }
 
 int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size) {
   char ip[INET6_ADDRSTRLEN];
   SockAddrToIP(sa, ip, sizeof(ip));
-  const struct sockaddr_in* sa4 = reinterpret_cast<const struct sockaddr_in*>(sa);
+  const struct sockaddr_in* sa4 = 
+      reinterpret_cast<const struct sockaddr_in*>(sa);
   uint16_t port = ::ntohs(sa4->sin_port);
   return FormatAddr(ip, port, buf, buf_size);
 }
@@ -291,7 +306,9 @@ void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4) {
   }
 }
 
-void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6) {
+void IPPortToSockAddr(const char* ip, 
+                      uint16_t port, 
+                      struct sockaddr_in6* sa6) {
   sa6->sin6_family = AF_INET6;
   sa6->sin6_port = ::htons(port);
   if (::inet_pton(AF_INET6, ip, &sa6->sin6_addr) <= 0) {
