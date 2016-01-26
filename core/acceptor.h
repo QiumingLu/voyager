@@ -8,7 +8,8 @@ namespace mirants {
 
 class Acceptor {
  public:
-  explicit Acceptor(const struct addrinfo* addr, int backlog, bool reuseport = false);
+  explicit Acceptor(const struct addrinfo* addr, 
+                    int backlog, bool reuseport = false);
   ~Acceptor();
 
   void EnableListen();
