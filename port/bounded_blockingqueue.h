@@ -3,12 +3,14 @@
 
 #include <deque>
 #include <utility>
+#include <assert.h>
 #include "port/mutex.h"
 #include "port/mutexlock.h"
 
 namespace mirants {
 namespace port {
 
+template<typename T>
 class BoundedBlockingQueue {
  public:
   BoundedBlockingQueue(size_t capacity) 
