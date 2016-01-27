@@ -2,6 +2,7 @@
 #define MIRANTS_PORT_THREADLOCALSTORAGE_SINGLETON_H_
 
 #include <pthread.h>
+#include <assert.h>
 
 namespace mirants {
 namespace port {
@@ -31,6 +32,8 @@ class ThreadLocalStorageSingleton {
       assert(pthread_getspecific(key_) == NULL);
       pthread_setspecific(key_, value);
     }
+
+    pthread_key_t key_;
   };
 
   static void Delete(void* value) {
@@ -40,6 +43,8 @@ class ThreadLocalStorageSingleton {
   static __thread T* value_;
   static Helper helper_;
 
+  ThreadLocalStorageSingleton();
+  ~ThreadLocalStorageSingleton();
   // No copying allow
   ThreadLocalStorageSingleton(const ThreadLocalStorageSingleton&);
   void operator=(const ThreadLocalStorageSingleton&);

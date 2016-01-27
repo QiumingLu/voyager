@@ -6,6 +6,7 @@ add_executable(bounded_blockingqueue_test bounded_blockingqueue_test.cc)
 add_executable(threadlocalstorage_test threadlocalstorage_test.cc)
 add_executable(threadlocalstorage_singleton_test 
                threadlocalstorage_singleton_test.cc)
+add_executable(threadpool_test threadpool_test.cc)
 
 target_link_libraries(atomic_test mirants_port)
 target_link_libraries(thread_test mirants_port)
@@ -14,3 +15,4 @@ target_link_libraries(blockingqueue_test mirants_port)
 target_link_libraries(bounded_blockingqueue_test mirants_port)
 target_link_libraries(threadlocalstorage_test mirants_port)
 target_link_libraries(threadlocalstorage_singleton_test mirants_port)
+target_link_libraries(threadpool_test mirants_port)

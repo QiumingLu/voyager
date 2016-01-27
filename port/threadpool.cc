@@ -2,10 +2,7 @@
 
 #include <algorithm>
 #include <utility>
-
 #include <assert.h>
-#include <stdio.h>
-
 #include "port/mutexlock.h"
 
 namespace mirants {
@@ -42,7 +39,7 @@ void ThreadPool::Stop() {
   {
     MutexLock lock(&mutex_);
     running_ = false;
-    cond_.Signal();
+    cond_.SignalAll();
   }
   using namespace std::placeholders;
   for_each(threads_.begin(), threads_.end(), std::bind(&Thread::Join, _1));
