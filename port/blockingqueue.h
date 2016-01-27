@@ -24,7 +24,7 @@ class BlockingQueue {
 
   void Put(T&& t) {
     MutexLock lock(&mutex_);
-    queue_.push(std::move(t));
+    queue_.push_back(std::move(t));
     assert(queue_.size() > 0);
     not_empty.Signal();
   }
