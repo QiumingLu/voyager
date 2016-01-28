@@ -1,12 +1,12 @@
 set(core_SRCS
   acceptor.cc
   connector.cc
-  event_defaultpoller.cc
+  dispatch.cc
+  eventloop.cc
   event_epoll.cc
   event_poll.cc
   event_poller.cc
   event_select.cc
-  eventloop.cc
   sockaddr.cc
   socket_util.cc
   tcp_client.cc
@@ -16,4 +16,13 @@ set(core_SRCS
 
 add_library(mirants_core ${core_SRCS})
 
-add_subdirectory(tests)
+target_link_libraries(mirants_core mirants_port)
+
+install(TARGETS mirants_core DESTINATION lib)
+
+file(GLOB HEADERS "*.h")
+install(FILES ${HEADERS} DESTINATION include/mirants/cort)
+
+if (NOT CMAKE_BUILD_NO_EXAMPLES)
+  add_subdirectory(tests)
+endif()
