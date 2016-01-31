@@ -13,7 +13,7 @@ class SockAddr {
   SockAddr(Slice host, uint16_t port, bool ipv6 = false);
   ~SockAddr();
 
-  const struct addrinfo* AddInfo() const { return addrinfo_; }
+  const struct addrinfo* AddrInfo() const { return addrinfo_; }
   bool IsIpv6() const { return ipv6_; }
 
  private:

@@ -6,7 +6,7 @@
 namespace mirants {
 
 EventLoop::EventLoop()
-    : poller_(new EventPoller()) {
+    : poller_(new EventPoll(this)) {
 }
 
 EventLoop::~EventLoop() {
@@ -15,7 +15,12 @@ EventLoop::~EventLoop() {
 
 void EventLoop::Loop() {
   while(true) {
-    
+    std::vector<Dispatch*> dispatches;
+    poller_->Poll(2330, &dispatches);
+    for (std::vector<Dispatch*>::iterator it = dispatches.begin();
+        it != dispatches.end(); ++it) {
+      (*it)->HandleEvent();
+    }
   }
 }
 
@@ -28,7 +33,7 @@ void EventLoop::RunInLoop(Func&& func) {
 }
 
 void EventLoop::UpdateDispatch(Dispatch* dispatch) {
-  poller_->UpdateDispatch();
+  poller_->UpdateDispatch(dispatch);
 }
 
 }  // namespace mirants

@@ -2,7 +2,7 @@
 #define MIRANTS_CORE_DISPATCH_H_
 
 #include <functional>
-
+#include <sys/poll.h>
 namespace mirants {
 
 class EventLoop;
@@ -14,6 +14,9 @@ class Dispatch {
   ~Dispatch();
 
   int Fd() const { return fd_; }
+  int Events() const { return events_; }
+  void SetRevents(int rv) { revents_ = rv; }
+
   void HandleEvent();
 
   void SetReadCallBack(const EventCallBack&& func) { readfunc_ = func; }
@@ -38,9 +41,9 @@ class Dispatch {
  private:
   void UpdateEvent();
 
-  static const int kNoneEvent;
-  static const int kReadEvent;
-  static const int kWriteEvent;
+  static const int kNoneEvent = 0;
+  static const int kReadEvent = POLLIN | POLLPRI;
+  static const int kWriteEvent = POLLOUT;
 
   EventLoop* eventloop_;
   const int fd_;
@@ -52,10 +55,6 @@ class Dispatch {
   EventCallBack closefunc_;
   EventCallBack errorfunc_;
 };
-
-const int Dispatch::kNoneEvent = 0;
-const int Dispatch::kReadEvent = POLLIN | POLLPRI;
-const int Dispatch::kWriteEvent = POLLOUT;
 
 }  // namespace mirants
 

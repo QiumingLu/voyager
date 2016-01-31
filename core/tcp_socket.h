@@ -14,7 +14,7 @@ class TcpSocket {
 
   void BindAddress(const struct sockaddr* sa, socklen_t salen);
   void Listen(int backlog);
-  int Accept(struct sockaddr* peer_sa, socklen_t salen);
+  int Accept(struct sockaddr* peer_sa, socklen_t* salen);
   
   void SetReuseAddr(bool on);
   void SetReusePort(bool on);

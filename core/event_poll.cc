@@ -1,5 +1,8 @@
 #include "core/event_poll.h"
-#include "util.logging.h"
+#include <string.h>
+#include "core/dispatch.h"
+#include "util/logging.h"
+
 
 namespace mirants {
 
@@ -17,7 +20,12 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
         it != pollfds_.end() && ret > 0; ++it) {
       if(it->revents > 0) {
         --ret;
-        
+        std::map<int, Dispatch*>::const_iterator iter = dispatch_map_.find(it->fd);
+        assert(iter != dispatch_map_.end());
+        Dispatch* dispatch = iter->second;
+        assert(dispatch->Fd() == it->fd);
+        dispatch->SetRevents(it->revents);
+        dispatches->push_back(dispatch);
       }
     }
   } else if(ret == 0) {
@@ -35,7 +43,7 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
   p.events = static_cast<short>(dispatch->Events());
   p.revents = 0;
   pollfds_.push_back(p);
-  dispatch_map_.insert(make_pair(p.fd, dispatch));
+  dispatch_map_.insert(std::make_pair(p.fd, dispatch));
 }
 
 }  // namespace mirants

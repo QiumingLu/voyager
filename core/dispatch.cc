@@ -1,9 +1,11 @@
 #include "core/dispatch.h"
 #include "core/eventloop.h"
+#include "util/logging.h"
 
 namespace mirants {
 
-Dispatch::Dispatch(EventLoop* eventloop) : eventloop_(eventloop), fd_(fd) {
+Dispatch::Dispatch(EventLoop* eventloop, int fd) 
+    : eventloop_(eventloop), fd_(fd) {
 
 }
 
@@ -38,6 +40,32 @@ void Dispatch::DisableAll() {
 
 void Dispatch::UpdateEvent() {
   eventloop_->UpdateDispatch(this);
+}
+
+void Dispatch::HandleEvent() {
+  if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
+    if (closefunc_) { 
+      closefunc_(); 
+    }
+  }
+  if (revents_ & POLLNVAL) {
+    MIRANTS_LOG(WARN) << "Dispatch::HandleEvent() POLLNVAL";
+  }
+  if (revents_ & (POLLERR | POLLNVAL)) {
+    if (errorfunc_) { 
+      errorfunc_(); 
+    }
+  }
+  if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
+    if (readfunc_) { 
+      readfunc_(); 
+    }
+  }
+  if (revents_ & POLLOUT) {
+    if (writefunc_) {
+      writefunc_();
+    }
+  }
 }
 
 }  // namespace mirants

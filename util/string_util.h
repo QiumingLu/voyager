@@ -30,10 +30,12 @@ inline bool ascii_islower(char c) {
   return c >= 'a' && c <= 'z';
 }
 
+#pragma GCC diagnostic ignored "-Wconversion"
 inline char ascii_toupper(char c) {
   return ascii_islower(c) ? c -('a' - 'A') : c;
 }
 
+#pragma GCC diagnostic ignored "-Wconversion"
 inline char ascii_tolower(char c) {
   return ascii_isupper(c) ? c + ('a' - 'A') : c;
 }
@@ -81,6 +83,7 @@ void StripString(std::string* s, const char* remove, char replacewith);
 
 void StripWhitespace(std::string* s);
 
+#pragma GCC diagnostic ignored "-Wconversion"
 inline void LowerString(std::string* s) {
   std::string::iterator end = s->end();
   for (std::string::iterator it = s->begin(); it != end; ++it) {
@@ -90,6 +93,7 @@ inline void LowerString(std::string* s) {
   }
 }
 
+#pragma GCC diagnostic ignored "-Wconversion"
 inline void UpperString(std::string* s) {
   std::string::iterator end = s->end();
   for (std::string::iterator it = s->begin(); it != end; ++it) {

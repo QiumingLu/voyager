@@ -8,13 +8,15 @@
 
 namespace mirants {
 
+//class Dispatch;
+
 class EventPoll : public EventPoller {
  public:
   EventPoll(EventLoop* eventloop);
   virtual ~EventPoll();
 
-  virtual void Poll();
-  virtual UpdateDispatch(Dispatch* dispatch);
+  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
+  virtual void UpdateDispatch(Dispatch* dispatch);
 
  private:
   std::vector<struct pollfd> pollfds_;

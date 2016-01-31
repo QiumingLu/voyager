@@ -14,7 +14,7 @@ int CreateSocketAndSetNonBlock(int domain);
 void CloseFd(int socketfd);
 void BindAddress(int socketfd, const struct sockaddr* sa, socklen_t salen);
 void Listen(int socketfd, int backlog);
-int Accept(int socketfd, struct sockaddr* sa, socklen_t salen);
+int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen);
 int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen);
 
 ssize_t Read(int socketfd, void* buf, size_t count);

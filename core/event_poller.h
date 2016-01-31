@@ -2,6 +2,7 @@
 #define MIRANTS_CORE_EVENT_POLLER_H_
 
 #include <map>
+#include <vector>
 
 #include "core/eventloop.h"
 
@@ -14,7 +15,7 @@ class EventPoller {
   EventPoller(EventLoop* eventloop);
   virtual ~EventPoller();
 
-  virtual void Poll() = 0;
+  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches) = 0;
   virtual void UpdateDispatch(Dispatch* dispatch) = 0;
 
  protected:

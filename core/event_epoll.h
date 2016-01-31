@@ -1,19 +1,19 @@
 #ifndef MIRANTS_CORE_EVENT_EPOLL_H_
 #define MIRANTS_CORE_EVENT_EPOLL_H_
 
-#include <vector>
 #include <sys/epoll.h>
 
 #include "core/event_poller.h"
 
 namespace mirants {
 
-class EventEpoll : public EventPoller{
+class EventEpoll : public EventPoller {
  public:
-  EventEpoll();
+  EventEpoll(EventLoop* eventloop);
   virtual ~EventEpoll();
-  virtual void Poll();
-  virtual void UpdateDispatch();
+
+  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
+  virtual void UpdateDispatch(Dispatch* dispatch);
 
  private:
   std::vector<struct epoll_event> epollfds_;

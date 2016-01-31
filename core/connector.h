@@ -9,9 +9,9 @@ class Connector {
  public:
   Connector(const struct addrinfo* addr);
 
- private:
   void TcpNonBlockConnect();
 
+ private:
   const struct addrinfo* servinfo_;
 
   // No copying allow

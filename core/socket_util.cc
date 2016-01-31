@@ -56,6 +56,7 @@ void Listen(int socketfd, int backlog) {
 
 int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
   int connectfd = ::accept(socketfd, sa, salen);
+  MIRANTS_LOG(INFO) << "accept:" << connectfd;
   if (connectfd == -1) {
     int err = errno;
     switch (err) {
@@ -91,6 +92,10 @@ int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
 
 int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen) {
   int ret = ::connect(socketfd, sa, salen);
+  char buf[222];
+  memset(buf, 0, sizeof(buf));
+  SockAddrToIPPort(sa, buf, sizeof(buf));
+  MIRANTS_LOG(INFO) << "connect:\n" << "socketfd:" << socketfd << "\nIPPort: " << buf << "\nret:" << ret;
   return ret;
 }
 
@@ -170,19 +175,19 @@ Status SetKeepAlive(int socketfd, bool alive) {
     std::string str;
     StringAppendF(&str, "setsockopt SO_KEEPALIVE: %s", strerror(errno));
     return Status::IOError(str);
-  }
+  } 
   return Status::OK();
 }
 
 
-Status SetTcpNotDelay(int socketfd, bool notdelay) {
+Status SetTcpNoDelay(int socketfd, bool notdelay) {
   int on = notdelay ? 1 : 0;
   if (::setsockopt(socketfd, IPPROTO_TCP, TCP_NODELAY, 
                    &on, static_cast<socklen_t>(sizeof(on))) == -1) {
     std::string str;
     StringAppendF(&str, "setsockopt TCP_NODELAY: %s", strerror(errno));
     return Status::IOError(str);
-  }
+  } 
   return Status::OK();
 }
 

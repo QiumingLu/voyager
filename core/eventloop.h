@@ -19,7 +19,7 @@ class EventLoop {
   void RunInLoop(const Func& func);
   void RunInLoop(Func&& func);
 
-  void UpdatedDispatch(Dispatch* dispatch);
+  void UpdateDispatch(Dispatch* dispatch);
 
  private:
   scoped_ptr<EventPoller> poller_;

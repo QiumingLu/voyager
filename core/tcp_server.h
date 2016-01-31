@@ -14,16 +14,16 @@ class SockAddr;
 
 class TcpServer {
  public:
-  TcpServer(const SockAddr& addr, int backlog = SOMAXCONN);
+  TcpServer(EventLoop* eventloop, const SockAddr& addr, int backlog = SOMAXCONN);
   ~TcpServer();
 
   void Start();
 
  private:
+  EventLoop* eventloop_;
   const struct addrinfo* servinfo_;
   scoped_ptr<Acceptor> acceptor_ptr_;
   const std::string name_;
-  EventLoop* eventloop_;
 
   // No copying allow
   TcpServer(const TcpServer&);

@@ -7,9 +7,11 @@
 
 namespace mirants {
 
+class EventLoop;
 class Acceptor {
   public:
-  explicit Acceptor(const struct addrinfo* addr, 
+  explicit Acceptor(EventLoop* eventloop, 
+                    const struct addrinfo* addr, 
                     int backlog, bool reuseport = false);
   ~Acceptor();
 
@@ -18,6 +20,7 @@ class Acceptor {
   bool IsListenning() const { return listenning_; }
 
  private:
+  EventLoop* eventloop_;
   TcpSocket tcpsocket_;
   int  backlog_;
   bool listenning_;
