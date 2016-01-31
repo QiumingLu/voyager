@@ -22,7 +22,7 @@ void Test(int poolsize) {
   latch.Wait();
   pool.Stop();
   printf("test end!\n");
-  printf("%d\n", pool.TaskSize());
+  printf("%zd\n", pool.TaskSize());
 }
 
 }  // namespace port

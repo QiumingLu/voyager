@@ -197,9 +197,7 @@ Status CheckSocketError(int socketfd) {
   }
   if (err) {
     errno = err;
-    char buf[30];
-    strerror_r(errno, buf, sizeof(buf));
-    return Status::IOError(buf);
+    return Status::IOError(strerror(errno));
   }
   return Status::OK();
 }
@@ -294,13 +292,13 @@ int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size) {
   SockAddrToIP(sa, ip, sizeof(ip));
   const struct sockaddr_in* sa4 = 
       reinterpret_cast<const struct sockaddr_in*>(sa);
-  uint16_t port = ::ntohs(sa4->sin_port);
+  uint16_t port = ntohs(sa4->sin_port);
   return FormatAddr(ip, port, buf, buf_size);
 }
 
 void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4) {
   sa4->sin_family = AF_INET;
-  sa4->sin_port = ::htons(port);
+  sa4->sin_port = htons(port);
   if (::inet_pton(AF_INET, ip, &sa4->sin_addr) <= 0) {
     MIRANTS_LOG(ERROR) << "inet_pton failed";
   }
@@ -310,7 +308,7 @@ void IPPortToSockAddr(const char* ip,
                       uint16_t port, 
                       struct sockaddr_in6* sa6) {
   sa6->sin6_family = AF_INET6;
-  sa6->sin6_port = ::htons(port);
+  sa6->sin6_port = htons(port);
   if (::inet_pton(AF_INET6, ip, &sa6->sin6_addr) <= 0) {
     MIRANTS_LOG(ERROR) << "inet_pton failed";
   }

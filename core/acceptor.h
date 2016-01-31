@@ -3,23 +3,25 @@
 
 #include <netdb.h>
 #include "core/tcp_socket.h"
+#include "core/dispatch.h"
 
 namespace mirants {
 
 class Acceptor {
- public:
+  public:
   explicit Acceptor(const struct addrinfo* addr, 
                     int backlog, bool reuseport = false);
   ~Acceptor();
 
   void EnableListen();
-  void AcceptTcpHandler();
+  void AcceptHandler();
   bool IsListenning() const { return listenning_; }
 
  private:
   TcpSocket tcpsocket_;
   int  backlog_;
   bool listenning_;
+  Dispatch dispatch_;
 
   // No copying allow
   Acceptor(const Acceptor&);

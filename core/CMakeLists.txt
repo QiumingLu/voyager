@@ -10,6 +10,7 @@ set(core_SRCS
   sockaddr.cc
   socket_util.cc
   tcp_client.cc
+  tcp_connection.cc
   tcp_server.cc
   tcp_socket.cc
   )
@@ -21,7 +22,7 @@ target_link_libraries(mirants_core mirants_port)
 install(TARGETS mirants_core DESTINATION lib)
 
 file(GLOB HEADERS "*.h")
-install(FILES ${HEADERS} DESTINATION include/mirants/cort)
+install(FILES ${HEADERS} DESTINATION include/mirants/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)
