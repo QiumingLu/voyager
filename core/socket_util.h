@@ -39,7 +39,7 @@ int FormatLocal(int socketfd, char* buf, size_t buf_size);
 
 void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size);
 int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size);
-void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4);
+Svoid IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4);
 void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6);
 
 struct sockaddr_storage PeerSockAddr(int socketfd);

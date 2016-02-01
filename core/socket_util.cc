@@ -284,7 +284,7 @@ void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
     ::inet_ntop(AF_INET, &sa4->sin_addr, 
                 ipbuf, static_cast<socklen_t>(ipbuf_size));
   } else if (sa->sa_family == AF_INET6) {
-    assert(sa->sa_family >= INET6_ADDRSTRLEN);
+    assert(ipbuf_size >= INET6_ADDRSTRLEN);
     const struct sockaddr_in6* sa6 = 
         reinterpret_cast<const struct sockaddr_in6*>(sa);
     ::inet_ntop(AF_INET6, &sa6->sin6_addr, 
