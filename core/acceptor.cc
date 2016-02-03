@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "core/eventloop.h"
 #include "core/socket_util.h"
 #include "util/logging.h"
 
@@ -22,6 +23,7 @@ Acceptor::Acceptor(EventLoop* eventloop, const struct addrinfo* addr, int backlo
 Acceptor::~Acceptor() { }
 
 void Acceptor::EnableListen() {
+  eventloop_->AssertThreadSafe();
   listenning_ = true;
   tcpsocket_.Listen(backlog_);
   dispatch_.EnableRead();

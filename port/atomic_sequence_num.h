@@ -13,7 +13,7 @@ class SequenceNumber {
   SequenceNumber() : num_(0) { }
 
   AtomicInt GetNext() {
-    return __atomic_add_fetch(&word_, 1, __ATOMIC_RELAXED) - 1;
+    return __atomic_add_fetch(&num_, 1, __ATOMIC_RELAXED) - 1;
   }
 
  private:
