@@ -1,7 +1,7 @@
 #ifndef MIRANTS_CORE_EVENT_POLLER_H_
 #define MIRANTS_CORE_EVENT_POLLER_H_
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "core/eventloop.h"
@@ -16,12 +16,11 @@ class EventPoller {
   virtual ~EventPoller();
 
   virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches) = 0;
+  virtual void RemoveDispatch(Dispatch* dispatch) = 0;
   virtual void UpdateDispatch(Dispatch* dispatch) = 0;
 
  protected:
-  std::map<int, Dispatch*> dispatch_map_;
-
- private:
+  std::unordered_map<int, Dispatch*> dispatch_map_;
   EventLoop* eventloop_;
 
   // No copying allow

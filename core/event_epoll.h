@@ -13,6 +13,7 @@ class EventEpoll : public EventPoller {
   virtual ~EventEpoll();
 
   virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
+  virtual void RemoveDispatch(Dispatch* dispatch);
   virtual void UpdateDispatch(Dispatch* dispatch);
 
  private:

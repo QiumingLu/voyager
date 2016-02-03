@@ -12,6 +12,9 @@ EventEpoll::~EventEpoll() {
 void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatch) {
 }
 
+void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
+}
+
 void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
 }
 

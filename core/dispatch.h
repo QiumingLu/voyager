@@ -16,6 +16,8 @@ class Dispatch {
   int Fd() const { return fd_; }
   int Events() const { return events_; }
   void SetRevents(int rv) { revents_ = rv; }
+  void set_index(int index) { index_ = index; }
+  int index() const { return index_; }
 
   void HandleEvent();
 
@@ -35,11 +37,16 @@ class Dispatch {
   void DisableWrite();
   void DisableAll();
 
+  bool IsNoneEvent() const { return events_ == kNoneEvent; }
   bool IsReading() const { return events_ & kReadEvent; }
   bool IsWriting() const { return events_ & kWriteEvent; }
 
+  void RemoveEvents();
+
+  EventLoop* OwnerEventLoop() const  { return eventloop_; }
+
  private:
-  void UpdateEvent();
+  void UpdateEvents();
 
   static const int kNoneEvent = 0;
   static const int kReadEvent = POLLIN | POLLPRI;
@@ -49,6 +56,7 @@ class Dispatch {
   const int fd_;
   int events_;
   int revents_;
+  int index_;
 
   EventCallBack readfunc_;
   EventCallBack writefunc_;

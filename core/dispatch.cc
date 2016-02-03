@@ -5,7 +5,11 @@
 namespace mirants {
 
 Dispatch::Dispatch(EventLoop* eventloop, int fd) 
-    : eventloop_(eventloop), fd_(fd) {
+    : eventloop_(eventloop), 
+      fd_(fd),
+      events_(0),
+      revents_(0),
+      index_(-1) {
 
 }
 
@@ -15,31 +19,36 @@ Dispatch::~Dispatch() {
 
 void Dispatch::EnableRead() {
   events_ |= kReadEvent;
-  UpdateEvent();
+  UpdateEvents();
 }
 
 void Dispatch::EnableWrite() {
   events_ |= kWriteEvent;
-  UpdateEvent();
+  UpdateEvents();
 }
 
 void Dispatch::DisableRead() {
   events_ &= ~kReadEvent;
-  UpdateEvent();
+  UpdateEvents();
 }
 
 void Dispatch::DisableWrite() {
   events_ &= ~kWriteEvent;
-  UpdateEvent();
+  UpdateEvents();
 }
 
 void Dispatch::DisableAll() {
   events_ = kNoneEvent;
-  UpdateEvent();
+  UpdateEvents();
 }
 
-void Dispatch::UpdateEvent() {
+void Dispatch::UpdateEvents() {
   eventloop_->UpdateDispatch(this);
+}
+
+void Dispatch::RemoveEvents() {
+  assert(IsNoneEvent());
+  eventloop_->RemoveDispatch(this);
 }
 
 void Dispatch::HandleEvent() {

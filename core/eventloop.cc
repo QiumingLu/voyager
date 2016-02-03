@@ -57,7 +57,15 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
+void EventLoop::RemoveDispatch(Dispatch* dispatch) {
+  assert(dispatch->OwnerEventLoop() == this);
+  this->AssertThreadSafe();
+  poller_->RemoveDispatch(dispatch);
+}
+
 void EventLoop::UpdateDispatch(Dispatch* dispatch) {
+  assert(dispatch->OwnerEventLoop() == this);
+  this->AssertThreadSafe();
   poller_->UpdateDispatch(dispatch);
 }
 

@@ -24,6 +24,7 @@ class EventLoop {
   void QueueInLoop(const Func& func);
   void QueueInLoop(Func&& func);
 
+  void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);
 
   void AssertThreadSafe() {
