@@ -12,7 +12,7 @@ class EventLoop;
 class Acceptor {
  public:
   typedef std::function<void (int fd, 
-      const struct sockaddr_storage& sa)> ConnectionCallBack;
+      const struct sockaddr_storage& sa)> NewConnectionCallback;
 
   explicit Acceptor(EventLoop* eventloop, 
                     const struct addrinfo* addr, 
@@ -22,10 +22,10 @@ class Acceptor {
   void EnableListen();
   bool IsListenning() const { return listenning_; }
 
-  void SetConnectionCallBack(const ConnectionCallBack& func) { 
+  void SetNewConnectionCallback(const NewConnectionCallback& func) { 
     connfunc_ = func; 
   }
-  void SetConnectionCallBack(ConnectionCallBack&& func) { 
+  void SetNewConnectionCallback(NewConnectionCallback&& func) { 
     connfunc_ = std::move(func); 
   }
 
@@ -38,7 +38,7 @@ class Acceptor {
   int        backlog_;
   int        idlefd_;
   bool       listenning_;
-  ConnectionCallBack connfunc_;
+  NewConnectionCallback connfunc_;
 
   // No copying allow
   Acceptor(const Acceptor&);

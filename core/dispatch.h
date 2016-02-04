@@ -8,7 +8,7 @@ namespace mirants {
 class EventLoop;
 class Dispatch {
  public:
-  typedef std::function<void()> EventCallBack;
+  typedef std::function<void()> EventCallback;
 
   Dispatch(EventLoop* eventloop, int fd);
   ~Dispatch();
@@ -21,14 +21,14 @@ class Dispatch {
 
   void HandleEvent();
 
-  void SetReadCallBack(const EventCallBack&& func) { readfunc_ = func; }
-  void SetReadCallBack(EventCallBack&& func) { readfunc_ = std::move(func); }
-  void SetWriteCallBack(const EventCallBack& func) { writefunc_ = func; }
-  void SetWriteCallBack(EventCallBack&& func) { writefunc_ = std::move(func); }
-  void SetCloseCallBack(const EventCallBack& func) { closefunc_ = func; }
-  void SetCloseCallBack(EventCallBack&& func) { closefunc_ = std::move(func); }
-  void SetErrorCallBack(const EventCallBack& func) { errorfunc_ = func; }
-  void SetErrorCallBack(EventCallBack&& func) { errorfunc_ = std::move(func); }
+  void SetReadCallback(const EventCallback&& func) { readfunc_ = func; }
+  void SetReadCallback(EventCallback&& func) { readfunc_ = std::move(func); }
+  void SetWriteCallback(const EventCallback& func) { writefunc_ = func; }
+  void SetWriteCallback(EventCallback&& func) { writefunc_ = std::move(func); }
+  void SetCloseCallback(const EventCallback& func) { closefunc_ = func; }
+  void SetCloseCallback(EventCallback&& func) { closefunc_ = std::move(func); }
+  void SetErrorCallback(const EventCallback& func) { errorfunc_ = func; }
+  void SetErrorCallback(EventCallback&& func) { errorfunc_ = std::move(func); }
 
   void EnableRead();
   void EnableWrite();
@@ -58,10 +58,10 @@ class Dispatch {
   int revents_;
   int index_;
 
-  EventCallBack readfunc_;
-  EventCallBack writefunc_;
-  EventCallBack closefunc_;
-  EventCallBack errorfunc_;
+  EventCallback readfunc_;
+  EventCallback writefunc_;
+  EventCallback closefunc_;
+  EventCallback errorfunc_;
 };
 
 }  // namespace mirants

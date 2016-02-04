@@ -1,8 +1,9 @@
 #include "core/tcp_connection.h"
+#include "core/eventloop.h"
 
 namespace mirants {
 
-TcpConnection::TcpConnection() {
+TcpConnection::TcpConnection(EventLoop* eventloop) {
 }
 
 TcpConnection::~TcpConnection() {

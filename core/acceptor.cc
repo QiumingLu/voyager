@@ -20,10 +20,11 @@ Acceptor::Acceptor(EventLoop* eventloop,
       backlog_(backlog),
       idlefd_(::open("/dev/null", O_RDONLY | O_CLOEXEC)),
       listenning_(false) {
+  assert(idlefd_ >= 0);
   tcpsocket_.SetReuseAddr(true);
   tcpsocket_.SetReusePort(reuseport);
   tcpsocket_.BindAddress(addr->ai_addr, addr->ai_addrlen);
-  dispatch_.SetReadCallBack(std::bind(&Acceptor::AcceptHandler, this));
+  dispatch_.SetReadCallback(std::bind(&Acceptor::AcceptHandler, this));
 }
 
 Acceptor::~Acceptor() {
@@ -43,7 +44,8 @@ void Acceptor::AcceptHandler() {
   eventloop_->AssertThreadSafe();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
-  int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa), &salen);
+  int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa), 
+                                    &salen);
   if (connectfd >= 0) {
     if (connfunc_) {
       connfunc_(connectfd, sa);
