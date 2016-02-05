@@ -48,7 +48,7 @@ void Acceptor::AcceptHandler() {
                                     &salen);
   if (connectfd >= 0) {
     if (connfunc_) {
-      connfunc_(connectfd, sa);
+      connfunc_(connectfd, &sa);
     } else {
       sockets::CloseFd(connectfd);
     }

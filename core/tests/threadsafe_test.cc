@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
   g_server = &server;
   Thread t(ThreadFunc);
   t.Start();
-  //server.Start();
   loop.Loop();
   return 0;
 }

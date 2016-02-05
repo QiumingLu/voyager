@@ -3,6 +3,8 @@ set(core_SRCS
   connector.cc
   dispatch.cc
   eventloop.cc
+  eventloop_thread.cc
+  eventloop_threadpool.cc
   event_epoll.cc
   event_poll.cc
   event_poller.cc

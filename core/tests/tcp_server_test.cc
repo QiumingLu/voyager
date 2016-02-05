@@ -7,9 +7,9 @@ namespace mirants {
 
 int main(int argc, char** argv) {
   mirants::EventLoop eventloop;
-  mirants::SockAddr addr("127.0.0.1", 5666);
-  std::string server_name("MirantsServer");
-  mirants::TcpServer tcpserver(&eventloop, addr, server_name);
+  //mirants::SockAddr addr("192.168.1.114", 5666);
+  mirants::SockAddr addr(5666);
+  mirants::TcpServer tcpserver(&eventloop, addr);
   tcpserver.Start();
   eventloop.Loop();
   return 0;
