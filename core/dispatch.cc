@@ -14,7 +14,7 @@ Dispatch::Dispatch(EventLoop* eventloop, int fd)
 }
 
 Dispatch::~Dispatch() {
-
+  MIRANTS_LOG(INFO) << "~Dispatch";
 }
 
 void Dispatch::EnableRead() {

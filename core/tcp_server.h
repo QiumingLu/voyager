@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include <netdb.h>
-#include <stdint.h>
 
 #include "core/callback.h"
 #include "core/sockaddr.h"

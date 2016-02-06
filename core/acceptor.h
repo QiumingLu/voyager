@@ -30,7 +30,7 @@ class Acceptor {
   }
 
  private:
-  void AcceptHandler();
+  void HandleAccept();
  
   EventLoop* eventloop_;
   TcpSocket  tcpsocket_;

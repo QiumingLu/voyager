@@ -1,7 +1,6 @@
 #include "core/tcp_server.h"
 
 #include <assert.h>
-
 #include "core/acceptor.h"
 #include "core/eventloop.h"
 #include "core/eventloop_threadpool.h"
@@ -64,6 +63,7 @@ void TcpServer::NewConnection(int fd, struct sockaddr_storage* sa) {
 
   EventLoop* ev = ev_pool_->GetNext(); 
   TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd, addr_, sa));
+  connection_map_[conn_name] = conn_ptr;
   conn_ptr->SetConnectionCallback(connection_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);

@@ -20,8 +20,7 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
         it != pollfds_.end() && ret > 0; ++it) {
       if(it->revents > 0) {
         --ret;
-        std::unordered_map<int, Dispatch*>::const_iterator iter = 
-            dispatch_map_.find(it->fd);
+        std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(it->fd);
         assert(iter != dispatch_map_.end());
         Dispatch* dispatch = iter->second;
         assert(dispatch->Fd() == it->fd);
@@ -72,7 +71,8 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     p.revents = 0;
     pollfds_.push_back(p);
     dispatch->set_index(static_cast<int>(pollfds_.size()) - 1);
-    dispatch_map_.insert(std::make_pair(p.fd, dispatch));
+    dispatch_map_[p.fd] = dispatch;
+    std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(p.fd);
   } else {
     assert(dispatch_map_.find(dispatch->Fd()) != dispatch_map_.end());
     assert(dispatch_map_[dispatch->Fd()] == dispatch);

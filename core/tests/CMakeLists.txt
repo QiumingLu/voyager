@@ -6,3 +6,6 @@ target_link_libraries(tcp_server_test mirants_core)
 
 add_executable(threadsafe_test threadsafe_test.cc)
 target_link_libraries(threadsafe_test mirants_core)
+
+add_executable(echo_server_test echo_server_test.cc)
+target_link_libraries(echo_server_test mirants_core)

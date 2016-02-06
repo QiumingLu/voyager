@@ -1,5 +1,6 @@
 set(core_SRCS
   acceptor.cc
+  buffer.cc
   connector.cc
   dispatch.cc
   eventloop.cc

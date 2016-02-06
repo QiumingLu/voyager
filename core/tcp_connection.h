@@ -4,14 +4,18 @@
 #include <string>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "core/buffer.h"
 #include "core/callback.h"
+#include "core/sockaddr.h"
+#include "core/tcp_socket.h"
+#include "util/scoped_ptr.h"
 
 namespace mirants {
 
+class Dispatch;
 class EventLoop;
-class SockAddr;
 
-class TcpConnection {
+class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
  public:
   TcpConnection(const std::string& name, EventLoop* ev, int fd,
                 const SockAddr& local_addr, struct sockaddr_storage* peer_sa);
@@ -56,6 +60,11 @@ class TcpConnection {
     kConnecting
   };
 
+  void HandleRead();
+  void HandleWrite();
+  void HandleClose();
+  void HandleError();
+
   ConnectionCallback connection_cb_;
   WriteCompleteCallback writecompletet_cb_;
   MessageCallback message_cb_;
@@ -63,6 +72,14 @@ class TcpConnection {
 
   const std::string name_;
   EventLoop* eventloop_;
+  ConnectState state_;
+  TcpSocket socket_;
+  scoped_ptr<Dispatch> dispatch_;
+  const SockAddr local_addr_;
+  struct sockaddr_storage* peer_sa_;
+
+  Buffer readbuf_;
+  Buffer writebuf_;
 
   // No copying allow
   TcpConnection(const TcpConnection&);
