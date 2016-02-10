@@ -104,10 +104,11 @@ void TcpConnection::SendMessage(std::string&& message) {
 void TcpConnection::SendMessage(const Slice& message) {
   if (state_ == kConnected) {
     if (eventloop_->IsInCreatedThread()) {
-      SendMessageInLoop(message);
+      SendInLoop(message.data(), message.size());
     } else {
+      std::string s(message.ToString());
       eventloop_->RunInLoop(
-        std::bind(&TcpConnection::SendMessageInLoop, this, message.ToString()));
+        std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
     }
   }
 }
@@ -124,15 +125,14 @@ void TcpConnection::SendMessage(Buffer* message) {
   // }
 }
 
-void TcpConnection::SendMessageInLoop(const Slice& message) {
-  SendInLoop(message.data(), message.size());
-}
-
 void TcpConnection::SendInLoop(const void* data, size_t size) {
   eventloop_->AssertThreadSafe();
   if (state_ == kDisconnected) {
+    MIRANTS_LOG(WARN) << "TcpConnection::SendInLoop[" << name_ << "]"
+                      << "has disconnected, give up writing.";
     return;
   }
+
   ssize_t nwrote = 0;
   size_t  remaining = size;
   bool fault = false;
@@ -144,7 +144,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     } else {
       nwrote = 0;
       if (errno != EWOULDBLOCK) {
-        MIRANTS_LOG(ERROR) << "TcpConnection::SendMessageInLoop [" << name_ 
+        MIRANTS_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - " << strerror(errno);
         if (errno == EPIPE || errno == ECONNRESET) {
           fault = true;

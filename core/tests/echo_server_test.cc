@@ -14,7 +14,7 @@ class EchoServer {
  public:
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : ev_(ev),
-        server_(ev, addr, "EchoServer", 1) {
+        server_(ev, addr, "EchoServer", 4) {
     server_.SetConnectionCallback(std::bind(&EchoServer::Connect, this, _1));
     server_.SetMessageCallback(std::bind(&EchoServer::Message, this, _1, _2));
   }

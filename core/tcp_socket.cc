@@ -7,7 +7,6 @@
 namespace mirants {
 
 TcpSocket::~TcpSocket() {
-  MIRANTS_LOG(INFO) << "TcpSocket::~TcpSocket";
   sockets::CloseFd(socketfd_);
 }
 

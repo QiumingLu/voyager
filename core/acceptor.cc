@@ -44,7 +44,6 @@ void Acceptor::HandleAccept() {
   eventloop_->AssertThreadSafe();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
-  MIRANTS_LOG(INFO) << "HandleAccept:" << tcpsocket_.SocketFd();
   int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa), 
                                     &salen);
   if (connectfd >= 0) {

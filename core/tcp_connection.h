@@ -67,7 +67,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     kConnecting
   };
 
-  void SendMessageInLoop(const Slice& message);
   void SendInLoop(const void* data, size_t size);
 
   void HandleRead();
