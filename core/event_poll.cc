@@ -29,7 +29,7 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
       }
     }
   } else if(ret == 0) {
-    MIRANTS_LOG(TRACE) << "Nothing Happended";
+    // MIRANTS_LOG(TRACE) << "Nothing Happended";
   } else {
     if (err != EINTR) {
       MIRANTS_LOG(ERROR) << "EventPoll::Poll" << strerror(err);

@@ -12,7 +12,7 @@ class EventLoop;
 class Acceptor {
  public:
   typedef std::function<void (int fd, 
-      struct sockaddr_storage* sa)> NewConnectionCallback;
+      const struct sockaddr_storage& sa)> NewConnectionCallback;
 
   explicit Acceptor(EventLoop* eventloop, 
                     const struct addrinfo* addr, 

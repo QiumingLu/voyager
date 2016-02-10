@@ -9,12 +9,14 @@ Dispatch::Dispatch(EventLoop* eventloop, int fd)
       fd_(fd),
       events_(0),
       revents_(0),
-      index_(-1) {
+      index_(-1),
+      tied_(false),
+      event_handling_(false) {
 
 }
 
 Dispatch::~Dispatch() {
-  MIRANTS_LOG(INFO) << "~Dispatch";
+  assert(!event_handling_);
 }
 
 void Dispatch::EnableRead() {
@@ -52,6 +54,19 @@ void Dispatch::RemoveEvents() {
 }
 
 void Dispatch::HandleEvent() {
+  std::shared_ptr<void> guard;
+  if (tied_) {
+    guard = tie_.lock();
+    if (guard) {
+      HandleEventWithGuard();
+    }
+  } else {
+    HandleEventWithGuard();
+  }
+}
+
+void Dispatch::HandleEventWithGuard() {
+  event_handling_ = true;
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
     if (closefunc_) { 
       closefunc_(); 
@@ -75,6 +90,12 @@ void Dispatch::HandleEvent() {
       writefunc_();
     }
   }
+  event_handling_ = false;
+}
+
+void Dispatch::Tie(const std::shared_ptr<void>& obj) {
+  tie_ = obj;
+  tied_ = true;
 }
 
 }  // namespace mirants

@@ -12,7 +12,7 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-
+  MIRANTS_LOG(INFO) << "EventLoop::~EventLoop";
 }
 
 void EventLoop::Loop() {

@@ -27,7 +27,7 @@ int CreateSocket(int domain) {
 
 int CreateSocketAndSetNonBlock(int domain) {
   int socketfd = CreateSocket(domain);
-  Status st = SetBlocking(socketfd, false);
+  Status st = SetBlockingAndCloseOnExec(socketfd, false);
   if (!st.ok()) {
     MIRANTS_LOG(FATAL) << st;
   }
@@ -56,7 +56,6 @@ void Listen(int socketfd, int backlog) {
 
 int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
   int connectfd = ::accept(socketfd, sa, salen);
-  MIRANTS_LOG(INFO) << "accept:" << connectfd;
   if (connectfd == -1) {
     int err = errno;
     switch (err) {
@@ -83,7 +82,7 @@ int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
     }
   }
 
-  Status status = SetBlocking(connectfd, false);
+  Status status = SetBlockingAndCloseOnExec(connectfd, false);
   if (!status.ok()) {
     MIRANTS_LOG(ERROR) << status;
   }
@@ -95,7 +94,8 @@ int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen) {
   char buf[222];
   memset(buf, 0, sizeof(buf));
   SockAddrToIPPort(sa, buf, sizeof(buf));
-  MIRANTS_LOG(INFO) << "connect:\n" << "socketfd:" << socketfd << "\nIPPort: " << buf << "\nret:" << ret;
+  MIRANTS_LOG(INFO) << "connect:\n" << "socketfd:" 
+                    << socketfd << "\nIPPort: " << buf << "\nret:" << ret;
   return ret;
 }
 
@@ -121,7 +121,7 @@ void ShutDownWrite(int socketfd) {
   }
 }
 
-Status SetBlocking(int socketfd, bool blocking) {
+Status SetBlockingAndCloseOnExec(int socketfd, bool blocking) {
   int flags = ::fcntl(socketfd, F_GETFL, 0);
   if (flags == -1) {
     std::string str;
@@ -140,6 +140,15 @@ Status SetBlocking(int socketfd, bool blocking) {
     StringAppendF(&str, "fcntl(F_SETFL, O_NONBLOCK): %s", strerror(errno));
     return Status::IOError(str);
   }
+
+  flags = ::fcntl(socketfd, F_GETFD, 0);
+  flags |= FD_CLOEXEC;
+  if (::fcntl(socketfd, F_SETFD, flags) == -1) {
+    std::string str;
+    StringAppendF(&str, "fcntl(F_SETFD, FD_CLOEXEC): %s", strerror(errno));
+    return Status::IOError(str);
+  }
+
   return Status::OK();
 }
 

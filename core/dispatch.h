@@ -2,7 +2,9 @@
 #define MIRANTS_CORE_DISPATCH_H_
 
 #include <functional>
+#include <memory>
 #include <sys/poll.h>
+
 namespace mirants {
 
 class EventLoop;
@@ -45,8 +47,11 @@ class Dispatch {
 
   EventLoop* OwnerEventLoop() const  { return eventloop_; }
 
+  void Tie(const std::shared_ptr<void>&);
+
  private:
   void UpdateEvents();
+  void HandleEventWithGuard();
 
   static const int kNoneEvent = 0;
   static const int kReadEvent = POLLIN | POLLPRI;
@@ -57,6 +62,10 @@ class Dispatch {
   int events_;
   int revents_;
   int index_;
+
+  std::weak_ptr<void> tie_;
+  bool tied_;
+  bool event_handling_;
 
   EventCallback readfunc_;
   EventCallback writefunc_;

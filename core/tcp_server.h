@@ -50,7 +50,7 @@ class TcpServer {
   void Start();
 
  private:
-  void NewConnection(int fd, struct sockaddr_storage* sa);
+  void NewConnection(int fd, const struct sockaddr_storage& sa);
   void CloseConnection(const TcpConnectionPtr& conn_ptr);
   void CloseConnectionInLoop(const TcpConnectionPtr& conn_ptr);
 

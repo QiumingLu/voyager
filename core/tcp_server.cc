@@ -18,7 +18,7 @@ TcpServer::TcpServer(EventLoop* eventloop,
                      const std::string& name,
                      int thread_size,
                      int backlog)
-    : eventloop_(eventloop),
+    : eventloop_(CHECK_NOTNULL(eventloop)),
       addr_(addr),
       acceptor_ptr_(new Acceptor(eventloop_, addr_.AddrInfo(), backlog)),
       name_(name),
@@ -49,13 +49,13 @@ void TcpServer::Start() {
   }
 }
 
-void TcpServer::NewConnection(int fd, struct sockaddr_storage* sa) {
+void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertThreadSafe();
 
   std::string conn_name = 
       StringPrintf("%s-%s#%d", name_.c_str(), addr_.IP().c_str(), ++conn_id_);
   char peer[64];
-  sockets::SockAddrToIPPort(reinterpret_cast<sockaddr*>(sa), 
+  sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
                             peer, sizeof(peer));
   MIRANTS_LOG(INFO) << "TcpServer::NewConnection [" << name_ 
                     << "] - new connection [" << conn_name

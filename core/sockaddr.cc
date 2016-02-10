@@ -10,7 +10,7 @@
 
 namespace mirants {
 
-SockAddr::SockAddr(uint16_t port) {
+SockAddr::SockAddr(uint16_t port) : addrinfo_(NULL) {
   Status st = GetAddrInfo(NULL, port);
   if (!st.ok()) {
     MIRANTS_LOG(ERROR) << st;
@@ -25,7 +25,10 @@ SockAddr::SockAddr(const std::string& host, uint16_t port) {
 }
 
 SockAddr::~SockAddr() {
-  ::freeaddrinfo(addrinfo_);
+  if (addrinfo_ != NULL) {
+//    ::freeaddrinfo(addrinfo_);
+    addrinfo_ = NULL;
+  }
 }
 
 Status SockAddr::GetAddrInfo(const char* host, uint16_t port) {

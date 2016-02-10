@@ -3,7 +3,8 @@
 #include "core/sockaddr.h"
 #include "core/tcp_connection.h"
 #include "core/callback.h"
-#include <stdio.h>
+#include "util/stringprintf.h"
+#include <unistd.h>
 
 using namespace std::placeholders;
 
@@ -13,7 +14,7 @@ class EchoServer {
  public:
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : ev_(ev),
-        server_(ev, addr, "EchoServer", 4) {
+        server_(ev, addr, "EchoServer", 1) {
     server_.SetConnectionCallback(std::bind(&EchoServer::Connect, this, _1));
     server_.SetMessageCallback(std::bind(&EchoServer::Message, this, _1, _2));
   }
@@ -24,12 +25,16 @@ class EchoServer {
 
  private:
   void Connect(const TcpConnectionPtr& conn_ptr) {
-    printf("Connection %s has been built\n", conn_ptr->name().c_str());
+    std::string  message = StringPrintf("Connection %s has been built\n",
+                                        conn_ptr->name().c_str());
+    conn_ptr->SendMessage(std::move(message));
   }
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
-    printf("Connection Name: %s ", conn_ptr->name().c_str());
-    printf("recieve %zd bytes\n", buf->ReadableSize());
+    std::string message = 
+        StringPrintf("Recieve your %zd bytes message successfully!\n", 
+                     buf->ReadableSize());
+    conn_ptr->SendMessage(message);
   }
 
   EventLoop* ev_;
@@ -39,6 +44,7 @@ class EchoServer {
 }  // namespace mirants
 
 int main(int argc, char** argv) {
+  printf("pid=%d, tid=%d\n", getpid(), mirants::port::CurrentThread::Tid());
   mirants::EventLoop ev;
   mirants::SockAddr addr(5666);
   mirants::EchoServer server(&ev, addr);

@@ -19,11 +19,11 @@ int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen);
 
 ssize_t Read(int socketfd, void* buf, size_t count);
 ssize_t ReadV(int socketfd, const struct iovec* iov, int count);
-ssize_t Write(int socketfd, void* buf, size_t count);
+ssize_t Write(int socketfd, const void* buf, size_t count);
 ssize_t WriteV(int socketfd, const struct iovec* iov, int count);
 void ShutDownWrite(int socketfd);
 
-Status SetBlocking(int socketfd, bool blocking);
+Status SetBlockingAndCloseOnExec(int socketfd, bool blocking);
 Status SetReuseAddr(int socketfd, bool reuse);
 Status SetReusePort(int socketfd, bool reuse);
 Status SetKeepAlive(int socketfd, bool alive);
