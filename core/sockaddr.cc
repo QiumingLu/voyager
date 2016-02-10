@@ -24,9 +24,9 @@ SockAddr::SockAddr(const std::string& host, uint16_t port) {
   }
 }
 
-SockAddr::~SockAddr() {
+void SockAddr::FreeAddrinfo() {
   if (addrinfo_ != NULL) {
-//    ::freeaddrinfo(addrinfo_);
+    ::freeaddrinfo(addrinfo_);
     addrinfo_ = NULL;
   }
 }

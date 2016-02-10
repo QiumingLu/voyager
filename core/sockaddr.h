@@ -11,10 +11,11 @@ class SockAddr {
  public:
   explicit SockAddr(uint16_t port);
   SockAddr(const std::string& host, uint16_t port);
-  ~SockAddr();
 
   const struct addrinfo* AddrInfo() const { return addrinfo_; }
   std::string IP() const { return ip_; }
+
+  void FreeAddrinfo();
 
  private:
   Status GetAddrInfo(const char* host, uint16_t port);
