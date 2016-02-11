@@ -45,10 +45,14 @@ void TcpSocket::SetKeepAlive(bool on) {
 }
 
 void TcpSocket::SetTcpNoDelay(bool on) {
-  Status st = mirants::sockets::SetTcpNoDelay(socketfd_, on);
+  Status st = sockets::SetTcpNoDelay(socketfd_, on);
   if (!st.ok()) {
     MIRANTS_LOG(ERROR) << st;
   }
+}
+
+void TcpSocket::ShutDownWrite() {
+  sockets::ShutDownWrite(socketfd_);
 }
 
 }  // namespace mirants

@@ -15,11 +15,6 @@ class Buffer {
   
   ssize_t ReadV(int socketfd, int& err);
 
-//  char* BeginRead() { return Begin() + read_index_; }
-//  const char* BeginRead() const { return Begin() + read_index_; }
-//  char* BeginWrite() { return Begin() + write_index_; }
-//  const char* BeginWrite() const { return Begin() + write_index_; }
-
   size_t ReadableSize() const { return write_index_ - read_index_; }
   size_t WritableSize() const { return buf_.size() - write_index_; }
 
@@ -31,10 +26,35 @@ class Buffer {
     write_index_ += size;
   }
 
- private:
-//  char* Begin() { return &*buf_.begin(); }
-//  const char* Begin() const { return &*buf_.begin(); }
+  const char* Peek() const {
+    return &*(buf_.begin() + read_index_);
+  }
 
+  void Retrieve(size_t size) {
+    assert(size <= ReadableSize());
+    if (size < ReadableSize()) {
+      read_index_ += size;
+    } else {
+      RetrieveAll();
+    }
+  }
+
+  void RetrieveAll() {
+    read_index_ = write_index_ = 0;
+  }
+
+  std::string RetrieveAsString() {
+    return RetrieveAsString(ReadableSize());
+  }
+
+  std::string RetrieveAsString(size_t size) {
+    assert(size <= ReadableSize());
+    std::string result(Peek(), size);
+    Retrieve(size);
+    return result;
+  }
+
+ private:
   void MakeSpace(size_t size) {
     if (WritableSize() < size) {
       buf_.resize(write_index_ + size);

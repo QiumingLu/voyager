@@ -21,6 +21,8 @@ class TcpSocket {
   void SetKeepAlive(bool on);
   void SetTcpNoDelay(bool on);
 
+  void ShutDownWrite();
+  
  private:
   const int socketfd_;
 

@@ -52,6 +52,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   void EstablishConnection();
   void DeleteConnection();
+ 
+  void ShutDown();
 
   std::string StateToString() const;
 
@@ -67,6 +69,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     kConnecting
   };
 
+  void ShutDownInLoop();
   void SendInLoop(const void* data, size_t size);
 
   void HandleRead();

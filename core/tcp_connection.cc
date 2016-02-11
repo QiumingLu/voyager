@@ -53,6 +53,20 @@ void TcpConnection::DeleteConnection() {
   dispatch_->RemoveEvents();
 }
 
+void TcpConnection::ShutDown() {
+  if (state_ == kConnected) {
+    state_ = kDisconnecting;
+    eventloop_->RunInLoop(std::bind(&TcpConnection::ShutDownInLoop, this));
+  }
+}
+
+void TcpConnection::ShutDownInLoop() {
+  eventloop_->AssertThreadSafe();
+  if (!dispatch_->IsWriting()) {
+    socket_.ShutDownWrite();
+  }
+}
+
 void TcpConnection::HandleRead() {
   eventloop_->AssertThreadSafe();
   int err;
@@ -65,12 +79,31 @@ void TcpConnection::HandleRead() {
     HandleClose();
   } else {
     errno = err;
-    MIRANTS_LOG(ERROR) << "TcpConnection::HandleRead - " << strerror(errno);
+    MIRANTS_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ <<"] - " 
+                       << strerror(errno);
     HandleError();
   }
 }
 
 void TcpConnection::HandleWrite() {
+  eventloop_->AssertThreadSafe();
+  if (dispatch_->IsWriting()) {
+    ssize_t n = sockets::Write(dispatch_->Fd(), 
+                               writebuf_.Peek(), 
+                               writebuf_.ReadableSize());
+    if (n >= 0) {
+      writebuf_.Retrieve(n);
+      if (writebuf_.ReadableSize() == 0) {
+        dispatch_->DisableWrite();
+        if (state_ == kDisconnecting) {
+          ShutDownInLoop();
+        }
+      }
+    }
+  } else {
+    MIRANTS_LOG(TRACE) << "TcpConnection::HandleWrite [" << name_ << "] - fd="
+                       << dispatch_->Fd() << " is down, no more writing";
+  }
 }
 
 void TcpConnection::HandleClose() {
@@ -114,15 +147,17 @@ void TcpConnection::SendMessage(const Slice& message) {
 }
 
 void TcpConnection::SendMessage(Buffer* message) {
-  // if (state_ == kConnected) {
-  //   if (eventloop_->IsInCreatedThread()) {
-  //     SendInLoop(message->Peek(), message->ReadableSize());
-  //     message->RetrieveAll();
-  //   } else {
-  //     eventloop_->RunInLoop(
-  //       std::bind(&TcpConnection::SendInLoop, this, message->RetrieveAllString()));
-  //   }
-  // }
+  CHECK_NOTNULL(message);
+  if (state_ == kConnected) {
+    if (eventloop_->IsInCreatedThread()) {
+      SendInLoop(message->Peek(), message->ReadableSize());
+      message->RetrieveAll();
+    } else {
+      std::string s(message->RetrieveAsString());
+      eventloop_->RunInLoop(
+          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+    }
+  }
 }
 
 void TcpConnection::SendInLoop(const void* data, size_t size) {
@@ -154,11 +189,10 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
   }
 
   assert(remaining <= size);
-  // FIXME
   if (!fault && remaining > 0) {
+    writebuf_.Append(static_cast<const char*>(data)+nwrote, remaining);
     if (!dispatch_->IsWriting()) {
       dispatch_->EnableWrite();
-      SendInLoop(static_cast<const char*>(data)+nwrote, remaining);
     }
   }
 }
