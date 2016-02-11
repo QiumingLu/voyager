@@ -2,7 +2,7 @@
 
 namespace mirants {
 
-EventPoller::EventPoller(EventLoop* eventloop) : eventloop_(eventloop) {
+EventPoller::EventPoller(EventLoop* ev) : eventloop_(ev) {
 }
 
 EventPoller::~EventPoller() { }

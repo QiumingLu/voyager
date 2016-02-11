@@ -9,7 +9,7 @@ namespace mirants {
 
 class EventEpoll : public EventPoller {
  public:
-  EventEpoll(EventLoop* eventloop);
+  EventEpoll(EventLoop* ev);
   virtual ~EventEpoll();
 
   virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
@@ -17,6 +17,11 @@ class EventEpoll : public EventPoller {
   virtual void UpdateDispatch(Dispatch* dispatch);
 
  private:
+  static const int kInitEpollFdSize = 16;
+
+  void EpollCTL(int op, Dispatch* dispatch);
+
+  int epollfd_;
   std::vector<struct epoll_event> epollfds_;
 };
 

@@ -88,7 +88,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   Buffer readbuf_;
   Buffer writebuf_;
 
-
   ConnectionCallback connection_cb_;
   WriteCompleteCallback writecompletet_cb_;
   MessageCallback message_cb_;

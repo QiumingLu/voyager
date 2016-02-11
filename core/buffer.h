@@ -69,8 +69,8 @@ class Buffer {
     }
   }
 
-  static const size_t kInitBufferSize = 10;
-  static const size_t kBackupBufferSize = 102;
+  static const size_t kInitBufferSize = 1024;
+  static const size_t kBackupBufferSize = 10240;
   std::vector<char> buf_;
   size_t read_index_;
   size_t write_index_;

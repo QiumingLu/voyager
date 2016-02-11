@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <memory>
-#include "util/slice.h"
 
 namespace mirants {
 

@@ -1,6 +1,6 @@
 #include "core/eventloop.h"
 #include "core/dispatch.h"
-#include "core/event_poll.h"
+#include "core/event_epoll.h"
 #include "port/mutexlock.h"
 #include "util/logging.h"
 
@@ -8,7 +8,7 @@ namespace mirants {
 
 EventLoop::EventLoop()
     : tid_(port::CurrentThread::Tid()),
-      poller_(new EventPoll(this)) {
+      poller_(new EventEpoll(this)) {
 }
 
 EventLoop::~EventLoop() {

@@ -10,7 +10,7 @@ namespace mirants {
 
 class EventPoll : public EventPoller {
  public:
-  EventPoll(EventLoop* eventloop);
+  EventPoll(EventLoop* ev);
   virtual ~EventPoll();
 
   virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);

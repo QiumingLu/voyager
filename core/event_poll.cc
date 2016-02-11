@@ -6,7 +6,7 @@
 
 namespace mirants {
 
-EventPoll::EventPoll(EventLoop* eventloop) : EventPoller(eventloop) {
+EventPoll::EventPoll(EventLoop* ev) : EventPoller(ev) {
 }
 
 EventPoll::~EventPoll() {
@@ -15,24 +15,22 @@ EventPoll::~EventPoll() {
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
   int ret = ::poll(&(*pollfds_.begin()), pollfds_.size(), timeout);
   int err = errno;
-  if(ret > 0) {
-    for (std::vector<pollfd>::const_iterator it = pollfds_.begin(); 
-        it != pollfds_.end() && ret > 0; ++it) {
-      if(it->revents > 0) {
-        --ret;
-        std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(it->fd);
-        assert(iter != dispatch_map_.end());
-        Dispatch* dispatch = iter->second;
-        assert(dispatch->Fd() == it->fd);
-        dispatch->SetRevents(it->revents);
-        dispatches->push_back(dispatch);
-      }
-    }
-  } else if(ret == 0) {
-    // MIRANTS_LOG(TRACE) << "Nothing Happended";
-  } else {
+  if (ret == -1) {
     if (err != EINTR) {
-      MIRANTS_LOG(ERROR) << "EventPoll::Poll" << strerror(err);
+      MIRANTS_LOG(ERROR) << "poll: " << strerror(err);
+    }
+    return;
+  }
+  for (std::vector<pollfd>::const_iterator it = pollfds_.begin(); 
+       it != pollfds_.end() && ret > 0; ++it) {
+    if (it->revents > 0) {
+      --ret;
+      std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(it->fd);
+      assert(iter != dispatch_map_.end());
+      Dispatch* dispatch = iter->second;
+      assert(dispatch->Fd() == it->fd);
+      dispatch->SetRevents(it->revents);
+      dispatches->push_back(dispatch);
     }
   }
 }

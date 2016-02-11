@@ -9,11 +9,11 @@ namespace mirants {
 
 class EventSelect : public EventPoller{
  public:
-  EventSelect(){}
-  virtual ~EventSelect(){}
-  virtual void Poll() {}
-  virtual void RemoveDispatch(Dispatch* dispatch) {}
-  virtual void UpdateDispatch(Dispatch* dispatch) {}
+  EventSelect(EventLoop* ev);
+  virtual ~EventSelect();
+  virtual void Poll();
+  virtual void RemoveDispatch(Dispatch* dispatch); 
+  virtual void UpdateDispatch(Dispatch* dispatch);
 };
 
 }  // namespace mirants
