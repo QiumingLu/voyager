@@ -38,6 +38,7 @@ TcpServer::~TcpServer() {
         std::bind(&TcpConnection::DeleteConnection, it->second));
     it->second.reset();
   }
+  addr_.FreeAddrinfo();
 }
 
 void TcpServer::Start() {

@@ -15,11 +15,12 @@ Connector::Connector(const struct addrinfo* addr) : servinfo_(addr) {
 
 void Connector::TcpNonBlockConnect() {
   const struct  addrinfo* p;
-
+  
   for (p = servinfo_; p != NULL; p = p->ai_next) {
     int socketfd = sockets::CreateSocketAndSetNonBlock(p->ai_family);
     int ret = sockets::Connect(socketfd, p->ai_addr, p->ai_addrlen);
     int err = (ret == 0) ? 0 : errno;
+    MIRANTS_LOG(INFO) << strerror(errno);
     switch (err) {
       case 0:
       case EINPROGRESS:
@@ -51,8 +52,8 @@ void Connector::TcpNonBlockConnect() {
         sockets::CloseFd(socketfd);
         break;
     }
+    break;
   }
 }
 
 }  // namespace mirants
-

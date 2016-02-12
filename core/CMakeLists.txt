@@ -16,6 +16,7 @@ set(core_SRCS
   tcp_connection.cc
   tcp_server.cc
   tcp_socket.cc
+  timer.cc
   )
 
 add_library(mirants_core ${core_SRCS})

@@ -34,9 +34,7 @@ class EchoServer {
     std::string message = 
         StringPrintf("Recieve your %zd bytes message successfully!\n", 
                      buf->ReadableSize());
-    for (int i = 0; i < 1000000; ++i) {
-      conn_ptr->SendMessage(message);
-    }
+    conn_ptr->SendMessage(message);
   }
 
   EventLoop* ev_;

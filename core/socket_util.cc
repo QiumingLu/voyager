@@ -91,11 +91,6 @@ int Accept(int socketfd, struct sockaddr* sa, socklen_t* salen) {
 
 int Connect(int socketfd, const struct sockaddr* sa, socklen_t salen) {
   int ret = ::connect(socketfd, sa, salen);
-  char buf[222];
-  memset(buf, 0, sizeof(buf));
-  SockAddrToIPPort(sa, buf, sizeof(buf));
-  MIRANTS_LOG(INFO) << "connect:\n" << "socketfd:" 
-                    << socketfd << "\nIPPort: " << buf << "\nret:" << ret;
   return ret;
 }
 

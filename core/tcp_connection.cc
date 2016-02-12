@@ -79,9 +79,8 @@ void TcpConnection::HandleRead() {
     HandleClose();
   } else {
     errno = err;
-    MIRANTS_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ <<"] - " 
-                       << strerror(errno);
-    HandleError();
+    MIRANTS_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
+                       <<"] - readv: " << strerror(errno);
   }
 }
 
@@ -91,14 +90,22 @@ void TcpConnection::HandleWrite() {
     ssize_t n = sockets::Write(dispatch_->Fd(), 
                                writebuf_.Peek(), 
                                writebuf_.ReadableSize());
+    int err = errno;
     if (n >= 0) {
       writebuf_.Retrieve(n);
       if (writebuf_.ReadableSize() == 0) {
         dispatch_->DisableWrite();
+        if (writecomplete_cb_) {
+          eventloop_->QueueInLoop(
+              std::bind(writecomplete_cb_, shared_from_this()));
+        }
         if (state_ == kDisconnecting) {
           ShutDownInLoop();
         }
       }
+    } else {
+      MIRANTS_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
+                         << "] - write: " << strerror(err);
     }
   } else {
     MIRANTS_LOG(TRACE) << "TcpConnection::HandleWrite [" << name_ << "] - fd="
@@ -116,8 +123,10 @@ void TcpConnection::HandleClose() {
 
 void TcpConnection::HandleError() {
   Status st = sockets::CheckSocketError(dispatch_->Fd());
-  MIRANTS_LOG(ERROR) << "TcpConnection::HandleError [" << name_
-                     << "] - " << st.ToString();
+  if (!st.ok()) {
+    MIRANTS_LOG(ERROR) << "TcpConnection::HandleError [" << name_
+                       << "] - " << st.ToString();
+  }
 }
 
 void TcpConnection::SendMessage(std::string&& message) {
@@ -176,11 +185,15 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     nwrote = sockets::Write(dispatch_->Fd(), data, size);
     if (nwrote >= 0) {
       remaining = size - nwrote;
+      if (remaining == 0 && writecomplete_cb_) {
+        eventloop_->QueueInLoop(
+            std::bind(writecomplete_cb_, shared_from_this()));
+      }
     } else {
       nwrote = 0;
       if (errno != EWOULDBLOCK) {
         MIRANTS_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
-                           << "] - " << strerror(errno);
+                           << "] - write: " << strerror(errno);
         if (errno == EPIPE || errno == ECONNRESET) {
           fault = true;
         }

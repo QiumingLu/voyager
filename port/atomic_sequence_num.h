@@ -16,6 +16,10 @@ class SequenceNumber {
     return __atomic_add_fetch(&num_, 1, __ATOMIC_RELAXED) - 1;
   }
 
+  AtomicInt Get() {
+    return __atomic_load_n(&num_, __ATOMIC_RELAXED);
+  }
+
  private:
   AtomicInt num_;
 };

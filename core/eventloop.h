@@ -4,6 +4,7 @@
 #include <functional>
 #include <vector>
 
+#include "core/callback.h"
 #include "util/scoped_ptr.h"
 #include "port/currentthread.h"
 #include "port/mutex.h"

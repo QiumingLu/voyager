@@ -29,10 +29,10 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     connection_cb_ = std::move(func);
   }
   void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
-    writecompletet_cb_ = func;
+    writecomplete_cb_ = func;
   }
   void SetWriteCompleteCallback(WriteCompleteCallback&& func) {
-    writecompletet_cb_ = std::move(func);
+    writecomplete_cb_ = std::move(func);
   }
   void SetMessageCallback(const MessageCallback& func) {
     message_cb_ = func;
@@ -89,7 +89,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   Buffer writebuf_;
 
   ConnectionCallback connection_cb_;
-  WriteCompleteCallback writecompletet_cb_;
+  WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
   CloseCallback close_cb_;
   
