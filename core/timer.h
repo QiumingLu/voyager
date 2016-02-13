@@ -16,16 +16,24 @@ struct Timer {
   Timestamp time;
   double interval;
   int64_t timer_id;
+  bool repeat;
 
   Timer(const TimeProcCallback& func, Timestamp t, double inter, int64_t id)
-      : timeproc(func), time(t), interval(inter), timer_id(id) {
+      : timeproc(func), time(t), interval(inter), timer_id(id), repeat(false) {
+    if (interval > 0.0) {
+      repeat = true;
+    }
   }
 
   Timer(TimeProcCallback&& func, Timestamp t, double inter, int64_t id)
       : timeproc(std::move(func)), 
         time(t), 
         interval(inter), 
-        timer_id(id) {
+        timer_id(id),
+        repeat(false) {
+    if (interval > 0.0) {
+      repeat = true;
+    }
   }
 };
 

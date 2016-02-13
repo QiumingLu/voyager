@@ -142,7 +142,7 @@ void TimerEvent::Next(const std::vector<Timer*>& expired, Timestamp now) {
   Timestamp next_time;
   for (std::vector<Timer*>::const_iterator it = expired.begin();
        it != expired.end(); ++it) {
-    if ((*it)->interval > 0.0 
+    if ((*it)->repeat
         && delete_timers_.find(*it) == delete_timers_.end()) {
       (*it)->time = AddTime(now, (*it)->interval);
       Add(*it);
