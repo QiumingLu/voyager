@@ -135,10 +135,10 @@ void TcpConnection::SendMessage(std::string&& message) {
       SendInLoop(&*message.begin(), message.size());
     } else {
       eventloop_->RunInLoop(
-        std::bind(&TcpConnection::SendInLoop, 
-                  this,
-                  &*message.begin(), 
-                  message.size())); 
+          std::bind(&TcpConnection::SendInLoop, 
+                    this,
+                    &*message.begin(), 
+                    message.size())); 
     }
   }
 }
@@ -150,7 +150,7 @@ void TcpConnection::SendMessage(const Slice& message) {
     } else {
       std::string s(message.ToString());
       eventloop_->RunInLoop(
-        std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
     }
   }
 }

@@ -3,9 +3,18 @@
 
 #include <string>
 #include <stdint.h>
-#include "util/time.h"
 
 namespace mirants {
+namespace timeops {
+
+static const int64_t kSecondsPerMinute = 60;
+static const int64_t kSecondsPerHour = 3600;
+static const int64_t kSecondsPerDay = kSecondsPerHour * 24;
+static const int64_t kMilliSecondsPerSecond = 1000;
+static const int64_t kMicroSecondsPerSecond = 1000 * 1000;
+static const int64_t kNonasSecondsPerSecond = 1000 * 1000 * 1000;
+  
+}  // namespace timeops
 
 class Timestamp {
  public:
@@ -17,7 +26,7 @@ class Timestamp {
   static Timestamp Now();
   static Timestamp FromUnixTimestamp(time_t t, int microseconds = 0) {
     return Timestamp(
-        static_cast<int64_t>(t) * (timedetail::kMicroSecondsPerSecond) + 
+        static_cast<int64_t>(t) * (timeops::kMicroSecondsPerSecond) + 
         microseconds);
   }
 
@@ -25,54 +34,41 @@ class Timestamp {
 
   time_t ToUnixTimestamp() const {
     return static_cast<time_t>(
-        microseconds_since_epoch_ / (timedetail::kMicroSecondsPerSecond));
+        microseconds_since_epoch_ / (timeops::kMicroSecondsPerSecond));
   }
 
   void SetMicroSecondsSinceEpoch(int64_t microsecons) {
     microseconds_since_epoch_ = microsecons;
   }
+
   int64_t MicroSecondsSinceEpoch() const {
     return microseconds_since_epoch_;
   } 
-  
-  bool CompareTo(Timestamp& rhs) const {
-    return microseconds_since_epoch_ > rhs.microseconds_since_epoch_;
-  }
 
-  bool Equal(Timestamp& rhs) const {
-    return microseconds_since_epoch_ == rhs.microseconds_since_epoch_;
+  bool Valid() const {
+    return microseconds_since_epoch_ > 0;
   }
 
  private:
   int64_t microseconds_since_epoch_;
 };
 
-inline Timestamp AddTime(Timestamp timestamp, int64_t microseconds) {
+inline Timestamp AddTime(Timestamp timestamp, double seconds) {
+  int64_t microseconds = 
+      static_cast<int64_t>(seconds * timeops::kMicroSecondsPerSecond);
   return Timestamp(timestamp.MicroSecondsSinceEpoch() + microseconds);
 }
 
-inline bool operator==(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() == y.MicroSecondsSinceEpoch();
+inline bool operator==(Timestamp lhs, Timestamp rhs) {
+  return lhs.MicroSecondsSinceEpoch() == rhs.MicroSecondsSinceEpoch();
 }
 
-inline bool operator!=(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() != y.MicroSecondsSinceEpoch();
+inline bool operator<(Timestamp lhs, Timestamp rhs) {
+  return lhs.MicroSecondsSinceEpoch() < rhs.MicroSecondsSinceEpoch();
 }
 
-inline bool operator>(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() > y.MicroSecondsSinceEpoch();
-}
-
-inline bool operator<(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() < y.MicroSecondsSinceEpoch();
-}
-
-inline bool operator>=(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() >= y.MicroSecondsSinceEpoch();
-}
-
-inline bool operator<=(const Timestamp& x, const Timestamp& y) {
-  return x.MicroSecondsSinceEpoch() <= y.MicroSecondsSinceEpoch();
+inline bool operator>(Timestamp lhs, Timestamp rhs) {
+  return lhs.MicroSecondsSinceEpoch() > rhs.MicroSecondsSinceEpoch();
 }
 
 }  // namespace mirants

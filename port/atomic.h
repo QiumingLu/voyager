@@ -49,6 +49,10 @@ inline Atomic32 AtomicGetAndWrite(volatile Atomic32* ptr, Atomic32 new_value) {
   return __sync_lock_test_and_set(ptr, new_value);
 }
 
+inline Atomic64 AtomicGet(volatile Atomic64* ptr) {
+  return __atomic_load_n(ptr,__ATOMIC_RELAXED);
+}
+
 inline Atomic64 AtomicAddAndGet(volatile Atomic64* ptr, Atomic64 increment) {
   return __sync_add_and_fetch(ptr, increment);
 }

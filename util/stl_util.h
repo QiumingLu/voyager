@@ -35,7 +35,6 @@ void STLDeleteValues(T* v) {
   v->clear();
 }
 
-}  // namespace port
 }  // namespace mirants
 
 #endif  // MIRANTS_UTIL_STL_UTIL_H_
