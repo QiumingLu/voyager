@@ -35,15 +35,15 @@ class TimerEvent {
   TimerEvent(EventLoop* ev);
   ~TimerEvent();
 
-  int64_t AddTimer(const TimeProcCallback& func, Timestamp t, double interval);
-  int64_t AddTimer(TimeProcCallback&& func, Timestamp t, double interval);
-  void DeleteTimer(int64_t id);
+  Timer* AddTimer(const TimeProcCallback& func, Timestamp t, double interval);
+  Timer* AddTimer(TimeProcCallback&& func, Timestamp t, double interval);
+  void DeleteTimer(Timer* timer);
 
  private:
   typedef std::pair<Timestamp, Timer*> Entry;
 
   void AddTimerInLoop(Timer* timer);
-  void DeleteTimerInLoop(int64_t id);
+  void DeleteTimerInLoop(Timer* timer);
   void HandleRead();
   std::vector<Timer*> GetExpired(Timestamp now);
   void Next(const std::vector<Timer*>& expired, Timestamp now);
@@ -52,10 +52,10 @@ class TimerEvent {
   EventLoop* eventloop_;
   const int timerfd_;
   Dispatch dispatch_;
-  std::set<Entry> timers_;
-  std::set<Timer*> cancel_timers_;
   bool calling_;
-
+  std::set<Entry> timers_;
+  std::set<Timer*> delete_timers_;
+ 
   static port::SequenceNumber seq_;
 };
 

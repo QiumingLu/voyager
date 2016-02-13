@@ -6,7 +6,6 @@ set(util_SRCS
   string_util.cc
   stringprintf.cc
   testharness.cc
-  time.cc
   timestamp.cc
   )
 

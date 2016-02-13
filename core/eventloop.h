@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "core/callback.h"
+#include "core/timer.h"
 #include "util/scoped_ptr.h"
 #include "port/currentthread.h"
 #include "port/mutex.h"
@@ -13,6 +14,7 @@ namespace mirants {
 
 class Dispatch;
 class EventPoller;
+class Timestamp;
 
 class EventLoop {
  public:
@@ -24,6 +26,15 @@ class EventLoop {
   void RunInLoop(Func&& func);
   void QueueInLoop(const Func& func);
   void QueueInLoop(Func&& func);
+
+  Timer* RunAt(const Timestamp& t, const TimeProcCallback& timeproc);
+  Timer* RunAfter(double delay, const TimeProcCallback& timeproc);
+  Timer* RunEvery(double interval, const TimeProcCallback& timeproc);
+  
+  Timer* RunAt(const Timestamp& t, TimeProcCallback&& timeproc);
+  Timer* RunAfter(double delay, TimeProcCallback&& timeproc);
+  Timer* RunEvery(double interval, TimeProcCallback&& timeproc);
+
 
   void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);
@@ -43,6 +54,7 @@ class EventLoop {
   const pid_t tid_;
   scoped_ptr<EventPoller> poller_;
 
+  scoped_ptr<TimerEvent> timer_ev_;
   port::Mutex mu_;
   std::vector<Func> funcqueue_;
 

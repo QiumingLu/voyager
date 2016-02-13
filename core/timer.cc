@@ -46,10 +46,13 @@ void SetTimerfd(int fd, Timestamp t) {
 
 }  // namespace timers
 
+port::SequenceNumber TimerEvent::seq_;
+
 TimerEvent::TimerEvent(EventLoop* ev)
     : eventloop_(ev),
       timerfd_(timeops::CreateTimerfd()),
-      dispatch_(ev, timerfd_) {
+      dispatch_(ev, timerfd_),
+      calling_(false) {
   dispatch_.SetReadCallback(std::bind(&TimerEvent::HandleRead, this));
   dispatch_.EnableRead();
 }
@@ -58,36 +61,50 @@ TimerEvent::~TimerEvent() {
   dispatch_.DisableAll();
   dispatch_.RemoveEvents();
   sockets::CloseFd(timerfd_);
+  STLDeleteValues(&timers_);
 }
 
-int64_t TimerEvent::AddTimer(const TimeProcCallback& func,
+Timer* TimerEvent::AddTimer(const TimeProcCallback& func,
                              Timestamp t,
                              double interval) {
   int64_t id = seq_.GetNext();
   Timer* timer = new Timer(func, t, interval, id);
   eventloop_->RunInLoop(std::bind(&TimerEvent::AddTimerInLoop, this, timer));
-  return id;
+  return timer;
 }
 
-int64_t TimerEvent::AddTimer(TimeProcCallback&& func,
+Timer* TimerEvent::AddTimer(TimeProcCallback&& func,
                              Timestamp t,
                              double interval) {
   int64_t id = seq_.GetNext();
-  Timer* timer = new Timer(func, t, interval, id);
+  Timer* timer = new Timer(std::move(func), t, interval, id);
   eventloop_->RunInLoop(std::bind(&TimerEvent::AddTimerInLoop, this, timer));
-  return id;
+  return timer;
 }
 
-void TimerEvent::DeleteTimer(int64_t id) {
+void TimerEvent::DeleteTimer(Timer* timer) {
   eventloop_->RunInLoop(
-      std::bind(&TimerEvent::DeleteTimerInLoop, this, id));
+      std::bind(&TimerEvent::DeleteTimerInLoop, this, timer));
 }
 
 void TimerEvent::AddTimerInLoop(Timer* timer) {
-  timeops::SetTimerfd(timerfd_, timer->time);
+  eventloop_->AssertThreadSafe();
+  bool isreset = Add(timer);
+  if (isreset) {
+    timeops::SetTimerfd(timerfd_, timer->time);
+  }
 }
 
-void TimerEvent::DeleteTimerInLoop(int64_t id) {
+void TimerEvent::DeleteTimerInLoop(Timer* timer) {
+  eventloop_->AssertThreadSafe();
+  Entry entry(timer->time, timer);
+  std::set<Entry>::iterator it = timers_.find(entry);
+  if (it != timers_.end()) {
+    delete it->second;
+    timers_.erase(it);
+  } else if (calling_) {
+    delete_timers_.insert(timer);
+  }
 }
 
 void TimerEvent::HandleRead() {
@@ -98,14 +115,16 @@ void TimerEvent::HandleRead() {
     MIRANTS_LOG(ERROR) << "read: " << strerror(errno);
   }
 
-  std::vector<Timer*> res(GetExpired(Timestamp::Now()));
+  Timestamp now = Timestamp::Now();
+  std::vector<Timer*> res(GetExpired(now));
 
   calling_ = true;
-
   for (std::vector<Timer*>::iterator it = res.begin(); it != res.end(); ++it) {
     (*it)->timeproc();
   }
   calling_ = false;
+
+  Next(res, now);
 }
 
 std::vector<Timer*> TimerEvent::GetExpired(Timestamp now) {
@@ -120,11 +139,11 @@ std::vector<Timer*> TimerEvent::GetExpired(Timestamp now) {
 }
 
 void TimerEvent::Next(const std::vector<Timer*>& expired, Timestamp now) {
-  Timestamp next;
+  Timestamp next_time;
   for (std::vector<Timer*>::const_iterator it = expired.begin();
        it != expired.end(); ++it) {
     if ((*it)->interval > 0.0 
-        && cancel_timers_.find(*it) == cancel_timers_.end()) {
+        && delete_timers_.find(*it) == delete_timers_.end()) {
       (*it)->time = AddTime(now, (*it)->interval);
       Add(*it);
     } else {
@@ -132,17 +151,25 @@ void TimerEvent::Next(const std::vector<Timer*>& expired, Timestamp now) {
     }
   }
   if (!timers_.empty()) {
-    next = timers_.begin()->second->time;
+    next_time = timers_.begin()->second->time;
   }
-  if (next.Valid()) {
-    timeops::SetTimerfd(timerfd_, next);
+  if (next_time.Valid()) {
+    timeops::SetTimerfd(timerfd_, next_time);
   }
 }
 
 bool TimerEvent::Add(Timer* timer) {
   eventloop_->AssertThreadSafe();
+  
+  bool isreset = false;
+  Timestamp t = timer->time;
+  if (timers_.empty() || t < timers_.begin()->first) {
+    isreset = true;
+  }
+
   timers_.insert(Entry(timer->time, timer));
-  return true;
+  
+  return isreset;
 }
 
 }  // namespace mirants

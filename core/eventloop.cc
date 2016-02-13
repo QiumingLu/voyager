@@ -3,12 +3,14 @@
 #include "core/event_epoll.h"
 #include "port/mutexlock.h"
 #include "util/logging.h"
+#include "util/timestamp.h"
 
 namespace mirants {
 
 EventLoop::EventLoop()
     : tid_(port::CurrentThread::Tid()),
-      poller_(new EventEpoll(this)) {
+      poller_(new EventEpoll(this)),
+      timer_ev_(new TimerEvent(this)) {
 }
 
 EventLoop::~EventLoop() {
@@ -55,6 +57,34 @@ void EventLoop::QueueInLoop(Func&& func) {
     port::MutexLock lock(&mu_);
     funcqueue_.push_back(std::move(func));
   }
+}
+
+Timer* EventLoop::RunAt(const Timestamp& t, const TimeProcCallback& timeproc) {
+  return timer_ev_->AddTimer(timeproc, t, 0.0);
+}
+
+Timer* EventLoop::RunAfter(double delay, const TimeProcCallback& timeproc) {
+  Timestamp t(AddTime(Timestamp::Now(), delay));
+  return RunAt(t, timeproc);
+}
+
+Timer* EventLoop::RunEvery(double interval, const TimeProcCallback& timeproc) {
+  Timestamp t(AddTime(Timestamp::Now(), interval));
+  return timer_ev_->AddTimer(timeproc, t, interval);
+}
+
+Timer* EventLoop::RunAt(const Timestamp& t, TimeProcCallback&& timeproc) {
+  return timer_ev_->AddTimer(std::move(timeproc), t, 0.0);
+}
+
+Timer* EventLoop::RunAfter(double delay, TimeProcCallback&& timeproc) {
+  Timestamp t(AddTime(Timestamp::Now(), delay));
+  return RunAt(t, std::move(timeproc));
+}
+
+Timer* EventLoop::RunEvery(double interval, TimeProcCallback&& timeproc) {
+  Timestamp t(AddTime(Timestamp::Now(), interval));
+  return timer_ev_->AddTimer(timeproc, t, interval);
 }
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
