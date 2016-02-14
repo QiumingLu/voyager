@@ -35,6 +35,7 @@ class EventLoop {
   Timer* RunAfter(double delay, TimeProcCallback&& timeproc);
   Timer* RunEvery(double interval, TimeProcCallback&& timeproc);
 
+  void DeleteTimer(Timer* t);
 
   void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);

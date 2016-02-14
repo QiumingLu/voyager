@@ -9,3 +9,6 @@ target_link_libraries(threadsafe_test mirants_core)
 
 add_executable(echo_server_test echo_server_test.cc)
 target_link_libraries(echo_server_test mirants_core)
+
+add_executable(timer_test timer_test.cc)
+target_link_libraries(timer_test mirants_core)

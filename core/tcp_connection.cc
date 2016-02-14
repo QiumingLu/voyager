@@ -162,7 +162,7 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      std::string s(message->RetrieveAsString());
+      std::string s(message->RetrieveAllAsString());
       eventloop_->RunInLoop(
           std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
     }

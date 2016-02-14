@@ -87,6 +87,10 @@ Timer* EventLoop::RunEvery(double interval, TimeProcCallback&& timeproc) {
   return timer_ev_->AddTimer(timeproc, t, interval);
 }
 
+void EventLoop::DeleteTimer(Timer* t) {
+  timer_ev_->DeleteTimer(t);
+}
+
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
   this->AssertThreadSafe();

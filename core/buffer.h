@@ -43,7 +43,7 @@ class Buffer {
     read_index_ = write_index_ = 0;
   }
 
-  std::string RetrieveAsString() {
+  std::string RetrieveAllAsString() {
     return RetrieveAsString(ReadableSize());
   }
 
