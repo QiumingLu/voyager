@@ -344,5 +344,11 @@ struct sockaddr_storage LocalSockAddr(int socketfd) {
   return sa;
 }
 
+int IsSelfConnect(int socketfd) {
+  struct sockaddr_storage localaddr = LocalSockAddr(socketfd);
+  struct sockaddr_storage peeraddr = PeerSockAddr(socketfd);
+  return memcmp(&localaddr, &peeraddr, sizeof(sockaddr_storage));
+}
+
 }  // namespace sockets
 }  // namespace mirants

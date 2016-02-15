@@ -6,19 +6,20 @@
 
 namespace mirants {
 
-class SockAddr;
+class EventLoop;
 class Connector;
+class SockAddr;
 typedef std::shared_ptr<Connector> ConnectorPtr;
 
 class TcpClient {
  public:
-  TcpClient(const SockAddr& addr);
+  TcpClient(EventLoop* ev, const SockAddr& addr);
   ~TcpClient();
 
   void TcpConnect();
 
  private:
-  const struct addrinfo* servinfo_;
+  EventLoop* ev_;
   ConnectorPtr connector_ptr_;
 
   // No copying allow
