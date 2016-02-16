@@ -12,7 +12,8 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop,
       poolname_(name),
       size_(size),
       started_(false),
-      next_(0) {
+      next_(0),
+      threads_(new scoped_ptr<EventLoopThread>[size]) {
 }
 
 EventLoopThreadPool::~EventLoopThreadPool() {
@@ -25,7 +26,7 @@ void EventLoopThreadPool::Start() {
   for (int i = 0; i < size_; ++i) {
     EventLoopThread* ev_t = new EventLoopThread(
         StringPrintf("%s%d", poolname_.c_str(), i));
-    threads_.push_back(ev_t);
+    threads_[i].reset(ev_t);
     eventloops_.push_back(ev_t->StartLoop());
   }
 }

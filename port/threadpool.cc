@@ -4,6 +4,7 @@
 #include <utility>
 #include <assert.h>
 #include "port/mutexlock.h"
+#include "util/logging.h"
 
 namespace mirants {
 namespace port {
@@ -13,6 +14,8 @@ ThreadPool::ThreadPool(int poolsize, const std::string& poolname)
       cond_(&mutex_),
       poolsize_(poolsize),
       poolname_(poolname),
+      threads_(new scoped_ptr<Thread>[poolsize]),
+      tasks_(),
       running_(false) 
 { }
 
@@ -23,15 +26,14 @@ ThreadPool::~ThreadPool() {
 }
 
 void ThreadPool::Start() {
-  assert(threads_.empty());
+  assert(!running_);
   running_ = true;
-  threads_.reserve(poolsize_);
   for (int i = 0; i < poolsize_; ++i) {
     char name[32] = { 0 };
     snprintf(name, sizeof(name), ": thread %d", i+1);
-    threads_.push_back(new Thread(
+    threads_[i].reset(new Thread(
         std::bind(&ThreadPool::ThreadEntry, this), poolname_ + name));
-    threads_[i].Start();
+    threads_[i]->Start();
   }
 }
 
@@ -42,11 +44,14 @@ void ThreadPool::Stop() {
     cond_.SignalAll();
   }
   using namespace std::placeholders;
-  for_each(threads_.begin(), threads_.end(), std::bind(&Thread::Join, _1));
+  for (int i = 0; i < poolsize_; ++i) {
+    threads_[i]->Join();
+  }
 }
 
 void ThreadPool::AddTask(const Task& task) {
-  if (threads_.empty()) {
+  if (poolsize_ == 0) {
+        MIRANTS_LOG(INFO) << "AddTask1"; 
     task();
   } else {
     MutexLock lock(&mutex_);
@@ -58,7 +63,8 @@ void ThreadPool::AddTask(const Task& task) {
 } 
 
 void ThreadPool::AddTask(Task&& task) {
-  if (threads_.empty()) {
+  if (poolsize_ == 0) {
+    MIRANTS_LOG(INFO) << "AddTask"; 
     task();
   } else {
     MutexLock lock(&mutex_);

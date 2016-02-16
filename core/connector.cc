@@ -36,6 +36,14 @@ void Connector::StartInLoop() {
   }
 }
 
+void Connector::ReStart() {
+  ev_->AssertThreadSafe();
+  state_ = kDisConnected;
+  retry_time_ = kInitRetryTime;
+  connect_ = true;
+  StartInLoop();
+}
+
 void Connector::Stop() {
   connect_ = false;
   ev_->QueueInLoop(std::bind(&Connector::StartInLoop, this));
@@ -96,7 +104,7 @@ void Connector::Connecting(int socketfd) {
   state_ = kConnecting; 
   assert(!dispatch_.get());
   dispatch_.reset(new Dispatch(ev_, socketfd));
-  dispatch_->SetWriteCallback(std::bind(&Connector::HandleWrite, this));
+  dispatch_->SetWriteCallback(std::bind(&Connector::OnConnect, this));
   dispatch_->SetErrorCallback(std::bind(&Connector::HandleError, this));
   dispatch_->EnableWrite();
 }
@@ -114,8 +122,8 @@ void Connector::Retry(int socketfd) {
   }
 }
 
-void Connector::HandleWrite() {
-  MIRANTS_LOG(TRACE) << "Connector::HandleWrite - " << StateToString();
+void Connector::OnConnect() {
+  MIRANTS_LOG(TRACE) << "Connector::OnConnect - " << StateToString();
 
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
@@ -124,12 +132,14 @@ void Connector::HandleWrite() {
       MIRANTS_LOG(WARN) << st;
       Retry(socketfd);
     } else if (sockets::IsSelfConnect(socketfd) == 0) {
-      MIRANTS_LOG(WARN) << "Connector::HandleWrite - Self connect";
+      MIRANTS_LOG(WARN) << "Connector::OnConnect - Self connect";
       Retry(socketfd);
     } else {
       state_ = kConnected;
       if (connect_) {
-        MIRANTS_LOG(INFO) << "write....";
+        if (newconnection_cb_) {
+          newconnection_cb_(socketfd);
+        }
       } else {
         sockets::CloseFd(socketfd);
       }

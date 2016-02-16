@@ -1,8 +1,9 @@
 #ifndef MIRANTS_CORE_EVENTLOOP_THREADPOOL_H_
 #define MIRANTS_CORE_EVENTLOOP_THREADPOOL_H_
 
+#include <string>
 #include <vector>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include "util/scoped_ptr.h"
 
 namespace mirants {
 
@@ -29,7 +30,7 @@ class EventLoopThreadPool {
   int size_;
   bool started_;
   int next_;
-  boost::ptr_vector<EventLoopThread> threads_;
+  scoped_array<scoped_ptr<EventLoopThread> > threads_;
   std::vector<EventLoop*> eventloops_;
 
   // No copying allow

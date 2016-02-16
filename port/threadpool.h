@@ -3,10 +3,10 @@
 
 #include <functional>
 #include <string>
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <deque>
 #include "port/mutex.h"
 #include "port/thread.h"
+#include "util/scoped_ptr.h"
 
 namespace mirants {
 namespace port {
@@ -37,7 +37,7 @@ class ThreadPool {
   Condition cond_;
   int poolsize_;
   std::string poolname_;
-  boost::ptr_vector<Thread> threads_;
+  scoped_array<scoped_ptr<Thread> > threads_;
   std::deque<Task> tasks_;
   bool running_;
 

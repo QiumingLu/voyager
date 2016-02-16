@@ -63,7 +63,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
                     << "] from " << peer;
 
   EventLoop* ev = ev_pool_->GetNext(); 
-  TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd, addr_, sa));
+  TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
   connection_map_[conn_name] = conn_ptr;
   conn_ptr->SetConnectionCallback(connection_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);

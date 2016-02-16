@@ -20,7 +20,12 @@ class Connector : public std::enable_shared_from_this<Connector> {
 
   Connector(EventLoop* ev, const SockAddr& addr);
 
+  void SetNewConnectionCallback(const NewConnectionCallback& func) {
+    newconnection_cb_ = func;
+  }
+
   void Start();
+  void ReStart();
   void Stop();
 
   SockAddr ServerAddr() const { return addr_; }
@@ -43,7 +48,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void Connecting(int socketfd);
   void Retry(int socketfd);
 
-  void HandleWrite();
+  void OnConnect();
   void HandleError();
 
   int DeleteOldDispatch();
@@ -55,6 +60,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   double retry_time_;
   bool connect_;
   scoped_ptr<Dispatch> dispatch_;
+  NewConnectionCallback newconnection_cb_;
 
   // No copying allow
   Connector(const Connector&);

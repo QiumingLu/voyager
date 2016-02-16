@@ -1,22 +1,18 @@
 #include "core/tcp_connection.h"
 #include "core/dispatch.h"
 #include "core/eventloop.h"
-#include "core/sockaddr.h"
 #include "core/socket_util.h"
 #include "util/logging.h"
+#include "util/slice.h"
 
 namespace mirants {
 
-TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd,
-                             const SockAddr& local_addr,
-                             const struct sockaddr_storage& peer_sa)
+TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
     : name_(name), 
       eventloop_(CHECK_NOTNULL(ev)),
       socket_(fd),
       state_(kConnecting),
-      dispatch_(new Dispatch(ev, fd)),
-      local_addr_(local_addr),
-      peer_sa_(peer_sa) {
+      dispatch_(new Dispatch(ev, fd)) {
   dispatch_->SetReadCallback(std::bind(&TcpConnection::HandleRead, this));
   dispatch_->SetWriteCallback(std::bind(&TcpConnection::HandleWrite, this));
   dispatch_->SetCloseCallback(std::bind(&TcpConnection::HandleClose, this));
@@ -67,6 +63,21 @@ void TcpConnection::ShutDownInLoop() {
   }
 }
 
+void TcpConnection::ForceClose() {
+  if (state_ == kConnected || state_ == kDisconnecting) {
+    state_ = kDisconnecting;
+    eventloop_->QueueInLoop(
+        std::bind(&TcpConnection::ForceCloseInLoop, shared_from_this()));
+  }
+}
+
+void TcpConnection::ForceCloseInLoop() {
+  eventloop_->AssertThreadSafe();
+  if (state_ == kConnected || state_ == kDisconnecting) {
+    HandleClose();
+  }
+}
+
 void TcpConnection::HandleRead() {
   eventloop_->AssertThreadSafe();
   int err;
@@ -91,7 +102,7 @@ void TcpConnection::HandleWrite() {
                                writebuf_.Peek(), 
                                writebuf_.ReadableSize());
     int err = errno;
-    if (n >= 0) {
+    if (n > 0) {
       writebuf_.Retrieve(n);
       if (writebuf_.ReadableSize() == 0) {
         dispatch_->DisableWrite();

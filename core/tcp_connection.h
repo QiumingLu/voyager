@@ -6,7 +6,6 @@
 #include <netdb.h>
 #include "core/buffer.h"
 #include "core/callback.h"
-#include "core/sockaddr.h"
 #include "core/tcp_socket.h"
 #include "util/scoped_ptr.h"
 
@@ -14,12 +13,11 @@ namespace mirants {
 
 class Dispatch;
 class EventLoop;
+class Slice;
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
  public:
-  TcpConnection(const std::string& name, EventLoop* ev, int fd,
-                const SockAddr& local_addr,
-                const struct sockaddr_storage& peer_sa);
+  TcpConnection(const std::string& name, EventLoop* ev, int fd);
   ~TcpConnection();
 
   void SetConnectionCallback(const ConnectionCallback& func) { 
@@ -54,6 +52,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void DeleteConnection();
  
   void ShutDown();
+  void ForceClose();
 
   std::string StateToString() const;
 
@@ -70,6 +69,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   };
 
   void ShutDownInLoop();
+  void ForceCloseInLoop();
   void SendInLoop(const void* data, size_t size);
 
   void HandleRead();
@@ -82,8 +82,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   TcpSocket socket_;
   ConnectState state_;
   scoped_ptr<Dispatch> dispatch_;
-  const SockAddr local_addr_;
-  struct sockaddr_storage peer_sa_;
 
   Buffer readbuf_;
   Buffer writebuf_;
