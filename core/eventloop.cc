@@ -10,7 +10,8 @@ namespace mirants {
 EventLoop::EventLoop()
     : tid_(port::CurrentThread::Tid()),
       poller_(new EventEpoll(this)),
-      timer_ev_(new TimerEvent(this)) {
+      timer_ev_(new TimerEvent(this)),
+      exit_(false) {
 }
 
 EventLoop::~EventLoop() {
@@ -18,7 +19,7 @@ EventLoop::~EventLoop() {
 }
 
 void EventLoop::Loop() {
-  while(true) {
+  while(!exit_) {
     std::vector<Dispatch*> dispatches;
     poller_->Poll(2330, &dispatches);
     for (std::vector<Dispatch*>::iterator it = dispatches.begin();

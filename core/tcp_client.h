@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include "core/callback.h"
 #include "port/mutex.h"
+#include "port/mutexlock.h"
 
 namespace mirants {
 
@@ -26,6 +27,13 @@ class TcpClient {
 
   void EnableRetry() { retry_ = true; }
   bool IsRetry() const { return retry_; }
+
+  TcpConnectionPtr ConnPtr() const {
+    port::MutexLock l(&mu_);
+    return conn_ptr_; 
+  }
+
+  EventLoop* GetLoop() const { return ev_; }
 
   void SetConnectionCallback(const ConnectionCallback& func) {
     connection_cb_ = func;
@@ -62,7 +70,7 @@ class TcpClient {
   bool retry_;
   bool connect_;
 
-  port::Mutex mu_;
+  mutable port::Mutex mu_;
   TcpConnectionPtr conn_ptr_;
 
   ConnectionCallback connection_cb_;

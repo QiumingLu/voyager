@@ -46,7 +46,7 @@ void Connector::ReStart() {
 
 void Connector::Stop() {
   connect_ = false;
-  ev_->QueueInLoop(std::bind(&Connector::StartInLoop, this));
+  ev_->QueueInLoop(std::bind(&Connector::StopInLoop, this));
 }
 
 void Connector::StopInLoop() {

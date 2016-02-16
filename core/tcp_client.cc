@@ -3,7 +3,6 @@
 #include "core/eventloop.h"
 #include "core/sockaddr.h"
 #include "core/tcp_connection.h"
-#include "port/mutexlock.h"
 #include "util/logging.h"
 #include "util/stringprintf.h"
 
@@ -19,6 +18,7 @@ TcpClient::TcpClient(const std::string& name,
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
+  MIRANTS_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] - " << this;
 }
 
 TcpClient::~TcpClient() {
@@ -29,15 +29,15 @@ TcpClient::~TcpClient() {
     unique = conn_ptr_.unique();
     p = conn_ptr_;
   }
-  if (p) {
+  if (p.get()) {
     assert(ev_ == p->GetLoop());
-    ev_->RunInLoop(std::bind(&TcpConnection::DeleteConnection, p));
     if (unique) {
       conn_ptr_->ForceClose();
     }
   } else {
     connector_ptr_->Stop();
   }
+  MIRANTS_LOG(INFO) << "TcpClient::~TcpClient [" << name_ << "] - " << this;
 }
 
 void TcpClient::Connect() {

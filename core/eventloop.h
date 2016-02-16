@@ -48,6 +48,8 @@ class EventLoop {
 
   bool IsInCreatedThread() const { return tid_ == port::CurrentThread::Tid(); }
 
+  void Exit() { exit_ = true; }
+
  private:
   void RunFuncQueue();
   void AbortForNotInCreatedThread();
@@ -56,6 +58,8 @@ class EventLoop {
   scoped_ptr<EventPoller> poller_;
 
   scoped_ptr<TimerEvent> timer_ev_;
+  bool exit_;
+
   port::Mutex mu_;
   std::vector<Func> funcqueue_;
 
