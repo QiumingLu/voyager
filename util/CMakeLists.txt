@@ -1,6 +1,4 @@
 set(util_SRCS
-  fileutil.cc
-  logfile.cc
   logging.cc
   status.cc
   string_util.cc
