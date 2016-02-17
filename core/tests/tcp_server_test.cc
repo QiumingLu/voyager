@@ -2,14 +2,22 @@
 #include "core/eventloop.h"
 #include "core/sockaddr.h"
 
-namespace mirants {
-}  // namespace mirants
+using namespace mirants;
+
+TcpServer* g_server = NULL;
+
+void DeleteServer() {
+  if (g_server) {
+    delete g_server;
+  }
+}
 
 int main(int argc, char** argv) {
-  mirants::EventLoop eventloop;
-  mirants::SockAddr addr(5666);
-  mirants::TcpServer tcpserver(&eventloop, addr, "Mirants", 4);
-  tcpserver.Start();
+  EventLoop eventloop;
+  SockAddr addr(5666);
+  g_server = new TcpServer(&eventloop, addr, "Mirants", 4);
+  g_server->Start();
+  eventloop.RunAfter(20, std::bind(DeleteServer));
   eventloop.Loop();
   return 0;
 }
