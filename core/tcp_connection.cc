@@ -49,6 +49,28 @@ void TcpConnection::DeleteConnection() {
   dispatch_->RemoveEvents();
 }
 
+void TcpConnection::StartRead() {
+  eventloop_->RunInLoop(std::bind(&TcpConnection::StartReadInLoop, this));
+}
+
+void TcpConnection::StartReadInLoop() {
+  eventloop_->AssertThreadSafe();
+  if (!dispatch_->IsReading()) {
+    dispatch_->EnableRead();
+  }
+}
+
+void TcpConnection::StopRead() {
+  eventloop_->RunInLoop(std::bind(&TcpConnection::StopReadInLoop, this));
+}
+
+void TcpConnection::StopReadInLoop() {
+  eventloop_->AssertThreadSafe();
+  if (dispatch_->IsReading()) {
+    dispatch_->DisableRead();
+  }
+}
+
 void TcpConnection::ShutDown() {
   if (state_ == kConnected) {
     state_ = kDisconnecting;

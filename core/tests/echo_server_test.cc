@@ -29,6 +29,10 @@ class EchoServer {
     std::string  message = StringPrintf("Connection %s has been built\n",
                                         conn_ptr->name().c_str());
     conn_ptr->SendMessage(message);
+    std::string s1 = "";
+    Slice s2("");
+    conn_ptr->SendMessage(s1);
+    conn_ptr->SendMessage(s2);
   }
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {

@@ -51,6 +51,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void EstablishConnection();
   void DeleteConnection();
  
+  void StartRead();
+  void StopRead();
   void ShutDown();
   void ForceClose();
 
@@ -68,6 +70,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     kConnecting
   };
 
+  void StartReadInLoop();
+  void StopReadInLoop();
   void ShutDownInLoop();
   void ForceCloseInLoop();
   void SendInLoop(const void* data, size_t size);
