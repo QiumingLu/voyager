@@ -1,10 +1,11 @@
 #include "port/bounded_blockingqueue.h"
 #include <stdio.h>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <unistd.h>
 #include "port/countdownlatch.h"
 #include "port/thread.h"
 #include "port/currentthread.h"
 #include "util/stringprintf.h"
+#include "util/scoped_ptr.h"
 
 namespace mirants {
 namespace port {
@@ -16,13 +17,14 @@ class BoundedBlockingQueueTest {
   BoundedBlockingQueueTest(int threads_size)
       : queue_(18),
         latch_(threads_size),
-        threads_(threads_size) {
-    for (int i = 0; i < threads_size; ++i) {
-      threads_.push_back(new Thread(
+        threads_size_(threads_size),
+        threads_(new scoped_ptr<Thread>[threads_size]) {
+    for (int i = 0; i < threads_size_; ++i) {
+      threads_[i].reset(new Thread(
             std::bind(&BoundedBlockingQueueTest::ThreadFunc, this),
             StringPrintf("thread %d", i)));
+      threads_[i]->Start();
     }
-    for_each(threads_.begin(), threads_.end(), std::bind(&Thread::Start, _1));
   }
 
   void Task(int num) {
@@ -37,10 +39,12 @@ class BoundedBlockingQueueTest {
   }
 
   void JoinAll() {
-    for (size_t i = 0; i < threads_.size(); ++i) {
+    for (int i = 0; i < threads_size_; ++i) {
       queue_.Put("No task, stop!");
     }
-    for_each(threads_.begin(), threads_.end(), std::bind(&Thread::Join, _1));
+    for (int i = 0; i < threads_size_; ++i) {
+      threads_[i]->Join();
+    }
   }
 
  private:
@@ -61,7 +65,8 @@ class BoundedBlockingQueueTest {
 
   BoundedBlockingQueue<std::string> queue_;
   CountDownLatch latch_;
-  boost::ptr_vector<Thread> threads_;
+  int threads_size_;
+  scoped_array<scoped_ptr<Thread> > threads_;
 };
 
 }  // namespace port
