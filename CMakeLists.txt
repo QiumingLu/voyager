@@ -44,3 +44,7 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 add_subdirectory(mirants/util)
 add_subdirectory(mirants/port)
 add_subdirectory(mirants/core)
+
+if (NOT CMAKE_BUILD_NO_EXAMPLES)
+  add_subdirectory(examples/sudoku)
+endif()

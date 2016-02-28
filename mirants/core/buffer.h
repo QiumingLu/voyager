@@ -30,6 +30,13 @@ class Buffer {
     return &*(buf_.begin() + read_index_);
   }
 
+  const char* FindCRLF() {
+    const char* crlf = std::search(&*(buf_.begin() + read_index_),
+                                   &*(buf_.begin() + write_index_),
+                                   kCRLF, kCRLF + 2);
+    return crlf == &*(buf_.begin() + write_index_) ? NULL : crlf;
+  }
+
   void Retrieve(size_t size) {
     assert(size <= ReadableSize());
     if (size < ReadableSize()) {
@@ -37,6 +44,12 @@ class Buffer {
     } else {
       RetrieveAll();
     }
+  }
+
+  void RetrieveUntil(const char* end) {
+    assert(Peek() <= end);
+    assert(end <= &*(buf_.begin() + write_index_));
+    Retrieve(end - Peek());
   }
 
   void RetrieveAll() {
@@ -71,6 +84,7 @@ class Buffer {
 
   static const size_t kInitBufferSize = 1024;
   static const size_t kBackupBufferSize = 10240;
+  static const char kCRLF[];
   std::vector<char> buf_;
   size_t read_index_;
   size_t write_index_;
