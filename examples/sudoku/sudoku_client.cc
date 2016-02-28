@@ -9,7 +9,7 @@
 
 using namespace std::placeholders;
 
-const int dotimes = 100000;
+int dotimes;
 
 mirants::Timestamp g_start;
 mirants::Timestamp g_stop;
@@ -26,10 +26,12 @@ void Connect(const mirants::TcpConnectionPtr& ptr) {
 
 void Message(const mirants::TcpConnectionPtr& ptr, mirants::Buffer* buf) {
   if (buf->FindCRLF() != NULL) {
-    if (seq.GetNext() == dotimes - 1) {
+    if (seq.GetNext() == dotimes - 2) {
       g_stop = mirants::Timestamp::Now();
-      MIRANTS_LOG(INFO) << "Start time is: " << g_start.FormatTimestamp()
-                        << "\nFinish time is: " << g_stop.FormatTimestamp();
+      MIRANTS_LOG(INFO) << "\nStart time is: " << g_start.FormatTimestamp()
+                        << "\nFinish time is: " << g_stop.FormatTimestamp()
+                        << "\nTake MicroSeconds: " 
+                        << g_stop.MicroSecondsSinceEpoch() - g_start.MicroSecondsSinceEpoch();
     }
   }
   std::string s = buf->RetrieveAllAsString();
@@ -37,10 +39,11 @@ void Message(const mirants::TcpConnectionPtr& ptr, mirants::Buffer* buf) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 2) {
-    printf("Usage: %s server_ip\n", argv[0]);
+  if (argc != 3) {
+    printf("Usage: %s server_ip dotimes\n", argv[0]);
     return 0;
   }
+  dotimes = atoi(argv[2]);
   mirants::EventLoop ev;
   mirants::SockAddr servaddr(argv[1], 5666);
   mirants::TcpClient client("SudokuClinet", &ev, servaddr);

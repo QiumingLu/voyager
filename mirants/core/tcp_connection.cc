@@ -216,6 +216,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
 
   if (!dispatch_->IsWriting() && writebuf_.ReadableSize() == 0) {
     nwrote = sockets::Write(dispatch_->Fd(), data, size);
+    int err = errno;
     if (nwrote >= 0) {
       remaining = size - nwrote;
       if (remaining == 0 && writecomplete_cb_) {
@@ -224,8 +225,9 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
       }
     } else {
       nwrote = 0;
+      errno = err;
       if (errno != EWOULDBLOCK) {
-        MIRANTS_LOG(WARN) << "TcpConnection::SendInLoop [" << name_ 
+        MIRANTS_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - write: " << strerror(errno);
         if (errno == EPIPE || errno == ECONNRESET) {
           fault = true;
