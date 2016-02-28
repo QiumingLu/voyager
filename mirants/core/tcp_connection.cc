@@ -225,7 +225,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     } else {
       nwrote = 0;
       if (errno != EWOULDBLOCK) {
-        MIRANTS_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
+        MIRANTS_LOG(WARN) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - write: " << strerror(errno);
         if (errno == EPIPE || errno == ECONNRESET) {
           fault = true;
