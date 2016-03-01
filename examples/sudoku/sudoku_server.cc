@@ -16,9 +16,9 @@ class SudukuServer {
     
     using namespace std::placeholders;
     server_.SetConnectionCallback(
-        std::bind(&SudukuServer::Connect, this, _1));
+        std::bind(&SudukuServer::ConnectCallback, this, _1));
     server_.SetMessageCallback(
-        std::bind(&SudukuServer::Message, this, _1, _2));
+        std::bind(&SudukuServer::MessageCallback, this, _1, _2));
   }
 
   void Start() {
@@ -26,12 +26,11 @@ class SudukuServer {
   }
 
  private:
-  void Connect(const mirants::TcpConnectionPtr& ptr) {
-    std::string message = "Connection has been built, Welcome!\n";
-    ptr->SendMessage(std::move(message));
+  void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
   }
 
-  void Message(const mirants::TcpConnectionPtr& ptr, mirants::Buffer* buf) {
+  void MessageCallback(const mirants::TcpConnectionPtr& ptr, 
+                       mirants::Buffer* buf) {
     size_t size = buf->ReadableSize();
     while (size >= kCells + 2) {
       const char* crlf = buf->FindCRLF();
