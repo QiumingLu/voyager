@@ -5,7 +5,6 @@
 #include "mirants/core/callback.h"
 #include "mirants/core/buffer.h"
 #include "mirants/util/logging.h"
-#include "mirants/port/atomic_sequence_num.h"
 #include <vector>
 
 using namespace std::placeholders;
