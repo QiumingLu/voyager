@@ -47,4 +47,5 @@ add_subdirectory(mirants/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/sudoku)
+  add_subdirectory(examples/pingpong)
 endif()
