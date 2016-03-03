@@ -12,7 +12,7 @@ namespace sudoku {
 class SudukuServer {
  public:
   SudukuServer(mirants::EventLoop* ev, const mirants::SockAddr& addr)
-      : server_(ev, addr, "SudukuServer", 2) {
+      : server_(ev, addr, "SudukuServer", 1) {
     
     using namespace std::placeholders;
     server_.SetConnectionCallback(

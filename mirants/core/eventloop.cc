@@ -1,4 +1,7 @@
 #include "mirants/core/eventloop.h"
+
+#include <signal.h>
+
 #include "mirants/core/dispatch.h"
 #include "mirants/core/event_epoll.h"
 #include "mirants/port/mutexlock.h"
@@ -6,6 +9,15 @@
 #include "mirants/util/timestamp.h"
 
 namespace mirants {
+
+class IgnoreSIGPIPE {
+ public:
+  IgnoreSIGPIPE() {
+    ::signal(SIGPIPE, SIG_IGN);
+  }
+};
+
+IgnoreSIGPIPE ignore_SIGPIPE;
 
 EventLoop::EventLoop()
     : tid_(port::CurrentThread::Tid()),
