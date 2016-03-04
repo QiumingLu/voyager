@@ -10,6 +10,8 @@
 
 namespace mirants {
 
+const int kPollTime = 10*1000;
+
 class IgnoreSIGPIPE {
  public:
   IgnoreSIGPIPE() {
@@ -33,7 +35,7 @@ EventLoop::~EventLoop() {
 void EventLoop::Loop() {
   while(!exit_) {
     std::vector<Dispatch*> dispatches;
-    poller_->Poll(2330, &dispatches);
+    poller_->Poll(kPollTime, &dispatches);
     for (std::vector<Dispatch*>::iterator it = dispatches.begin();
         it != dispatches.end(); ++it) {
       (*it)->HandleEvent();

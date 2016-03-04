@@ -5,6 +5,7 @@
 #include "mirants/core/callback.h"
 #include "mirants/core/buffer.h"
 #include "mirants/util/logging.h"
+#include "mirants/util/stringprintf.h"
 #include <vector>
 
 using namespace std::placeholders;
@@ -62,7 +63,7 @@ class SudokuClient {
         size = buf->ReadableSize();
         MIRANTS_LOG(INFO) << "The result is: " << res;
         ++num_;
-        if (++num_ == static_cast<int64_t>(vec_.size())) {
+        if (num_ == static_cast<int64_t>(vec_.size())) {
           stop_ = mirants::Timestamp::Now();
           MIRANTS_LOG(INFO) << "\nStart time is: " << start_.FormatTimestamp()
                             << "\nFinish time is: " << stop_.FormatTimestamp()
@@ -98,7 +99,8 @@ int main(int argc, char** argv) {
   std::string message = "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  5    8  79\r\n";
   std::vector<std::string> vec(dotimes);
   for (int i = 0; i < dotimes; ++i) {
-    vec.push_back(message);
+    std::string s = mirants::StringPrintf("%d:%s", i,message.c_str());
+    vec.push_back(std::move(s));
   }
   mirants::EventLoop ev;
   mirants::SockAddr servaddr(argv[1], 5666);

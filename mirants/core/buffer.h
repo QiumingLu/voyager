@@ -83,7 +83,7 @@ class Buffer {
   }
 
   static const size_t kInitBufferSize = 1024;
-  static const size_t kBackupBufferSize = 10240;
+  static const size_t kBackupBufferSize = 65536;
   static const char kCRLF[];
   std::vector<char> buf_;
   size_t read_index_;
