@@ -1,0 +1,18 @@
+Bufsize: 12212 Threads: 4 Sessions: 4
+1974191920 total bytes written
+1974191920 total bytes read
+156.895 MiB/s throughtput
+
+
+Bufsize: 12212 Threads: 4 Sessions: 4
+48848 total bytes written
+48848 total bytes read
+0.00388209 MiB/s throughtput
+
+
+Bufsize: 12212 Threads: 4 Sessions: 4
+122376452 total bytes written
+122376452 total bytes read
+9.72561 MiB/s throughtput
+
+
