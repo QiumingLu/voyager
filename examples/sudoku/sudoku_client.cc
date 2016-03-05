@@ -114,4 +114,6 @@ int main(int argc, char** argv) {
   sudoku::SudokuClient client(&ev, servaddr, "SudokuClinet", std::move(vec));
   client.Connect();
   ev.Loop();
+  servaddr.FreeAddrinfo();
+  return 0;
 }

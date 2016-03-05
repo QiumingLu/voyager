@@ -11,6 +11,7 @@
 
 #include <list>
 #include <iostream>
+#include <fstream>
 
 using namespace std::placeholders;
 
@@ -81,6 +82,7 @@ class Client {
          int timeout,
          int thread_count)
       : base_ev_(ev),
+        thread_count_(thread_count),
         ev_pool_(base_ev_, "client", thread_count - 1),
         session_count_(session_count),
         block_size_(block_size),
@@ -123,6 +125,18 @@ class Client {
       MIRANTS_LOG(INFO) << total_bytes_read << " total bytes read";
       MIRANTS_LOG(INFO) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
                         << " MiB/s throughtput";
+
+      std::fstream file;
+      file.open("test.txt", std::ofstream::out | std::ofstream::app);
+      file << "Bufsize: " << block_size_ << " Threads: " << thread_count_
+           << " Sessions: " << sessions_.size() << "\n";
+      file << total_bytes_written << " total bytes written\n";
+      file << total_bytes_read << " total bytes read\n";
+      file << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024) 
+           << " MiB/s throughtput\n";
+      file.close();
+
+      base_ev_->Exit();
     }
   }
 
@@ -133,6 +147,7 @@ class Client {
 
  private:
   mirants::EventLoop* base_ev_;
+  int thread_count_;
   mirants::EventLoopThreadPool ev_pool_;
   size_t session_count_;
   size_t block_size_;
@@ -177,9 +192,9 @@ int main(int argc, char* argv[]) {
     Client client(&base_ev, sockaddr, block_size,
                   session_count, timeout, thread_count);
     base_ev.Loop();
+    sockaddr.FreeAddrinfo();
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
   }
-
   return 0;
 }
