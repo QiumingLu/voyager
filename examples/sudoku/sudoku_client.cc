@@ -14,12 +14,12 @@ namespace sudoku {
 
 class SudokuClient {
  public:
-  SudokuClient(const std::string& name, 
-               mirants::EventLoop* ev, 
-               const mirants::SockAddr& addr, 
+  SudokuClient(mirants::EventLoop* ev, 
+               const mirants::SockAddr& addr,
+               const std::string& name,
                const std::vector<std::string>& vec)
       : num_(0),
-        client_(name, ev, addr),
+        client_(ev, addr, name),
         vec_(vec) {
     client_.SetConnectionCallback(
         std::bind(&SudokuClient::ConnectCallback,this,  _1));
@@ -32,7 +32,7 @@ class SudokuClient {
                const mirants::SockAddr& addr, 
                std::vector<std::string>&& vec)
       : num_(0),
-        client_(name, ev, addr),
+        client_(ev, addr, name),
         vec_(std::move(vec)) {
     client_.SetConnectionCallback(
         std::bind(&SudokuClient::ConnectCallback, this, _1));
@@ -53,7 +53,8 @@ class SudokuClient {
     }
   }
 
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr, mirants::Buffer* buf) {
+  void MessageCallback(const mirants::TcpConnectionPtr& ptr,
+                       mirants::Buffer* buf) {
     size_t size = buf->ReadableSize();
     while (size >= kCells + 2) {
       const char* crlf = buf->FindCRLF();
@@ -61,14 +62,16 @@ class SudokuClient {
         std::string res(buf->Peek(), crlf);
         buf->RetrieveUntil(crlf + 2);
         size = buf->ReadableSize();
-        MIRANTS_LOG(INFO) << "The result is: " << res;
+        MIRANTS_LOG(INFO) << "The result is: \n" << res;
         ++num_;
         if (num_ == static_cast<int64_t>(vec_.size())) {
           stop_ = mirants::Timestamp::Now();
           MIRANTS_LOG(INFO) << "\nStart time is: " << start_.FormatTimestamp()
                             << "\nFinish time is: " << stop_.FormatTimestamp()
                             << "\nTake MicroSeconds: " 
-                            << stop_.MicroSecondsSinceEpoch() - start_.MicroSecondsSinceEpoch();
+                            << stop_.MicroSecondsSinceEpoch() 
+                                   - start_.MicroSecondsSinceEpoch();
+          client_.DisConnect();
         }
       } else {
         break;
@@ -82,6 +85,10 @@ class SudokuClient {
   std::vector<std::string> vec_;
   mirants::Timestamp start_;
   mirants::Timestamp stop_;
+
+  // No copy allow
+  SudokuClient(const SudokuClient&);
+  void operator=(const SudokuClient&);
 };
 
 }  // namespace sudoku
@@ -97,14 +104,14 @@ int main(int argc, char** argv) {
   }
   
   std::string message = "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  5    8  79\r\n";
-  std::vector<std::string> vec(dotimes);
+  std::vector<std::string> vec;
   for (int i = 0; i < dotimes; ++i) {
-    std::string s = mirants::StringPrintf("%d:%s", i,message.c_str());
+    std::string s = mirants::StringPrintf("%d:%s", i+1, message.c_str());
     vec.push_back(std::move(s));
   }
   mirants::EventLoop ev;
   mirants::SockAddr servaddr(argv[1], 5666);
-  sudoku::SudokuClient client("SudokuClinet", &ev, servaddr, std::move(vec));
+  sudoku::SudokuClient client(&ev, servaddr, "SudokuClinet", std::move(vec));
   client.Connect();
   ev.Loop();
 }

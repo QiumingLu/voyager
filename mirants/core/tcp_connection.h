@@ -27,6 +27,12 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
   }
+  void SetDisConnectionCallback(const DisConnectionCallback& func) { 
+    disconnection_cb_ = func; 
+  }
+  void SetDisConnectionCallback(DisConnectionCallback&& func) {
+    disconnection_cb_ = std::move(func);
+  }
   void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
     writecomplete_cb_ = func;
   }
@@ -63,6 +69,13 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SendMessage(const Slice& message);
   void SendMessage(Buffer* message);
 
+  bool IsDisConnected() const { return state_ == kDisconnected; }
+  bool IsDisConnecting() const { return state_ == kDisconnecting; }
+  bool IsConnected() const { return state_ == kConnected; }
+  bool IsConnecting() const { return state_ == kConnecting; }
+
+  void SetTcpNoDelay(bool on) { socket_.SetTcpNoDelay(on); }
+
  private:
   enum ConnectState {
     kDisconnected,
@@ -92,6 +105,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   Buffer writebuf_;
 
   ConnectionCallback connection_cb_;
+  DisConnectionCallback disconnection_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
   CloseCallback close_cb_;

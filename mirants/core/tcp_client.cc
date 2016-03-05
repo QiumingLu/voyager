@@ -8,8 +8,7 @@
 
 namespace mirants {
 
-TcpClient::TcpClient(const std::string& name,
-                     EventLoop* ev, const SockAddr& addr)
+TcpClient::TcpClient(EventLoop* ev, const SockAddr& addr, const std::string& name)
     : name_(name),
       ev_(CHECK_NOTNULL(ev)),
       connector_ptr_(new Connector(ev, addr)),

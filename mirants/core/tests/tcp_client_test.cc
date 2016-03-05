@@ -39,7 +39,7 @@ using namespace std::placeholders;
 int main(int argc, char** argv) {
   mirants::EventLoop ev;
   mirants::SockAddr serveraddr("172.31.44.121", 5666);
-  g_client = new mirants::TcpClient("test", &ev, serveraddr);
+  g_client = new mirants::TcpClient(&ev, serveraddr);
   g_client->SetMessageCallback(
       std::bind(mirants::Message, _1, _2));
   g_client->Connect();

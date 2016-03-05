@@ -45,6 +45,9 @@ void TcpConnection::DeleteConnection() {
   if (state_ == kConnected) {
     state_ = kDisconnected;
     dispatch_->DisableAll();
+    if (disconnection_cb_) {
+      disconnection_cb_(shared_from_this());
+    }
   }
   dispatch_->RemoveEvents();
 }
@@ -151,6 +154,9 @@ void TcpConnection::HandleClose() {
   assert(state_ == kConnected || state_ == kDisconnecting);
   state_ = kDisconnected;
   dispatch_->DisableAll();
+  if (disconnection_cb_) {
+    disconnection_cb_(shared_from_this());
+  }
   close_cb_(shared_from_this());
 }
 
