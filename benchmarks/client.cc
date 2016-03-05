@@ -111,7 +111,7 @@ class Client {
 
   const std::string& Message() const { return message_; }
 
-  void Print(const mirants::TcpConnectionPtr& ptr) {
+  void Print() {
   
     if (static_cast<size_t>(seq_.GetNext() + 1) == session_count_) {
       for (std::list<Session*>::iterator it = sessions_.begin();
@@ -133,10 +133,10 @@ class Client {
       file << total_bytes_written << " total bytes written\n";
       file << total_bytes_read << " total bytes read\n";
       file << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024) 
-           << " MiB/s throughtput\n";
+           << " MiB/s throughtput\n\n\n";
       file.close();
 
-      base_ev_->Exit();
+      base_ev_->QueueInLoop(std::bind(&EventLoop::Exit, base_ev_));
     }
   }
 
@@ -171,7 +171,7 @@ void Session::ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
 }
 
 void Session::DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
-  owner_->Print(ptr);
+  owner_->Print();
 }
 
 int main(int argc, char* argv[]) {
