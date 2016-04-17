@@ -26,6 +26,23 @@ pid_t GetTid() {
   return static_cast<pid_t>(::syscall(SYS_gettid));
 }
 
+void AfterFork() {
+  CurrentThread::cached_tid = 0;
+  CurrentThread::thread_name = "main";
+  CurrentThread::Tid();
+}
+
+class ThreadInitializer {
+ public:
+  ThreadInitializer() {
+    CurrentThread::thread_name = "main";
+    CurrentThread::Tid();
+    pthread_atfork(NULL, NULL, &AfterFork);
+  }
+};
+
+ThreadInitializer thread_init;
+
 struct StartThreadState {
   typedef mirants::port::Thread::ThreadFunc ThreadFunc;
   ThreadFunc thread_func;
