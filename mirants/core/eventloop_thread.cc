@@ -13,6 +13,7 @@ EventLoopThread::EventLoopThread(const std::string& name)
 
 EventLoopThread::~EventLoopThread() {
   if (eventloop_ != NULL) {
+    eventloop_->Exit();
     thread_.Join();
   }
 }

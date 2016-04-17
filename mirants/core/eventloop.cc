@@ -51,7 +51,7 @@ EventLoop::EventLoop()
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
         
-  MIRANTS_LOG(DEBUG) << "EventLoop "<< this << " created in thread" << tid_;
+  MIRANTS_LOG(WARN) << "EventLoop "<< this << " created in thread " << tid_;
   if (t_eventloop) {
     MIRANTS_LOG(FATAL) << "Another EventLoop " << t_eventloop
                        << " exists in this thread " << tid_;
@@ -64,7 +64,7 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-  MIRANTS_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
+  MIRANTS_LOG(WARN) << "EventLoop " << this << " of thread " << tid_
                      << "destructs in thread " << port::CurrentThread::Tid();
   
   wakeup_dispatch_->DisableAll();
@@ -130,6 +130,12 @@ void EventLoop::QueueInLoop(Func&& func) {
   {
     port::MutexLock lock(&mu_);
     funcqueue_.push_back(std::move(func));
+  }
+  // "必要时"有两种情况：
+  // 1、如果调用QueueInLoop()的线程不是IO线程，那么唤醒是必需的；
+  // 2、如果在IO线程调用QueueInLoop(),而此时正在调用RunFuncQueue
+  if (!IsInCreatedThread() || runfuncqueue_) {
+    WakeUp();
   }
 }
 
@@ -217,7 +223,7 @@ void EventLoop::HandleRead() {
 
 void EventLoop::AbortForNotInCreatedThread() {
   MIRANTS_LOG(FATAL) << "EventLoop::AbortForNotInCreatedThread - (EventLoop)"
-                     << this << " was not created in tid_ = " << tid_
+                     << this << " was created in tid_ = " << tid_
                      << ", currentthread's tid_ = " 
                      << port::CurrentThread::Tid();
 }

@@ -90,7 +90,7 @@ class Client {
         total_bytes_written(0),
         total_bytes_read(0) {
 
-    ev->RunAfter(timeout, std::bind(&Client::HanleTimeout, this));
+    ev->RunAfter(timeout, std::bind(&Client::HandleTimeout, this));
 
     for (size_t i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
@@ -121,9 +121,9 @@ class Client {
       }
 
       using namespace mirants;
-      MIRANTS_LOG(INFO) << total_bytes_written << " total bytes written";
-      MIRANTS_LOG(INFO) << total_bytes_read << " total bytes read";
-      MIRANTS_LOG(INFO) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
+      MIRANTS_LOG(WARN) << total_bytes_written << " total bytes written";
+      MIRANTS_LOG(WARN) << total_bytes_read << " total bytes read";
+      MIRANTS_LOG(WARN) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
                         << " MiB/s throughtput";
 
       std::fstream file;
@@ -136,11 +136,14 @@ class Client {
            << " MiB/s throughtput\n\n\n";
       file.close();
 
-       ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
+      MIRANTS_LOG(WARN) << "EventLoop " << ptr->GetLoop();
+      MIRANTS_LOG(WARN) << "EventLoop " << base_ev_;
+      
+      ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
     }
   }
 
-  void HanleTimeout() {
+  void HandleTimeout() {
     std::for_each(sessions_.begin(), sessions_.end(), 
         std::mem_fn(&Session::DisConnect));
   }

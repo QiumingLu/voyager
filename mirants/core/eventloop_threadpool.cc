@@ -2,7 +2,7 @@
 #include "mirants/core/eventloop.h"
 #include "mirants/core/eventloop_thread.h"
 #include "mirants/util/stringprintf.h"
-
+#include <stdio.h>
 namespace mirants {
 
 EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop, 
