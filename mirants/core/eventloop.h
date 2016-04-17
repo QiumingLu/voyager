@@ -37,8 +37,11 @@ class EventLoop {
 
   void DeleteTimer(Timer* t);
 
+  // internal usage
+  void WakeUp();
   void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);
+  bool HasDispatch(Dispatch* dispatch);
 
   void AssertThreadSafe() {
     if (!IsInCreatedThread()) {
@@ -48,17 +51,25 @@ class EventLoop {
 
   bool IsInCreatedThread() const { return tid_ == port::CurrentThread::Tid(); }
 
-  void Exit() { exit_ = true; }
+  static EventLoop* GetEventLoopOfCurrentThread();
+
+  void Exit();
 
  private:
   void RunFuncQueue();
+  void HandleRead();
   void AbortForNotInCreatedThread();
   
+  bool exit_;
+  bool runfuncqueue_;
+
   const pid_t tid_;
   scoped_ptr<EventPoller> poller_;
 
   scoped_ptr<TimerEvent> timer_ev_;
-  bool exit_;
+  
+  int wakeup_fd_;
+  scoped_ptr<Dispatch> wakeup_dispatch_;
 
   port::Mutex mu_;
   std::vector<Func> funcqueue_;

@@ -136,9 +136,7 @@ class Client {
            << " MiB/s throughtput\n\n\n";
       file.close();
 
-      // FIXME
-      exit(0);
-      // ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
+       ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
     }
   }
 
@@ -181,26 +179,23 @@ void Session::DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
 }
 
 int main(int argc, char* argv[]) {
-  try {
-    if (argc != 7) {
-      std::cerr << "Usage: client <host> <port> <threads> < blocksize> ";
-      std::cerr << "<sessions> <time>\n";
-      return 1;
-    }
-    const char* host = argv[1];
-    uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
-    int thread_count = atoi(argv[3]);
-    size_t block_size = atoi(argv[4]);
-    size_t session_count = atoi(argv[5]);
-    int timeout = atoi(argv[6]);
-    mirants::EventLoop base_ev;
-    mirants::SockAddr sockaddr(host, port);
-    Client client(&base_ev, sockaddr, block_size,
-                  session_count, timeout, thread_count);
-    base_ev.Loop();
-    sockaddr.FreeAddrinfo();
-  } catch (std::exception& e) {
-    std::cerr << "Exception: " << e.what() << "\n";
+  if (argc != 7) {
+    std::cerr << "Usage: client <host> <port> <threads> < blocksize> ";
+    std::cerr << "<sessions> <time>\n";
+    return 1;
   }
+  const char* host = argv[1];
+  uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
+  int thread_count = atoi(argv[3]);
+  size_t block_size = atoi(argv[4]);
+  size_t session_count = atoi(argv[5]);
+  int timeout = atoi(argv[6]);
+  mirants::EventLoop base_ev;
+  mirants::SockAddr sockaddr(host, port);
+  Client client(&base_ev, sockaddr, block_size,
+      session_count, timeout, thread_count);
+  base_ev.Loop();
+  sockaddr.FreeAddrinfo();
+  
   return 0;
 }

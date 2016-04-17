@@ -57,7 +57,7 @@ class EchoServer {
 int main(int argc, char** argv) {
   printf("pid=%d, tid=%d\n", getpid(), mirants::port::CurrentThread::Tid());
   mirants::EventLoop ev;
-  mirants::SockAddr addr(5666);
+  mirants::SockAddr addr("2001:da8:205:40b2:6d12:4a15:b65d:63e3", 5666);
   mirants::EchoServer server(&ev, addr);
   server.Start();
   ev.Loop();

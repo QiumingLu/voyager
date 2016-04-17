@@ -1,4 +1,4 @@
-// ASUS i5*2 8G
+// ASUS Ubuntu 15.10 64-bit Intel® Core™ i5-3210M CPU @ 2.50GHz × 4 8G
 Bufsize: 16384 Threads: 1 Sessions: 1
 54216654848 total bytes written
 54216654848 total bytes read
@@ -78,7 +78,7 @@ Bufsize: 16384 Threads: 4 Sessions: 1000
 1099.02 MiB/s throughtput
 
 
-// DELL Intel® Core™2 Duo CPU E8400 @ 3.00GHz × 2  4G
+// DELL Ubuntu 15.10 64-bit Intel® Core™2 Duo CPU E8400 @ 3.00GHz × 2  4G
 Bufsize: 16384 Threads: 1 Sessions: 1
 48510205952 total bytes written
 48510205952 total bytes read
@@ -311,4 +311,10 @@ Bufsize: 16384 Threads: 3 Sessions: 1000
 Bufsize: 16384 Threads: 4 Sessions: 1000
 42686087168 total bytes written
 42686087168 total bytes read
-407.086 MiB/s throughtput
+407.086 MiB/s throughtputBufsize: 16384 Threads: 1 Sessions: 1
+Bufsize: 16384 Threads: 1 Sessions: 1
+78871478272 total bytes written
+78871478272 total bytes read
+752.177 MiB/s throughtput
+
+

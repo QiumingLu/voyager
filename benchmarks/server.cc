@@ -40,25 +40,20 @@ class Server {
 };
 
 int main(int argc, char** argv) {
-  try {
-    if (argc != 4) {
-      std::cerr << "Usage: server <host> <port> <threads>\n";
-      return 1;
-    }
-    const char* host = argv[1];
-    uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
-    int thread_count = atoi(argv[3]);
-
-    mirants::SockAddr addr(host, port);
-    mirants::EventLoop ev;
-    Server server(&ev, addr, "server", thread_count);
-    
-    server.Start();
-    ev.Loop();
-
-  } catch (std::exception& e) {
-    std::cerr << "Exception: " << e.what() << "\n";
+  if (argc != 4) {
+    std::cerr << "Usage: server <host> <port> <threads>\n";
+    return 1;
   }
+  const char* host = argv[1];
+  uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
+  int thread_count = atoi(argv[3]);
+
+  mirants::SockAddr addr(host, port);
+  mirants::EventLoop ev;
+  Server server(&ev, addr, "server", thread_count);
+    
+  server.Start();
+  ev.Loop();
 
   return 0;
 }
