@@ -106,7 +106,7 @@ class Client {
   }
 
   ~Client() {
-    //mirants::STLDeleteElements(&sessions_);
+    mirants::STLDeleteElements(&sessions_);
   }
 
   const std::string& Message() const { return message_; }
