@@ -106,7 +106,7 @@ class Client {
   }
 
   ~Client() {
-    mirants::STLDeleteElements(&sessions_);
+    //mirants::STLDeleteElements(&sessions_);
   }
 
   const std::string& Message() const { return message_; }
@@ -136,9 +136,6 @@ class Client {
            << " MiB/s throughtput\n\n\n";
       file.close();
 
-      MIRANTS_LOG(WARN) << "EventLoop " << ptr->GetLoop();
-      MIRANTS_LOG(WARN) << "EventLoop " << base_ev_;
-      
       ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
     }
   }

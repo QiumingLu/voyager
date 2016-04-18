@@ -51,7 +51,7 @@ EventLoop::EventLoop()
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
         
-  MIRANTS_LOG(WARN) << "EventLoop "<< this << " created in thread " << tid_;
+  MIRANTS_LOG(DEBUG) << "EventLoop "<< this << " created in thread " << tid_;
   if (t_eventloop) {
     MIRANTS_LOG(FATAL) << "Another EventLoop " << t_eventloop
                        << " exists in this thread " << tid_;
@@ -64,8 +64,8 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-  MIRANTS_LOG(WARN) << "EventLoop " << this << " of thread " << tid_
-                     << "destructs in thread " << port::CurrentThread::Tid();
+  MIRANTS_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
+                     << " destructs in thread " << port::CurrentThread::Tid();
   
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
@@ -90,6 +90,7 @@ void EventLoop::Loop() {
 
 void EventLoop::Exit() {
   exit_ = true;
+  
   // 在必要时唤醒IO线程，让它及时终止循环。
   if (!IsInCreatedThread()) {
     WakeUp();

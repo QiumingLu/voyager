@@ -150,12 +150,12 @@ void Connector::OnConnect() {
 }
 
 void Connector::HandleError() {
-  MIRANTS_LOG(ERROR) << "Connector::HandleError - state_=" << StateToString();
+  // MIRANTS_LOG(ERROR) << "Connector::HandleError - state_=" << StateToString();
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
     Status st = sockets::CheckSocketError(socketfd);
     if (!st.ok()) {
-      MIRANTS_LOG(ERROR) << st.ToString();
+      // MIRANTS_LOG(ERROR) << st.ToString();
     }
     Retry(socketfd);
   }

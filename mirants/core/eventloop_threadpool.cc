@@ -2,7 +2,7 @@
 #include "mirants/core/eventloop.h"
 #include "mirants/core/eventloop_thread.h"
 #include "mirants/util/stringprintf.h"
-#include <stdio.h>
+
 namespace mirants {
 
 EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop, 
@@ -12,7 +12,7 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop,
       poolname_(name),
       size_(size),
       started_(false),
-      next_(0),
+      next_(0), 
       threads_(new scoped_ptr<EventLoopThread>[size]) {
 }
 

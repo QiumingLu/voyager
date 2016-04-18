@@ -1,7 +1,7 @@
 #include "mirants/core/eventloop_thread.h"
 #include "mirants/core/eventloop.h"
 #include "mirants/port/mutexlock.h"
-
+#include "mirants/util/logging.h"
 namespace mirants {
 
 EventLoopThread::EventLoopThread(const std::string& name)
