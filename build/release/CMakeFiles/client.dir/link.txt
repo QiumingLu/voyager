@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/client.dir/client.cc.o  -o client -rdynamic -lmirants_core 

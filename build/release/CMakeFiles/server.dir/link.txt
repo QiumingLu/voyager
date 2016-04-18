@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/server.dir/server.cc.o  -o server -rdynamic -lmirants_core 
