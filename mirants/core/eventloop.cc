@@ -51,7 +51,7 @@ EventLoop::EventLoop()
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
         
-  MIRANTS_LOG(DEBUG) << "EventLoop "<< this << " created in thread " << tid_;
+  MIRANTS_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
   if (t_eventloop) {
     MIRANTS_LOG(FATAL) << "Another EventLoop " << t_eventloop
                        << " exists in this thread " << tid_;
@@ -64,7 +64,7 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-  MIRANTS_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
+  MIRANTS_LOG(INFO) << "EventLoop " << this << " of thread " << tid_
                      << " destructs in thread " << port::CurrentThread::Tid();
   
   wakeup_dispatch_->DisableAll();

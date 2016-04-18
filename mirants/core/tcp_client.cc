@@ -30,12 +30,13 @@ TcpClient::~TcpClient() {
   }
   if (p.get()) {
     assert(ev_ == p->GetLoop());
+    ev_->RunInLoop(std::bind(&TcpConnection::DeleteConnection, p));
+
     if (unique) {
-      conn_ptr_->ForceClose();
+      p->ForceClose();
     }
-  } else {
-    connector_ptr_->Stop();
   }
+
   MIRANTS_LOG(INFO) << "TcpClient::~TcpClient [" << name_ << "] - " << this;
 }
 
@@ -76,7 +77,7 @@ void TcpClient::NewConnection(int socketfd) {
   p->SetMessageCallback(message_cb_);
   p->SetWriteCompleteCallback(writecomplete_cb_);
   p->SetCloseCallback(
-      std::bind(&TcpClient::CloseConnection, this,std::placeholders:: _1));
+      std::bind(&TcpClient::CloseConnection, this,std::placeholders::_1));
   
   {
     port::MutexLock l(&mu_);

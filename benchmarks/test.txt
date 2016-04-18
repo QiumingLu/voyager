@@ -1,261 +1,107 @@
-// ASUS Ubuntu 15.10 64-bit Intel® Core™ i5-3210M CPU @ 2.50GHz × 4   8G
 // DELL Ubuntu 15.10 64-bit Intel® Core™2 Duo CPU E8400 @ 3.00GHz × 2 4G
 
-Bufsize: 16384 Threads: 1 Sessions: 100
-45256736768 total bytes written
-45256736768 total bytes read
-431.602 MiB/s throughtput
+Bufsize: 16384 Threads: 1 Sessions: 1
+57366839296 total bytes written
+57366839296 total bytes read
+547.093 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 2 Sessions: 100
-44684656640 total bytes written
-44684656640 total bytes read
-426.146 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-44213649408 total bytes written
-44213649408 total bytes read
-421.654 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-43868274688 total bytes written
-43868274688 total bytes read
-418.36 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 1 Sessions: 1000
-35468050432 total bytes written
-35468050432 total bytes read
-338.25 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 2 Sessions: 1000
-35005005824 total bytes written
-35005005824 total bytes read
-333.834 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 1000
-34627174400 total bytes written
-34627174400 total bytes read
-330.23 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 1000
-34162343936 total bytes written
-34162343936 total bytes read
-325.798 MiB/s throughtput
+Bufsize: 16384 Threads: 1 Sessions: 10
+76530909184 total bytes written
+76530909184 total bytes read
+729.856 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 1 Sessions: 100
-44434587648 total bytes written
-44434587648 total bytes read
-423.761 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 2 Sessions: 100
-44801589248 total bytes written
-44801589248 total bytes read
-427.261 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-44167561216 total bytes written
-44167561216 total bytes read
-421.215 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-43971985408 total bytes written
-43971985408 total bytes read
-419.35 MiB/s throughtput
+45216989184 total bytes written
+45216989184 total bytes read
+431.223 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 1 Sessions: 1000
-35559227392 total bytes written
-35559227392 total bytes read
-339.119 MiB/s throughtput
+35408445440 total bytes written
+35408445440 total bytes read
+337.681 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 2 Sessions: 1000
-35191980032 total bytes written
-35191980032 total bytes read
-335.617 MiB/s throughtput
+Bufsize: 16384 Threads: 1 Sessions: 10000
+32540636464 total bytes written
+32540636464 total bytes read
+310.332 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 3 Sessions: 1000
-34878734336 total bytes written
-34878734336 total bytes read
-332.63 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 1000
-34450620416 total bytes written
-34450620416 total bytes read
-328.547 MiB/s throughtput
+Bufsize: 16384 Threads: 1 Sessions: 10
+72857190400 total bytes written
+72857190400 total bytes read
+694.82 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 2 Sessions: 10
-74905829376 total bytes written
-74905829376 total bytes read
-714.358 MiB/s throughtput
+73268805632 total bytes written
+73268805632 total bytes read
+698.746 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 3 Sessions: 10
-73717841920 total bytes written
-73717841920 total bytes read
-703.028 MiB/s throughtput
+71974944768 total bytes written
+71974944768 total bytes read
+686.407 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 4 Sessions: 10
-68646748160 total bytes written
-68646748160 total bytes read
-654.666 MiB/s throughtput
+68812095488 total bytes written
+68812095488 total bytes read
+656.243 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 1 Sessions: 100
+44491587584 total bytes written
+44491587584 total bytes read
+424.305 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 2 Sessions: 100
+44157337600 total bytes written
+44157337600 total bytes read
+421.117 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 3 Sessions: 100
-43267670016 total bytes written
-43267670016 total bytes read
-412.633 MiB/s throughtput
+43301240832 total bytes written
+43301240832 total bytes read
+412.953 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 4 Sessions: 100
-42867343360 total bytes written
-42867343360 total bytes read
-408.815 MiB/s throughtput
+42865704960 total bytes written
+42865704960 total bytes read
+408.799 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 3 Sessions: 100
-95494979584 total bytes written
-95494979584 total bytes read
-910.711 MiB/s throughtput
+Bufsize: 16384 Threads: 1 Sessions: 1000
+35401891840 total bytes written
+35401891840 total bytes read
+337.619 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 4 Sessions: 100
-129957724160 total bytes written
-129957724160 total bytes read
-1239.37 MiB/s throughtput
+Bufsize: 16384 Threads: 2 Sessions: 1000
+34906030080 total bytes written
+34906030080 total bytes read
+332.89 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 3 Sessions: 100
-44135038976 total bytes written
-44135038976 total bytes read
-420.905 MiB/s throughtput
+Bufsize: 16384 Threads: 3 Sessions: 1000
+34573484032 total bytes written
+34573484032 total bytes read
+329.718 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 4 Sessions: 100
-43761729536 total bytes written
-43761729536 total bytes read
-417.344 MiB/s throughtput
+Bufsize: 16384 Threads: 4 Sessions: 1000
+34186461184 total bytes written
+34186461184 total bytes read
+326.027 MiB/s throughtput
 
 
-Bufsize: 16384 Threads: 3 Sessions: 100
-4584095744 total bytes written
-4584095744 total bytes read
-437.173 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4408410112 total bytes written
-4408410112 total bytes read
-420.419 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4421615616 total bytes written
-4421615616 total bytes read
-421.678 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4441899008 total bytes written
-4441899008 total bytes read
-423.613 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4461707264 total bytes written
-4461707264 total bytes read
-425.502 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4446470144 total bytes written
-4446470144 total bytes read
-424.048 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4438425600 total bytes written
-4438425600 total bytes read
-423.281 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4403118080 total bytes written
-4403118080 total bytes read
-419.914 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4459626496 total bytes written
-4459626496 total bytes read
-425.303 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4433035264 total bytes written
-4433035264 total bytes read
-422.767 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4569481216 total bytes written
-4569481216 total bytes read
-435.78 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4464099328 total bytes written
-4464099328 total bytes read
-425.73 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4458348544 total bytes written
-4458348544 total bytes read
-425.181 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4389797888 total bytes written
-4389797888 total bytes read
-418.644 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4434788352 total bytes written
-4434788352 total bytes read
-422.934 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4435984384 total bytes written
-4435984384 total bytes read
-423.048 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 3 Sessions: 100
-4438245376 total bytes written
-4438245376 total bytes read
-423.264 MiB/s throughtput
-
-
-Bufsize: 16384 Threads: 4 Sessions: 100
-4413030400 total bytes written
-4413030400 total bytes read
-420.859 MiB/s throughtput
+// ASUS Ubuntu 15.10 64-bit Intel® Core™ i5-3210M CPU @ 2.50GHz × 4   8G
 
 

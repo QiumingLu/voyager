@@ -1,0 +1,2 @@
+/home/anthony/Documents/test/mirants/build/release/CMakeFiles/client.dir
+/home/anthony/Documents/test/mirants/build/release/CMakeFiles/server.dir
