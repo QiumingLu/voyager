@@ -9,20 +9,12 @@
 #include "mirants/core/dispatch.h"
 #include "mirants/core/eventloop.h"
 #include "mirants/util/scoped_ptr.h"
+#include "mirants/util/timestamp.h"
 
-#define timersub(tvp, uvp, vvp)           \
-  do {                \
-    (vvp)->tv_sec = (tvp)->tv_sec - (uvp)->tv_sec;    \
-    (vvp)->tv_usec = (tvp)->tv_usec - (uvp)->tv_usec; \
-    if ((vvp)->tv_usec < 0) {       \
-      (vvp)->tv_sec--;        \
-      (vvp)->tv_usec += 1000000;      \
-    }             \
-  } while (0)
-#endif
+using namespace mirants;
 
 EventLoop *eventloop;
-scoped_array<scoped_ptr<Dispatch> > dispatches;
+scoped_array<scoped_ptr<Dispatch> > *g_dispatches;
 
 static int count, writes, fired;
 static int *pipes;
@@ -46,16 +38,15 @@ void ReadCallback(int fd, int index) {
   }
 }
 
-struct timeval* RunOnce() {
-  static struct timeval ta, ts, te;
+void RunOnce() {
 
-  gettimeofday(&ta, NULL);
+  Timestamp ta(Timestamp::Now());
 
   for (int i = 0; i < num_pipes; ++i)
   {
-    Dispatch& dispatch = dispatches[i];
-    dispatch.SetReadCallback(std::bind(ReadCallback, dispatch.Fd(), i));
-    dispatch.EnableRead();
+    (*g_dispatches)[i]->SetReadCallback(
+        std::bind(ReadCallback, (*g_dispatches)[i]->Fd(), i));
+    (*g_dispatches)[i]->EnableRead();
   }
 
   int space = num_pipes / num_active;
@@ -68,37 +59,32 @@ struct timeval* RunOnce() {
   count = 0;
   writes = num_writes;
 
-  gettimeofday(&ts, NULL);
+  Timestamp ts(Timestamp::Now());
   eventloop->Loop();
-  gettimeofday(&te, NULL);
+  Timestamp te(Timestamp::Now());
 
-  timersub(&te, &ta, &ta);
-  timersub(&te, &ts, &ts);
   fprintf(stdout, "%8ld %8ld\n", 
-          ta.tv_sec * 1000000L + ta.tv_usec, 
-          ts.tv_sec * 1000000L + ts.tv_usec);
-
-  return (&te);
+          te.MicroSecondsSinceEpoch() - ta.MicroSecondsSinceEpoch(),
+          te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch());
 }
 
 int main(int argc, char* argv[]) {
   int i, c;
-  struct timeval *tv;
-  int *cp;
+  int* cp;
   extern char *optarg;
 
   num_pipes = 100;
   num_active = 1;
   num_writes = 100;
 
-  while ((c = getopt(argc, argv, "n:a:w")) != -1) {
+  while ((c = getopt(argc, argv, "n:a:w:")) != -1) {
     switch (c) {
       case 'n':
         num_pipes = atoi(optarg);
-        break;
+         break;
       case 'a':
         num_active = atoi(optarg);
-        break;
+          break;
       case 'w':
         num_writes = atoi(optarg);
         break;
@@ -108,6 +94,10 @@ int main(int argc, char* argv[]) {
     }
   }
   
+  printf("num_pipes:%d\n", num_pipes);
+  printf("num_active:%d\n", num_active);
+  printf("num_writes:%d\n", num_writes);
+
 #if 1
   struct rlimit rl;
   rl.rlim_cur = rl.rlim_max = num_pipes * 2 + 50;
@@ -116,7 +106,7 @@ int main(int argc, char* argv[]) {
   }
 #endif
 
-  pipes = calloc(num_pipes * 2, sizeof(int));
+  pipes = static_cast<int*>(calloc(num_pipes * 2, sizeof(int)));
   if (pipes == NULL)
   {
     perror("malloc");
@@ -134,14 +124,17 @@ int main(int argc, char* argv[]) {
   EventLoop ev;
   eventloop = &ev;
   int dispatch_size = num_pipes;
-  dispatches(new scoped_ptr<Dispatch>[dispatch_size]);
+
+  scoped_array<scoped_ptr<Dispatch> > dispatches(new scoped_ptr<Dispatch>[dispatch_size]);
   for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
     Dispatch* dispatch = new Dispatch(&ev, *cp);
     dispatches[i].reset(dispatch);
   }
 
+  g_dispatches = &dispatches;
+
   for (i = 0; i < 25; ++i) {
-    tv = RunOnce();
+    RunOnce();
   }
 
   for (i = 0; i < dispatch_size; ++i) {

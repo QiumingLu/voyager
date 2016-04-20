@@ -5,7 +5,7 @@ project (mirants C CXX)
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "release")
 endif()
 
 set(CXX_FLAGS
