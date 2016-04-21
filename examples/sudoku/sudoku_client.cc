@@ -38,7 +38,7 @@ class SudokuClient {
         std::bind(&SudokuClient::ConnectCallback, this, _1));
     client_.SetMessageCallback(
         std::bind(&SudokuClient::MessageCallback, this, _1, _2));
-  }
+ }
 
   void Connect() {
     client_.Connect();
@@ -46,6 +46,8 @@ class SudokuClient {
 
  private:
   void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+    ptr->SetDisConnectionCallback(
+        std::bind(&SudokuClient::DisConnectCallback, this, _1));
     MIRANTS_LOG(INFO) << "Start solve sudoku...";
     start_ = mirants::Timestamp::Now();
     for (size_t i = 0; i < vec_.size(); ++i) {
@@ -62,11 +64,11 @@ class SudokuClient {
         std::string res(buf->Peek(), crlf);
         buf->RetrieveUntil(crlf + 2);
         size = buf->ReadableSize();
-        MIRANTS_LOG(INFO) << "The result is: \n" << res;
+        MIRANTS_LOG(WARN) << "The result is: \n" << res;
         ++num_;
         if (num_ == static_cast<int64_t>(vec_.size())) {
           stop_ = mirants::Timestamp::Now();
-          MIRANTS_LOG(INFO) << "\nStart time is: " << start_.FormatTimestamp()
+          MIRANTS_LOG(WARN) << "\nStart time is: " << start_.FormatTimestamp()
                             << "\nFinish time is: " << stop_.FormatTimestamp()
                             << "\nTake MicroSeconds: " 
                             << stop_.MicroSecondsSinceEpoch() 
@@ -77,6 +79,10 @@ class SudokuClient {
         break;
       }
     }
+  }
+
+  void DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+    ptr->GetLoop()->QueueInLoop(std::bind(&mirants::EventLoop::Exit, ptr->GetLoop()));
   }
 
   static const int kCells = 81;

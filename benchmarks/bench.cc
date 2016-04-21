@@ -116,6 +116,7 @@ int main(int argc, char* argv[]) {
   for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
     if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cp)  == -1) {
       perror("pipe");
+      free(pipes);
       exit(1);
     }
   }
@@ -141,6 +142,8 @@ int main(int argc, char* argv[]) {
     dispatches[i]->DisableAll();
     dispatches[i]->RemoveEvents();
   }
+
+  free(pipes);
     
   return 0;
 }
