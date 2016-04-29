@@ -25,7 +25,21 @@ target_link_libraries(mirants_core mirants_port)
 
 install(TARGETS mirants_core DESTINATION lib)
 
-file(GLOB HEADERS "*.h")
+set(HEADERS 
+  buffer.h
+  callback.h
+  dispatch.h
+  eventloop.h
+  eventloop_thread.h
+  eventloop_threadpool.h
+  sockaddr.h
+  tcp_client.h
+  tcp_connection.h
+  tcp_server.h
+  tcp_socket.h
+  timer.h
+  )
+ 
 install(FILES ${HEADERS} DESTINATION include/mirants/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)

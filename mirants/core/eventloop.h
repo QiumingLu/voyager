@@ -4,7 +4,6 @@
 #include <functional>
 #include <vector>
 
-#include "mirants/core/callback.h"
 #include "mirants/core/timer.h"
 #include "mirants/util/scoped_ptr.h"
 #include "mirants/port/currentthread.h"

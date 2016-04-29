@@ -5,7 +5,7 @@
 #include <string>
 #include <netdb.h>
 
-#include "mirants/core/callback.h"
+#include "mirants/core/tcp_connection.h"
 #include "mirants/core/sockaddr.h"
 #include "mirants/port/atomic_sequence_num.h"
 #include "mirants/util/scoped_ptr.h"
@@ -15,7 +15,6 @@ namespace mirants {
 class Acceptor;
 class EventLoop;
 class EventLoopThreadPool;
-class SockAddr;
 
 class TcpServer {
  public:

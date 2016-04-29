@@ -5,7 +5,7 @@
 #include <string>
 #include <netdb.h>
 
-#include "mirants/core/callback.h"
+#include "mirants/core/tcp_connection.h"
 #include "mirants/port/mutex.h"
 #include "mirants/port/mutexlock.h"
 
