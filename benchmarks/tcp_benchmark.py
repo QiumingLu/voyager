@@ -120,12 +120,12 @@ total_time = end_job - start_job
 print "Finished: " + str(current_request) + "/" + str(total_request)
 
 print "\n======================================================="
-print "Total time:           " + str(connect_sum + request_sum) + " [s]"
+#print "Total time:           " + str(connect_sum + request_sum) + " [s]"
 print "Total time:           " + str(total_time) + " [s] (across all concurrent requests)"
-print "Time per request:     " + str((connect_sum + request_sum) / total_request * 1000) + " [ms] (mean)"
-print "Time per request:     " + str(total_time / total_request * 1000) + " [ms] (mean, across all concurrent requests)"
-print "Time per connect:     " + str(connect_sum / total_concurrency * 1000) + " [ms] (mean)"
-print "Time per request:     " + str(request_sum / total_request * 1000) + " [ms] (mean, connecting time excluded)"
+#print "Time per request:     " + str((connect_sum + request_sum) / total_request * 1000) + " [ms] (mean)"
+#print "Time per request:     " + str(total_time / total_request * 1000) + " [ms] (mean, across all concurrent requests)"
+#print "Time per connect:     " + str(connect_sum / total_concurrency * 1000) + " [ms] (mean)"
+#print "Time per request:     " + str(request_sum / total_request * 1000) + " [ms] (mean, connecting time excluded)"
 print "Requests per second:  " + str(int(total_request / total_time)) + " [#/sec] (mean)"
 
 print "========================================================="

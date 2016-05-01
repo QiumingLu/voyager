@@ -71,6 +71,10 @@ class Dispatch {
   EventCallback writefunc_;
   EventCallback closefunc_;
   EventCallback errorfunc_;
+
+  // No copy allow
+  Dispatch(const Dispatch&);
+  void operator=(const Dispatch&);
 };
 
 }  // namespace mirants

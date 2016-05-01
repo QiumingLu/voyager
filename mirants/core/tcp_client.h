@@ -19,7 +19,8 @@ typedef std::shared_ptr<Connector> ConnectorPtr;
 
 class TcpClient {
  public:
-  TcpClient(EventLoop* ev, const SockAddr& addr, const std::string& name = "MrantsClient");
+  TcpClient(EventLoop* ev, const SockAddr& addr, 
+            const std::string& name = "MrantsClient");
   ~TcpClient();
 
   void Connect();

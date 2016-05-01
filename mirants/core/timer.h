@@ -65,6 +65,10 @@ class TimerEvent {
   std::set<Timer*> delete_timers_;
  
   static port::SequenceNumber seq_;
+
+  // No copy allow
+  TimerEvent(const TimerEvent&);
+  void operator=(const TimerEvent&);
 };
 
 }  // namespace mirants
