@@ -37,7 +37,6 @@ set(HEADERS
   tcp_connection.h
   tcp_server.h
   tcp_socket.h
-  timer.h
   )
  
 install(FILES ${HEADERS} DESTINATION include/mirants/core)

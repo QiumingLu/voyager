@@ -8,6 +8,7 @@
 
 namespace mirants {
 
+class SockAddr;
 class EventLoop;
 class Acceptor {
  public:
@@ -15,7 +16,7 @@ class Acceptor {
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
   explicit Acceptor(EventLoop* eventloop, 
-                    const struct addrinfo* addr, 
+                    const SockAddr& addr, 
                     int backlog, bool reuseport = false);
   ~Acceptor();
 

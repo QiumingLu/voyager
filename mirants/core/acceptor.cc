@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "mirants/core/sockaddr.h"
 #include "mirants/core/eventloop.h"
 #include "mirants/core/socket_util.h"
 #include "mirants/util/logging.h"
@@ -11,11 +12,11 @@
 namespace mirants {
 
 Acceptor::Acceptor(EventLoop* eventloop, 
-                   const struct addrinfo* addr, 
+                   const SockAddr& addr,
                    int backlog, 
                    bool reuseport)
     : eventloop_(eventloop),
-      tcpsocket_(sockets::CreateSocketAndSetNonBlock(addr->ai_family)),
+      tcpsocket_(sockets::CreateSocketAndSetNonBlock(addr.Family())),
       dispatch_(eventloop_, tcpsocket_.SocketFd()),     
       backlog_(backlog),
       idlefd_(::open("/dev/null", O_RDONLY | O_CLOEXEC)),
@@ -23,7 +24,8 @@ Acceptor::Acceptor(EventLoop* eventloop,
   assert(idlefd_ >= 0);
   tcpsocket_.SetReuseAddr(true);
   tcpsocket_.SetReusePort(reuseport);
-  tcpsocket_.BindAddress(addr->ai_addr, addr->ai_addrlen);
+  tcpsocket_.BindAddress(addr.GetSockAddr(), 
+                         sizeof(*(addr.GetSockAddr())));
   dispatch_.SetReadCallback(std::bind(&Acceptor::OnAccept, this));
 }
 

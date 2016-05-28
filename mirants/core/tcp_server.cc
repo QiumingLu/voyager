@@ -19,8 +19,8 @@ TcpServer::TcpServer(EventLoop* eventloop,
                      int thread_size,
                      int backlog)
     : eventloop_(CHECK_NOTNULL(eventloop)),
-      addr_(addr),
-      acceptor_ptr_(new Acceptor(eventloop_, addr_.AddrInfo(), backlog)),
+      ipbuf_(addr.IP()),
+      acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
       name_(name),
       ev_pool_(new EventLoopThreadPool(eventloop_, name_, thread_size-1)),
       conn_id_(0) {
@@ -38,7 +38,6 @@ TcpServer::~TcpServer() {
         std::bind(&TcpConnection::DeleteConnection, it->second));
     it->second.reset();
   }
-  addr_.FreeAddrinfo();
 }
 
 void TcpServer::Start() {
@@ -54,7 +53,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertThreadSafe();
 
   std::string conn_name = 
-      StringPrintf("%s-%s#%d", name_.c_str(), addr_.IP().c_str(), ++conn_id_);
+      StringPrintf("%s-%s#%d", name_.c_str(), ipbuf_.c_str(), ++conn_id_);
   char peer[64];
   sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
                             peer, sizeof(peer));

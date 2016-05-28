@@ -12,15 +12,16 @@ class SockAddr {
   explicit SockAddr(uint16_t port);
   SockAddr(const std::string& host, uint16_t port);
 
-  const struct addrinfo* AddrInfo() const { return addrinfo_; }
+  const struct sockaddr* GetSockAddr () const { 
+    return reinterpret_cast<const struct sockaddr*>(&sa_);
+  }
+  sa_family_t Family() const { return sa_.ss_family; }
   std::string IP() const { return ip_; }
-
-  void FreeAddrinfo();
 
  private:
   Status GetAddrInfo(const char* host, uint16_t port);
 
-  struct addrinfo *addrinfo_;
+  struct sockaddr_storage sa_;
   std::string ip_;
 };
 

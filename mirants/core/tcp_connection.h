@@ -55,6 +55,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   EventLoop* GetLoop() const { return eventloop_; }
   const std::string& name() const { return name_; }
 
+  // Internal use only
   void EstablishConnection();
   void DeleteConnection();
  

@@ -54,7 +54,7 @@ class TcpServer {
   void CloseConnectionInLoop(const TcpConnectionPtr& conn_ptr);
 
   EventLoop* eventloop_;
-  SockAddr addr_;
+  std::string ipbuf_;
   scoped_ptr<Acceptor> acceptor_ptr_;
   const std::string name_;
   std::shared_ptr<EventLoopThreadPool> ev_pool_;

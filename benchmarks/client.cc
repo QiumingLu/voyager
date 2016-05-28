@@ -195,7 +195,5 @@ int main(int argc, char* argv[]) {
   Client client(&base_ev, sockaddr, block_size,
       session_count, timeout, thread_count);
   base_ev.Loop();
-  sockaddr.FreeAddrinfo();
-  
   return 0;
 }

@@ -1,3 +1,4 @@
+#include <utility>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -38,7 +39,7 @@ void ReadCallback(int fd, int index) {
   }
 }
 
-void RunOnce() {
+std::pair<uint64_t, uint64_t> RunOnce() {
 
   Timestamp ta(Timestamp::Now());
 
@@ -63,9 +64,13 @@ void RunOnce() {
   eventloop->Loop();
   Timestamp te(Timestamp::Now());
 
-  fprintf(stdout, "%8ld %8ld\n", 
-          te.MicroSecondsSinceEpoch() - ta.MicroSecondsSinceEpoch(),
-          te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch());
+  uint64_t total_time = te.MicroSecondsSinceEpoch() - ta.MicroSecondsSinceEpoch();
+  uint64_t sub_time = te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch();
+  std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
+
+  fprintf(stdout, "%8ld %8ld\n", total_time, sub_time);
+
+  return t;
 }
 
 int main(int argc, char* argv[]) {
@@ -134,9 +139,17 @@ int main(int argc, char* argv[]) {
 
   g_dispatches = &dispatches;
 
+  uint64_t total_times = 0;
+  uint64_t sub_times = 0;
   for (i = 0; i < 25; ++i) {
-    RunOnce();
+    std::pair<uint64_t, uint64_t> t = RunOnce();
+    if (i != 0) {
+      total_times += t.first;
+      sub_times += t.second;
+    }
   }
+
+  fprintf(stdout, "TotolTime: %8ld, SubTime: %8ld\n", total_times/24, sub_times/24);
 
   for (i = 0; i < dispatch_size; ++i) {
     dispatches[i]->DisableAll();

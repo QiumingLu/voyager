@@ -59,44 +59,42 @@ void Connector::StopInLoop() {
 }
 
 void Connector::Connect() {
-  const struct  addrinfo* p;
-  for (p = addr_.AddrInfo(); p != NULL; p = p->ai_next) {
-    int socketfd = sockets::CreateSocketAndSetNonBlock(p->ai_family);
-    int ret = sockets::Connect(socketfd, p->ai_addr, p->ai_addrlen);
-    int err = (ret == 0) ? 0 : errno;
-    switch (err) {
-      case 0:
-      case EINPROGRESS:
-      case EINTR:
-      case EISCONN:
-        Connecting(socketfd);
-        break;
+  int socketfd = sockets::CreateSocketAndSetNonBlock(addr_.Family());
+  int ret = sockets::Connect(socketfd, 
+                             addr_.GetSockAddr(), 
+                             sizeof(*(addr_.GetSockAddr())));
+  int err = (ret == 0) ? 0 : errno;
+  switch (err) {
+    case 0:
+    case EINPROGRESS:
+    case EINTR:
+    case EISCONN:
+      Connecting(socketfd);
+      break;
 
-      case EAGAIN:
-      case EADDRINUSE:
-      case EADDRNOTAVAIL:
-      case ECONNREFUSED:
-      case ENETUNREACH:
-        Retry(socketfd);
-        break;
+    case EAGAIN:
+    case EADDRINUSE:
+    case EADDRNOTAVAIL:
+    case ECONNREFUSED:
+    case ENETUNREACH:
+      Retry(socketfd);
+      break;
 
-      case EACCES:
-      case EPERM:
-      case EAFNOSUPPORT:
-      case EALREADY:
-      case EBADF:
-      case EFAULT:
-      case ENOTSOCK:
-        MIRANTS_LOG(ERROR) << "connect error: " << strerror(err);
-        sockets::CloseFd(socketfd);
-        break;
+    case EACCES:
+    case EPERM:
+    case EAFNOSUPPORT:
+    case EALREADY:
+    case EBADF:
+    case EFAULT:
+    case ENOTSOCK:
+      MIRANTS_LOG(ERROR) << "connect error: " << strerror(err);
+      sockets::CloseFd(socketfd);
+      break;
 
-      default:
-        MIRANTS_LOG(ERROR) << "unexpected connect error: " << strerror(err);
-        sockets::CloseFd(socketfd);
-        break;
-    }
-    break;
+    default:
+      MIRANTS_LOG(ERROR) << "unexpected connect error: " << strerror(err);
+      sockets::CloseFd(socketfd);
+      break;
   }
 }
 
