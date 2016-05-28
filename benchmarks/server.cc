@@ -25,7 +25,9 @@ class Server {
 
  private:
   void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
-    ptr->SetTcpNoDelay(true);
+    if (ptr->IsConnected()) {
+      ptr->SetTcpNoDelay(true);
+    }
   }
   
   void MessageCallback(const mirants::TcpConnectionPtr& ptr,

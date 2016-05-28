@@ -26,6 +26,9 @@ class EchoServer {
 
  private:
   void Connect(const TcpConnectionPtr& conn_ptr) {
+    if (conn_ptr->IsConnected()) {
+      conn_ptr->SetTcpNoDelay(true);
+    }
   }
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
