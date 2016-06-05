@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include "mirants/util/slice.h"
 
 namespace mirants {
 
@@ -17,6 +18,10 @@ class Buffer {
 
   size_t ReadableSize() const { return write_index_ - read_index_; }
   size_t WritableSize() const { return buf_.size() - write_index_; }
+
+  void Append(const Slice& s) {
+    Append(s.data(), s.size());
+  }
 
   void Append(const char* data, size_t size) {
     if (WritableSize() < size) {

@@ -32,8 +32,9 @@ class EchoServer {
   }
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
-    std::string s = buf->RetrieveAllAsString();
-    conn_ptr->SendMessage(std::move(s));
+    // std::string s = buf->RetrieveAllAsString();
+    // conn_ptr->SendMessage(std::move(s));
+    conn_ptr->SendMessage(buf);
   }
 
   EventLoop* ev_;

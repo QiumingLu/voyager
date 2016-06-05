@@ -5,7 +5,7 @@ project (mirants C CXX)
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "release")
+  set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 set(CXX_FLAGS
@@ -48,5 +48,6 @@ add_subdirectory(mirants/core)
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/sudoku)
   add_subdirectory(examples/pingpong)
+  add_subdirectory(examples/http)
   add_subdirectory(benchmarks)
 endif()

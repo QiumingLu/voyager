@@ -127,7 +127,7 @@ void SplitStringAllowEmpty(const std::string& full,
                            std::vector<std::string>* result);
 
 // Split a string using a character delimiter.
-inline std::vector<std::string> Split(std::string& full,
+inline std::vector<std::string> Split(const std::string& full,
                                       const char* delim,
                                       const bool skip_empty = true) {
   std::vector<std::string> result;
