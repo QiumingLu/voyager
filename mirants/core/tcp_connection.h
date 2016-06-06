@@ -9,6 +9,7 @@
 #include "mirants/core/callback.h"
 #include "mirants/core/tcp_socket.h"
 #include "mirants/util/scoped_ptr.h"
+#include "mirants/util/any.h"
 
 namespace mirants {
 
@@ -77,6 +78,14 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   void SetTcpNoDelay(bool on) { socket_.SetTcpNoDelay(on); }
 
+  void set_context(const any& context) {
+    context_ = context;
+  }
+
+  any context() const {
+    return context_;
+  }
+
  private:
   enum ConnectState {
     kDisconnected,
@@ -104,6 +113,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   Buffer readbuf_;
   Buffer writebuf_;
+
+  any context_;
 
   ConnectionCallback connection_cb_;
   DisConnectionCallback disconnection_cb_;

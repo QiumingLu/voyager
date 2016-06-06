@@ -47,7 +47,8 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
     char* tmp = &*(s.begin());
     bool close;
     if (strcasecmp(tmp, "close") == 0 || 
-        (request.version() == Request::kHttp10 && strcasecmp(tmp, "keep-alive"))) {
+        (request.version() == Request::kHttp10 && 
+           strcasecmp(tmp, "keep-alive"))) {
       close = true;
     } else {
       close = false;
