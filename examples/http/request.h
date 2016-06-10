@@ -4,7 +4,7 @@
 #include <map>
 #include <utility>
 #include <strings.h>
-
+#include "mirants/util/logging.h"
 namespace http {
 
 class Request {
@@ -25,9 +25,16 @@ class Request {
   };
 
   Request()
-    : method_(kNotSupported),
-      version_(kUnknown) 
-  { }
+      : state_(0),
+        method_(kNotSupported),
+        version_(kUnknown) {
+  }
+
+  ~Request() {
+  }
+
+  void set_state(int s) { state_ = s; }
+  int state() const { return state_; }
 
   bool set_method(const char* buf, size_t size) {
     if (strncasecmp(buf, "GET", size) == 0) {
@@ -115,7 +122,17 @@ class Request {
     return headers_;
   }
 
+  void Reset() {
+    state_ = 0;
+    method_ = kNotSupported;
+    version_ = kUnknown;
+    query_string_ = "";
+    path_ = "";
+    headers_.clear();
+  }
+
  private:
+  int state_;
   Method method_;
   Version version_;
   std::string query_string_;

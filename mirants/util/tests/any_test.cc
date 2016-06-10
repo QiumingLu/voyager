@@ -1,6 +1,7 @@
 #include "mirants/util/any.h"
 #include "mirants/util/testharness.h"
-
+#include "mirants/util/slice.h"
+#include <iostream>
 namespace mirants {
 
 class  AnyTest { };
@@ -23,6 +24,9 @@ TEST(AnyTest, TestAny) {
   ASSERT_EQ(a.cast<bool>(), true);
   a.cast<bool>() = false;
   ASSERT_EQ(a.cast<bool>(), false);
+  any c(Slice("sddssd"));
+  Slice &s = c.cast<Slice>();
+  ASSERT_EQ(s.data(), "sddssd");
 }
 
 }  // namespace mirants

@@ -31,6 +31,7 @@ class HttpServer {
   void ConnectCallback(const mirants::TcpConnectionPtr& ptr);
   void MessageCallback(const mirants::TcpConnectionPtr& ptr,
                        mirants::Buffer* buf);
+  void DisConnectCallback(const mirants::TcpConnectionPtr& ptr);
   bool ProcessRequest(mirants::Buffer* buf, Request* request);
   bool ProcessRequestLine(const char* begin, 
                           const char* end,

@@ -23,31 +23,43 @@ void HttpServer::Start() {
 }
 
 void HttpServer::ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+  ptr->SetContext(mirants::any(new Request()));
+  ptr->SetCloseCallback(std::bind(&HttpServer::DisConnectCallback,
+                        this, 
+                        std::placeholders::_1));
+}
+
+void HttpServer::DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+  Request *request = ptr->MutableContext()->cast<Request *>();
+  if (request) delete request;
 }
 
 void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
                                   mirants::Buffer* buf) {
-  Request request;
-  if (!ProcessRequest(buf, &request)) {
+  Request* request = ptr->MutableContext()->cast<Request *>();
+
+  if (!ProcessRequest(buf, request)) {
     std::string s("HTTP/1.1 400 Bad Request\r\n\r\n");
     ptr->SendMessage(std::move(s));
     ptr->ShutDown();
-  } else {
+  } 
+  
+  if (request->state() == 2) {
     /*
-    MIRANTS_LOG(WARN) << request.MethodToString() << " "
-                      << request.path() << request.query_string()
-                      << " " << request.VersionToString();
+    MIRANTS_LOG(WARN) << request->MethodToString() << " "
+                      << request->path() << request->query_string()
+                      << " " << request->VersionToString();
     std::map<std::string, std::string>::const_iterator it;
-    for (it = request.headers().begin(); it != request.headers().end(); ++it) {
+    for (it = request->headers().begin(); it != request->headers().end(); ++it) {
       MIRANTS_LOG(WARN) << it->first << ":" << it->second;
     }
     */
-
-    std::string s = request.GetHeader("Connection");
+  
+    std::string s = request->GetHeader("Connection");
     char* tmp = &*(s.begin());
     bool close;
     if (strcasecmp(tmp, "close") == 0 || 
-        (request.version() == Request::kHttp10 && 
+        (request->version() == Request::kHttp10 && 
            strcasecmp(tmp, "keep-alive"))) {
       close = true;
     } else {
@@ -57,7 +69,7 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
     Response response(close);
     
     if (http_cb_) {
-      http_cb_(&request, &response);
+      http_cb_(request, &response);
     } else {
       response.set_status_code(Response::k200);
     }
@@ -65,9 +77,10 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
     mirants::Buffer buffer;
     response.AppendToBuffer(&buffer);
     ptr->SendMessage(&buffer);
+    request->Reset();
     if (response.close_connection()) {
       ptr->ShutDown();
-    }    
+    }
   }
 }
 
@@ -75,22 +88,21 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
 bool HttpServer::ProcessRequest(mirants::Buffer* buf, Request* request) {
   bool ok = true;
   bool flag = true;
-  int state = 0;
   while (flag) {
-    if (state == 0) {
+    if (request->state() == 0) {
       const char* crlf = buf->FindCRLF();
       if (crlf) {
         ok = ProcessRequestLine(buf->Peek(), crlf, request);
         if (ok) {
           buf->RetrieveUntil(crlf+2);
-          state = 1;
+          request->set_state(1);
         } else {
           flag = false;
         }
       } else {
         flag = false;
       }
-    } else if (state == 1) {
+    } else if (request->state() == 1) {
       const char* crlf = buf->FindCRLF();
       if (crlf) {
         const char* colon = buf->Peek();
@@ -100,7 +112,7 @@ bool HttpServer::ProcessRequest(mirants::Buffer* buf, Request* request) {
         if (colon != crlf) {
           request->AddHeader(buf->Peek(), colon, crlf);
         } else {
-          state = 2;
+          request->set_state(2);
           flag = false;
         }
         buf->RetrieveUntil(crlf + 2);

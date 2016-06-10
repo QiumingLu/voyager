@@ -78,15 +78,15 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   void SetTcpNoDelay(bool on) { socket_.SetTcpNoDelay(on); }
 
-  void set_context(const any& context) {
+  void SetContext(const any& context) {
     context_ = context;
   }
 
-  const any& context() const {
+  const any& Context() const {
     return context_;
   }
 
-  any* mutable_context() {
+  any* MutableContext() {
     return &context_;
   }
 
