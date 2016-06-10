@@ -82,8 +82,12 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     context_ = context;
   }
 
-  any context() const {
+  const any& context() const {
     return context_;
+  }
+
+  any* mutable_context() {
+    return &context_;
   }
 
  private:
