@@ -14,6 +14,9 @@ install(TARGETS mirants_util DESTINATION lib)
 file(GLOB HEADERS "*.h")
 install(FILES ${HEADERS} DESTINATION include/mirants/util)
 
+add_subdirectory(json)
+add_subdirectory(base64)
+
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)
 endif()
