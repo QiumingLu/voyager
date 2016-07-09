@@ -8,10 +8,6 @@
 
 namespace mirants {
 namespace json {
-  
-struct JsonException {
-        
-};
 
 // 读字符串类
 class JsonReader {

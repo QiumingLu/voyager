@@ -321,7 +321,7 @@ Status Json::GetNum(JsonReader &reader, char head, JsonValuePtr* p) {
     exponential_value = 0 - exponential_value;
   }
   
-  double result = (static_cast<double>(int_value )+ float_value) *
+  double result = (static_cast<double>(int_value)+ float_value) *
                       pow(static_cast<double>(10),
                            static_cast<double>(exponential_value));
   if (is_negative) {
