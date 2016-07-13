@@ -22,17 +22,18 @@ set(CXX_FLAGS
   -Wwrite-strings
   -Wshadow
   -march=native
-  -std=c++0x
-#if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-#  -Wno-sign-conversion
-#endif()
-#if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-#  -rdynamic
-#endif()
+  -std=c++11
+  -Wno-sign-conversion
   )
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND CXX_FLAGS "-rdynamic")
+endif()
+
 if(CMAKE_BUILD_BITS EQUAL 32)
   list(APPEND CXX_FLAGS "-m32")
 endif()
+
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
