@@ -80,6 +80,9 @@ void Dispatch::HandleEventWithGuard() {
       errorfunc_(); 
     }
   }
+#ifndef POLLRDHUP
+  const int POLLRDHUP = 0;
+#endif
   if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
     if (readfunc_) { 
       readfunc_(); 

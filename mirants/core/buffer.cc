@@ -17,7 +17,7 @@ ssize_t Buffer::ReadV(int socketfd, int& err) {
   char backup_buf[kBackupBufferSize];
   struct iovec iov[2];
   const size_t writable_size = WritableSize();
-  iov[0].iov_base = &*(buf_.begin() + write_index_);
+  iov[0].iov_base = &*(buf_.begin() + SafeCast(write_index_));
   iov[0].iov_len = writable_size;
   iov[1].iov_base = backup_buf;
   iov[1].iov_len = sizeof(backup_buf);
@@ -26,10 +26,10 @@ ssize_t Buffer::ReadV(int socketfd, int& err) {
   if (n < 0) {
     err = errno;
   } else if (static_cast<size_t>(n) <= writable_size) {
-    write_index_ += n;
+    write_index_ += static_cast<const size_t>(n);
   } else {
     write_index_ = buf_.size();
-    Append(backup_buf, n - writable_size);
+    Append(backup_buf, static_cast<const size_t>(n) - writable_size);
   }
   return n;
 }

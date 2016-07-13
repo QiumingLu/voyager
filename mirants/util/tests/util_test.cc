@@ -39,10 +39,10 @@ TEST(SliceTest, TestSlice) {
 }
 
 TEST(StatusTest, TestStatus) {
-  Status st(std::move(Status::OK()));
+  Status st(Status::OK());
   ASSERT_EQ(st.ok(), true);
   Status st2 = st;
-  st2 = std::move(Status::NotFound("test status"));
+  st2 = Status::NotFound("test status");
   ASSERT_EQ(st2.IsNotFound(), true);
   Status st3(Status::Corruption("test status"));
   MIRANTS_LOG(INFO) << st3.ToString();
@@ -80,11 +80,11 @@ TEST(StringUtilTest, TestStringUtil) {
   ASSERT_EQ(ToUpper(s), "OKOKOKOKOK");
 
   std::string s1 = "ok ok ok ok ok";
-  std::vector<std::string> v = std::move(Split(s1, " "));
+  std::vector<std::string> v = Split(s1, " ");
   std::string s2;
   JoinStrings(v, " ", &s2);
   ASSERT_EQ(s1, s2);
-  std::string s3 = std::move(StringReplace(s2, "ok", "OK", true));
+  std::string s3 = StringReplace(s2, "ok", "OK", true);
   std::string s4 = "OK OK OK OK OK";
   ASSERT_EQ(s3, s4);
   std::string s5 = "   hhhh";

@@ -77,6 +77,8 @@
 #define CHARPAD '\0'
 #endif
 
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 int modp_b64_encode(char* dest, const char* str, int len)
 {
     int i;

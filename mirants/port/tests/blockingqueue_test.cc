@@ -31,7 +31,7 @@ class BlockingQueueTest {
     printf("waiting for count down latch...\n");
     latch_.Wait();
     for (int i = 1; i <= num; ++i) {
-      std::string task(std::move(StringPrintf("task %d", i)));
+      std::string task(StringPrintf("task %d", i));
       queue_.Put(task);
       printf("tid=%d, put task = %s, queue's size = %zd\n",
              CurrentThread::Tid(), task.c_str(), queue_.Size());

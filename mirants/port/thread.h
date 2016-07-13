@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "mirants/port/atomic.h"
 

@@ -137,7 +137,7 @@ inline std::string& modp_b64_encode(std::string& s)
     int d = modp_b64_encode(const_cast<char*>(x.data()),
                             s.data(),
                             static_cast<int>(s.size()));
-    x.erase(d, std::string::npos);
+    x.erase(static_cast<size_t>(d), std::string::npos);
     s.swap(x);
     return s;
 }
@@ -160,7 +160,7 @@ inline std::string& modp_b64_decode(std::string& s)
     if (d < 0) {
         x.clear();
     } else {
-        x.erase(d, std::string::npos);
+        x.erase(static_cast<size_t>(d), std::string::npos);
     }
     s.swap(x);
     return s;

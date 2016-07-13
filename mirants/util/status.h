@@ -3,6 +3,7 @@
 
 #include <string>
 #include "mirants/util/slice.h"
+#include <iostream>
 
 namespace mirants {
 
@@ -74,6 +75,7 @@ inline Status::Status(const Status& s) {
 inline Status::Status(Status&& s) {
   state_ = (s.state_ == NULL) ? NULL : s.state_;
   s.state_ = NULL;
+  std::cout << "test" << "\n";
 }
 
 inline void Status::operator=(const Status& s) {

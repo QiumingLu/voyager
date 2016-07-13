@@ -91,7 +91,7 @@ ThreadPool::Task ThreadPool::TakeTask() {
 
 void ThreadPool::ThreadEntry() {
   while (running_) {
-    Task t(std::move(TakeTask()));
+    Task t(TakeTask());
     if (t) {
       t();
     }

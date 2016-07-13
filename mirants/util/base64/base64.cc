@@ -13,7 +13,7 @@ bool Base64Encode(const std::string& input, std::string* output) {
   if (d < 0) {
     return false;
   }
-  x.erase(d, std::string::npos);
+  x.erase(static_cast<size_t>(d), std::string::npos);
   output->swap(x);
   return true;
 }
@@ -26,7 +26,7 @@ bool Base64Decode(const std::string& input, std::string* output) {
   if (d < 0) {
     return false;
   }
-  x.erase(d, std::string::npos);
+  x.erase(static_cast<size_t>(d), std::string::npos);
   output->swap(x);
   return true;
 }

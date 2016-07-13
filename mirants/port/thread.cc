@@ -5,7 +5,11 @@
 #include <assert.h>
 
 #include <sys/syscall.h>
-#include <unistd.h>
+
+#ifndef __MACH__
+#include <linux/unistd.h>
+#include <sys/prctl.h>
+#endif
 
 #include "mirants/util/logging.h"
 #include "mirants/port/currentthread.h"
@@ -22,9 +26,15 @@ __thread const char* thread_name = "unknow";
 
 namespace {
 
+#ifdef __MACH__
+pid_t GetTid() {
+  return static_cast<pid_t>(pthread_mach_thread_np(pthread_self()));
+}
+#else
 pid_t GetTid() {
   return static_cast<pid_t>(::syscall(SYS_gettid));
 }
+#endif
 
 void AfterFork() {
   CurrentThread::cached_tid = 0;

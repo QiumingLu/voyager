@@ -5,7 +5,11 @@ set(port_SRCS
   )
 add_library(mirants_port ${port_SRCS})
 
-target_link_libraries(mirants_port pthread rt)
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  target_link_libraries(mirants_port pthread)
+else()
+  target_link_libraries(mirants_port pthread rt)
+endif()
 target_link_libraries(mirants_port mirants_util)
 
 install(TARGETS mirants_port DESTINATION lib)
