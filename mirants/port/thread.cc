@@ -6,8 +6,7 @@
 
 #include <sys/syscall.h>
 
-#ifndef __MACH__
-#include <linux/unistd.h>
+#ifdef __linux__
 #include <sys/prctl.h>
 #endif
 

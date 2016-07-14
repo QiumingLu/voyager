@@ -235,3 +235,9 @@ Bufsize: 16384 Threads: 4 Sessions: 1000
 1568.29 MiB/s throughtput
 
 
+Bufsize: 16384 Threads: 1 Sessions: 10
+187524366284 total bytes written
+187524366284 total bytes read
+1788.37 MiB/s throughtput
+
+
