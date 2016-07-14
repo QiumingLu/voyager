@@ -27,7 +27,7 @@ set(CXX_FLAGS
 
   )
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   list(APPEND CXX_FLAGS "-rdynamic")
 endif()
 
