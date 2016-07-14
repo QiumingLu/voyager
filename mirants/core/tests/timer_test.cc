@@ -18,8 +18,7 @@ namespace mirants {
 class TimerServer {
  public:
   TimerServer(EventLoop* ev, const SockAddr& addr)
-      : ev_(ev),
-        server_(ev, addr, "TimerServer", 4),
+      : server_(ev, addr, "TimerServer", 4),
         num_(0) {
     server_.SetConnectionCallback(
         std::bind(&TimerServer::OnConnect, this, _1));
@@ -62,7 +61,6 @@ class TimerServer {
     MIRANTS_LOG(INFO) << "TimerServer has wrote completely!";
   }
 
-  EventLoop* ev_;
   TcpServer server_;
   int64_t num_;
 };
@@ -81,8 +79,9 @@ int main(int argc, char** argv) {
   mirants::Timer* t3 = ev.RunAt(mirants::Timestamp::Now(),
       std::bind(&mirants::TimerServer::TimerTest, &server));
   (void)t1;
+  (void)t2;
   (void)t3;
   // ev.DeleteTimer(t1);
-  ev.DeleteTimer(t2);
+  // ev.DeleteTimer(t2);
   ev.Loop();
 }

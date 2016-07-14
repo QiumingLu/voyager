@@ -1,7 +1,7 @@
 #ifndef MIRANTS_CORE_EVENT_EPOLL_H_
 #define MIRANTS_CORE_EVENT_EPOLL_H_
 
-#ifndef __MACH__
+#ifdef __linux__
 #include <sys/epoll.h>
 #endif
 
@@ -9,7 +9,7 @@
 
 namespace mirants {
 
-#ifndef __MACH__
+#ifdef __linux__
 
 class EventEpoll : public EventPoller {
  public:

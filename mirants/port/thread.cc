@@ -26,13 +26,13 @@ __thread const char* thread_name = "unknow";
 
 namespace {
 
-#ifdef __MACH__
-pid_t GetTid() {
-  return static_cast<pid_t>(pthread_mach_thread_np(pthread_self()));
-}
-#else
+#ifdef __linux__
 pid_t GetTid() {
   return static_cast<pid_t>(::syscall(SYS_gettid));
+}
+#elif __APPLE__
+pid_t GetTid() {
+  return static_cast<pid_t>(pthread_mach_thread_np(pthread_self()));
 }
 #endif
 

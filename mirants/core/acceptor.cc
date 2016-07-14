@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "mirants/core/sockaddr.h"
 #include "mirants/core/eventloop.h"

@@ -24,10 +24,9 @@ set(CXX_FLAGS
   -march=native
   -std=c++0x
   -Wno-sign-conversion
-
   )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   list(APPEND CXX_FLAGS "-rdynamic")
 endif()
 
@@ -37,18 +36,18 @@ endif()
 
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_COMPILER "clang++")
-else()
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_COMPILER "g++")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_COMPILER "clang++")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
-else() 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

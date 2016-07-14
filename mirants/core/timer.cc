@@ -1,9 +1,11 @@
-#ifndef __MACH__
 #include "mirants/core/timer.h"
 
 #include <stdint.h>
 #include <unistd.h>
+
+#ifdef __linux__
 #include <sys/timerfd.h>
+#endif
 
 #include "mirants/core/eventloop.h"
 #include "mirants/core/socket_util.h"
@@ -11,8 +13,10 @@
 #include "mirants/util/stl_util.h"
 
 namespace mirants {
+
+#ifdef __linux__  
 namespace timeops{
-  
+
 int CreateTimerfd() {
   int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
   if (timerfd == -1) {
@@ -29,7 +33,7 @@ struct timespec FromNow(Timestamp t) {
   }
   struct timespec ts;
   ts.tv_sec = static_cast<time_t>(
-      microseconds/kMicroSecondsPerSecond);
+      microseconds / kMicroSecondsPerSecond);
   ts.tv_nsec = static_cast<long>(
       (microseconds % kMicroSecondsPerSecond) * 1000);
   return ts;
@@ -46,10 +50,26 @@ void SetTimerfd(int fd, Timestamp t) {
   }
 }
 
-}  // namespace timers
+}  // namespace timeops
+
+#elif __APPLE__
+namespace timeops {
+int FromNow(Timestamp t) {
+  int64_t microseconds = t.MicroSecondsSinceEpoch() 
+                         - Timestamp::Now().MicroSecondsSinceEpoch();
+  if (microseconds < 1000) {
+    microseconds = 1000;
+  }
+  return static_cast<int>(microseconds / 1000);
+}
+
+}  // namespace timeops
+#endif
+
 
 port::SequenceNumber TimerEvent::seq_;
 
+#ifdef __linux__
 TimerEvent::TimerEvent(EventLoop* ev)
     : eventloop_(ev),
       timerfd_(timeops::CreateTimerfd()),
@@ -65,6 +85,17 @@ TimerEvent::~TimerEvent() {
   sockets::CloseFd(timerfd_);
   STLDeleteValues(&timers_);
 }
+
+#elif __APPLE__
+TimerEvent::TimerEvent(EventLoop* ev)
+    : eventloop_(ev),
+      calling_(false) {
+}
+
+TimerEvent::~TimerEvent() {
+  STLDeleteValues(&timers_);
+}
+#endif
 
 Timer* TimerEvent::AddTimer(const TimeProcCallback& func,
                              Timestamp t,
@@ -89,6 +120,7 @@ void TimerEvent::DeleteTimer(Timer* timer) {
       std::bind(&TimerEvent::DeleteTimerInLoop, this, timer));
 }
 
+#ifdef __linux__
 void TimerEvent::AddTimerInLoop(Timer* timer) {
   eventloop_->AssertThreadSafe();
   bool isreset = Add(timer);
@@ -96,6 +128,12 @@ void TimerEvent::AddTimerInLoop(Timer* timer) {
     timeops::SetTimerfd(timerfd_, timer->time);
   }
 }
+#elif __APPLE__
+void TimerEvent::AddTimerInLoop(Timer* timer) {
+  eventloop_->AssertThreadSafe();
+  Add(timer);
+}
+#endif 
 
 void TimerEvent::DeleteTimerInLoop(Timer* timer) {
   eventloop_->AssertThreadSafe();
@@ -109,6 +147,7 @@ void TimerEvent::DeleteTimerInLoop(Timer* timer) {
   }
 }
 
+#ifdef __linux__
 void TimerEvent::HandleRead() {
   eventloop_->AssertThreadSafe();
   uint64_t exp;
@@ -128,6 +167,31 @@ void TimerEvent::HandleRead() {
 
   Next(res, now);
 }
+
+#elif __APPLE__
+void TimerEvent::HandleTimers() {
+  eventloop_->AssertThreadSafe();
+  Timestamp now = Timestamp::Now();
+  std::vector<Timer*> res(GetExpired(now));
+
+  calling_ = true;
+  for (std::vector<Timer*>::iterator it = res.begin(); it != res.end(); ++it) {
+    (*it)->timeproc();
+  }
+  calling_ = false;
+
+  Next(res, now);
+}
+
+int TimerEvent::GetTimeout() const {
+  eventloop_->AssertThreadSafe();
+  if (timers_.empty()) {
+    return 100000;
+  } else {
+    return timeops::FromNow(timers_.begin()->second->time);
+  }
+}
+#endif
 
 std::vector<Timer*> TimerEvent::GetExpired(Timestamp now) {
   std::vector<Timer*> res;
@@ -155,9 +219,11 @@ void TimerEvent::Next(const std::vector<Timer*>& expired, Timestamp now) {
   if (!timers_.empty()) {
     next_time = timers_.begin()->second->time;
   }
+#ifdef __linux__
   if (next_time.Valid()) {
     timeops::SetTimerfd(timerfd_, next_time);
   }
+#endif
 }
 
 bool TimerEvent::Add(Timer* timer) {
@@ -175,5 +241,3 @@ bool TimerEvent::Add(Timer* timer) {
 }
 
 }  // namespace mirants
-
-#endif

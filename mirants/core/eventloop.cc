@@ -1,13 +1,17 @@
 #include "mirants/core/eventloop.h"
 
 #include <signal.h>
-#ifndef __MACH__
+#ifdef __linux__
 #include <sys/eventfd.h>
 #endif
 #include <unistd.h>
 
 #include "mirants/core/dispatch.h"
+#ifdef __linux__
+#include "mirants/core/event_epoll.h"
+#elif __APPLE__
 #include "mirants/core/event_poll.h"
+#endif
 #include "mirants/core/socket_util.h"
 #include "mirants/port/mutexlock.h"
 #include "mirants/util/logging.h"
@@ -18,9 +22,7 @@ namespace {
 
 __thread EventLoop* t_eventloop = NULL;
 
-const int kPollTime = 10*1000;
-
-#ifndef __MACH__
+#ifdef __linux__
 int CreateEventfd() {
   int fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   if (fd < 0) {
@@ -46,13 +48,12 @@ EventLoop* EventLoop::GetEventLoopOfCurrentThread() {
   return t_eventloop;
 }
 
-#ifndef __MACH__
-
+#ifdef __linux__
 EventLoop::EventLoop()
     : exit_(false),
       runfuncqueue_(false),
       tid_(port::CurrentThread::Tid()),
-      poller_(new EventPoll(this)),
+      poller_(new EventEPoll(this)),
       timer_ev_(new TimerEvent(this)),
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
@@ -68,9 +69,7 @@ EventLoop::EventLoop()
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
   wakeup_dispatch_->EnableRead();
 }
-
-#else
-
+#elif __APPLE__
 EventLoop::EventLoop()
     : exit_(false),
       runfuncqueue_(false),
@@ -94,10 +93,7 @@ EventLoop::EventLoop()
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
   wakeup_dispatch_->EnableRead();
 }
-
 #endif
-
-
 
 EventLoop::~EventLoop() {
   MIRANTS_LOG(INFO) << "EventLoop " << this << " of thread " << tid_
@@ -105,9 +101,9 @@ EventLoop::~EventLoop() {
   
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
-#ifndef __MACH__
+#ifdef __linux__
   ::close(wakeup_fd_);
-#else
+#elif __APPLE__
   ::close(wakeup_fd_[0]);
   ::close(wakeup_fd_[1]);
 #endif
@@ -120,7 +116,16 @@ void EventLoop::Loop() {
 
   while(!exit_) {
     std::vector<Dispatch*> dispatches;
+
+#ifdef __linux__
+    static const int kPollTime = 10*1000;
     poller_->Poll(kPollTime, &dispatches);
+#elif __APPLE__
+    int t = timer_ev_->GetTimeout();
+    poller_->Poll(t, &dispatches);
+    timer_ev_->HandleTimers();
+#endif
+
     for (std::vector<Dispatch*>::iterator it = dispatches.begin();
         it != dispatches.end(); ++it) {
       (*it)->HandleEvent();
@@ -181,7 +186,6 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-#ifndef __MACH__
 Timer* EventLoop::RunAt(const Timestamp& t, const TimeProcCallback& timeproc) {
   return timer_ev_->AddTimer(timeproc, t, 0.0);
 }
@@ -213,7 +217,6 @@ Timer* EventLoop::RunEvery(double interval, TimeProcCallback&& timeproc) {
 void EventLoop::DeleteTimer(Timer* t) {
   timer_ev_->DeleteTimer(t);
 }
-#endif
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
@@ -249,9 +252,9 @@ void EventLoop::RunFuncQueue() {
 
 void EventLoop::WakeUp() {
   uint64_t one = 1;
-#ifndef __MACH__
+#ifdef __linux__
   ssize_t n  = sockets::Write(wakeup_fd_, &one, sizeof(one));
-#else
+#elif __APPLE__
     ssize_t n  = sockets::Write(wakeup_fd_[1], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
@@ -262,9 +265,9 @@ void EventLoop::WakeUp() {
 
 void EventLoop::HandleRead() {
   uint64_t one = 1;
-#ifndef __MACH__
+#ifdef __linux__
   ssize_t n = sockets::Read(wakeup_fd_, &one, sizeof(one));
-#else
+#elif __APPLE__
     ssize_t n = sockets::Read(wakeup_fd_[0], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {

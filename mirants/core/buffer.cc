@@ -1,6 +1,8 @@
 #include "mirants/core/buffer.h"
 
 #include <sys/uio.h>
+#include <errno.h>
+
 #include "mirants/core/socket_util.h"
 
 namespace mirants {

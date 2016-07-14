@@ -7,7 +7,6 @@ set(core_SRCS
   eventloop_thread.cc
   eventloop_threadpool.cc
   event_epoll.cc
-  event_epoll.cc
   event_poll.cc
   event_poller.cc
   event_select.cc

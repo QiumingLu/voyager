@@ -7,13 +7,13 @@
 
 #include "mirants/core/buffer.h"
 #include "mirants/core/callback.h"
+#include "mirants/core/dispatch.h"
 #include "mirants/core/tcp_socket.h"
 #include "mirants/util/scoped_ptr.h"
 #include "mirants/util/any.h"
 
 namespace mirants {
 
-class Dispatch;
 class EventLoop;
 class Slice;
 

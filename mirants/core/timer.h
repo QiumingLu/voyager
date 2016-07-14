@@ -15,7 +15,7 @@ struct Timer {
   TimeProcCallback timeproc;
   Timestamp time;
   double interval;
-  int64_t timer_id;
+  int64_t timer_id;  
   bool repeat;
 
   Timer(const TimeProcCallback& func, Timestamp t, double inter, int64_t id)
@@ -47,19 +47,32 @@ class TimerEvent {
   Timer* AddTimer(TimeProcCallback&& func, Timestamp t, double interval);
   void DeleteTimer(Timer* timer);
 
+#ifdef __APPLE__
+  int GetTimeout() const;
+  void HandleTimers();
+#endif
+
  private:
   typedef std::pair<Timestamp, Timer*> Entry;
 
   void AddTimerInLoop(Timer* timer);
   void DeleteTimerInLoop(Timer* timer);
+
+#ifdef __linux__
   void HandleRead();
+#endif
+
   std::vector<Timer*> GetExpired(Timestamp now);
   void Next(const std::vector<Timer*>& expired, Timestamp now);
   bool Add(Timer* timer);
   
   EventLoop* eventloop_;
+
+#ifdef __linux__
   const int timerfd_;
   Dispatch dispatch_;
+#endif
+
   bool calling_;
   std::set<Entry> timers_;
   std::set<Timer*> delete_timers_;

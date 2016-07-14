@@ -5,10 +5,10 @@ set(port_SRCS
   )
 add_library(mirants_port ${port_SRCS})
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_link_libraries(mirants_port pthread)
-else()
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   target_link_libraries(mirants_port pthread rt)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  target_link_libraries(mirants_port pthread)
 endif()
 target_link_libraries(mirants_port mirants_util)
 

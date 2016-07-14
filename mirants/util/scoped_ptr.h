@@ -12,7 +12,7 @@ template<typename T> class scoped_array;
 template<typename T>
 class scoped_ptr {
  public:
-  typedef T value_type;
+  typedef T element_type;
 
   explicit scoped_ptr(T* p = NULL) : ptr_(p) { }
   ~scoped_ptr() {
@@ -70,7 +70,7 @@ class scoped_ptr {
 template<typename T>
 class scoped_array {
  public:
-  typedef T value_type;
+  typedef T element_type;
 
   explicit scoped_array(T* p = NULL) : array_(p) { }
   ~scoped_array() {

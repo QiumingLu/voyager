@@ -113,12 +113,12 @@ void Connector::Retry(int socketfd) {
   if (connect_) {
     MIRANTS_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.IP() << " in " << retry_time_ << " seconds.";
-#ifndef __MACH__
+#ifdef __linux__
     ev_->RunAfter(retry_time_, 
                   std::bind(&Connector::StartInLoop, shared_from_this()));
     retry_time_ = 
         (retry_time_*2) < kMaxRetryTime ? retry_time_*2 : kMaxRetryTime;
-#else
+#elif __APPLE__
     ev_->QueueInLoop(std::bind(&Connector::StartInLoop, shared_from_this()));
 #endif
   }

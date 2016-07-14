@@ -4,6 +4,7 @@
 #include "mirants/core/socket_util.h"
 #include "mirants/util/logging.h"
 #include "mirants/util/slice.h"
+#include <errno.h>
 
 namespace mirants {
 

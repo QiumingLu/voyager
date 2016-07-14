@@ -68,7 +68,7 @@ std::pair<uint64_t, uint64_t> RunOnce() {
   uint64_t sub_time = te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch();
   std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
 
-  fprintf(stdout, "%8ld %8ld\n", total_time, sub_time);
+  fprintf(stdout, "%8lld %8lld\n", total_time, sub_time);
 
   return t;
 }
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  fprintf(stdout, "TotolTime: %8ld, SubTime: %8ld\n", total_times/24, sub_times/24);
+  fprintf(stdout, "TotolTime: %8lld, SubTime: %8lld\n", total_times/24, sub_times/24);
 
   for (i = 0; i < dispatch_size; ++i) {
     dispatches[i]->DisableAll();

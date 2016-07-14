@@ -16,7 +16,8 @@ EventPoll::~EventPoll() {
 }
 
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  int ret = ::poll(&(*pollfds_.begin()), static_cast<nfds_t>(pollfds_.size()), timeout);
+  int ret = ::poll(&(*pollfds_.begin()), 
+                   static_cast<nfds_t>(pollfds_.size()), timeout);
   int err = errno;
   if (ret == -1) {
     if (err != EINTR) {
@@ -81,7 +82,8 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
     assert(pollfds_[idx].fd == dispatch->Fd() || 
            pollfds_[idx].fd == -dispatch->Fd()-1);
-    pollfds_[static_cast<size_t>(idx)].events = static_cast<short>(dispatch->Events());
+    pollfds_[static_cast<size_t>(idx)].events 
+        = static_cast<short>(dispatch->Events());
     pollfds_[static_cast<size_t>(idx)].revents = 0;
     if (dispatch->IsNoneEvent()) {
       // ignore this pollfd

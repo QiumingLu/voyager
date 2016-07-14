@@ -8,7 +8,7 @@
 
 namespace mirants {
 
-#ifndef __MACH__
+#ifdef __linux__
 
 const static int kNew = -1;
 const static int kAdded = 1;
