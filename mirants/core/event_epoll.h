@@ -1,11 +1,15 @@
 #ifndef MIRANTS_CORE_EVENT_EPOLL_H_
 #define MIRANTS_CORE_EVENT_EPOLL_H_
 
+#ifndef __MACH__
 #include <sys/epoll.h>
+#endif
 
 #include "mirants/core/event_poller.h"
 
 namespace mirants {
+
+#ifndef __MACH__
 
 class EventEpoll : public EventPoller {
  public:
@@ -24,6 +28,8 @@ class EventEpoll : public EventPoller {
   int epollfd_;
   std::vector<struct epoll_event> epollfds_;
 };
+
+#endif
 
 }  // namespace mirants
 

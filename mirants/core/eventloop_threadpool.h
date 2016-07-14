@@ -29,7 +29,7 @@ class EventLoopThreadPool {
   std::string poolname_;
   int size_;
   bool started_;
-  int next_;
+  size_t next_;
   
   scoped_array<scoped_ptr<EventLoopThread> > threads_;
   std::vector<EventLoop*> eventloops_;

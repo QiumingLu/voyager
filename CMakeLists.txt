@@ -23,16 +23,18 @@ set(CXX_FLAGS
   -Wshadow
   -march=native
   -std=c++0x
-#if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-#  -Wno-sign-conversion
-#endif()
-#if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-#  -rdynamic
-#endif()
+  -Wno-sign-conversion
+
   )
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  list(APPEND CXX_FLAGS "-rdynamic")
+endif()
+
 if(CMAKE_BUILD_BITS EQUAL 32)
   list(APPEND CXX_FLAGS "-m32")
 endif()
+
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -62,6 +64,7 @@ add_subdirectory(mirants/port)
 add_subdirectory(mirants/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
+  add_subdirectory(examples/cache)
   add_subdirectory(examples/sudoku)
   add_subdirectory(examples/pingpong)
   add_subdirectory(examples/http)

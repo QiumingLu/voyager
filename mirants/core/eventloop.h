@@ -4,7 +4,9 @@
 #include <functional>
 #include <vector>
 
+#ifndef __MACH__
 #include "mirants/core/timer.h"
+#endif
 #include "mirants/util/scoped_ptr.h"
 #include "mirants/port/currentthread.h"
 #include "mirants/port/mutex.h"
@@ -26,6 +28,7 @@ class EventLoop {
   void QueueInLoop(const Func& func);
   void QueueInLoop(Func&& func);
 
+#ifndef __MACH__
   Timer* RunAt(const Timestamp& t, const TimeProcCallback& timeproc);
   Timer* RunAfter(double delay, const TimeProcCallback& timeproc);
   Timer* RunEvery(double interval, const TimeProcCallback& timeproc);
@@ -35,6 +38,7 @@ class EventLoop {
   Timer* RunEvery(double interval, TimeProcCallback&& timeproc);
 
   void DeleteTimer(Timer* t);
+#endif
 
   // internal usage
   void WakeUp();
@@ -65,9 +69,12 @@ class EventLoop {
   const pid_t tid_;
   scoped_ptr<EventPoller> poller_;
 
+  #ifndef __MACH__
   scoped_ptr<TimerEvent> timer_ev_;
-  
   int wakeup_fd_;
+  #else
+  int wakeup_fd_[2];
+  #endif
   scoped_ptr<Dispatch> wakeup_dispatch_;
 
   port::Mutex mu_;

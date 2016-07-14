@@ -128,7 +128,7 @@ void TcpConnection::HandleWrite() {
                                writebuf_.ReadableSize());
     int err = errno;
     if (n > 0) {
-      writebuf_.Retrieve(n);
+      writebuf_.Retrieve(static_cast<size_t>(n));
       if (writebuf_.ReadableSize() == 0) {
         dispatch_->DisableWrite();
         if (writecomplete_cb_) {
@@ -224,7 +224,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     nwrote = sockets::Write(dispatch_->Fd(), data, size);
     int err = errno;
     if (nwrote >= 0) {
-      remaining = size - nwrote;
+      remaining = size - static_cast<size_t>(nwrote);
       if (remaining == 0 && writecomplete_cb_) {
         eventloop_->QueueInLoop(
             std::bind(writecomplete_cb_, shared_from_this()));

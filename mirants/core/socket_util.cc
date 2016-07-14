@@ -267,14 +267,14 @@ int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size) {
 }
 
 int FormatPeer(int socketfd, char* buf, size_t buf_size) {
-  struct sockaddr_storage sa(std::move(PeerSockAddr(socketfd)));
+  struct sockaddr_storage sa(PeerSockAddr(socketfd));
   return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
                           buf, 
                           buf_size);
 }
 
 int FormatLocal(int socketfd, char* buf, size_t buf_size) {
-  struct  sockaddr_storage sa(std::move(LocalSockAddr(socketfd)));
+  struct  sockaddr_storage sa(LocalSockAddr(socketfd));
   return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
                           buf, 
                           buf_size);

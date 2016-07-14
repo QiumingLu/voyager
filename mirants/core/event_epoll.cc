@@ -6,13 +6,13 @@
 #include "mirants/core/socket_util.h"
 #include "mirants/util/logging.h"
 
-namespace {
-const int kNew = -1;
-const int kAdded = 1;
-const int kDeleted = 2;
-}
-
 namespace mirants {
+
+#ifndef __MACH__
+
+const static int kNew = -1;
+const static int kAdded = 1;
+const static int kDeleted = 2;
 
 EventEpoll::EventEpoll(EventLoop* ev) 
     : EventPoller(ev),
@@ -102,5 +102,7 @@ void EventEpoll::EpollCTL(int op, Dispatch* dispatch) {
     MIRANTS_LOG(ERROR) << "epoll_wait: " << strerror(errno) << " fd=" << fd;
   }
 }
+
+#endif
 
 }  // namespace mirants

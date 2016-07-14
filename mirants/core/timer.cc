@@ -1,3 +1,4 @@
+#ifndef __MACH__
 #include "mirants/core/timer.h"
 
 #include <stdint.h>
@@ -174,3 +175,5 @@ bool TimerEvent::Add(Timer* timer) {
 }
 
 }  // namespace mirants
+
+#endif

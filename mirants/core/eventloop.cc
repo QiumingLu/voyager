@@ -1,11 +1,13 @@
 #include "mirants/core/eventloop.h"
 
 #include <signal.h>
+#ifndef __MACH__
 #include <sys/eventfd.h>
+#endif
 #include <unistd.h>
 
 #include "mirants/core/dispatch.h"
-#include "mirants/core/event_epoll.h"
+#include "mirants/core/event_poll.h"
 #include "mirants/core/socket_util.h"
 #include "mirants/port/mutexlock.h"
 #include "mirants/util/logging.h"
@@ -18,6 +20,7 @@ __thread EventLoop* t_eventloop = NULL;
 
 const int kPollTime = 10*1000;
 
+#ifndef __MACH__
 int CreateEventfd() {
   int fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   if (fd < 0) {
@@ -26,6 +29,7 @@ int CreateEventfd() {
   }
   return fd;
 }
+#endif
 
 class IgnoreSIGPIPE {
  public:
@@ -42,11 +46,13 @@ EventLoop* EventLoop::GetEventLoopOfCurrentThread() {
   return t_eventloop;
 }
 
+#ifndef __MACH__
+
 EventLoop::EventLoop()
     : exit_(false),
       runfuncqueue_(false),
       tid_(port::CurrentThread::Tid()),
-      poller_(new EventEpoll(this)),
+      poller_(new EventPoll(this)),
       timer_ev_(new TimerEvent(this)),
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
@@ -63,13 +69,48 @@ EventLoop::EventLoop()
   wakeup_dispatch_->EnableRead();
 }
 
+#else
+
+EventLoop::EventLoop()
+    : exit_(false),
+      runfuncqueue_(false),
+      tid_(port::CurrentThread::Tid()),
+      poller_(new EventPoll(this)),
+      timer_ev_(new TimerEvent(this)) {
+
+  if (::socketpair(AF_UNIX, SOCK_STREAM, 0, wakeup_fd_) < 0) {
+    MIRANTS_LOG(FATAL) << "socketpair failed";
+  }
+  wakeup_dispatch_.reset(new Dispatch(this, wakeup_fd_[0]));
+
+  MIRANTS_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
+  if (t_eventloop) {
+    MIRANTS_LOG(FATAL) << "Another EventLoop " << t_eventloop
+                       << " exists in this thread " << tid_;
+  } else {
+    t_eventloop = this;
+  }
+
+  wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
+  wakeup_dispatch_->EnableRead();
+}
+
+#endif
+
+
+
 EventLoop::~EventLoop() {
   MIRANTS_LOG(INFO) << "EventLoop " << this << " of thread " << tid_
                      << " destructs in thread " << port::CurrentThread::Tid();
   
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
+#ifndef __MACH__
   ::close(wakeup_fd_);
+#else
+  ::close(wakeup_fd_[0]);
+  ::close(wakeup_fd_[1]);
+#endif
   t_eventloop = NULL;  
 }
 
@@ -140,6 +181,7 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
+#ifndef __MACH__
 Timer* EventLoop::RunAt(const Timestamp& t, const TimeProcCallback& timeproc) {
   return timer_ev_->AddTimer(timeproc, t, 0.0);
 }
@@ -171,6 +213,7 @@ Timer* EventLoop::RunEvery(double interval, TimeProcCallback&& timeproc) {
 void EventLoop::DeleteTimer(Timer* t) {
   timer_ev_->DeleteTimer(t);
 }
+#endif
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
@@ -206,7 +249,11 @@ void EventLoop::RunFuncQueue() {
 
 void EventLoop::WakeUp() {
   uint64_t one = 1;
+#ifndef __MACH__
   ssize_t n  = sockets::Write(wakeup_fd_, &one, sizeof(one));
+#else
+    ssize_t n  = sockets::Write(wakeup_fd_[1], &one, sizeof(one));
+#endif
   if (n != sizeof(one)) {
     MIRANTS_LOG(ERROR) << "EventLoop::WakeUp - " << wakeup_fd_ << " writes "
                        << n << " bytes instead of 8";
@@ -215,7 +262,11 @@ void EventLoop::WakeUp() {
 
 void EventLoop::HandleRead() {
   uint64_t one = 1;
+#ifndef __MACH__
   ssize_t n = sockets::Read(wakeup_fd_, &one, sizeof(one));
+#else
+    ssize_t n = sockets::Read(wakeup_fd_[0], &one, sizeof(one));
+#endif
   if (n != sizeof(one)) {
     MIRANTS_LOG(ERROR) << "EventLoop::HandleRead - " << wakeup_fd_ << " reads "
                        << n << " bytes instead of 8";
