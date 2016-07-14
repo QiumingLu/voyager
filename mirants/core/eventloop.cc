@@ -115,14 +115,15 @@ void EventLoop::Loop() {
   exit_ = false;
 
   while(!exit_) {
+    static const int kPollTime = 10*1000;
     std::vector<Dispatch*> dispatches;
 
 #ifdef __linux__
-    static const int kPollTime = 10*1000;
     poller_->Poll(kPollTime, &dispatches);
 #elif __APPLE__
     int t = timer_ev_->GetTimeout();
-    poller_->Poll(t, &dispatches);
+    int temp = std::min(t, kPollTime);
+    poller_->Poll(temp, &dispatches);
     timer_ev_->HandleTimers();
 #endif
 
