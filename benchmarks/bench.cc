@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -68,7 +69,7 @@ std::pair<uint64_t, uint64_t> RunOnce() {
   uint64_t sub_time = te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch();
   std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
 
-  fprintf(stdout, "%8lld %8lld\n", total_time, sub_time);
+  fprintf(stdout, "%8" PRId64 "%8" PRId64 "\n", total_time, sub_time);
 
   return t;
 }
@@ -149,7 +150,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  fprintf(stdout, "TotolTime: %8lld, SubTime: %8lld\n", total_times/24, sub_times/24);
+  fprintf(stdout, "TotolTime: %8" PRId64 ", SubTime: %8" PRId64 "\n", total_times/24, sub_times/24);
 
   for (i = 0; i < dispatch_size; ++i) {
     dispatches[i]->DisableAll();
