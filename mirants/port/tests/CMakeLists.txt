@@ -1,4 +1,3 @@
-add_executable(atomic_test atomic_test.cc)
 add_executable(thread_test thread_test.cc)
 add_executable(singleton_test singleton_test.cc)
 add_executable(blockingqueue_test blockingqueue_test.cc)
@@ -8,7 +7,6 @@ add_executable(threadlocalstorage_singleton_test
                threadlocalstorage_singleton_test.cc)
 add_executable(threadpool_test threadpool_test.cc)
 
-target_link_libraries(atomic_test mirants_port)
 target_link_libraries(thread_test mirants_port)
 target_link_libraries(singleton_test mirants_port)
 target_link_libraries(blockingqueue_test mirants_port)

@@ -1,13 +1,12 @@
 #ifndef MIRANTS_PORT_THREAD_H_
 #define MIRANTS_PORT_THREAD_H_
 
+#include <atomic>
 #include <functional>
 #include <string>
 #include <utility>
 #include <pthread.h>
 #include <unistd.h>
-
-#include "mirants/port/atomic.h"
 
 namespace mirants {
 namespace port {
@@ -26,8 +25,8 @@ class Thread {
   bool Joined() const { return joined_; }
   pid_t Tid() const { return tid_; }
   const std::string& Name() const { return name_; }
-  static Atomic32 ThreadCreatedNum() { 
-    return mirants::port::AtomicGet(&num_);
+  static int ThreadCreatedNum() { 
+    return num_.load(std::memory_order_relaxed);
   }
 
  private:
@@ -40,7 +39,7 @@ class Thread {
   pid_t tid_;
   ThreadFunc func_;
   std::string name_;
-  static Atomic32 num_;
+  static std::atomic<int> num_;
 
   // No copying allow
   Thread(const Thread&);

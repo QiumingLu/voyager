@@ -1,23 +1,22 @@
 #ifndef MIRANTS_ATOMIC_SEQUENCE_NUM_H_
 #define MIRANTS_ATOMIC_SEQUENCE_NUM_H_
 
-#include <stdint.h> 
+#include <atomic>
 
 namespace mirants {
 namespace port {
 
 class SequenceNumber {
  public:
-  typedef intptr_t AtomicInt;
 
   SequenceNumber() : num_(0) { }
 
-  AtomicInt GetNext() {
-    return __atomic_add_fetch(&num_, 1, __ATOMIC_RELAXED) - 1;
+  int GetNext() {
+    return num_++;
   }
 
  private:
-  AtomicInt num_;
+  std::atomic<int> num_;
 };
 
 }  // namespace port

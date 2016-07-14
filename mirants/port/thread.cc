@@ -88,7 +88,6 @@ bool CurrentThread::IsMainThread() {
   return Tid() == ::getpid();
 }
 
-Atomic32 Thread::num_;
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
      : started_(false),
@@ -100,6 +99,8 @@ Thread::Thread(const ThreadFunc& func, const std::string& name)
 {
   SetDefaultName();
 }
+
+std::atomic<int> Thread::num_;
 
 Thread::Thread(ThreadFunc&& func, const std::string& name) 
      : started_(false),
@@ -119,10 +120,10 @@ Thread::~Thread() {
 }
 
 void Thread::SetDefaultName() {
-  int num = mirants::port::AtomicIncr(&num_, 1);
+  ++num_;
   if (name_.empty()) {
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "Thread %d", num);
+    snprintf(buffer, sizeof(buffer), "Thread %d", num_.load(std::memory_order_relaxed));
     name_ = buffer;
   }
 }
