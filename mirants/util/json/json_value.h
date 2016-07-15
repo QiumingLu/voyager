@@ -37,6 +37,11 @@ class JsonValueString : public JsonValue {
   virtual ~JsonValueString() { }
         
   JsonType GetType() const { return kJsonTypeString; }
+
+  void SetValue(const std::string& s) { value_ = s; }
+
+  void SetValue(std::string&& s) { value_ = std::move(s); }
+
   const std::string& Value() const { return value_; }
         
  private:
@@ -51,7 +56,14 @@ class JsonValueNum : public JsonValue {
   virtual ~JsonValueNum() { }
         
   JsonType GetType () const { return kJsontypeNum; }
+
+  void SetValue(double d, bool is_int = false) { 
+    value_ = d; 
+    is_int_ = is_int; 
+  }
+
   double Value() const { return value_; }
+
   bool IsInt() const { return is_int_; }
         
  private:
@@ -65,6 +77,17 @@ class JsonValueObj : public JsonValue {
   virtual ~JsonValueObj() { }
         
   JsonType GetType() const { return kJsonTypeObj; }
+  
+  void insert(const std::string& key, JsonValuePtr p) {
+    value_[key] = p;
+  }
+
+  void SetValue(const std::map<std::string, JsonValuePtr>& m) { value_ = m; }
+
+  void SetValue(std::map<std::string, JsonValuePtr>&& m) { 
+    value_ = std::move(m); 
+  }
+
   const std::map<std::string, JsonValuePtr>& Value() const {
     return value_;
   }
@@ -79,7 +102,13 @@ class JsonValueArray : public JsonValue {
   virtual ~JsonValueArray() { }
         
   JsonType GetType() const { return kJsonTypeArray; }
+
   void push_back(const JsonValuePtr& v) { value_.push_back(v); }
+
+  void SetValue(const std::vector<JsonValuePtr>& v) { value_ = v; }
+
+  void SetValue(std::vector<JsonValuePtr>&& v) { value_ = std::move(v); }
+
   const std::vector<JsonValuePtr>& Value() const {
     return value_;
   }
@@ -92,7 +121,10 @@ class JsonValueArray : public JsonValue {
 class JsonValueBoolean : public JsonValue {
  public:
   virtual ~JsonValueBoolean() { }
+
   JsonType GetType() const { return kJsonTypeBoolean; }
+
+  void SetValue(bool b) { value_ = b; }
   bool Value() const { return value_; }
         
  private:
