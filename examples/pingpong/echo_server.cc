@@ -1,15 +1,15 @@
-#include "mirants/core/tcp_server.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/core/sockaddr.h"
-#include "mirants/core/tcp_connection.h"
-#include "mirants/core/callback.h"
-#include "mirants/util/stringprintf.h"
-#include "mirants/util/logging.h"
+#include "voyager/core/tcp_server.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/core/callback.h"
+#include "voyager/util/stringprintf.h"
+#include "voyager/util/logging.h"
 #include <unistd.h>
 
 using namespace std::placeholders;
 
-namespace mirants {
+namespace voyager {
 
 class EchoServer {
  public:
@@ -39,13 +39,13 @@ class EchoServer {
   TcpServer server_;
 };
 
-}  // namespace mirants
+}  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%d\n", getpid(), mirants::port::CurrentThread::Tid());
-  mirants::EventLoop ev;
-  mirants::SockAddr addr(5666);
-  mirants::EchoServer server(&ev, addr);
+  printf("pid=%d, tid=%d\n", getpid(), voyager::port::CurrentThread::Tid());
+  voyager::EventLoop ev;
+  voyager::SockAddr addr(5666);
+  voyager::EchoServer server(&ev, addr);
   server.Start();
   ev.Loop();
   return 0;

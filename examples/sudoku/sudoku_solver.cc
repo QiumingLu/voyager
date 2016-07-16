@@ -2,11 +2,11 @@
 
 #include <assert.h>
 
-#include "mirants/util/slice.h"
-#include "mirants/util/logging.h"
+#include "voyager/util/slice.h"
+#include "voyager/util/logging.h"
 namespace sudoku {
 
-SudokuSolver::SudokuSolver(const mirants::Slice& s) {
+SudokuSolver::SudokuSolver(const voyager::Slice& s) {
   memset(rows_, false, sizeof(rows_));
   memset(cols_, false, sizeof(cols_));
   memset(subboard_, false, sizeof(subboard_));

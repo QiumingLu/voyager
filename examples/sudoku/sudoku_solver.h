@@ -1,14 +1,14 @@
-#ifndef MIRANTS_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
-#define MIRANTS_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#ifndef VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#define VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
 
 #include <string>
-#include "mirants/util/slice.h"
+#include "voyager/util/slice.h"
 
 namespace sudoku {
 
 class SudokuSolver {
  public:
-  SudokuSolver(const mirants::Slice& s);
+  SudokuSolver(const voyager::Slice& s);
   SudokuSolver(std::string&& s);
 
   std::string Solve();
@@ -26,4 +26,4 @@ class SudokuSolver {
 
 }  // namespace sudoku
 
-#endif  // MIRANTS_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#endif  // VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_

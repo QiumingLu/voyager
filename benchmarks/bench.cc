@@ -8,12 +8,12 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
-#include "mirants/core/dispatch.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/util/scoped_ptr.h"
-#include "mirants/util/timestamp.h"
+#include "voyager/core/dispatch.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/util/scoped_ptr.h"
+#include "voyager/util/timestamp.h"
 
-using namespace mirants;
+using namespace voyager;
 
 EventLoop *eventloop;
 scoped_array<scoped_ptr<Dispatch> > *g_dispatches;

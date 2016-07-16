@@ -2,7 +2,7 @@
 
 namespace http {
 
-void Response::AppendToBuffer(mirants::Buffer* buf) {
+void Response::AppendToBuffer(voyager::Buffer* buf) {
   buf->Append(StatusCodeToString());
   if (close_) {
     buf->Append("Connection: close\r\n");

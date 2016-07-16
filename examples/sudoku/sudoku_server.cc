@@ -1,18 +1,18 @@
 #include "examples/sudoku/sudoku_solver.h"
-#include "mirants/core/buffer.h"
-#include "mirants/core/callback.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/core/sockaddr.h"
-#include "mirants/core/tcp_server.h"
-#include "mirants/core/tcp_connection.h"
-#include "mirants/util/logging.h"
-#include "mirants/util/string_util.h"
+#include "voyager/core/buffer.h"
+#include "voyager/core/callback.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_server.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/util/logging.h"
+#include "voyager/util/string_util.h"
 
 namespace sudoku {
 
 class SudukuServer {
  public:
-  SudukuServer(mirants::EventLoop* ev, const mirants::SockAddr& addr)
+  SudukuServer(voyager::EventLoop* ev, const voyager::SockAddr& addr)
       : server_(ev, addr, "SudukuServer", 5) {
     
     using namespace std::placeholders;
@@ -27,11 +27,11 @@ class SudukuServer {
   }
 
  private:
-  void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   }
 
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr, 
-                       mirants::Buffer* buf) {
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr, 
+                       voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
     while (size >= kCells + 2) {
       const char* crlf = buf->FindCRLF();
@@ -41,7 +41,7 @@ class SudukuServer {
         size = buf->ReadableSize();
 
         if (!Slove(ptr, std::move(s))) {
-          mirants::Slice bad("Bad Request!\r\n");
+          voyager::Slice bad("Bad Request!\r\n");
           ptr->SendMessage(bad);
           ptr->ShutDown();
           break;
@@ -52,11 +52,11 @@ class SudukuServer {
     }
   }
 
-  bool Slove(const mirants::TcpConnectionPtr& ptr, std::string&& s) {
+  bool Slove(const voyager::TcpConnectionPtr& ptr, std::string&& s) {
     std::string id;
     std::string puzzle;
     std::vector<std::string> v;
-    mirants::SplitStringUsing(s, ":", &v);
+    voyager::SplitStringUsing(s, ":", &v);
     if (v.size() > 1) {
       id = v.at(0);
       puzzle = v.at(1);
@@ -79,14 +79,14 @@ class SudukuServer {
 
   const static int kCells = 81;
 
-  mirants::TcpServer server_;
+  voyager::TcpServer server_;
 };
 
 }  // namespace sudoku
 
 int main(int argc, char** argv) {
-  mirants::EventLoop ev;
-  mirants::SockAddr addr(5666);
+  voyager::EventLoop ev;
+  voyager::SockAddr addr(5666);
   sudoku::SudukuServer server(&ev, addr);
   server.Start();
   ev.Loop();

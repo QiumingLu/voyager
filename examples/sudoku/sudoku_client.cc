@@ -1,11 +1,11 @@
-#include "mirants/core/tcp_client.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/core/sockaddr.h"
-#include "mirants/core/tcp_connection.h"
-#include "mirants/core/callback.h"
-#include "mirants/core/buffer.h"
-#include "mirants/util/logging.h"
-#include "mirants/util/stringprintf.h"
+#include "voyager/core/tcp_client.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/core/callback.h"
+#include "voyager/core/buffer.h"
+#include "voyager/util/logging.h"
+#include "voyager/util/stringprintf.h"
 #include <vector>
 
 using namespace std::placeholders;
@@ -14,8 +14,8 @@ namespace sudoku {
 
 class SudokuClient {
  public:
-  SudokuClient(mirants::EventLoop* ev, 
-               const mirants::SockAddr& addr,
+  SudokuClient(voyager::EventLoop* ev, 
+               const voyager::SockAddr& addr,
                const std::string& name,
                const std::vector<std::string>& vec)
       : num_(0),
@@ -28,8 +28,8 @@ class SudokuClient {
   }
 
   SudokuClient(const std::string& name, 
-               mirants::EventLoop* ev, 
-               const mirants::SockAddr& addr, 
+               voyager::EventLoop* ev, 
+               const voyager::SockAddr& addr, 
                std::vector<std::string>&& vec)
       : num_(0),
         client_(ev, addr, name),
@@ -45,18 +45,18 @@ class SudokuClient {
   }
 
  private:
-  void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
     ptr->SetDisConnectionCallback(
         std::bind(&SudokuClient::DisConnectCallback, this, _1));
-    MIRANTS_LOG(INFO) << "Start solve sudoku...";
-    start_ = mirants::Timestamp::Now();
+    VOYAGER_LOG(INFO) << "Start solve sudoku...";
+    start_ = voyager::Timestamp::Now();
     for (size_t i = 0; i < vec_.size(); ++i) {
       ptr->SendMessage(vec_.at(i));
     }
   }
 
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr,
-                       mirants::Buffer* buf) {
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr,
+                       voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
     while (size >= kCells + 2) {
       const char* crlf = buf->FindCRLF();
@@ -64,11 +64,11 @@ class SudokuClient {
         std::string res(buf->Peek(), crlf);
         buf->RetrieveUntil(crlf + 2);
         size = buf->ReadableSize();
-        MIRANTS_LOG(WARN) << "The result is: \n" << res;
+        VOYAGER_LOG(WARN) << "The result is: \n" << res;
         ++num_;
         if (num_ == static_cast<int64_t>(vec_.size())) {
-          stop_ = mirants::Timestamp::Now();
-          MIRANTS_LOG(WARN) << "\nStart time is: " << start_.FormatTimestamp()
+          stop_ = voyager::Timestamp::Now();
+          VOYAGER_LOG(WARN) << "\nStart time is: " << start_.FormatTimestamp()
                             << "\nFinish time is: " << stop_.FormatTimestamp()
                             << "\nTake MicroSeconds: " 
                             << stop_.MicroSecondsSinceEpoch() 
@@ -81,16 +81,16 @@ class SudokuClient {
     }
   }
 
-  void DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
-    ptr->GetLoop()->QueueInLoop(std::bind(&mirants::EventLoop::Exit, ptr->GetLoop()));
+  void DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
+    ptr->GetLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, ptr->GetLoop()));
   }
 
   static const int kCells = 81;
   int64_t num_;
-  mirants::TcpClient client_;
+  voyager::TcpClient client_;
   std::vector<std::string> vec_;
-  mirants::Timestamp start_;
-  mirants::Timestamp stop_;
+  voyager::Timestamp start_;
+  voyager::Timestamp stop_;
 
   // No copy allow
   SudokuClient(const SudokuClient&);
@@ -112,11 +112,11 @@ int main(int argc, char** argv) {
   std::string message = "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  5    8  79\r\n";
   std::vector<std::string> vec;
   for (int i = 0; i < dotimes; ++i) {
-    std::string s = mirants::StringPrintf("%d:%s", i+1, message.c_str());
+    std::string s = voyager::StringPrintf("%d:%s", i+1, message.c_str());
     vec.push_back(std::move(s));
   }
-  mirants::EventLoop ev;
-  mirants::SockAddr servaddr(argv[1], 5666);
+  voyager::EventLoop ev;
+  voyager::SockAddr servaddr(argv[1], 5666);
   sudoku::SudokuClient client(&ev, servaddr, "SudokuClinet", std::move(vec));
   client.Connect();
   ev.Loop();

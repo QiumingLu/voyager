@@ -1,9 +1,9 @@
-#ifndef MIRANTS_EXAMPLES_HTTP_RESPONSE_H_
-#define MIRANTS_EXAMPLES_HTTP_RESPONSE_H_
+#ifndef VOYAGER_EXAMPLES_HTTP_RESPONSE_H_
+#define VOYAGER_EXAMPLES_HTTP_RESPONSE_H_
 
 #include <string>
 #include <map>
-#include "mirants/core/buffer.h"
+#include "voyager/core/buffer.h"
 
 namespace http {
 
@@ -48,7 +48,7 @@ class Response {
     headers_ = headers;
   }
   
-  void AppendToBuffer(mirants::Buffer* buf);
+  void AppendToBuffer(voyager::Buffer* buf);
 
  private:
   std::string StatusCodeToString() const;
@@ -61,4 +61,4 @@ class Response {
 
 }  // namespace http
 
-#endif  // MIRANTS_EXAMPLES_HTTP_RESPONSE_H_
+#endif  // VOYAGER_EXAMPLES_HTTP_RESPONSE_H_

@@ -5,7 +5,7 @@ set(http_SRCS
   )
 
 add_library(examples_http ${http_SRCS})
-target_link_libraries(examples_http mirants_core)
+target_link_libraries(examples_http voyager_core)
 
 set(HEADERS
   request.h

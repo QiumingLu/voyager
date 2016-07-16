@@ -4,7 +4,7 @@ set (cache_SRCS
   )
 
 add_library(examples_cache ${cache_SRCS})
-target_link_libraries(examples_cache mirants_core)
+target_link_libraries(examples_cache voyager_core)
 
 set(HEADERS
    arena.h

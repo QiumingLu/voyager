@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project (mirants C CXX)
+project (voyager C CXX)
 
 enable_testing()
 
@@ -58,9 +58,9 @@ include_directories(${PROJECT_SOURCE_DIR})
 string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
 
-add_subdirectory(mirants/util)
-add_subdirectory(mirants/port)
-add_subdirectory(mirants/core)
+add_subdirectory(voyager/util)
+add_subdirectory(voyager/port)
+add_subdirectory(voyager/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/cache)

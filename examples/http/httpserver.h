@@ -1,7 +1,7 @@
-#ifndef MIRANTS_EXAMPLES_HTTP_HTTPSERVER_H
-#define MIRANTS_EXAMPLES_HTTP_HTTPSERVER_H
+#ifndef VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H
+#define VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H
 
-#include "mirants/core/tcp_server.h"
+#include "voyager/core/tcp_server.h"
 
 namespace http {
 
@@ -12,8 +12,8 @@ class HttpServer {
  public:
   typedef std::function<void (Request*, Response*)> HttpCallback;
 
-  HttpServer(mirants::EventLoop* ev, 
-             const mirants::SockAddr& addr,
+  HttpServer(voyager::EventLoop* ev, 
+             const voyager::SockAddr& addr,
              const std::string& name = std::string("MirantsServer"),
              int thread_size = 4);
 
@@ -28,16 +28,16 @@ class HttpServer {
   }
 
  private:
-  void ConnectCallback(const mirants::TcpConnectionPtr& ptr);
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr,
-                       mirants::Buffer* buf);
-  void DisConnectCallback(const mirants::TcpConnectionPtr& ptr);
-  bool ProcessRequest(mirants::Buffer* buf, Request* request);
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr);
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr,
+                       voyager::Buffer* buf);
+  void DisConnectCallback(const voyager::TcpConnectionPtr& ptr);
+  bool ProcessRequest(voyager::Buffer* buf, Request* request);
   bool ProcessRequestLine(const char* begin, 
                           const char* end,
                           Request* request);
 
-  mirants::TcpServer server_;
+  voyager::TcpServer server_;
   HttpCallback http_cb_;
 
   // No copying allow
@@ -47,4 +47,4 @@ class HttpServer {
 
 } // namespace http
 
-#endif  // MIRANTS_EXAMPLES_HTTP_HTTPSERVER_H
+#endif  // VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H

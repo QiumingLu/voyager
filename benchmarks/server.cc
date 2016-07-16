@@ -1,14 +1,14 @@
-#include "mirants/core/tcp_server.h"
-#include "mirants/core/callback.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/core/sockaddr.h"
-#include "mirants/core/tcp_connection.h"
+#include "voyager/core/tcp_server.h"
+#include "voyager/core/callback.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_connection.h"
 #include <iostream>
 
 class Server {
  public:
-  Server(mirants::EventLoop* ev, 
-         const mirants::SockAddr& addr,
+  Server(voyager::EventLoop* ev, 
+         const voyager::SockAddr& addr,
          const std::string& name,
          int thread_count)
       : server_(ev, addr, name, thread_count) {
@@ -24,21 +24,21 @@ class Server {
   }
 
  private:
-  void ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
     if (ptr->IsConnected()) {
       ptr->SetTcpNoDelay(true);
     }
   }
   
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr,
-                       mirants::Buffer* buf) {
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr,
+                       voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
-    mirants::Slice s(buf->Peek(), size);
+    voyager::Slice s(buf->Peek(), size);
     ptr->SendMessage(s);
     buf->Retrieve(size);
   }
 
-  mirants::TcpServer server_;
+  voyager::TcpServer server_;
 };
 
 int main(int argc, char** argv) {
@@ -50,8 +50,8 @@ int main(int argc, char** argv) {
   uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
   int thread_count = atoi(argv[3]);
 
-  mirants::SockAddr addr(host, port);
-  mirants::EventLoop ev;
+  voyager::SockAddr addr(host, port);
+  voyager::EventLoop ev;
   Server server(&ev, addr, "server", thread_count);
     
   server.Start();

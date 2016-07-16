@@ -1,10 +1,10 @@
-#ifndef MIRANTS_EXAMPLES_HTTP_REQUEST_H_
-#define MIRANTS_EXAMPLES_HTTP_REQUEST_H_
+#ifndef VOYAGER_EXAMPLES_HTTP_REQUEST_H_
+#define VOYAGER_EXAMPLES_HTTP_REQUEST_H_
 
 #include <map>
 #include <utility>
 #include <strings.h>
-#include "mirants/util/logging.h"
+#include "voyager/util/logging.h"
 namespace http {
 
 class Request {
@@ -142,4 +142,4 @@ class Request {
 
 }  // namespace http
 
-#endif  // MIRANTS_EXAMPLES_HTTP_REQUEST_H_
+#endif  // VOYAGER_EXAMPLES_HTTP_REQUEST_H_

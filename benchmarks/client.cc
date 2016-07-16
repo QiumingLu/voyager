@@ -1,13 +1,13 @@
-#include "mirants/core/buffer.h"
-#include "mirants/core/callback.h"
-#include "mirants/core/eventloop.h"
-#include "mirants/core/eventloop_threadpool.h"
-#include "mirants/core/sockaddr.h"
-#include "mirants/core/tcp_client.h"
-#include "mirants/core/tcp_connection.h"
-#include "mirants/util/logging.h"
-#include "mirants/util/stl_util.h"
-#include "mirants/util/stringprintf.h"
+#include "voyager/core/buffer.h"
+#include "voyager/core/callback.h"
+#include "voyager/core/eventloop.h"
+#include "voyager/core/eventloop_threadpool.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_client.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/util/logging.h"
+#include "voyager/util/stl_util.h"
+#include "voyager/util/stringprintf.h"
 
 #include <list>
 #include <iostream>
@@ -19,8 +19,8 @@ class Client;
 
 class Session {
  public:
-  Session(mirants::EventLoop* ev, 
-          const mirants::SockAddr& addr,
+  Session(voyager::EventLoop* ev, 
+          const voyager::SockAddr& addr,
           const std::string& name,
           Client* owner)
       : client_(ev, addr, name),
@@ -50,20 +50,20 @@ class Session {
   }
 
  private:
-  void ConnectCallback(const mirants::TcpConnectionPtr& ptr);
-  void DisConnectCallback(const mirants::TcpConnectionPtr& ptr);
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr);
+  void DisConnectCallback(const voyager::TcpConnectionPtr& ptr);
 
-  void MessageCallback(const mirants::TcpConnectionPtr& ptr,
-                       mirants::Buffer* buf) {
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr,
+                       voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
     bytes_read_ += size;
     bytes_written_ += size;
-    mirants::Slice s(buf->Peek(), size);
+    voyager::Slice s(buf->Peek(), size);
     ptr->SendMessage(s);
     buf->Retrieve(size);
   }
 
-  mirants::TcpClient client_;
+  voyager::TcpClient client_;
   Client* owner_;
   size_t bytes_read_;
   size_t bytes_written_;
@@ -75,8 +75,8 @@ class Session {
 
 class Client {
  public:
-  Client(mirants::EventLoop* ev, 
-         const mirants::SockAddr& addr,
+  Client(voyager::EventLoop* ev, 
+         const voyager::SockAddr& addr,
          size_t block_size,
          size_t session_count, 
          int timeout,
@@ -98,7 +98,7 @@ class Client {
 
     ev_pool_.Start();
     for (size_t i = 0; i < session_count; ++i) {
-      std::string name = mirants::StringPrintf("session %d", i + 1);
+      std::string name = voyager::StringPrintf("session %d", i + 1);
       Session* new_session = new Session(ev_pool_.GetNext(), addr, name, this);
       new_session->Connect();
       sessions_.push_back(new_session);
@@ -106,12 +106,12 @@ class Client {
   }
 
   ~Client() {
-    mirants::STLDeleteElements(&sessions_);
+    voyager::STLDeleteElements(&sessions_);
   }
 
   const std::string& Message() const { return message_; }
 
-  void Print(const mirants::TcpConnectionPtr& ptr) {
+  void Print(const voyager::TcpConnectionPtr& ptr) {
   
     if (static_cast<size_t>(seq_.GetNext() + 1) == session_count_) {
       for (std::list<Session*>::iterator it = sessions_.begin();
@@ -120,10 +120,10 @@ class Client {
         total_bytes_read += (*it)->BytesRead();
       }
 
-      using namespace mirants;
-      MIRANTS_LOG(WARN) << total_bytes_written << " total bytes written";
-      MIRANTS_LOG(WARN) << total_bytes_read << " total bytes read";
-      MIRANTS_LOG(WARN) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
+      using namespace voyager;
+      VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
+      VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
+      VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
                         << " MiB/s throughtput";
 
       std::fstream file;
@@ -147,12 +147,12 @@ class Client {
 
  private:
   void Exit() {
-    base_ev_->QueueInLoop(std::bind(&mirants::EventLoop::Exit, base_ev_));
+    base_ev_->QueueInLoop(std::bind(&voyager::EventLoop::Exit, base_ev_));
   }
 
-  mirants::EventLoop* base_ev_;
+  voyager::EventLoop* base_ev_;
   int thread_count_;
-  mirants::EventLoopThreadPool ev_pool_;
+  voyager::EventLoopThreadPool ev_pool_;
   size_t session_count_;
   size_t block_size_;
   int timeout_;
@@ -160,21 +160,21 @@ class Client {
   size_t total_bytes_read;
   std::list<Session*> sessions_;
   std::string message_;
-  mirants::port::SequenceNumber seq_;
+  voyager::port::SequenceNumber seq_;
 
   // No copy allow
   Client(const Client&);
   void operator=(const Client&);
 };
 
-void Session::ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+void Session::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   ptr->SetDisConnectionCallback(
       std::bind(&Session::DisConnectCallback, this, _1));
   ptr->SetTcpNoDelay(true);
   ptr->SendMessage(owner_->Message());
 }
 
-void Session::DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+void Session::DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   owner_->Print(ptr);
 }
 
@@ -190,8 +190,8 @@ int main(int argc, char* argv[]) {
   size_t block_size = atoi(argv[4]);
   size_t session_count = atoi(argv[5]);
   int timeout = atoi(argv[6]);
-  mirants::EventLoop base_ev;
-  mirants::SockAddr sockaddr(host, port);
+  voyager::EventLoop base_ev;
+  voyager::SockAddr sockaddr(host, port);
   Client client(&base_ev, sockaddr, block_size,
       session_count, timeout, thread_count);
   base_ev.Loop();

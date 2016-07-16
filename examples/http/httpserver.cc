@@ -1,14 +1,14 @@
 #include "examples/http/httpserver.h"
 #include "examples/http/request.h"
 #include "examples/http/response.h"
-#include "mirants/util/logging.h"
+#include "voyager/util/logging.h"
 
 namespace http {
 
 using namespace std::placeholders;
 
-HttpServer::HttpServer(mirants::EventLoop* ev,
-                       const mirants::SockAddr& addr,
+HttpServer::HttpServer(voyager::EventLoop* ev,
+                       const voyager::SockAddr& addr,
                        const std::string& name,
                        int thread_size)
   : server_(ev, addr, name, thread_size) {
@@ -22,20 +22,20 @@ void HttpServer::Start() {
   server_.Start();
 }
 
-void HttpServer::ConnectCallback(const mirants::TcpConnectionPtr& ptr) {
-  ptr->SetContext(mirants::any(new Request()));
+void HttpServer::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
+  ptr->SetContext(voyager::any(new Request()));
   ptr->SetCloseCallback(std::bind(&HttpServer::DisConnectCallback,
                         this, 
                         std::placeholders::_1));
 }
 
-void HttpServer::DisConnectCallback(const mirants::TcpConnectionPtr& ptr) {
+void HttpServer::DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   Request *request = ptr->MutableContext()->cast<Request *>();
   if (request) delete request;
 }
 
-void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
-                                  mirants::Buffer* buf) {
+void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
+                                  voyager::Buffer* buf) {
   Request* request = ptr->MutableContext()->cast<Request *>();
 
   if (!ProcessRequest(buf, request)) {
@@ -46,12 +46,12 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
   
   if (request->state() == 2) {
     /*
-    MIRANTS_LOG(WARN) << request->MethodToString() << " "
+    VOYAGER_LOG(WARN) << request->MethodToString() << " "
                       << request->path() << request->query_string()
                       << " " << request->VersionToString();
     std::map<std::string, std::string>::const_iterator it;
     for (it = request->headers().begin(); it != request->headers().end(); ++it) {
-      MIRANTS_LOG(WARN) << it->first << ":" << it->second;
+      VOYAGER_LOG(WARN) << it->first << ":" << it->second;
     }
     */
   
@@ -74,7 +74,7 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
       response.set_status_code(Response::k200);
     }
 
-    mirants::Buffer buffer;
+    voyager::Buffer buffer;
     response.AppendToBuffer(&buffer);
     ptr->SendMessage(&buffer);
     request->Reset();
@@ -85,7 +85,7 @@ void HttpServer::MessageCallback(const mirants::TcpConnectionPtr& ptr,
 }
 
 
-bool HttpServer::ProcessRequest(mirants::Buffer* buf, Request* request) {
+bool HttpServer::ProcessRequest(voyager::Buffer* buf, Request* request) {
   bool ok = true;
   bool flag = true;
   while (flag) {
