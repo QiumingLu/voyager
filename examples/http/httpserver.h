@@ -14,7 +14,7 @@ class HttpServer {
 
   HttpServer(voyager::EventLoop* ev, 
              const voyager::SockAddr& addr,
-             const std::string& name = std::string("MirantsServer"),
+             const std::string& name = std::string("VoyagerServer"),
              int thread_size = 4);
 
   void Start();

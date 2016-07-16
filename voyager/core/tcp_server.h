@@ -20,7 +20,7 @@ class TcpServer {
  public:
   TcpServer(EventLoop* eventloop,
             const SockAddr& addr,
-            const std::string& name = std::string("MirantsServer"),
+            const std::string& name = std::string("VoyagerServer"),
             int thread_size = 1,
             int backlog = SOMAXCONN);
   ~TcpServer();
