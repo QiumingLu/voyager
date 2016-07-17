@@ -123,7 +123,8 @@ void Thread::SetDefaultName() {
   ++num_;
   if (name_.empty()) {
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "Thread %d", num_.load(std::memory_order_relaxed));
+    snprintf(buffer, sizeof(buffer), 
+             "Thread %d", num_.load(std::memory_order_relaxed));
     name_ = buffer;
   }
 }

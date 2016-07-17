@@ -5,6 +5,7 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/port/atomic_sequence_num.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"

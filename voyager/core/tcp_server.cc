@@ -35,7 +35,7 @@ TcpServer::~TcpServer() {
   for (std::map<std::string, TcpConnectionPtr>::iterator it = connection_map_.begin();
        it != connection_map_.end(); ++it) {
     it->second->GetLoop()->RunInLoop(
-        std::bind(&TcpConnection::DeleteConnection, it->second));
+        std::bind(&TcpConnection::CloseConnection, it->second));
     it->second.reset();
   }
 }
@@ -79,11 +79,9 @@ void TcpServer::CloseConnection(const TcpConnectionPtr& conn_ptr) {
 
 void TcpServer::CloseConnectionInLoop(const TcpConnectionPtr& conn_ptr) {
   eventloop_->AssertThreadSafe();
-  VOYAGER_LOG(INFO) << "TcpServer::CloseConnectionInLoop [" << name_ 
-                    << "] - connection " << conn_ptr->name();
   connection_map_.erase(conn_ptr->name());
   conn_ptr->GetLoop()->QueueInLoop(
-      std::bind(&TcpConnection::DeleteConnection, conn_ptr));
+      std::bind(&TcpConnection::CloseConnection, conn_ptr));
 }
 
 }  // namespace voyager

@@ -6,7 +6,6 @@
 
 #include "voyager/core/callback.h"
 #include "voyager/core/dispatch.h"
-#include "voyager/port/atomic_sequence_num.h"
 #include "voyager/util/timestamp.h"
 
 namespace voyager {
@@ -15,21 +14,19 @@ struct Timer {
   TimeProcCallback timeproc;
   Timestamp time;
   double interval;
-  int64_t timer_id;  
   bool repeat;
 
-  Timer(const TimeProcCallback& func, Timestamp t, double inter, int64_t id)
-      : timeproc(func), time(t), interval(inter), timer_id(id), repeat(false) {
+  Timer(const TimeProcCallback& func, Timestamp t, double inter)
+      : timeproc(func), time(t), interval(inter), repeat(false) {
     if (interval > 0.0) {
       repeat = true;
     }
   }
 
-  Timer(TimeProcCallback&& func, Timestamp t, double inter, int64_t id)
+  Timer(TimeProcCallback&& func, Timestamp t, double inter)
       : timeproc(std::move(func)), 
         time(t), 
-        interval(inter), 
-        timer_id(id),
+        interval(inter),
         repeat(false) {
     if (interval > 0.0) {
       repeat = true;
@@ -76,8 +73,6 @@ class TimerEvent {
   bool calling_;
   std::set<Entry> timers_;
   std::set<Timer*> delete_timers_;
- 
-  static port::SequenceNumber seq_;
 
   // No copy allow
   TimerEvent(const TimerEvent&);

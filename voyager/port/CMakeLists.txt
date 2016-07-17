@@ -10,12 +10,15 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_link_libraries(voyager_port pthread)
 endif()
+
 target_link_libraries(voyager_port voyager_util)
 
 install(TARGETS voyager_port DESTINATION lib)
 
-file(GLOB HEADERS "*.h")
-install(FILES ${HEADERS} DESTINATION include/voyager/port)
+set(HEADERS
+  singleton.h
+  )
+install(FILES ${HEADERS} DESTINATION include/voyager)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES) 
   add_subdirectory(tests)

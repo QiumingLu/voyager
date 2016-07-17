@@ -82,7 +82,8 @@ class SudokuClient {
   }
 
   void DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->GetLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, ptr->GetLoop()));
+    ptr->GetLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, 
+                                          ptr->GetLoop()));
   }
 
   static const int kCells = 81;

@@ -46,30 +46,20 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetMessageCallback(MessageCallback&& func) {
     message_cb_ = std::move(func);
   }
-  void SetCloseCallback(const CloseCallback& func) {
-    close_cb_ = func;
-  }
-  void SetCloseCallback(CloseCallback&& func) {
-    close_cb_ = std::move(func);
-  }
 
   EventLoop* GetLoop() const { return eventloop_; }
   const std::string& name() const { return name_; }
 
-  // Internal use only
-  void EstablishConnection();
-  void DeleteConnection();
- 
   void StartRead();
   void StopRead();
   void ShutDown();
   void ForceClose();
 
-  std::string StateToString() const;
-
   void SendMessage(std::string&& message);
   void SendMessage(const Slice& message);
   void SendMessage(Buffer* message);
+
+  std::string StateToString() const;
 
   bool IsDisConnected() const { return state_ == kDisconnected; }
   bool IsDisConnecting() const { return state_ == kDisconnecting; }
@@ -90,6 +80,18 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     return &context_;
   }
 
+  // Internal use only
+  void SetCloseCallback(const CloseCallback& func) {
+    close_cb_ = func;
+  }
+
+  void SetCloseCallback(CloseCallback&& func) {
+    close_cb_ = std::move(func);
+  }
+ 
+  void EstablishConnection();
+  void CloseConnection(); 
+ 
  private:
   enum ConnectState {
     kDisconnected,

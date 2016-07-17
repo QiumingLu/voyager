@@ -3,19 +3,19 @@
 
 #include <string>
 #include <vector>
+
+#include "voyager/core/eventloop_thread.h"
 #include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 
 class EventLoop;
-class EventLoopThread;
 
 class EventLoopThreadPool {
  public:
   EventLoopThreadPool(EventLoop* evloop, 
                       const std::string& poolname, 
                       int size);
-  ~EventLoopThreadPool();
 
   void Start();
 

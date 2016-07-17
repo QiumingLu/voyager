@@ -16,8 +16,10 @@ namespace port {
 class Thread {
  public:
   typedef std::function<void()> ThreadFunc;
-  explicit Thread(const ThreadFunc& func, const std::string& name = std::string());
-  explicit Thread(ThreadFunc&& func, const std::string& name);
+  explicit Thread(const ThreadFunc& func, 
+                  const std::string& name = std::string());
+  explicit Thread(ThreadFunc&& func, 
+                  const std::string& name = std::string());
   ~Thread();
 
   void Start();

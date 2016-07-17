@@ -30,7 +30,7 @@ TcpClient::~TcpClient() {
   }
   if (p.get()) {
     assert(ev_ == p->GetLoop());
-    ev_->RunInLoop(std::bind(&TcpConnection::DeleteConnection, p));
+    ev_->RunInLoop(std::bind(&TcpConnection::CloseConnection, p));
 
     if (unique) {
       p->ForceClose();
@@ -77,7 +77,7 @@ void TcpClient::NewConnection(int socketfd) {
   p->SetMessageCallback(message_cb_);
   p->SetWriteCompleteCallback(writecomplete_cb_);
   p->SetCloseCallback(
-      std::bind(&TcpClient::CloseConnection, this,std::placeholders::_1));
+      std::bind(&TcpClient::CloseConnection, this, std::placeholders::_1));
   
   {
     port::MutexLock l(&mu_);
@@ -95,7 +95,7 @@ void TcpClient::CloseConnection(const TcpConnectionPtr& conn) {
     assert(conn_ptr_ == conn);
     conn_ptr_.reset();
   }
-  ev_->QueueInLoop(std::bind(&TcpConnection::DeleteConnection, conn));
+  ev_->QueueInLoop(std::bind(&TcpConnection::CloseConnection, conn));
   if (retry_ && connect_) {
     connector_ptr_->ReStart();
   }

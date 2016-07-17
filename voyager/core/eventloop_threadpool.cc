@@ -1,6 +1,5 @@
 #include "voyager/core/eventloop_threadpool.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/eventloop_thread.h"
 #include "voyager/util/stringprintf.h"
 
 namespace voyager {
@@ -14,9 +13,6 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop,
       started_(false),
       next_(0), 
       threads_(new scoped_ptr<EventLoopThread>[size]) {
-}
-
-EventLoopThreadPool::~EventLoopThreadPool() {
 }
 
 void EventLoopThreadPool::Start() {

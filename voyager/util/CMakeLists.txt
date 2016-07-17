@@ -5,17 +5,26 @@ set(util_SRCS
   stringprintf.cc
   testharness.cc
   timestamp.cc
+  json/json.cc
+  base64/base64.cc
+  base64/modp_base64/modp_b64.cc
   )
 
 add_library(voyager_util ${util_SRCS})
 
 install(TARGETS voyager_util DESTINATION lib)
 
-file(GLOB HEADERS "*.h")
-install(FILES ${HEADERS} DESTINATION include/voyager/util)
+set(HEADERS
+  any.h
+  logging.h
+  slice.h
+  status.h
+  base64/base64.h
+  json/json.h
+  json/json_value.h
+  )
 
-add_subdirectory(json)
-add_subdirectory(base64)
+install(FILES ${HEADERS} DESTINATION include/voyager)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)

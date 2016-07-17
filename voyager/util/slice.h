@@ -36,7 +36,10 @@ class Slice {
   }
   
   std::string ToString() const { return std::string(data_, size_); }
-  
+
+  // < 0 iff "this" < s
+  // = 0 iff "this" = s
+  // > 0 iff "this" > s  
   int compare(const Slice& s) const {
     const size_t min_len = (size_ < s.size_) ? size_ : s.size_;
     int r = memcmp(data_, s.data_, min_len);
@@ -63,7 +66,7 @@ inline bool operator==(const Slice& x, const Slice& y) {
 }
 
 inline bool operator!=(const Slice& x, const Slice& y) {
-  return !(x ==y);
+  return !(x == y);
 }
 
 }  // namespace voyager

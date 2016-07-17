@@ -42,7 +42,7 @@ void TcpConnection::EstablishConnection() {
   }
 }
 
-void TcpConnection::DeleteConnection() {
+void TcpConnection::CloseConnection() {
   eventloop_->AssertThreadSafe();
   if (state_ == kConnected) {
     state_ = kDisconnected;

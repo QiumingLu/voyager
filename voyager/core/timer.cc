@@ -66,9 +66,6 @@ int FromNow(Timestamp t) {
 }  // namespace timeops
 #endif
 
-
-port::SequenceNumber TimerEvent::seq_;
-
 #ifdef __linux__
 TimerEvent::TimerEvent(EventLoop* ev)
     : eventloop_(ev),
@@ -100,8 +97,7 @@ TimerEvent::~TimerEvent() {
 Timer* TimerEvent::AddTimer(const TimeProcCallback& func,
                              Timestamp t,
                              double interval) {
-  int64_t id = seq_.GetNext();
-  Timer* timer = new Timer(func, t, interval, id);
+  Timer* timer = new Timer(func, t, interval);
   eventloop_->RunInLoop(std::bind(&TimerEvent::AddTimerInLoop, this, timer));
   return timer;
 }
@@ -109,8 +105,7 @@ Timer* TimerEvent::AddTimer(const TimeProcCallback& func,
 Timer* TimerEvent::AddTimer(TimeProcCallback&& func,
                              Timestamp t,
                              double interval) {
-  int64_t id = seq_.GetNext();
-  Timer* timer = new Timer(std::move(func), t, interval, id);
+  Timer* timer = new Timer(std::move(func), t, interval);
   eventloop_->RunInLoop(std::bind(&TimerEvent::AddTimerInLoop, this, timer));
   return timer;
 }

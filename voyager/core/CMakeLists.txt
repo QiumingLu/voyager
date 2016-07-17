@@ -39,7 +39,7 @@ set(HEADERS
   tcp_socket.h
   )
  
-install(FILES ${HEADERS} DESTINATION include/voyager/core)
+install(FILES ${HEADERS} DESTINATION include/voyager)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)
