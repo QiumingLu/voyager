@@ -23,28 +23,18 @@ TcpServer::TcpServer(EventLoop* eventloop,
       acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
       name_(name),
       ev_pool_(new EventLoopThreadPool(eventloop_, name_, thread_size-1)),
-      conn_id_(0), mu_() {
+      conn_id_(0) {
   acceptor_ptr_->SetNewConnectionCallback(
       std::bind(&TcpServer::NewConnection, this, _1, _2));
   VOYAGER_LOG(INFO) << "TcpServer::TcpServer [" << name_ << "] is running";
 }
 
 TcpServer::~TcpServer() {
-  eventloop_->AssertThreadSafe();
-  {
-  port::MutexLock lock(&mu_); 
-  for (std::map<std::string, TcpConnectionPtr>::iterator it = connection_map_.begin();
-       it != connection_map_.end(); ++it) {
-    it->second->GetLoop()->RunInLoop(
-        std::bind(&TcpConnection::CloseConnection, it->second));
-    it->second.reset();
-  }
-  }
   VOYAGER_LOG(INFO) << "TcpServer::~TcpServer [" << name_ << "] is down";
 }
 
 void TcpServer::Start() {
-  if (sequence_num_.GetNext() == 0) {
+  if (seq_.GetNext() == 0) {
     ev_pool_->Start();
     assert(!acceptor_ptr_->IsListenning());
     eventloop_->RunInLoop(
@@ -66,25 +56,13 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
 
   EventLoop* ev = ev_pool_->GetNext(); 
   TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
-  {
-  port::MutexLock lock(&mu_);
-  connection_map_[conn_name] = conn_ptr;
-  }
+  
   conn_ptr->SetConnectionCallback(connection_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
-  conn_ptr->SetCloseCallback(
-      std::bind(&TcpServer::CloseConnection, this, _1));
+  
+  ev->NewConnection(conn_name, conn_ptr);
   ev->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn_ptr));
-}
-
-void TcpServer::CloseConnection(const TcpConnectionPtr& conn_ptr) {
-  {
-  port::MutexLock lock(&mu_);
-  connection_map_.erase(conn_ptr->name());
-  }
-  conn_ptr->GetLoop()->QueueInLoop(
-      std::bind(&TcpConnection::CloseConnection, conn_ptr));
 }
 
 }  // namespace voyager

@@ -19,6 +19,7 @@ class TimerServer {
  public:
   TimerServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "TimerServer", 4),
+        ev_(ev),
         num_(0) {
     server_.SetConnectionCallback(
         std::bind(&TimerServer::OnConnect, this, _1));
@@ -41,6 +42,8 @@ class TimerServer {
                        << " pid=" << getpid()
                        << " tid=" << port::CurrentThread::Tid()
                        << " timestamp=" << Timestamp::Now().FormatTimestamp();
+    ev_->Exit();
+  
   }
 
  private:
@@ -62,25 +65,27 @@ class TimerServer {
   }
 
   TcpServer server_;
+  EventLoop* ev_;
   int64_t num_;
 };
 
 }  // namespace voyager
+
 
 int main(int argc, char** argv) {
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::TimerServer server(&ev, addr);
   server.Start();
-  voyager::Timer* t1 = ev.RunEvery(10, 
-      std::bind(&voyager::TimerServer::ConnMessage, &server));
+  //voyager::Timer* t1 = ev.RunEvery(10, 
+  //    std::bind(&voyager::TimerServer::ConnMessage, &server));
   voyager::Timer* t2 = ev.RunAfter(10,
       std::bind(&voyager::TimerServer::TimerTest, &server));
-  voyager::Timer* t3 = ev.RunAt(voyager::Timestamp::Now(),
-      std::bind(&voyager::TimerServer::TimerTest, &server));
-  (void)t1;
+  //voyager::Timer* t3 = ev.RunAt(voyager::Timestamp::Now(),
+  //    std::bind(&voyager::TimerServer::TimerTest, &server));
+  //(void)t1;
   (void)t2;
-  (void)t3;
+  //(void)t3;
   // ev.DeleteTimer(t1);
   // ev.DeleteTimer(t2);
   ev.Loop();

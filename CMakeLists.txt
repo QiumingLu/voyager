@@ -22,7 +22,7 @@ set(CXX_FLAGS
   -Wwrite-strings
   -Wshadow
   -march=native
-  -std=c++0x
+  -std=c++11
   -Wno-sign-conversion
   )
 

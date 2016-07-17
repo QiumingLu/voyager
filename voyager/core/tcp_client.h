@@ -6,8 +6,6 @@
 #include <netdb.h>
 
 #include "voyager/core/tcp_connection.h"
-#include "voyager/port/mutex.h"
-#include "voyager/port/mutexlock.h"
 
 namespace voyager {
 
@@ -20,7 +18,7 @@ typedef std::shared_ptr<Connector> ConnectorPtr;
 class TcpClient {
  public:
   TcpClient(EventLoop* ev, const SockAddr& addr, 
-            const std::string& name = "MrantsClient");
+            const std::string& name = "VoyagerClient");
   ~TcpClient();
 
   void Connect();
@@ -31,7 +29,6 @@ class TcpClient {
   bool IsRetry() const { return retry_; }
 
   TcpConnectionPtr ConnPtr() const {
-    port::MutexLock l(&mu_);
     return conn_ptr_; 
   }
 
@@ -63,7 +60,6 @@ class TcpClient {
 
  private:
   void NewConnection(int socketfd);
-  void CloseConnection(const TcpConnectionPtr& conn);
 
   std::string name_;
   EventLoop* ev_;
@@ -72,12 +68,11 @@ class TcpClient {
   bool retry_;
   bool connect_;
 
-  mutable port::Mutex mu_;
-  TcpConnectionPtr conn_ptr_;
-
   ConnectionCallback connection_cb_;
   MessageCallback message_cb_;
   WriteCompleteCallback writecomplete_cb_;
+
+  TcpConnectionPtr conn_ptr_;
 
   // No copying allow
   TcpClient(const TcpClient&);

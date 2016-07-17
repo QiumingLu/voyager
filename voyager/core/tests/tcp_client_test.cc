@@ -38,7 +38,7 @@ using namespace std::placeholders;
 
 int main(int argc, char** argv) {
   voyager::EventLoop ev;
-  voyager::SockAddr serveraddr("172.31.44.121", 5666);
+  voyager::SockAddr serveraddr("127.0.0.1", 5666);
   g_client = new voyager::TcpClient(&ev, serveraddr);
   g_client->SetMessageCallback(
       std::bind(voyager::Message, _1, _2));

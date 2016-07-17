@@ -169,7 +169,7 @@ class Client {
 };
 
 void Session::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  ptr->SetDisConnectionCallback(
+  ptr->SetCloseCallback(
       std::bind(&Session::DisConnectCallback, this, _1));
   ptr->SetTcpNoDelay(true);
   ptr->SendMessage(owner_->Message());

@@ -28,11 +28,11 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
   }
-  void SetDisConnectionCallback(const DisConnectionCallback& func) { 
-    disconnection_cb_ = func; 
+  void SetCloseCallback(const CloseCallback& func) { 
+    close_cb_ = func; 
   }
-  void SetDisConnectionCallback(DisConnectionCallback&& func) {
-    disconnection_cb_ = std::move(func);
+  void SetCloseCallback(CloseCallback&& func) {
+    close_cb_ = std::move(func);
   }
   void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
     writecomplete_cb_ = func;
@@ -81,16 +81,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
 
   // Internal use only
-  void SetCloseCallback(const CloseCallback& func) {
-    close_cb_ = func;
-  }
-
-  void SetCloseCallback(CloseCallback&& func) {
-    close_cb_ = std::move(func);
-  }
- 
   void EstablishConnection();
-  void CloseConnection(); 
  
  private:
   enum ConnectState {
@@ -104,6 +95,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void StopReadInLoop();
   void ShutDownInLoop();
   void ForceCloseInLoop();
+  void CloseConnection(); 
   void SendInLoop(const void* data, size_t size);
 
   void HandleRead();
@@ -123,10 +115,9 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   any context_;
 
   ConnectionCallback connection_cb_;
-  DisConnectionCallback disconnection_cb_;
+  CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
-  CloseCallback close_cb_;
   
   // No copying allow
   TcpConnection(const TcpConnection&);

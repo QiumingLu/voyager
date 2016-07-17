@@ -3,11 +3,13 @@
 
 #include <functional>
 #include <vector>
+#include <map>
 
 #include "voyager/core/timer.h"
 #include "voyager/util/scoped_ptr.h"
 #include "voyager/port/currentthread.h"
-#include "voyager/port/mutex.h"
+#include "voyager/port/mutexlock.h"
+#include "voyager/core/tcp_connection.h"
 
 namespace voyager {
 
@@ -36,7 +38,7 @@ class EventLoop {
 
   void DeleteTimer(Timer* t);
 
-  // internal usage
+  // only internal use
   void WakeUp();
   void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);
@@ -53,6 +55,16 @@ class EventLoop {
   static EventLoop* GetEventLoopOfCurrentThread();
 
   void Exit();
+
+  // only internal use
+  void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
+    port::MutexLock lock(&conn_mu_);
+    conn_map_[name] = ptr;
+  }
+  void EraseCnnection(const TcpConnectionPtr& ptr) {
+    port::MutexLock lock(&conn_mu_);
+    conn_map_.erase(ptr->name());
+  }
 
  private:
   void RunFuncQueue();
@@ -77,6 +89,9 @@ class EventLoop {
 
   port::Mutex mu_;
   std::vector<Func> funcqueue_;
+
+  port::Mutex conn_mu_;
+  std::map<std::string, TcpConnectionPtr> conn_map_;
 
   // No copying allow
   EventLoop(const EventLoop&);

@@ -17,27 +17,11 @@ TcpClient::TcpClient(EventLoop* ev, const SockAddr& addr, const std::string& nam
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
-  VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] - " << this;
+  VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running ";
 }
 
 TcpClient::~TcpClient() {
-  TcpConnectionPtr p;
-  bool unique = false;
-  {
-    port::MutexLock l(&mu_);
-    unique = conn_ptr_.unique();
-    p = conn_ptr_;
-  }
-  if (p.get()) {
-    assert(ev_ == p->GetLoop());
-    ev_->RunInLoop(std::bind(&TcpConnection::CloseConnection, p));
-
-    if (unique) {
-      p->ForceClose();
-    }
-  }
-
-  VOYAGER_LOG(INFO) << "TcpClient::~TcpClient [" << name_ << "] - " << this;
+  VOYAGER_LOG(INFO) << "TcpClient::~TcpClient [" << name_ << "] is down";
 }
 
 void TcpClient::Connect() {
@@ -49,11 +33,8 @@ void TcpClient::Connect() {
 
 void TcpClient::DisConnect() {
   connect_ = false;
-  {
-    port::MutexLock l(&mu_);
-    if (conn_ptr_) {
-      conn_ptr_->ShutDown();
-    }
+  if (conn_ptr_) {
+    conn_ptr_->ShutDown();
   }
 }
 
@@ -76,29 +57,11 @@ void TcpClient::NewConnection(int socketfd) {
   p->SetConnectionCallback(connection_cb_);
   p->SetMessageCallback(message_cb_);
   p->SetWriteCompleteCallback(writecomplete_cb_);
-  p->SetCloseCallback(
-      std::bind(&TcpClient::CloseConnection, this, std::placeholders::_1));
-  
-  {
-    port::MutexLock l(&mu_);
-    conn_ptr_ = p;
-  }
 
+  conn_ptr_ = p;
+
+  ev_->NewConnection(conn_name, p);
   p->EstablishConnection();
-}
-
-void TcpClient::CloseConnection(const TcpConnectionPtr& conn) {
-  ev_->AssertThreadSafe();
-  assert(ev_ == conn->GetLoop());
-  {
-    port::MutexLock l(&mu_);
-    assert(conn_ptr_ == conn);
-    conn_ptr_.reset();
-  }
-  ev_->QueueInLoop(std::bind(&TcpConnection::CloseConnection, conn));
-  if (retry_ && connect_) {
-    connector_ptr_->ReStart();
-  }
 }
 
 }  // namespace voyager

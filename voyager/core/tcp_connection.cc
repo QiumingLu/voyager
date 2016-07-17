@@ -25,6 +25,7 @@ TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
 }
  
 TcpConnection::~TcpConnection() {
+  CloseConnection();
   VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ << "] at "
                      << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
@@ -43,12 +44,11 @@ void TcpConnection::EstablishConnection() {
 }
 
 void TcpConnection::CloseConnection() {
-  eventloop_->AssertThreadSafe();
-  if (state_ == kConnected) {
+  if (state_ == kConnected || state_ == kDisconnecting) {
     state_ = kDisconnected;
     dispatch_->DisableAll();
-    if (disconnection_cb_) {
-      disconnection_cb_(shared_from_this());
+    if (close_cb_) {
+      close_cb_(shared_from_this());
     }
   }
   dispatch_->RemoveEvents();
@@ -153,13 +153,9 @@ void TcpConnection::HandleWrite() {
 
 void TcpConnection::HandleClose() {
   eventloop_->AssertThreadSafe();
+  eventloop_->EraseCnnection(shared_from_this());
   assert(state_ == kConnected || state_ == kDisconnecting);
-  state_ = kDisconnected;
-  dispatch_->DisableAll();
-  if (disconnection_cb_) {
-    disconnection_cb_(shared_from_this());
-  }
-  close_cb_(shared_from_this());
+  CloseConnection();
 }
 
 void TcpConnection::HandleError() {

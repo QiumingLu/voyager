@@ -46,7 +46,7 @@ class SudokuClient {
 
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->SetDisConnectionCallback(
+    ptr->SetCloseCallback(
         std::bind(&SudokuClient::DisConnectCallback, this, _1));
     VOYAGER_LOG(INFO) << "Start solve sudoku...";
     start_ = voyager::Timestamp::Now();
