@@ -33,11 +33,11 @@ class TimerServer {
   }
 
   void ConnMessage() {
-    VOYAGER_LOG(TRACE) << "Has " << num_ << " connections were built.";
+    VOYAGER_LOG(INFO) << "Has " << num_ << " connections were built.";
   }
 
   void TimerTest() {
-    VOYAGER_LOG(TRACE) << "TimerServer::TimerTest - "
+    VOYAGER_LOG(INFO) << "TimerServer::TimerTest - "
                        << " pid=" << getpid()
                        << " tid=" << port::CurrentThread::Tid()
                        << " timestamp=" << Timestamp::Now().FormatTimestamp();

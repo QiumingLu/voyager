@@ -9,6 +9,7 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/port/atomic_sequence_num.h"
 #include "voyager/util/scoped_ptr.h"
+#include "voyager/port/mutexlock.h"
 
 namespace voyager {
 
@@ -51,7 +52,6 @@ class TcpServer {
  private:
   void NewConnection(int fd, const struct sockaddr_storage& sa);
   void CloseConnection(const TcpConnectionPtr& conn_ptr);
-  void CloseConnectionInLoop(const TcpConnectionPtr& conn_ptr);
 
   EventLoop* eventloop_;
   std::string ipbuf_;
@@ -65,6 +65,7 @@ class TcpServer {
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
 
+  port::Mutex mu_;
   std::map<std::string, TcpConnectionPtr> connection_map_;
   
   // No copying allow

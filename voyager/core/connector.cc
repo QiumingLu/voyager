@@ -121,7 +121,7 @@ void Connector::Retry(int socketfd) {
 }
 
 void Connector::OnConnect() {
-  VOYAGER_LOG(TRACE) << "Connector::OnConnect - " << StateToString();
+  VOYAGER_LOG(INFO) << "Connector::OnConnect - " << StateToString();
 
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();

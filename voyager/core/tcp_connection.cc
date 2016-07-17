@@ -146,7 +146,7 @@ void TcpConnection::HandleWrite() {
                          << "] - write: " << strerror(err);
     }
   } else {
-    VOYAGER_LOG(TRACE) << "TcpConnection::HandleWrite [" << name_ << "] - fd="
+    VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ << "] - fd="
                        << dispatch_->Fd() << " is down, no more writing";
   }
 }

@@ -46,6 +46,7 @@ void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6);
 struct sockaddr_storage PeerSockAddr(int socketfd);
 struct sockaddr_storage LocalSockAddr(int socketfd);
 int IsSelfConnect(int socketfd);
+
 }  // namespace sockets
 }  // namespace voyager 
 

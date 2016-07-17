@@ -12,10 +12,10 @@ namespace voyager {
 void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
   static const char* loglevel_names[] = {
-    "TRACE", "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
+     "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
   std::string log_time = Timestamp::Now().FormatTimestamp();
 
-  if (level >= LOGLEVEL_WARN) {
+  if (level >= LOGLEVEL_INFO) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
             log_time.c_str(), loglevel_names[level], filename, line, 
             message.c_str());

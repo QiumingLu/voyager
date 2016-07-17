@@ -6,7 +6,6 @@
 namespace voyager {
 
 enum LogLevel {
-  LOGLEVEL_TRACE,
   LOGLEVEL_DEBUG,
   LOGLEVEL_INFO,
   LOGLEVEL_WARN,
