@@ -4,6 +4,8 @@
 #include <atomic>
 #include <vector>
 #include <assert.h>
+#include <stdint.h>
+#include <stddef.h>
 
 namespace voyager {
 namespace cache {
