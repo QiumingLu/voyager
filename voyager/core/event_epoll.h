@@ -35,9 +35,9 @@ class EventKQueue : public EventPoller {
   EventKQueue(EventLoop* ev);
   virtual ~EventKQueue();
 
-  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches) { }
-  virtual void RemoveDispatch(Dispatch* dispatch) { }
-  virtual void UpdateDispatch(Dispatch* dispatch) { }
+  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
+  virtual void RemoveDispatch(Dispatch* dispatch);
+  virtual void UpdateDispatch(Dispatch* dispatch);
 };
 
 #endif

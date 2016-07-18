@@ -44,12 +44,13 @@ void TcpServer::Start() {
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertThreadSafe();
-
-  std::string conn_name = 
-      StringPrintf("%s-%s#%d", name_.c_str(), ipbuf_.c_str(), ++conn_id_);
   char peer[64];
   sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
-                            peer, sizeof(peer));
+                            peer, sizeof(peer)); 
+  std::string conn_name = 
+      StringPrintf("%s-%s-%s#%d",
+		           name_.c_str(), ipbuf_.c_str(), peer, ++conn_id_);
+  
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_ 
                     << "] - new connection [" << conn_name
                     << "] from " << peer;

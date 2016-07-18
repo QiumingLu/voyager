@@ -103,6 +103,22 @@ void EventEpoll::EpollCTL(int op, Dispatch* dispatch) {
   }
 }
 
+#elif __APPLE__
+EventKQueue::EventKQueue(EventLoop* ev) : EventPoller(ev) {
+}
+
+EventKQueue::~EventKQueue() {
+}
+
+void EventKQueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
+}
+
+void EventKQueue::RemoveDispatch(Dispatch* dispatch) {
+}
+
+void EventKQueue::UpdateDispatch(Dispatch* dispatch) {
+}
+
 #endif
 
 }  // namespace voyager

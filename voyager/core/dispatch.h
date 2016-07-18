@@ -23,14 +23,30 @@ class Dispatch {
 
   void HandleEvent();
 
-  void SetReadCallback(const EventCallback&& func) { readfunc_ = func; }
-  void SetReadCallback(EventCallback&& func) { readfunc_ = std::move(func); }
-  void SetWriteCallback(const EventCallback& func) { writefunc_ = func; }
-  void SetWriteCallback(EventCallback&& func) { writefunc_ = std::move(func); }
-  void SetCloseCallback(const EventCallback& func) { closefunc_ = func; }
-  void SetCloseCallback(EventCallback&& func) { closefunc_ = std::move(func); }
-  void SetErrorCallback(const EventCallback& func) { errorfunc_ = func; }
-  void SetErrorCallback(EventCallback&& func) { errorfunc_ = std::move(func); }
+  void SetReadCallback(const EventCallback& func) { 
+	readfunc_ = func;
+  }
+  void SetReadCallback(EventCallback&& func) { 
+	readfunc_ = std::move(func); 
+  }
+  void SetWriteCallback(const EventCallback& func) {
+	writefunc_ = func;
+  }
+  void SetWriteCallback(EventCallback&& func) { 
+	writefunc_ = std::move(func); 
+  }
+  void SetCloseCallback(const EventCallback& func) { 
+	closefunc_ = func; 
+  }
+  void SetCloseCallback(EventCallback&& func) { 
+	closefunc_ = std::move(func);
+  }
+  void SetErrorCallback(const EventCallback& func) { 
+	errorfunc_ = func;
+  }
+  void SetErrorCallback(EventCallback&& func) { 
+	errorfunc_ = std::move(func);
+  }
 
   void EnableRead();
   void EnableWrite();
@@ -47,7 +63,7 @@ class Dispatch {
 
   EventLoop* OwnerEventLoop() const  { return eventloop_; }
 
-  void Tie(const std::shared_ptr<void>&);
+  void Tie(const std::shared_ptr<void>& obj);
 
  private:
   void UpdateEvents();

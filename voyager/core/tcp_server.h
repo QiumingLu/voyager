@@ -57,7 +57,7 @@ class TcpServer {
   const std::string name_;
   std::shared_ptr<EventLoopThreadPool> ev_pool_;
   port::SequenceNumber seq_;
-  int conn_id_;
+  size_t conn_id_;
 
   ConnectionCallback connection_cb_;
   WriteCompleteCallback writecomplete_cb_;

@@ -12,4 +12,4 @@ Voyager的代码目录结构主要分为三部分，分别为util，port和core�
 
 编译环境：
 （1）Linux 和 GCC 4.8
-（2）Mac OS X 和 Clang3.4
+（2）Mac OS X 和 Clang 3.3
