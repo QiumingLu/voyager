@@ -1,15 +1,10 @@
 #ifndef VOYAGER_CORE_EVENT_EPOLL_H_
 #define VOYAGER_CORE_EVENT_EPOLL_H_
 
-#ifdef __linux__
 #include <sys/epoll.h>
-#endif
-
 #include "voyager/core/event_poller.h"
 
 namespace voyager {
-
-#ifdef __linux__
 
 class EventEpoll : public EventPoller {
  public:
@@ -28,19 +23,6 @@ class EventEpoll : public EventPoller {
   int epollfd_;
   std::vector<struct epoll_event> epollfds_;
 };
-
-#elif __APPLE__
-class EventKQueue : public EventPoller {
- public:
-  EventKQueue(EventLoop* ev);
-  virtual ~EventKQueue();
-
-  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
-  virtual void RemoveDispatch(Dispatch* dispatch);
-  virtual void UpdateDispatch(Dispatch* dispatch);
-};
-
-#endif
 
 }  // namespace voyager
 

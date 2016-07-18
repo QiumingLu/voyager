@@ -6,7 +6,6 @@ set(core_SRCS
   eventloop.cc
   eventloop_thread.cc
   eventloop_threadpool.cc
-  event_epoll.cc
   event_poll.cc
   event_poller.cc
   event_select.cc
@@ -18,6 +17,12 @@ set(core_SRCS
   tcp_socket.cc
   timer.cc
   )
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
+  list(APPEND core_SRCS "event_epoll.cc")
+elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+  list(APPEND core_SRCS "event_kqueue.cc")
+endif()
 
 add_library(voyager_core ${core_SRCS})
 
@@ -38,7 +43,7 @@ set(HEADERS
   tcp_server.h
   tcp_socket.h
   )
- 
+
 install(FILES ${HEADERS} DESTINATION include/voyager)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)

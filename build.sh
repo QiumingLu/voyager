@@ -2,6 +2,7 @@
 
 set -x
 
+SYSTEM=`uname -a`
 SOURCE_DIR=`pwd`
 BUILD_DIR=${BUILD_DIR:-../build}
 BUILD_TYPE=${BUILD_TYPE:-release}

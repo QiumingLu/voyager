@@ -8,8 +8,6 @@
 
 namespace voyager {
 
-#ifdef __linux__
-
 const static int kNew = -1;
 const static int kAdded = 1;
 const static int kDeleted = 2;
@@ -102,23 +100,5 @@ void EventEpoll::EpollCTL(int op, Dispatch* dispatch) {
     VOYAGER_LOG(ERROR) << "epoll_wait: " << strerror(errno) << " fd=" << fd;
   }
 }
-
-#elif __APPLE__
-EventKQueue::EventKQueue(EventLoop* ev) : EventPoller(ev) {
-}
-
-EventKQueue::~EventKQueue() {
-}
-
-void EventKQueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
-}
-
-void EventKQueue::RemoveDispatch(Dispatch* dispatch) {
-}
-
-void EventKQueue::UpdateDispatch(Dispatch* dispatch) {
-}
-
-#endif
 
 }  // namespace voyager
