@@ -31,7 +31,7 @@ class Acceptor {
   }
 
  private:
-  void OnAccept();
+  void Accept();
  
   EventLoop* eventloop_;
   TcpSocket  tcpsocket_;

@@ -27,7 +27,7 @@ Acceptor::Acceptor(EventLoop* eventloop,
   tcpsocket_.SetReusePort(reuseport);
   tcpsocket_.BindAddress(addr.GetSockAddr(), 
                          sizeof(*(addr.GetSockAddr())));
-  dispatch_.SetReadCallback(std::bind(&Acceptor::OnAccept, this));
+  dispatch_.SetReadCallback(std::bind(&Acceptor::Accept, this));
 }
 
 Acceptor::~Acceptor() {
@@ -43,12 +43,12 @@ void Acceptor::EnableListen() {
   dispatch_.EnableRead();
 }
 
-void Acceptor::OnAccept() {
+void Acceptor::Accept() {
   eventloop_->AssertThreadSafe();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
-  int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa), 
-                                    &salen);
+  int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa),
+                              &salen);
   if (connectfd >= 0) {
     if (connfunc_) {
       connfunc_(connectfd, sa);

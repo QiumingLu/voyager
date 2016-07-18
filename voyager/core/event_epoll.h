@@ -16,7 +16,7 @@ class EventEpoll : public EventPoller {
   EventEpoll(EventLoop* ev);
   virtual ~EventEpoll();
 
-  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
+  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
   virtual void RemoveDispatch(Dispatch* dispatch);
   virtual void UpdateDispatch(Dispatch* dispatch);
 
@@ -27,6 +27,17 @@ class EventEpoll : public EventPoller {
 
   int epollfd_;
   std::vector<struct epoll_event> epollfds_;
+};
+
+#elif __APPLE__
+class EventKQueue : public EventPoller {
+ public:
+  EventKQueue(EventLoop* ev);
+  virtual ~EventKQueue();
+
+  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches) { }
+  virtual void RemoveDispatch(Dispatch* dispatch) { }
+  virtual void UpdateDispatch(Dispatch* dispatch) { }
 };
 
 #endif

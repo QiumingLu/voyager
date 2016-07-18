@@ -102,7 +102,7 @@ void Connector::Connecting(int socketfd) {
   state_ = kConnecting; 
   assert(!dispatch_.get());
   dispatch_.reset(new Dispatch(ev_, socketfd));
-  dispatch_->SetWriteCallback(std::bind(&Connector::OnConnect, this));
+  dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
   dispatch_->SetErrorCallback(std::bind(&Connector::HandleError, this));
   dispatch_->EnableWrite();
 }
@@ -120,8 +120,8 @@ void Connector::Retry(int socketfd) {
   }
 }
 
-void Connector::OnConnect() {
-  VOYAGER_LOG(INFO) << "Connector::OnConnect - " << StateToString();
+void Connector::ConnectCallback() {
+  VOYAGER_LOG(INFO) << "Connector::ConnectCallback - " << StateToString();
 
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
@@ -130,7 +130,7 @@ void Connector::OnConnect() {
       VOYAGER_LOG(WARN) << st;
       Retry(socketfd);
     } else if (sockets::IsSelfConnect(socketfd) == 0) {
-      VOYAGER_LOG(WARN) << "Connector::OnConnect - Self connect";
+      VOYAGER_LOG(WARN) << "Connector::ConnectCallback - Self connect";
       Retry(socketfd);
     } else {
       state_ = kConnected;

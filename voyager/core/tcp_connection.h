@@ -80,7 +80,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     return &context_;
   }
 
-  // Internal use only
+  // Internal use only, use in TcpClient and TcpServer.
   void EstablishConnection();
  
  private:

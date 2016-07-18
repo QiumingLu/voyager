@@ -48,7 +48,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void Connecting(int socketfd);
   void Retry(int socketfd);
 
-  void OnConnect();
+  void ConnectCallback();
   void HandleError();
 
   int DeleteOldDispatch();

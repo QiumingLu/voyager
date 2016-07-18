@@ -38,23 +38,24 @@ class EventLoop {
 
   void DeleteTimer(Timer* t);
 
-  // only internal use
-  void WakeUp();
-  void RemoveDispatch(Dispatch* dispatch);
-  void UpdateDispatch(Dispatch* dispatch);
-  bool HasDispatch(Dispatch* dispatch);
-
   void AssertThreadSafe() {
     if (!IsInCreatedThread()) {
       AbortForNotInCreatedThread();
     }
   }
+  bool IsInCreatedThread() const { 
+	return tid_ == port::CurrentThread::Tid(); 
+  }
 
-  bool IsInCreatedThread() const { return tid_ == port::CurrentThread::Tid(); }
-
-  static EventLoop* GetEventLoopOfCurrentThread();
-
+  // Voyager创建的EvevntLoop，应由它自己来调用退出,用户不需要调用。
   void Exit();
+
+  static EventLoop* EventLoopOfCurrentThread();
+  
+  // only internal use
+  void RemoveDispatch(Dispatch* dispatch);
+  void UpdateDispatch(Dispatch* dispatch);
+  bool HasDispatch(Dispatch* dispatch);
 
   // only internal use
   void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
@@ -70,7 +71,9 @@ class EventLoop {
   void RunFuncQueue();
   void HandleRead();
   void AbortForNotInCreatedThread();
-  
+ 
+  void WakeUp();
+ 
   bool exit_;
   bool runfuncqueue_;
 

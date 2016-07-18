@@ -43,7 +43,7 @@ IgnoreSIGPIPE ignore_SIGPIPE;
 
 }  // namespace anonymous
 
-EventLoop* EventLoop::GetEventLoopOfCurrentThread() {
+EventLoop* EventLoop::EventLoopOfCurrentThread() {
   return t_eventloop;
 }
 
@@ -81,7 +81,8 @@ EventLoop::EventLoop()
   }
   wakeup_dispatch_.reset(new Dispatch(this, wakeup_fd_[0]));
 
-  VOYAGER_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
+  VOYAGER_LOG(DEBUG) << "EventLoop "<< this 
+	                 << " created in thread " << tid_;
   if (t_eventloop) {
     VOYAGER_LOG(FATAL) << "Another EventLoop " << t_eventloop
                        << " exists in this thread " << tid_;
@@ -95,9 +96,11 @@ EventLoop::EventLoop()
 #endif
 
 EventLoop::~EventLoop() {
-  VOYAGER_LOG(INFO) << "EventLoop " << this << " of thread " << tid_
-                     << " destructs in thread " << port::CurrentThread::Tid();
-  
+  t_eventloop = NULL;
+  VOYAGER_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
+                     << " destructs in thread " 
+					 << port::CurrentThread::Tid();
+
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
 #ifdef __linux__
