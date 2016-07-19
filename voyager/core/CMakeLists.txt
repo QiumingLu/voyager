@@ -42,9 +42,10 @@ set(HEADERS
   tcp_connection.h
   tcp_server.h
   tcp_socket.h
+  timer.h
   )
 
-install(FILES ${HEADERS} DESTINATION include/voyager)
+install(FILES ${HEADERS} DESTINATION include/voyager/core)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)

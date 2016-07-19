@@ -14,17 +14,8 @@ add_library(voyager_util ${util_SRCS})
 
 install(TARGETS voyager_util DESTINATION lib)
 
-set(HEADERS
-  any.h
-  logging.h
-  slice.h
-  status.h
-  base64/base64.h
-  json/json.h
-  json/json_value.h
-  )
-
-install(FILES ${HEADERS} DESTINATION include/voyager)
+file(GLOB HEADERS "*.h")
+install(FILES ${HEADERS} DESTINATION include/voyager/util)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(tests)

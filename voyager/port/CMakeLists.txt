@@ -15,10 +15,8 @@ target_link_libraries(voyager_port voyager_util)
 
 install(TARGETS voyager_port DESTINATION lib)
 
-set(HEADERS
-  singleton.h
-  )
-install(FILES ${HEADERS} DESTINATION include/voyager)
+file(GLOB HEADERS "*.h")
+install(FILES ${HEADERS} DESTINATION include/voyager/port)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES) 
   add_subdirectory(tests)
