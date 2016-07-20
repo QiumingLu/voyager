@@ -1,8 +1,8 @@
-#include "voyager/core/tcp_server.h"
-#include "voyager/core/eventloop.h"
-#include "voyager/core/sockaddr.h"
-#include "voyager/core/tcp_connection.h"
-#include "voyager/core/callback.h"
+#include <voyager/core/tcp_server.h>
+#include <voyager/core/eventloop.h>
+#include <voyager/core/sockaddr.h>
+#include <voyager/core/tcp_connection.h>
+#include <voyager/core/callback.h>
 #include <unistd.h>
 
 using namespace std::placeholders;
@@ -13,8 +13,10 @@ class EchoServer {
  public:
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "EchoServer", 4) {
-    server_.SetConnectionCallback(std::bind(&EchoServer::Connect, this, _1));
-    server_.SetMessageCallback(std::bind(&EchoServer::Message, this, _1, _2));
+    server_.SetConnectionCallback(
+		std::bind(&EchoServer::Connect, this, _1));
+    server_.SetMessageCallback(
+		std::bind(&EchoServer::Message, this, _1, _2));
   }
 
   void Start() {
@@ -33,6 +35,10 @@ class EchoServer {
   }
 
   TcpServer server_;
+
+  // No copying allow
+  EchoServer(const EchoServer&);
+  void operator=(const EchoServer&);
 };
 
 }  // namespace voyager

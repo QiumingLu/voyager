@@ -5,7 +5,7 @@ project (voyager C CXX)
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE "release")
 endif()
 
 set(CXX_FLAGS
@@ -36,17 +36,17 @@ endif()
 
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_COMPILER "g++")
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_COMPILER "clang++")
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif()
 
