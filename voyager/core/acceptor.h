@@ -16,8 +16,8 @@ class Acceptor {
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
   Acceptor(EventLoop* eventloop, 
-                    const SockAddr& addr, 
-                    int backlog, bool reuseport = false);
+           const SockAddr& addr, 
+           int backlog, bool reuseport = false);
   ~Acceptor();
 
   void EnableListen();

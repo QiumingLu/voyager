@@ -49,7 +49,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
                             peer, sizeof(peer)); 
   std::string conn_name = StringPrintf("%s-%s#%d", 
-	                                   ipbuf_.c_str(), peer, ++conn_id_);
+                                       ipbuf_.c_str(), peer, ++conn_id_);
   
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_ 
                     << "] - new connection [" << conn_name

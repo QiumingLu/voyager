@@ -113,7 +113,7 @@ void Connector::Retry(int socketfd) {
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.Ipbuf() << " in " << retry_time_ 
-					  << " seconds.";
+                      << " seconds.";
     ev_->RunAfter(retry_time_, 
                   std::bind(&Connector::StartInLoop, shared_from_this()));
     retry_time_ = 
@@ -148,7 +148,7 @@ void Connector::ConnectCallback() {
 
 void Connector::HandleError() {
   VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" 
-	                   << StateToString();
+	                 << StateToString();
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
     Status st = sockets::CheckSocketError(socketfd);

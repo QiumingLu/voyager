@@ -28,7 +28,7 @@ TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
  
 TcpConnection::~TcpConnection() {
   VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ 
-	                 << "] at " << this << " fd=" << dispatch_->Fd()
+                     << "] at " << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
   assert(state_ == kDisconnected);
 }
@@ -137,8 +137,8 @@ void TcpConnection::HandleWrite() {
     }
   } else {
     VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ 
-	                  << "] - fd=" << dispatch_->Fd() 
-					  << " is down, no more writing";
+                      << "] - fd=" << dispatch_->Fd() 
+                      << " is down, no more writing";
   }
 }
 
@@ -169,11 +169,8 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInCreatedThread()) {
       SendInLoop(&*message.begin(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, 
-                    this,
-                    &*message.begin(), 
-                    message.size())); 
+      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this,
+                                      &*message.begin(), message.size())); 
     }
   }
 }
@@ -185,7 +182,7 @@ void TcpConnection::SendMessage(const Slice& message) {
     } else {
       std::string s(message.ToString());
       eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
-			                          &*s.begin(), s.size()));
+                                      &*s.begin(), s.size()));
     }
   }
 }
@@ -199,7 +196,7 @@ void TcpConnection::SendMessage(Buffer* message) {
     } else {
       std::string s(message->RetrieveAllAsString());
       eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
-			                &*s.begin(), s.size()));
+                                      &*s.begin(), s.size()));
     }
   }
 }
