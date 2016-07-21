@@ -1,7 +1,9 @@
 #include "voyager/core/tcp_connection.h"
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
+#include "voyager/core/online_connections.h"
 #include "voyager/core/socket_util.h"
+#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
 
@@ -25,9 +27,8 @@ TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
 }
  
 TcpConnection::~TcpConnection() {
-  CloseConnection();
-  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ << "] at "
-                     << this << " fd=" << dispatch_->Fd()
+  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ 
+	                 << "] at " << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
   assert(state_ == kDisconnected);
 }
@@ -41,17 +42,6 @@ void TcpConnection::EstablishConnection() {
   if (connection_cb_) {
     connection_cb_(shared_from_this());
   }
-}
-
-void TcpConnection::CloseConnection() {
-  if (state_ == kConnected || state_ == kDisconnecting) {
-    state_ = kDisconnected;
-    dispatch_->DisableAll();
-    if (close_cb_) {
-      close_cb_(shared_from_this());
-    }
-  }
-  dispatch_->RemoveEvents();
 }
 
 void TcpConnection::StartRead() {
@@ -146,16 +136,24 @@ void TcpConnection::HandleWrite() {
                          << "] - write: " << strerror(err);
     }
   } else {
-    VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ << "] - fd="
-                       << dispatch_->Fd() << " is down, no more writing";
+    VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ 
+	                  << "] - fd=" << dispatch_->Fd() 
+					  << " is down, no more writing";
   }
 }
 
 void TcpConnection::HandleClose() {
   eventloop_->AssertThreadSafe();
-  eventloop_->EraseCnnection(shared_from_this());
   assert(state_ == kConnected || state_ == kDisconnecting);
-  CloseConnection();
+  TcpConnectionPtr guard(shared_from_this());
+  state_ = kDisconnected;
+  dispatch_->DisableAll();
+  if (close_cb_) {
+    close_cb_(guard);
+  }
+  dispatch_->RemoveEvents();
+  
+  port::Singleton<OnlineConnections>::Instance().EraseCnnection(guard);
 }
 
 void TcpConnection::HandleError() {
@@ -186,8 +184,8 @@ void TcpConnection::SendMessage(const Slice& message) {
       SendInLoop(message.data(), message.size());
     } else {
       std::string s(message.ToString());
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
+			                          &*s.begin(), s.size()));
     }
   }
 }
@@ -200,8 +198,8 @@ void TcpConnection::SendMessage(Buffer* message) {
       message->RetrieveAll();
     } else {
       std::string s(message->RetrieveAllAsString());
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
+			                &*s.begin(), s.size()));
     }
   }
 }

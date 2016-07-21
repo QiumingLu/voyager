@@ -16,7 +16,7 @@ class SockAddr {
     return reinterpret_cast<const struct sockaddr*>(&sa_);
   }
   sa_family_t Family() const { return sa_.ss_family; }
-  std::string IP() const { return ip_; }
+  std::string Ipbuf() const { return ip_; }
 
  private:
   Status GetAddrInfo(const char* host, uint16_t port);

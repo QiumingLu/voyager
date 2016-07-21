@@ -26,19 +26,32 @@ class TcpServer {
   ~TcpServer();
 
   const std::string& name() const { return name_; }
-  
+
+  // 连接建立之后的回调
   void SetConnectionCallback(const ConnectionCallback& func) {
     connection_cb_ = func;
   }
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
   }
+
+  // 连接关闭之后的回调
+  void SetCloseCallback(const CloseCallback& func) {
+	close_cb_ = func;
+  }
+  void SetCloseCallback(CloseCallback&& func) {
+	close_cb_ = std::move(func);
+  }
+
+  // 发送完消息之后的回调
   void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
     writecomplete_cb_ = func;
   }
   void SetWriteCompleteCallback(WriteCompleteCallback&& func) {
     writecomplete_cb_ = std::move(func);
   }
+
+  // 接收消息到来的回调
   void SetMessageCallback(const MessageCallback& func) {
     message_cb_ = func;
   }
@@ -53,13 +66,14 @@ class TcpServer {
 
   EventLoop* eventloop_;
   std::string ipbuf_;
-  scoped_ptr<Acceptor> acceptor_ptr_;
   const std::string name_;
+  scoped_ptr<Acceptor> acceptor_ptr_;
   std::shared_ptr<EventLoopThreadPool> ev_pool_;
   port::SequenceNumber seq_;
   size_t conn_id_;
 
   ConnectionCallback connection_cb_;
+  CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
 

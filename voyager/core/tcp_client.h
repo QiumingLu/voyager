@@ -22,15 +22,10 @@ class TcpClient {
   ~TcpClient();
 
   void Connect();
+  void ReConnect();
+  void QuitConnect();
+
   void DisConnect();
-  void Stop();
-
-  void EnableRetry() { retry_ = true; }
-  bool IsRetry() const { return retry_; }
-
-  TcpConnectionPtr ConnPtr() const {
-    return conn_ptr_; 
-  }
 
   EventLoop* GetLoop() const { return ev_; }
 
@@ -40,6 +35,14 @@ class TcpClient {
 
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
+  }
+
+  void SetCloseCallback(const CloseCallback& func) {
+	close_cb_ = func;
+  }
+
+  void SetCloseCallback(CloseCallback&& func) {
+	close_cb_ = std::move(func);
   }
 
   void SetMessageCallback(const MessageCallback& func) {
@@ -64,11 +67,11 @@ class TcpClient {
   std::string name_;
   EventLoop* ev_;
   ConnectorPtr connector_ptr_;
-  int conn_id_;
-  bool retry_;
+  size_t conn_id_;
   bool connect_;
 
   ConnectionCallback connection_cb_;
+  CloseCallback close_cb_;
   MessageCallback message_cb_;
   WriteCompleteCallback writecomplete_cb_;
 

@@ -2,18 +2,18 @@
 #include "voyager/core/connector.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
-#include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
 namespace voyager {
 
-TcpClient::TcpClient(EventLoop* ev, const SockAddr& addr, const std::string& name)
+TcpClient::TcpClient(EventLoop* ev, 
+	                   const SockAddr& addr, 
+					           const std::string& name)
     : name_(name),
       ev_(CHECK_NOTNULL(ev)),
       connector_ptr_(new Connector(ev, addr)),
       conn_id_(0),
-      retry_(false),
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
@@ -25,22 +25,29 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::Connect() {
-  VOYAGER_LOG(INFO) << "TcpClient::TcpConnect - connecting to "
-                    << connector_ptr_->ServerAddr().IP();
+  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to "
+                    << connector_ptr_->ServerAddr().Ipbuf();
   connect_ = true;
   connector_ptr_->Start();
 }
 
-void TcpClient::DisConnect() {
-  connect_ = false;
-  if (conn_ptr_) {
-    conn_ptr_->ShutDown();
-  }
+void TcpClient::ReConnect() {
+  VOYAGER_LOG(INFO) << "TcpClient::ReConnect -reconnecting to "
+                    << connector_ptr_->ServerAddr().Ipbuf();
+  connect_ = true;
+  connector_ptr_->ReStart();
 }
 
-void TcpClient::Stop() {
+void TcpClient::QuitConnect() {
   connect_ = false;
   connector_ptr_->Stop();
+}
+
+void TcpClient::DisConnect() {
+  connect_ = false;
+  if (conn_ptr_.get()) {
+    conn_ptr_->ShutDown();
+  }
 }
 
 void TcpClient::NewConnection(int socketfd) {
@@ -49,19 +56,18 @@ void TcpClient::NewConnection(int socketfd) {
   std::string conn_name = 
       StringPrintf("%s-%s#%d", 
                   name_.c_str(), 
-                  connector_ptr_->ServerAddr().IP().c_str(), 
+                  connector_ptr_->ServerAddr().Ipbuf().c_str(), 
                   ++conn_id_);
 
-  TcpConnectionPtr p(new TcpConnection(conn_name, ev_, socketfd));
+  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
 
-  p->SetConnectionCallback(connection_cb_);
-  p->SetMessageCallback(message_cb_);
-  p->SetWriteCompleteCallback(writecomplete_cb_);
+  ptr->SetConnectionCallback(connection_cb_);
+  ptr->SetCloseCallback(close_cb_);
+  ptr->SetMessageCallback(message_cb_);
+  ptr->SetWriteCompleteCallback(writecomplete_cb_);
 
-  conn_ptr_ = p;
-
-  ev_->NewConnection(conn_name, p);
-  p->EstablishConnection();
+  conn_ptr_ = ptr;
+  ptr->EstablishConnection();
 }
 
 }  // namespace voyager

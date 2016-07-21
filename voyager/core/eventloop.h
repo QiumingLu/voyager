@@ -57,16 +57,6 @@ class EventLoop {
   void UpdateDispatch(Dispatch* dispatch);
   bool HasDispatch(Dispatch* dispatch);
 
-  // only internal use
-  void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
-    port::MutexLock lock(&conn_mu_);
-    conn_map_[name] = ptr;
-  }
-  void EraseCnnection(const TcpConnectionPtr& ptr) {
-    port::MutexLock lock(&conn_mu_);
-    conn_map_.erase(ptr->name());
-  }
-
  private:
   void RunFuncQueue();
   void HandleRead();
@@ -92,9 +82,6 @@ class EventLoop {
 
   port::Mutex mu_;
   std::vector<Func> funcqueue_;
-
-  port::Mutex conn_mu_;
-  std::map<std::string, TcpConnectionPtr> conn_map_;
 
   // No copying allow
   EventLoop(const EventLoop&);

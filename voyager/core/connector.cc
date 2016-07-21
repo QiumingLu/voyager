@@ -37,7 +37,6 @@ void Connector::StartInLoop() {
 }
 
 void Connector::ReStart() {
-  ev_->AssertThreadSafe();
   state_ = kDisConnected;
   retry_time_ = kInitRetryTime;
   connect_ = true;
@@ -54,7 +53,8 @@ void Connector::StopInLoop() {
   if (state_ == kConnecting) {
     state_ = kDisConnected;
     int socketfd = DeleteOldDispatch();
-    Retry(socketfd);
+    sockets::CloseFd(socketfd);
+    state_ = kDisConnected;
   }
 }
 
@@ -112,7 +112,8 @@ void Connector::Retry(int socketfd) {
   state_ = kDisConnected;
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
-                      << addr_.IP() << " in " << retry_time_ << " seconds.";
+                      << addr_.Ipbuf() << " in " << retry_time_ 
+					  << " seconds.";
     ev_->RunAfter(retry_time_, 
                   std::bind(&Connector::StartInLoop, shared_from_this()));
     retry_time_ = 
@@ -142,13 +143,12 @@ void Connector::ConnectCallback() {
         sockets::CloseFd(socketfd);
       }
     }
-  } else {
-    assert(state_ == kDisConnected);
   }
 }
 
 void Connector::HandleError() {
-  VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" << StateToString();
+  VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" 
+	                   << StateToString();
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
     Status st = sockets::CheckSocketError(socketfd);
@@ -163,12 +163,8 @@ int Connector::DeleteOldDispatch() {
   dispatch_->DisableAll();
   dispatch_->RemoveEvents();
   int socketfd = dispatch_->Fd();
-  ev_->QueueInLoop(std::bind(&Connector::ResetDispatch, this));
-  return socketfd;
-}
-
-void Connector::ResetDispatch() {
   dispatch_.reset();
+  return socketfd;
 }
 
 std::string Connector::StateToString() const {

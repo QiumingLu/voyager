@@ -20,7 +20,7 @@ void Message(const TcpConnectionPtr& p, Buffer* buf) {
     p->SendMessage(message);
   } else if (s == "Bye!") {
     VOYAGER_LOG(INFO) << p->StateToString();
-    g_client->DisConnect();
+    p->ShutDown();
     VOYAGER_LOG(INFO) << p->StateToString();
   } else {   
     Slice message = "Yes, I know!";

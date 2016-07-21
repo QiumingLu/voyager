@@ -4,8 +4,9 @@
 #include "voyager/core/acceptor.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/eventloop_threadpool.h"
+#include "voyager/core/online_connections.h"
 #include "voyager/core/socket_util.h"
-#include "voyager/core/tcp_connection.h"
+#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
@@ -19,9 +20,9 @@ TcpServer::TcpServer(EventLoop* eventloop,
                      int thread_size,
                      int backlog)
     : eventloop_(CHECK_NOTNULL(eventloop)),
-      ipbuf_(addr.IP()),
-      acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
+      ipbuf_(addr.Ipbuf()),
       name_(name),
+      acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
       ev_pool_(new EventLoopThreadPool(eventloop_, name_, thread_size-1)),
       conn_id_(0) {
   acceptor_ptr_->SetNewConnectionCallback(
@@ -47,9 +48,8 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   char peer[64];
   sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
                             peer, sizeof(peer)); 
-  std::string conn_name = 
-      StringPrintf("%s-%s-%s#%d",
-		           name_.c_str(), ipbuf_.c_str(), peer, ++conn_id_);
+  std::string conn_name = StringPrintf("%s-%s#%d", 
+	                                   ipbuf_.c_str(), peer, ++conn_id_);
   
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_ 
                     << "] - new connection [" << conn_name
@@ -59,10 +59,11 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
   
   conn_ptr->SetConnectionCallback(connection_cb_);
+  conn_ptr->SetCloseCallback(close_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
   
-  ev->NewConnection(conn_name, conn_ptr);
+  port::Singleton<OnlineConnections>::Instance().NewConnection(conn_name, conn_ptr);
   ev->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn_ptr));
 }
 

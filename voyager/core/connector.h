@@ -52,7 +52,6 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void HandleError();
 
   int DeleteOldDispatch();
-  void ResetDispatch();
 
   EventLoop* ev_;
   SockAddr addr_;

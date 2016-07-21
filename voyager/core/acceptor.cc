@@ -48,7 +48,7 @@ void Acceptor::Accept() {
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
   int connectfd = tcpsocket_.Accept(reinterpret_cast<struct sockaddr*>(&sa),
-                              &salen);
+                                    &salen);
   if (connectfd >= 0) {
     if (connfunc_) {
       connfunc_(connectfd, sa);

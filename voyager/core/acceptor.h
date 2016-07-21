@@ -15,7 +15,7 @@ class Acceptor {
   typedef std::function<void (int fd, 
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
-  explicit Acceptor(EventLoop* eventloop, 
+  Acceptor(EventLoop* eventloop, 
                     const SockAddr& addr, 
                     int backlog, bool reuseport = false);
   ~Acceptor();
