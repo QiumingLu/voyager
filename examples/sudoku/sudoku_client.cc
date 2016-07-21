@@ -73,7 +73,7 @@ class SudokuClient {
                             << "\nTake MicroSeconds: " 
                             << stop_.MicroSecondsSinceEpoch() 
                                    - start_.MicroSecondsSinceEpoch();
-          client_.DisConnect();
+          client_.Close();
         }
       } else {
         break;

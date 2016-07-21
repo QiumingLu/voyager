@@ -65,7 +65,8 @@ std::pair<uint64_t, uint64_t> RunOnce() {
   eventloop->Loop();
   Timestamp te(Timestamp::Now());
 
-  uint64_t total_time = te.MicroSecondsSinceEpoch() - ta.MicroSecondsSinceEpoch();
+  uint64_t total_time = te.MicroSecondsSinceEpoch() - 
+                            ta.MicroSecondsSinceEpoch();
   uint64_t sub_time = te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch();
   std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
 
@@ -132,7 +133,8 @@ int main(int argc, char* argv[]) {
   eventloop = &ev;
   int dispatch_size = num_pipes;
 
-  scoped_array<scoped_ptr<Dispatch> > dispatches(new scoped_ptr<Dispatch>[dispatch_size]);
+  scoped_array<scoped_ptr<Dispatch> > dispatches(
+      new scoped_ptr<Dispatch>[dispatch_size]);
   for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
     Dispatch* dispatch = new Dispatch(&ev, *cp);
     dispatches[i].reset(dispatch);

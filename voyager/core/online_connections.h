@@ -2,9 +2,12 @@
 #define VOYAGER_CORE_ONLINE_CONNECTIONS_H_
 
 #include "voyager/port/mutexlock.h"
+#include "voyager/port/singleton.h"
+
 
 namespace voyager {
 
+// 单例类，借助于port::Singleton模板类
 class OnlineConnections
 {
  public:
@@ -22,8 +25,8 @@ class OnlineConnections
   }
 
   size_t OnlineUsersNum() const {
-  	port::MutexLock lock(&mu_);
-  	return conn_map_.size();
+    port::MutexLock lock(&mu_);
+    return conn_map_.size();
   }
 
  private:

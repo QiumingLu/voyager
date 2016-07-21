@@ -66,6 +66,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   bool IsConnected() const { return state_ == kConnected; }
   bool IsConnecting() const { return state_ == kConnecting; }
 
+  // 默认为ture
   void SetTcpNoDelay(bool on) { socket_.SetTcpNoDelay(on); }
 
   void SetContext(const any& context) {

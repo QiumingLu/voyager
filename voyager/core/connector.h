@@ -28,9 +28,6 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void ReStart();
   void Stop();
 
-  SockAddr ServerAddr() const { return addr_; }
-  std::string StateToString() const;
-
  private:
   enum ConnectState {
     kDisConnected,
@@ -52,6 +49,8 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void HandleError();
 
   int DeleteOldDispatch();
+
+  std::string StateToString() const;
 
   EventLoop* ev_;
   SockAddr addr_;

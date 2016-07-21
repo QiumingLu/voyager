@@ -3,7 +3,6 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/core/socket_util.h"
-#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
 
@@ -22,6 +21,7 @@ TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
   dispatch_->SetCloseCallback(std::bind(&TcpConnection::HandleClose, this));
   dispatch_->SetErrorCallback(std::bind(&TcpConnection::HandleError, this));
   socket_.SetKeepAlive(true);
+  socket_.SetTcpNoDelay(true);
   VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ << "] at "
                      << this << " fd=" << fd;
 }

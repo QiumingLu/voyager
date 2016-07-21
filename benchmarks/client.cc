@@ -32,14 +32,16 @@ class Session {
         std::bind(&Session::ConnectCallback, this, _1));
     client_.SetMessageCallback(
         std::bind(&Session::MessageCallback, this, _1, _2));
-  }
+    client_.SetCloseCallback(
+        std::bind(&Session::CloseCallback, this, _1));
+ }
 
   void Connect() {
     client_.Connect();
   }
 
-  void DisConnect() {
-    client_.DisConnect();
+  void Close() {
+    client_.Close();
   }
 
   size_t BytesRead() const {
@@ -52,7 +54,7 @@ class Session {
 
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr);
-  void DisConnectCallback(const voyager::TcpConnectionPtr& ptr);
+  void CloseCallback(const voyager::TcpConnectionPtr& ptr);
 
   void MessageCallback(const voyager::TcpConnectionPtr& ptr,
                        voyager::Buffer* buf) {
@@ -124,7 +126,8 @@ class Client {
       using namespace voyager;
       VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
       VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
-      VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024)
+      VOYAGER_LOG(WARN) << static_cast<double>(
+                               total_bytes_read) / (timeout_ * 1024 * 1024)
                         << " MiB/s throughtput";
 
       std::fstream file;
@@ -143,7 +146,7 @@ class Client {
 
   void HandleTimeout() {
     std::for_each(sessions_.begin(), sessions_.end(), 
-        std::mem_fn(&Session::DisConnect));
+        std::mem_fn(&Session::Close));
   }
 
  private:
@@ -169,13 +172,11 @@ class Client {
 };
 
 void Session::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  ptr->SetCloseCallback(
-      std::bind(&Session::DisConnectCallback, this, _1));
   ptr->SetTcpNoDelay(true);
   ptr->SendMessage(owner_->Message());
 }
 
-void Session::DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
+void Session::CloseCallback(const voyager::TcpConnectionPtr& ptr) {
   owner_->Print(ptr);
 }
 

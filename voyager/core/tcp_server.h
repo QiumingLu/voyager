@@ -70,7 +70,7 @@ class TcpServer {
   scoped_ptr<Acceptor> acceptor_ptr_;
   std::shared_ptr<EventLoopThreadPool> ev_pool_;
   port::SequenceNumber seq_;
-  size_t conn_id_;
+  uint64_t conn_id_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

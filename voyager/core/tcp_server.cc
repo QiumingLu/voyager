@@ -6,7 +6,6 @@
 #include "voyager/core/eventloop_threadpool.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/core/socket_util.h"
-#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
@@ -63,7 +62,8 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
   
-  port::Singleton<OnlineConnections>::Instance().NewConnection(conn_name, conn_ptr);
+  port::Singleton<OnlineConnections>::Instance().NewConnection(conn_name, 
+                                                               conn_ptr);
   ev->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn_ptr));
 }
 

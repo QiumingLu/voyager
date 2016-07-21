@@ -11,6 +11,7 @@ TcpClient::TcpClient(EventLoop* ev,
                      const SockAddr& addr, 
                      const std::string& name)
     : name_(name),
+      server_ipbuf_(addr.Ipbuf()),
       ev_(CHECK_NOTNULL(ev)),
       connector_ptr_(new Connector(ev, addr)),
       conn_id_(0),
@@ -25,25 +26,24 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::Connect() {
-  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to "
-                    << connector_ptr_->ServerAddr().Ipbuf();
+  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " << server_ipbuf_;
   connect_ = true;
   connector_ptr_->Start();
 }
 
 void TcpClient::ReConnect() {
-  VOYAGER_LOG(INFO) << "TcpClient::ReConnect -reconnecting to "
-                    << connector_ptr_->ServerAddr().Ipbuf();
+  VOYAGER_LOG(INFO) << "TcpClient::ReConnect -reconnecting to " 
+                    << server_ipbuf_;
   connect_ = true;
   connector_ptr_->ReStart();
 }
 
-void TcpClient::QuitConnect() {
+void TcpClient::DisConnect() {
   connect_ = false;
   connector_ptr_->Stop();
 }
 
-void TcpClient::DisConnect() {
+void TcpClient::Close() {
   connect_ = false;
   if (conn_ptr_.get()) {
     conn_ptr_->ShutDown();
@@ -53,11 +53,8 @@ void TcpClient::DisConnect() {
 void TcpClient::NewConnection(int socketfd) {
   ev_->AssertThreadSafe();
 
-  std::string conn_name = 
-      StringPrintf("%s-%s#%d", 
-                  name_.c_str(), 
-                  connector_ptr_->ServerAddr().Ipbuf().c_str(), 
-                  ++conn_id_);
+  std::string conn_name = StringPrintf("%s-%s#%d", name_.c_str(), 
+                          server_ipbuf_.c_str(), ++conn_id_);
 
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
 
@@ -67,7 +64,7 @@ void TcpClient::NewConnection(int socketfd) {
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
 
   conn_ptr_ = ptr;
-  ptr->EstablishConnection();
+  ev_->RunInLoop(std::bind(&TcpConnection::EstablishConnection, ptr));
 }
 
 }  // namespace voyager

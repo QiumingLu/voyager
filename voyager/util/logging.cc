@@ -15,7 +15,7 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
      "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
   std::string log_time = Timestamp::Now().FormatTimestamp();
 
-  if (level >= LOGLEVEL_DEBUG) {
+  if (level >= LOGLEVEL_WARN) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
             log_time.c_str(), loglevel_names[level], filename, line, 
             message.c_str());

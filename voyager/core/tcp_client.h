@@ -23,9 +23,9 @@ class TcpClient {
 
   void Connect();
   void ReConnect();
-  void QuitConnect();
-
   void DisConnect();
+
+  void Close();
 
   EventLoop* GetLoop() const { return ev_; }
 
@@ -65,9 +65,10 @@ class TcpClient {
   void NewConnection(int socketfd);
 
   std::string name_;
+  std::string server_ipbuf_;
   EventLoop* ev_;
   ConnectorPtr connector_ptr_;
-  size_t conn_id_;
+  uint32_t conn_id_;
   bool connect_;
 
   ConnectionCallback connection_cb_;
