@@ -8,8 +8,8 @@
 namespace voyager {
 
 TcpClient::TcpClient(EventLoop* ev, 
-	                 const SockAddr& addr, 
-					 const std::string& name)
+                     const SockAddr& addr, 
+                     const std::string& name)
     : name_(name),
       ev_(CHECK_NOTNULL(ev)),
       connector_ptr_(new Connector(ev, addr)),

@@ -148,7 +148,7 @@ void Connector::ConnectCallback() {
 
 void Connector::HandleError() {
   VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" 
-	                 << StateToString();
+                     << StateToString();
   if (state_ == kConnecting) {
     int socketfd = DeleteOldDispatch();
     Status st = sockets::CheckSocketError(socketfd);
