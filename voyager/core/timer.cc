@@ -79,7 +79,7 @@ TimerEvent::TimerEvent(EventLoop* ev)
 TimerEvent::~TimerEvent() {
   dispatch_.DisableAll();
   dispatch_.RemoveEvents();
-  sockets::CloseFd(timerfd_);
+  close(timerfd_);
   STLDeleteValues(&timers_);
 }
 

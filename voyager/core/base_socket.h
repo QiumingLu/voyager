@@ -32,11 +32,14 @@ class BaseSocket {
   struct sockaddr_storage LocalSockAddr() const;
   int IsSelfConnect() const;
 
+  void SetNoAutoCloseFd() { need_close_ = false; }
+  
  protected:
   const int fd_;
-  bool need_close_;
 
  private:
+  bool need_close_;
+ 
   // No copying allow
   BaseSocket(const BaseSocket&);
   void operator=(const BaseSocket&);

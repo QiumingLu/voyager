@@ -15,7 +15,8 @@ TcpClient::TcpClient(EventLoop* ev,
       ev_(CHECK_NOTNULL(ev)),
       connector_ptr_(new Connector(ev, addr)),
       conn_id_(0),
-      connect_(false) {
+      connect_(false),
+      retry_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
@@ -61,12 +62,22 @@ void TcpClient::NewConnection(int socketfd) {
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
 
   ptr->SetConnectionCallback(connection_cb_);
-  ptr->SetCloseCallback(close_cb_);
+  ptr->SetCloseCallback(std::bind(&TcpClient::HandleClose, 
+                                  this, std::placeholders::_1));
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
 
   conn_ptr_ = ptr;
   ev_->RunInLoop(std::bind(&TcpConnection::EstablishConnection, ptr));
+}
+
+void TcpClient::HandleClose(const TcpConnectionPtr& ptr) {
+  if (close_cb_) {
+    close_cb_(ptr);
+  }
+  if (retry_ && connect_) {
+    connector_ptr_->ReStart();
+  }
 }
 
 }  // namespace voyager

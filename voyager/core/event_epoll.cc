@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <string.h>
+#include <unistd.h>
 #include "voyager/core/dispatch.h"
 #include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
@@ -22,7 +23,7 @@ EventEpoll::EventEpoll(EventLoop* ev)
 }
 
 EventEpoll::~EventEpoll() {
-  sockets::CloseFd(epollfd_);
+  ::close(epollfd_);
 }
 
 void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {

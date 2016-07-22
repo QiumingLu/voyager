@@ -29,10 +29,14 @@ class TcpClient {
 
   EventLoop* GetLoop() const { return ev_; }
 
+  void EnableRetry() { retry_ = true; }
+  
+  bool IsRetry() const { return retry_; }
+
   void SetConnectionCallback(const ConnectionCallback& func) {
     connection_cb_ = func;
   }
-void Retry(const TcpConnectionPtr& ptr); 
+  
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
   }
@@ -63,13 +67,15 @@ void Retry(const TcpConnectionPtr& ptr);
 
  private:
   void NewConnection(int socketfd);
-  
+  void HandleClose(const TcpConnectionPtr& ptr);
+
   std::string name_;
   std::string server_ipbuf_;
   EventLoop* ev_;
   ConnectorPtr connector_ptr_;
   uint32_t conn_id_;
   bool connect_;
+  bool retry_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

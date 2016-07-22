@@ -55,7 +55,6 @@ void Connector::StopInLoop() {
   if (state_ == kConnecting) {
     state_ = kDisConnected;
     DeleteOldDispatch();
-    state_ = kDisConnected;
   }
 }
 
@@ -88,7 +87,6 @@ void Connector::Connect() {
     case EFAULT:
     case ENOTSOCK:
     case ENAMETOOLONG:
-      break;
     
     default:
       VOYAGER_LOG(ERROR) << "connect: " << strerror(err);
@@ -108,7 +106,6 @@ void Connector::Connecting() {
 }
 
 void Connector::Retry() {
-  socket_.reset();
   state_ = kDisConnected;
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
@@ -158,9 +155,11 @@ void Connector::HandleError() {
 }
 
 void Connector::DeleteOldDispatch() {
-  dispatch_->DisableAll();
-  dispatch_->RemoveEvents();
-  dispatch_.reset();
+  if (dispatch_.get()) {
+    dispatch_->DisableAll();
+    dispatch_->RemoveEvents();
+    dispatch_.reset();
+  }
 }
 
 std::string Connector::StateToString() const {

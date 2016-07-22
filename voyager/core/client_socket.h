@@ -16,8 +16,6 @@ class ClientSocket : public BaseSocket {
   }
   
   int Connect(const struct sockaddr* sa, socklen_t salen) const;
-
-  void SetNoAutoCloseFd() { need_close_ = false; }
 };
 
 }  // namespace voyager

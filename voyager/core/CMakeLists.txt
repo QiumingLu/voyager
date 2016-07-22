@@ -17,7 +17,6 @@ set(core_SRCS
   tcp_client.cc
   tcp_connection.cc
   tcp_server.cc
-  #  tcp_socket.cc
   timer.cc
   )
 

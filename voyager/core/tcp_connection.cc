@@ -25,6 +25,7 @@ TcpConnection::TcpConnection(const std::string& name,
       std::bind(&TcpConnection::HandleClose, this));
   dispatch_->SetErrorCallback(
       std::bind(&TcpConnection::HandleError, this));
+  socket_.SetNonBlockAndCloseOnExec(true);
   socket_.SetKeepAlive(true);
   socket_.SetTcpNoDelay(true);
   VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ 
