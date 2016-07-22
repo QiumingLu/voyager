@@ -32,7 +32,7 @@ class TcpClient {
   void SetConnectionCallback(const ConnectionCallback& func) {
     connection_cb_ = func;
   }
-
+void Retry(const TcpConnectionPtr& ptr); 
   void SetConnectionCallback(ConnectionCallback&& func) {
     connection_cb_ = std::move(func);
   }
@@ -63,7 +63,7 @@ class TcpClient {
 
  private:
   void NewConnection(int socketfd);
-
+  
   std::string name_;
   std::string server_ipbuf_;
   EventLoop* ev_;

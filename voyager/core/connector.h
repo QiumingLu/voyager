@@ -6,6 +6,7 @@
 #include <string>
 #include <netdb.h>
 
+#include "voyager/core/client_socket.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/scoped_ptr.h"
 
@@ -42,13 +43,13 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void StopInLoop();
 
   void Connect();
-  void Connecting(int socketfd);
-  void Retry(int socketfd);
+  void Connecting();
+  void Retry();
 
   void ConnectCallback();
   void HandleError();
 
-  int DeleteOldDispatch();
+  void DeleteOldDispatch();
 
   std::string StateToString() const;
 
@@ -58,6 +59,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   double retry_time_;
   bool connect_;
   scoped_ptr<Dispatch> dispatch_;
+  scoped_ptr<ClientSocket> socket_;
   NewConnectionCallback newconnection_cb_;
 
   // No copying allow

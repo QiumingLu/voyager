@@ -10,20 +10,25 @@
 
 namespace voyager {
 
-TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd)
+TcpConnection::TcpConnection(const std::string& name, 
+                             EventLoop* ev, int fd)
     : name_(name), 
       eventloop_(CHECK_NOTNULL(ev)),
       socket_(fd),
       state_(kConnecting),
       dispatch_(new Dispatch(ev, fd)) {
-  dispatch_->SetReadCallback(std::bind(&TcpConnection::HandleRead, this));
-  dispatch_->SetWriteCallback(std::bind(&TcpConnection::HandleWrite, this));
-  dispatch_->SetCloseCallback(std::bind(&TcpConnection::HandleClose, this));
-  dispatch_->SetErrorCallback(std::bind(&TcpConnection::HandleError, this));
+  dispatch_->SetReadCallback(
+      std::bind(&TcpConnection::HandleRead, this));
+  dispatch_->SetWriteCallback(
+      std::bind(&TcpConnection::HandleWrite, this));
+  dispatch_->SetCloseCallback(
+      std::bind(&TcpConnection::HandleClose, this));
+  dispatch_->SetErrorCallback(
+      std::bind(&TcpConnection::HandleError, this));
   socket_.SetKeepAlive(true);
   socket_.SetTcpNoDelay(true);
-  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ << "] at "
-                     << this << " fd=" << fd;
+  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ 
+                     << "] at " << this << " fd=" << fd;
 }
  
 TcpConnection::~TcpConnection() {
@@ -157,7 +162,7 @@ void TcpConnection::HandleClose() {
 }
 
 void TcpConnection::HandleError() {
-  Status st = sockets::CheckSocketError(dispatch_->Fd());
+  Status st = socket_.CheckSocketError();
   if (!st.ok()) {
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_
                        << "] - " << st.ToString();

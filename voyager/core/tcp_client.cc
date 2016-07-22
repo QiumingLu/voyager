@@ -18,7 +18,7 @@ TcpClient::TcpClient(EventLoop* ev,
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
-  VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running ";
+  VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
 }
 
 TcpClient::~TcpClient() {
@@ -26,7 +26,8 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::Connect() {
-  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " << server_ipbuf_;
+  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " 
+                    << server_ipbuf_;
   connect_ = true;
   connector_ptr_->Start();
 }
@@ -56,6 +57,7 @@ void TcpClient::NewConnection(int socketfd) {
   std::string conn_name = StringPrintf("%s-%s#%d", name_.c_str(), 
                           server_ipbuf_.c_str(), ++conn_id_);
 
+  VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
 
   ptr->SetConnectionCallback(connection_cb_);

@@ -20,7 +20,9 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
       addr_(addr),
       state_(kDisConnected),
       retry_time_(kInitRetryTime),
-      connect_(false) {
+      connect_(false),
+      dispatch_(),
+      socket_() {
 }
 
 void Connector::Start() {
@@ -52,16 +54,14 @@ void Connector::StopInLoop() {
   ev_->AssertThreadSafe();
   if (state_ == kConnecting) {
     state_ = kDisConnected;
-    int socketfd = DeleteOldDispatch();
-    sockets::CloseFd(socketfd);
+    DeleteOldDispatch();
     state_ = kDisConnected;
   }
 }
 
 void Connector::Connect() {
-  int socketfd = sockets::CreateSocketAndSetNonBlock(addr_.Family());
-  int ret = sockets::Connect(socketfd, 
-                             addr_.GetSockAddr(), 
+  socket_.reset(new ClientSocket(addr_.Family(), true));
+  int ret = socket_->Connect(addr_.GetSockAddr(),
                              sizeof(*(addr_.GetSockAddr())));
   int err = (ret == 0) ? 0 : errno;
   switch (err) {
@@ -69,7 +69,7 @@ void Connector::Connect() {
     case EINPROGRESS:
     case EINTR:
     case EISCONN:
-      Connecting(socketfd);
+      Connecting();
       break;
 
     case EAGAIN:
@@ -77,7 +77,7 @@ void Connector::Connect() {
     case EADDRNOTAVAIL:
     case ECONNREFUSED:
     case ENETUNREACH:
-      Retry(socketfd);
+      Retry();
       break;
 
     case EACCES:
@@ -87,28 +87,28 @@ void Connector::Connect() {
     case EBADF:
     case EFAULT:
     case ENOTSOCK:
-      VOYAGER_LOG(ERROR) << "connect error: " << strerror(err);
-      sockets::CloseFd(socketfd);
+    case ENAMETOOLONG:
       break;
-
+    
     default:
-      VOYAGER_LOG(ERROR) << "unexpected connect error: " << strerror(err);
-      sockets::CloseFd(socketfd);
+      VOYAGER_LOG(ERROR) << "connect: " << strerror(err);
+      socket_.reset();
       break;
   }
 }
 
-void Connector::Connecting(int socketfd) {
+void Connector::Connecting() {
   state_ = kConnecting; 
   assert(!dispatch_.get());
-  dispatch_.reset(new Dispatch(ev_, socketfd));
-  dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
+  dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
+  dispatch_->SetWriteCallback(
+      std::bind(&Connector::ConnectCallback, this));
   dispatch_->SetErrorCallback(std::bind(&Connector::HandleError, this));
   dispatch_->EnableWrite();
 }
 
-void Connector::Retry(int socketfd) {
-  sockets::CloseFd(socketfd);
+void Connector::Retry() {
+  socket_.reset();
   state_ = kDisConnected;
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
@@ -122,26 +122,24 @@ void Connector::Retry(int socketfd) {
 }
 
 void Connector::ConnectCallback() {
-  VOYAGER_LOG(INFO) << "Connector::ConnectCallback - " << StateToString();
-
   if (state_ == kConnecting) {
-    int socketfd = DeleteOldDispatch();
-    Status st = sockets::CheckSocketError(socketfd);
+    DeleteOldDispatch();
+    Status st = socket_->CheckSocketError();
     if (!st.ok()) {
       VOYAGER_LOG(WARN) << st;
-      Retry(socketfd);
-    } else if (sockets::IsSelfConnect(socketfd) == 0) {
+      Retry();
+    } else if (socket_->IsSelfConnect() == 0) {
       VOYAGER_LOG(WARN) << "Connector::ConnectCallback - Self connect";
-      Retry(socketfd);
+      Retry();
     } else {
       state_ = kConnected;
-      if (connect_) {
-        if (newconnection_cb_) {
-          newconnection_cb_(socketfd);
-        }
-      } else {
-        sockets::CloseFd(socketfd);
+      VOYAGER_LOG(INFO) << "Connector::ConnectCallback - " 
+                        << StateToString();
+      if (connect_ && newconnection_cb_) {
+        socket_->SetNoAutoCloseFd();
+        newconnection_cb_(socket_->SocketFd());
       }
+      socket_.reset();
     }
   }
 }
@@ -150,21 +148,19 @@ void Connector::HandleError() {
   VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" 
                      << StateToString();
   if (state_ == kConnecting) {
-    int socketfd = DeleteOldDispatch();
-    Status st = sockets::CheckSocketError(socketfd);
+    DeleteOldDispatch();
+    Status st = socket_->CheckSocketError();
     if (!st.ok()) {
        VOYAGER_LOG(ERROR) << st.ToString();
     }
-    Retry(socketfd);
+    Retry();
   }
 }
 
-int Connector::DeleteOldDispatch() {
+void Connector::DeleteOldDispatch() {
   dispatch_->DisableAll();
   dispatch_->RemoveEvents();
-  int socketfd = dispatch_->Fd();
   dispatch_.reset();
-  return socketfd;
 }
 
 std::string Connector::StateToString() const {

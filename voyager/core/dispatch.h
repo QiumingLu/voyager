@@ -24,28 +24,28 @@ class Dispatch {
   void HandleEvent();
 
   void SetReadCallback(const EventCallback& func) { 
-	readfunc_ = func;
+    readfunc_ = func;
   }
   void SetReadCallback(EventCallback&& func) { 
-	readfunc_ = std::move(func); 
+    readfunc_ = std::move(func); 
   }
   void SetWriteCallback(const EventCallback& func) {
-	writefunc_ = func;
+    writefunc_ = func;
   }
   void SetWriteCallback(EventCallback&& func) { 
-	writefunc_ = std::move(func); 
+    writefunc_ = std::move(func); 
   }
   void SetCloseCallback(const EventCallback& func) { 
-	closefunc_ = func; 
+    closefunc_ = func; 
   }
   void SetCloseCallback(EventCallback&& func) { 
-	closefunc_ = std::move(func);
+    closefunc_ = std::move(func);
   }
   void SetErrorCallback(const EventCallback& func) { 
-	errorfunc_ = func;
+    errorfunc_ = func;
   }
   void SetErrorCallback(EventCallback&& func) { 
-	errorfunc_ = std::move(func);
+    errorfunc_ = std::move(func);
   }
 
   void EnableRead();

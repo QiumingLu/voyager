@@ -1,4 +1,5 @@
 #include "examples/cache/cache.h"
+#include "voyager/port/mutexlock.h"
 
 namespace voyager {
 namespace cache {
@@ -11,10 +12,10 @@ struct LRUHandle {
   LRUHandle* prev;
   size_t charge;
   size_t key_length;
-  bool in_cache;       // Whether entry is in the cache.
-  uint32_t refs;       // References, including cache reference, if present.
-  uint32_t hash;       // Hash of key(); used for fast sharding and comparisons
-  char key_data[1];    // Beginning of key
+  bool in_cache;    // Whether entry is in the cache.
+  uint32_t refs;    // References, including cache reference, if present.
+  uint32_t hash;    // Hash of key(); used for fast sharding and comparisons
+  char key_data[1]; // Beginning of key
 
   Slice key() const {
     // For cheaper lookups, we allow a temporary Handle object
@@ -105,7 +106,61 @@ class LRUCache {
  public:
   LRUCache();
   ~LRUCache();
+
+ private:
+  void LRU_Remove(LRUHandle* e);
+  void LRU_Append(LRUHandle* lsit, LRUHandle* e);
+  void Ref(LRUHandle* e);
+  void UnRef(LRUHandle* e);
+  bool FinishErase(LRUHandle* e);
+
+  size_t capacity_;
+  mutable port::Mutex mu_;
+  size_t usage_;
+
+  LRUHandle lru_;
+  LRUHandle in_use_;
+  HandleTable table_;
 };
+
+class SharedLRUCache : public Cache {
+ public:
+  SharedLRUCache(size_t capacity) {
+  }
+
+  virtual Handle* Lookup(const Slice& key) { 
+    Handle* h = new Handle();
+    return h;
+  }
+
+  virtual void Release(Handle* handle) { }
+
+  virtual void* Value(Handle* handle) { 
+    Handle* h = new Handle();
+    return (void*)h;
+  }
+
+  virtual void Erase(const Slice& key) {
+  }
+
+  virtual uint64_t NewId() {
+    return 0;
+  }
+
+  virtual void Purne() { }
+
+  virtual size_t TotalCharge() const {
+    return 0;
+  }
+
+
+ private:
+
+};
+
+Cache* NewLRUCache(size_t capacity) {
+  return new SharedLRUCache(capacity);
+}
 
 }  // namespace cache
 }  // namespace voyager

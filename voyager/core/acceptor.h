@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <netdb.h>
-#include "voyager/core/tcp_socket.h"
+#include "voyager/core/server_socket.h"
 #include "voyager/core/dispatch.h"
 
 namespace voyager {
@@ -34,7 +34,7 @@ class Acceptor {
   void Accept();
  
   EventLoop* eventloop_;
-  TcpSocket  tcpsocket_;
+  ServerSocket socket_;
   Dispatch   dispatch_;
   int        backlog_;
   int        idlefd_;

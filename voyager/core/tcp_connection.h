@@ -8,7 +8,7 @@
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/dispatch.h"
-#include "voyager/core/tcp_socket.h"
+#include "voyager/core/base_socket.h"
 #include "voyager/util/scoped_ptr.h"
 #include "voyager/util/any.h"
 
@@ -106,7 +106,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   const std::string name_;
   EventLoop* eventloop_;
-  TcpSocket socket_;
+  BaseSocket socket_;
   ConnectState state_;
   scoped_ptr<Dispatch> dispatch_;
 

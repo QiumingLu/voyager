@@ -1,5 +1,8 @@
 set(core_SRCS
   acceptor.cc
+  base_socket.cc
+  client_socket.cc
+  server_socket.cc
   buffer.cc
   connector.cc
   dispatch.cc
@@ -14,7 +17,7 @@ set(core_SRCS
   tcp_client.cc
   tcp_connection.cc
   tcp_server.cc
-  tcp_socket.cc
+  #  tcp_socket.cc
   timer.cc
   )
 
@@ -41,7 +44,9 @@ set(HEADERS
   tcp_client.h
   tcp_connection.h
   tcp_server.h
-  tcp_socket.h
+  base_socket.h
+  client_socket.h
+  server_socket.h
   timer.h
   )
 
