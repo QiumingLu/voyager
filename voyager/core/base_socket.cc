@@ -35,7 +35,7 @@ void BaseSocket::ShutDownWrite() const {
   }
 }
 
-void BaseSocket::SetNonBlockAndCloseOnExec(bool on) {
+void BaseSocket::SetNonBlockAndCloseOnExec(bool on) const {
   int flags = ::fcntl(fd_, F_GETFL, 0);
   if (flags == -1) {
     VOYAGER_LOG(ERROR) << "fcntl(F_GETFL): " << strerror(errno);

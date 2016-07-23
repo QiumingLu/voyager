@@ -20,7 +20,7 @@ class BaseSocket {
   int SocketFd() const { return fd_; }
   
   void ShutDownWrite() const;
-  void SetNonBlockAndCloseOnExec(bool on);
+  void SetNonBlockAndCloseOnExec(bool on) const;
   void SetReuseAddr(bool on) const;
   void SetReusePort(bool on) const;
   void SetKeepAlive(bool on) const;
