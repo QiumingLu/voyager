@@ -40,15 +40,12 @@ void TcpClient::ReConnect() {
   connector_ptr_->ReStart();
 }
 
-void TcpClient::DisConnect() {
-  connect_ = false;
-  connector_ptr_->Stop();
-}
-
 void TcpClient::Close() {
   connect_ = false;
-  if (conn_ptr_.get()) {
-    conn_ptr_->ShutDown();
+  connector_ptr_->Stop();
+  TcpConnectionPtr ptr =  weak_ptr_.lock();
+  if (ptr.get() != NULL) {
+    ptr->ShutDown();
   }
 }
 
@@ -60,6 +57,8 @@ void TcpClient::NewConnection(int socketfd) {
 
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
+ 
+  weak_ptr_ = ptr;
 
   ptr->SetConnectionCallback(connection_cb_);
   ptr->SetCloseCallback(std::bind(&TcpClient::HandleClose, 
@@ -67,8 +66,7 @@ void TcpClient::NewConnection(int socketfd) {
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
 
-  conn_ptr_ = ptr;
-  ev_->RunInLoop(std::bind(&TcpConnection::EstablishConnection, ptr));
+  ev_->RunInLoop(std::bind(&TcpConnection::StartWorking, ptr));
 }
 
 void TcpClient::HandleClose(const TcpConnectionPtr& ptr) {

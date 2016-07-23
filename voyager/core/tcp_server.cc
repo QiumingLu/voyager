@@ -62,9 +62,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
   
-  port::Singleton<OnlineConnections>::Instance().NewConnection(conn_name, 
-                                                               conn_ptr);
-  ev->RunInLoop(std::bind(&TcpConnection::EstablishConnection, conn_ptr));
+  ev->RunInLoop(std::bind(&TcpConnection::StartWorking, conn_ptr));
 }
 
 }  // namespace voyager

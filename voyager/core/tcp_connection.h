@@ -82,7 +82,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
 
   // Internal use only, use in TcpClient and TcpServer.
-  void EstablishConnection();
+  void StartWorking();
  
  private:
   enum ConnectState {

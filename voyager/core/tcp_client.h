@@ -23,8 +23,6 @@ class TcpClient {
 
   void Connect();
   void ReConnect();
-  void DisConnect();
-
   void Close();
 
   EventLoop* GetLoop() const { return ev_; }
@@ -82,7 +80,7 @@ class TcpClient {
   MessageCallback message_cb_;
   WriteCompleteCallback writecomplete_cb_;
 
-  TcpConnectionPtr conn_ptr_;
+  std::weak_ptr<TcpConnection> weak_ptr_;
 
   // No copying allow
   TcpClient(const TcpClient&);

@@ -13,7 +13,7 @@
 namespace voyager {
 
 const double Connector::kMaxRetryTime = 30.0;
-const double Connector::kInitRetryTime = 1.0;
+const double Connector::kInitRetryTime = 2.0;
 
 Connector::Connector(EventLoop* ev, const SockAddr& addr) 
     : ev_(CHECK_NOTNULL(ev)),
@@ -54,7 +54,7 @@ void Connector::StopInLoop() {
   ev_->AssertThreadSafe();
   if (state_ == kConnecting) {
     state_ = kDisConnected;
-    DeleteOldDispatch();
+    ResetDispatch();
   }
 }
 
@@ -63,6 +63,7 @@ void Connector::Connect() {
   int ret = socket_->Connect(addr_.GetSockAddr(),
                              sizeof(*(addr_.GetSockAddr())));
   int err = (ret == 0) ? 0 : errno;
+  VOYAGER_LOG(DEBUG) << "Connect: " << strerror(errno);
   switch (err) {
     case 0:
     case EINPROGRESS:
@@ -98,10 +99,9 @@ void Connector::Connect() {
 void Connector::Connecting() {
   state_ = kConnecting; 
   assert(!dispatch_.get());
+  
   dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
-  dispatch_->SetWriteCallback(
-      std::bind(&Connector::ConnectCallback, this));
-  dispatch_->SetErrorCallback(std::bind(&Connector::HandleError, this));
+  dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
   dispatch_->EnableWrite();
 }
 
@@ -120,7 +120,7 @@ void Connector::Retry() {
 
 void Connector::ConnectCallback() {
   if (state_ == kConnecting) {
-    DeleteOldDispatch();
+    ResetDispatch();
     Status st = socket_->CheckSocketError();
     if (!st.ok()) {
       VOYAGER_LOG(WARN) << st;
@@ -138,27 +138,6 @@ void Connector::ConnectCallback() {
       }
       socket_.reset();
     }
-  }
-}
-
-void Connector::HandleError() {
-  VOYAGER_LOG(ERROR) << "Connector::HandleError - state_=" 
-                     << StateToString();
-  if (state_ == kConnecting) {
-    DeleteOldDispatch();
-    Status st = socket_->CheckSocketError();
-    if (!st.ok()) {
-       VOYAGER_LOG(ERROR) << st.ToString();
-    }
-    Retry();
-  }
-}
-
-void Connector::DeleteOldDispatch() {
-  if (dispatch_.get()) {
-    dispatch_->DisableAll();
-    dispatch_->RemoveEvents();
-    dispatch_.reset();
   }
 }
 
@@ -180,6 +159,14 @@ std::string Connector::StateToString() const {
   }
   std::string result(type);
   return result;
+}
+
+void Connector::ResetDispatch() {
+  if (dispatch_.get()) {
+    dispatch_->DisableAll();
+    dispatch_->RemoveEvents();
+    dispatch_.reset();
+  }
 }
 
 }  // namespace voyager

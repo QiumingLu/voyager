@@ -35,7 +35,7 @@ void BaseSocket::ShutDownWrite() const {
   }
 }
 
-void BaseSocket::SetNonBlockAndCloseOnExec(bool on) const {
+void BaseSocket::SetNonBlockAndCloseOnExec(bool on) {
   int flags = ::fcntl(fd_, F_GETFL, 0);
   if (flags == -1) {
     VOYAGER_LOG(ERROR) << "fcntl(F_GETFL): " << strerror(errno);
@@ -94,7 +94,7 @@ void BaseSocket::SetTcpNoDelay(bool on) const {
 
 Status BaseSocket::CheckSocketError() const {
   int err = 0;
-  socklen_t errlen = sizeof(err);
+  socklen_t errlen = static_cast<socklen_t>(sizeof(err));
   if (::getsockopt(fd_, SOL_SOCKET, SO_ERROR,
                    &err, &errlen) == -1) {
     VOYAGER_LOG(ERROR) << "getsockopt(SO_ERROR): " << strerror(errno);

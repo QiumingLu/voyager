@@ -39,12 +39,14 @@ TcpConnection::~TcpConnection() {
   assert(state_ == kDisconnected);
 }
 
-void TcpConnection::EstablishConnection() {
+void TcpConnection::StartWorking() {
   eventloop_->AssertThreadSafe();
   assert(state_ == kConnecting);
   state_ = kConnected;
   dispatch_->Tie(shared_from_this());
   dispatch_->EnableRead();
+  port::Singleton<OnlineConnections>::Instance().NewConnection(
+      name_, shared_from_this());
   if (connection_cb_) {
     connection_cb_(shared_from_this());
   }

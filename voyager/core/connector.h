@@ -47,9 +47,8 @@ class Connector : public std::enable_shared_from_this<Connector> {
   void Retry();
 
   void ConnectCallback();
-  void HandleError();
 
-  void DeleteOldDispatch();
+  void ResetDispatch();
 
   std::string StateToString() const;
 

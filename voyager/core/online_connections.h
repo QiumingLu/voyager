@@ -3,7 +3,7 @@
 
 #include "voyager/port/mutexlock.h"
 #include "voyager/port/singleton.h"
-
+#include <unordered_map>
 
 namespace voyager {
 
@@ -31,7 +31,7 @@ class OnlineConnections
 
  private:
   mutable port::Mutex mu_;
-  std::map<std::string, TcpConnectionPtr> conn_map_;
+  std::unordered_map<std::string, TcpConnectionPtr> conn_map_;
 
   OnlineConnections(const OnlineConnections&);
   void operator=(const OnlineConnections&);	
