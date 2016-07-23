@@ -3,6 +3,7 @@
 #include <voyager/core/sockaddr.h>
 #include <voyager/core/tcp_connection.h>
 #include <voyager/core/callback.h>
+#include <voyager/util/logging.h>
 #include <unistd.h>
 
 using namespace std::placeholders;
@@ -32,6 +33,7 @@ class EchoServer {
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
     conn_ptr->SendMessage(buf);
+    conn_ptr->ShutDown();
   }
 
   TcpServer server_;
@@ -44,6 +46,7 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
+  voyager::SetLogHandler(NULL);
   printf("pid=%d, tid=%d\n", getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
