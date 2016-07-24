@@ -40,7 +40,7 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
 }
 
 void EventPoll::RemoveDispatch(Dispatch* dispatch) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   assert(dispatch_map_.find(dispatch->Fd()) != dispatch_map_.end());
   assert(dispatch_map_[dispatch->Fd()] == dispatch);
   assert(dispatch->IsNoneEvent());
@@ -64,7 +64,7 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
 }
 
 void EventPoll::UpdateDispatch(Dispatch* dispatch) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (dispatch->index() == -1) {
     assert(dispatch_map_.find(dispatch->Fd()) == dispatch_map_.end());
     struct pollfd p;

@@ -18,7 +18,7 @@ namespace port {
 
 namespace CurrentThread {
 
-__thread int  cached_tid = 0;
+__thread uint64_t cached_tid = 0;
 __thread const char* thread_name = "unknow";
 
 }  // namespace CurrentThread
@@ -26,14 +26,21 @@ __thread const char* thread_name = "unknow";
 namespace {
 
 #ifdef __linux__
-pid_t GetTid() {
-  return static_cast<pid_t>(::syscall(SYS_gettid));
+uint64_t GetTid() {
+  return static_cast<uint64_t>(::syscall(SYS_gettid));
 }
 #elif __APPLE__
-pid_t GetTid() {
-  return static_cast<pid_t>(pthread_mach_thread_np(pthread_self()));
+uint64_t GetTid() {
+  return static_cast<uint64_t>(pthread_mach_thread_np(pthread_self()));
 }
 #endif
+
+// uint64_t GetTid() {
+//   pthread_t tid = pthread_self();
+//   uint64_t thread_id = 0;
+//   memcpy(&thread_id, &tid, std::min(sizeof(thread_id), sizeof(tid)));
+//   return thread_id;
+// }
 
 void AfterFork() {
   CurrentThread::cached_tid = 0;
@@ -56,10 +63,10 @@ struct StartThreadState {
   typedef voyager::port::Thread::ThreadFunc ThreadFunc;
   ThreadFunc thread_func;
   std::string thread_name;
-  pid_t* thread_tid;
+  uint64_t* thread_tid;
   StartThreadState(const ThreadFunc& func,
                    const std::string& name,
-                   pid_t* tid) 
+                   uint64_t* tid) 
       : thread_func(func),
         thread_name(name),
         thread_tid(tid) 
@@ -85,7 +92,7 @@ void CurrentThread::CacheTid() {
 }
 
 bool CurrentThread::IsMainThread() {
-  return Tid() == ::getpid();
+  return Tid() == static_cast<uint64_t>(::getpid());
 }
 
 

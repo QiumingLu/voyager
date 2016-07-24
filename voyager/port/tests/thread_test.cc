@@ -4,15 +4,16 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 namespace voyager {
 
 void ThreadFunc() {
-  printf("tid=%d\n", port::CurrentThread::Tid());
+  printf("tid=%" PRIu64"\n", port::CurrentThread::Tid());
 }
 
 void ThreadFunc2(int x) {
-  printf("tid=%d, x=%d\n", port::CurrentThread::Tid(), x);
+  printf("tid=%" PRIu64", x=%d\n", port::CurrentThread::Tid(), x);
 }
 
 class Foo {
@@ -20,11 +21,11 @@ class Foo {
   explicit Foo(double x) : x_(x) { }
   
   void MemberFunc() {
-    printf("tid=%d, Foo::x_=%f\n",  port::CurrentThread::Tid(), x_);
+    printf("tid=%" PRIu64", Foo::x_=%f\n",  port::CurrentThread::Tid(), x_);
   }
 
   void MemberFunc2(const std::string& text) {
-    printf("tid=%d, Foo::x_=%f, test=%s\n", 
+    printf("tid=%" PRIu64", Foo::x_=%f, test=%s\n", 
            port::CurrentThread::Tid(), x_, text.c_str());
   }
 
@@ -35,8 +36,8 @@ class Foo {
 class ThreadTest { };
 
 TEST(ThreadTest, TestThread) {
-  ASSERT_EQ(::getpid(), port::CurrentThread::Tid());
-  printf("pid=%d, tid=%d\n", ::getpid(), port::CurrentThread::Tid());
+  ASSERT_EQ(static_cast<uint64_t>(::getpid()), port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64"\n", ::getpid(), port::CurrentThread::Tid());
 
   port::Thread t1(ThreadFunc);
   t1.Start();

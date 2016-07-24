@@ -36,14 +36,14 @@ Acceptor::~Acceptor() {
 }
 
 void Acceptor::EnableListen() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   listenning_ = true;
   socket_.Listen(backlog_);
   dispatch_.EnableRead();
 }
 
 void Acceptor::Accept() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
   int connectfd = socket_.Accept(reinterpret_cast<struct sockaddr*>(&sa),

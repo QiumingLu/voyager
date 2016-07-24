@@ -5,6 +5,7 @@
 #include <voyager/core/callback.h>
 #include <voyager/util/logging.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 using namespace std::placeholders;
 
@@ -47,7 +48,7 @@ class EchoServer {
 
 int main(int argc, char** argv) {
   voyager::SetLogHandler(NULL);
-  printf("pid=%d, tid=%d\n", getpid(), voyager::port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64"\n", getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);

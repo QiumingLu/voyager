@@ -40,7 +40,7 @@ TcpConnection::~TcpConnection() {
 }
 
 void TcpConnection::StartWorking() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   assert(state_ == kConnecting);
   state_ = kConnected;
   dispatch_->Tie(shared_from_this());
@@ -57,7 +57,7 @@ void TcpConnection::StartRead() {
 }
 
 void TcpConnection::StartReadInLoop() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (!dispatch_->IsReading()) {
     dispatch_->EnableRead();
   }
@@ -68,7 +68,7 @@ void TcpConnection::StopRead() {
 }
 
 void TcpConnection::StopReadInLoop() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (dispatch_->IsReading()) {
     dispatch_->DisableRead();
   }
@@ -82,7 +82,7 @@ void TcpConnection::ShutDown() {
 }
 
 void TcpConnection::ShutDownInLoop() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (!dispatch_->IsWriting()) {
     socket_.ShutDownWrite();
   }
@@ -97,14 +97,14 @@ void TcpConnection::ForceClose() {
 }
 
 void TcpConnection::ForceCloseInLoop() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (state_ == kConnected || state_ == kDisconnecting) {
     HandleClose();
   }
 }
 
 void TcpConnection::HandleRead() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   int err;
   ssize_t n = readbuf_.ReadV(dispatch_->Fd(), err);
   if (n > 0) {
@@ -121,7 +121,7 @@ void TcpConnection::HandleRead() {
 }
 
 void TcpConnection::HandleWrite() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (dispatch_->IsWriting()) {
     ssize_t n = sockets::Write(dispatch_->Fd(), 
                                writebuf_.Peek(), 
@@ -151,7 +151,7 @@ void TcpConnection::HandleWrite() {
 }
 
 void TcpConnection::HandleClose() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   assert(state_ == kConnected || state_ == kDisconnecting);
   TcpConnectionPtr guard(shared_from_this());
   state_ = kDisconnected;
@@ -174,7 +174,7 @@ void TcpConnection::HandleError() {
 
 void TcpConnection::SendMessage(std::string&& message) {
   if (state_ == kConnected) {
-    if (eventloop_->IsInCreatedThread()) {
+    if (eventloop_->IsInMyLoop()) {
       SendInLoop(&*message.begin(), message.size());
     } else {
       eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this,
@@ -185,7 +185,7 @@ void TcpConnection::SendMessage(std::string&& message) {
 
 void TcpConnection::SendMessage(const Slice& message) {
   if (state_ == kConnected) {
-    if (eventloop_->IsInCreatedThread()) {
+    if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
       std::string s(message.ToString());
@@ -198,7 +198,7 @@ void TcpConnection::SendMessage(const Slice& message) {
 void TcpConnection::SendMessage(Buffer* message) {
   CHECK_NOTNULL(message);
   if (state_ == kConnected) {
-    if (eventloop_->IsInCreatedThread()) {
+    if (eventloop_->IsInMyLoop()) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
@@ -210,7 +210,7 @@ void TcpConnection::SendMessage(Buffer* message) {
 }
 
 void TcpConnection::SendInLoop(const void* data, size_t size) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (state_ == kDisconnected) {
     VOYAGER_LOG(WARN) << "TcpConnection::SendInLoop[" << name_ << "]"
                       << "has disconnected, give up writing.";

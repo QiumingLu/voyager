@@ -3,6 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "voyager/port/countdownlatch.h"
 #include "voyager/port/thread.h"
@@ -33,7 +34,7 @@ class BlockingQueueTest {
     for (int i = 1; i <= num; ++i) {
       std::string task(StringPrintf("task %d", i));
       queue_.Put(task);
-      printf("tid=%d, put task = %s, queue's size = %zd\n",
+      printf("tid=%" PRIu64", put task = %s, queue's size = %zd\n",
              CurrentThread::Tid(), task.c_str(), queue_.Size());
     }
   }
@@ -49,14 +50,14 @@ class BlockingQueueTest {
 
  private:
   void ThreadFunc() {
-    printf("tid=%d, %s started\n", 
+    printf("tid=%" PRIu64", %s started\n", 
            CurrentThread::Tid(), CurrentThread::ThreadName());
     latch_.CountDown();
     while (true) {
       std::string task(queue_.Take());
       if (task == "No task, stop!") {
         printf("All taskes have been done! yelp!\n");
-        printf("tid=%d, get task = %s, queue's size = %zd\n",
+        printf("tid=%" PRIu64", get task = %s, queue's size = %zd\n",
                CurrentThread::Tid(), task.c_str(), queue_.Size());
         break;
       }
@@ -73,7 +74,7 @@ class BlockingQueueTest {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%d\n", ::getpid(), voyager::port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64"\n", ::getpid(), voyager::port::CurrentThread::Tid());
   voyager::port::BlockingQueueTest t(4);
   t.Task(100);
   t.JoinAll();

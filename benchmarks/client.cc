@@ -140,7 +140,7 @@ class Client {
            << " MiB/s throughtput\n\n\n";
       file.close();
 
-      ptr->GetLoop()->QueueInLoop(std::bind(&Client::Exit, this));
+      ptr->OwnerLoop()->QueueInLoop(std::bind(&Client::Exit, this));
     }
   }
 

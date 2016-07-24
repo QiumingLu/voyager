@@ -1,6 +1,7 @@
 #include "voyager/port/threadlocalstorage_singleton.h"
 #include <string>
 #include <stdio.h>
+#include <inttypes.h>
 #include "voyager/port/thread.h"
 #include "voyager/port/currentthread.h"
 
@@ -10,11 +11,11 @@ namespace port {
 class Test {
  public:
   Test() {
-    printf("tid=%d, constructing %p\n", CurrentThread::Tid(), this);
+    printf("tid=%" PRIu64", constructing %p\n", CurrentThread::Tid(), this);
   }
 
   ~Test() {
-    printf("tid=%d, destructing %p %s\n", 
+    printf("tid=%" PRIu64", destructing %p %s\n", 
            CurrentThread::Tid(), this, name_.c_str());
   }
 
@@ -26,12 +27,12 @@ class Test {
 };
 
 void ThreadFunc(const std::string& n) {
-  printf("tid=%d, %p name=%s\n",
+  printf("tid=%" PRIu64", %p name=%s\n",
          CurrentThread::Tid(),
          &ThreadLocalStorageSingleton<Test>::Instance(),
          ThreadLocalStorageSingleton<Test>::Instance().name().c_str());
   ThreadLocalStorageSingleton<Test>::Instance().set_name(n);
-  printf("tid=%d, %p name=%s\n",
+  printf("tid=%" PRIu64", %p name=%s\n",
          CurrentThread::Tid(),
          &ThreadLocalStorageSingleton<Test>::Instance(),
          ThreadLocalStorageSingleton<Test>::Instance().name().c_str());

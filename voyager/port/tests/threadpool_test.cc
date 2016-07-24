@@ -1,5 +1,6 @@
 #include "voyager/port/threadpool.h"
 #include <stdio.h>
+#include <inttypes.h>
 #include "voyager/port/currentthread.h"
 #include "voyager/port/countdownlatch.h"
 
@@ -7,7 +8,7 @@ namespace voyager {
 namespace port {
 
 void Print() {
-  printf("tid=%d, threadname=%s\n", 
+  printf("tid=%" PRIu64", threadname=%s\n", 
          CurrentThread::Tid(), CurrentThread::ThreadName());
 }
 

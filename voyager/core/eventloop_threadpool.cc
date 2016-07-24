@@ -17,7 +17,7 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* evloop,
 
 void EventLoopThreadPool::Start() {
   assert(!started_);
-  baseloop_->AssertThreadSafe();
+  baseloop_->AssertInMyLoop();
   started_ = true;
   for (int i = 0; i < size_; ++i) {
     EventLoopThread* ev_t = new EventLoopThread(
@@ -28,7 +28,7 @@ void EventLoopThreadPool::Start() {
 }
 
 EventLoop* EventLoopThreadPool::GetNext() {
-  baseloop_->AssertThreadSafe();
+  baseloop_->AssertInMyLoop();
   assert(started_);
   if (eventloops_.empty()) {
     return baseloop_;

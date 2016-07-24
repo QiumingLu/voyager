@@ -31,7 +31,7 @@ void Connector::Start() {
 }
 
 void Connector::StartInLoop() {
-  ev_->AssertThreadSafe();
+  ev_->AssertInMyLoop();
   assert(state_ == kDisConnected);
   if (connect_) {
     Connect();
@@ -51,7 +51,7 @@ void Connector::Stop() {
 }
 
 void Connector::StopInLoop() {
-  ev_->AssertThreadSafe();
+  ev_->AssertInMyLoop();
   if (state_ == kConnecting) {
     state_ = kDisConnected;
     ResetDispatch();

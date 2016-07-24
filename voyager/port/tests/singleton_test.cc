@@ -2,6 +2,7 @@
 #include "voyager/util/testharness.h"
 
 #include <string>
+#include <inttypes.h>
 
 #include "voyager/port/currentthread.h"
 #include "voyager/port/thread.h"
@@ -11,11 +12,11 @@ namespace voyager {
 class SingletonTest {
  public:
   SingletonTest() {
-    printf("tid=%d, constructing %p\n", port::CurrentThread::Tid(), this);
+    printf("tid=%" PRIu64", constructing %p\n", port::CurrentThread::Tid(), this);
   }
 
   ~SingletonTest() {
-    printf("tid=%d, destructing %p %s\n", 
+    printf("tid=%" PRIu64", destructing %p %s\n", 
            port::CurrentThread::Tid(), this, name_.c_str());
   }
 
@@ -30,7 +31,7 @@ class SingletonTest {
 };
 
 void ThreadFunc() {
-  printf("tid=%d, %p name=%s\n",
+  printf("tid=%" PRIu64", %p name=%s\n",
          port::CurrentThread::Tid(),
          &(port::Singleton<SingletonTest>::Instance()),
          port::Singleton<SingletonTest>::Instance().name().c_str());
@@ -42,7 +43,7 @@ TEST(SingletonTest, TestSingleton) {
   port::Thread t(ThreadFunc);
   t.Start();
   t.Join();
-  printf("tid=%d, %p name=%s\n",
+  printf("tid=%" PRIu64", %p name=%s\n",
          port::CurrentThread::Tid(),
          &(port::Singleton<SingletonTest>::Instance()),
          port::Singleton<SingletonTest>::Instance().name().c_str());

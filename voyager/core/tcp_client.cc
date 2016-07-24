@@ -50,7 +50,7 @@ void TcpClient::Close() {
 }
 
 void TcpClient::NewConnection(int socketfd) {
-  ev_->AssertThreadSafe();
+  ev_->AssertInMyLoop();
 
   std::string conn_name = StringPrintf("%s-%s#%d", name_.c_str(), 
                           server_ipbuf_.c_str(), ++conn_id_);

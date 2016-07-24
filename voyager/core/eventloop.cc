@@ -114,7 +114,7 @@ EventLoop::~EventLoop() {
 }
 
 void EventLoop::Loop() {
-  AssertThreadSafe();
+  AssertInMyLoop();
   exit_ = false;
 
   while(!exit_) {
@@ -142,13 +142,13 @@ void EventLoop::Exit() {
   exit_ = true;
   
   // 在必要时唤醒IO线程，让它及时终止循环。
-  if (!IsInCreatedThread()) {
+  if (!IsInMyLoop()) {
     WakeUp();
   }
 }
 
 void EventLoop::RunInLoop(const Func& func) {
-  if (IsInCreatedThread()) {
+  if (IsInMyLoop()) {
     func();
   } else {
     QueueInLoop(func);
@@ -156,7 +156,7 @@ void EventLoop::RunInLoop(const Func& func) {
 }
 
 void EventLoop::RunInLoop(Func&& func) {
-  if (IsInCreatedThread()) {
+  if (IsInMyLoop()) {
     func();
   } else {
     QueueInLoop(std::move(func));
@@ -172,7 +172,7 @@ void EventLoop::QueueInLoop(const Func& func) {
   // "必要时"有两种情况：
   // 1、如果调用QueueInLoop()的线程不是IO线程，那么唤醒是必需的；
   // 2、如果在IO线程调用QueueInLoop(),而此时正在调用RunFuncQueue
-  if (!IsInCreatedThread() || runfuncqueue_) {
+  if (!IsInMyLoop() || runfuncqueue_) {
     WakeUp();
   }
 }
@@ -185,7 +185,7 @@ void EventLoop::QueueInLoop(Func&& func) {
   // "必要时"有两种情况：
   // 1、如果调用QueueInLoop()的线程不是IO线程，那么唤醒是必需的；
   // 2、如果在IO线程调用QueueInLoop(),而此时正在调用RunFuncQueue
-  if (!IsInCreatedThread() || runfuncqueue_) {
+  if (!IsInMyLoop() || runfuncqueue_) {
     WakeUp();
   }
 }
@@ -224,19 +224,19 @@ void EventLoop::DeleteTimer(Timer* t) {
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertThreadSafe();
+  this->AssertInMyLoop();
   poller_->RemoveDispatch(dispatch);
 }
 
 void EventLoop::UpdateDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertThreadSafe();
+  this->AssertInMyLoop();
   poller_->UpdateDispatch(dispatch);
 }
 
 bool EventLoop::HasDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertThreadSafe();
+  this->AssertInMyLoop();
   return poller_->HasDispatch(dispatch);
 }
 
@@ -280,9 +280,9 @@ void EventLoop::HandleRead() {
   }
 }
 
-void EventLoop::AbortForNotInCreatedThread() {
-  VOYAGER_LOG(FATAL) << "EventLoop::AbortForNotInCreatedThread - (EventLoop)"
-                     << this << " was created in tid_ = " << tid_
+void EventLoop::Abort() {
+  VOYAGER_LOG(FATAL) << "EventLoop::Abort - (EventLoop " << this 
+                     << ") was created in tid_ = " << tid_ 
                      << ", currentthread's tid_ = " 
                      << port::CurrentThread::Tid();
 }

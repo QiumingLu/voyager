@@ -5,11 +5,11 @@ namespace voyager {
 namespace port {
 namespace CurrentThread {
 
-extern __thread int  cached_tid;
+extern __thread uint64_t  cached_tid;
 extern __thread const char* thread_name;
 extern void CacheTid();
 
-inline int Tid() {
+inline uint64_t Tid() {
   if (__builtin_expect(cached_tid == 0, 0)) {
     CacheTid();
   }

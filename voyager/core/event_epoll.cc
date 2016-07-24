@@ -49,7 +49,7 @@ void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
 }
 
 void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
   assert(dispatch_map_.find(fd) != dispatch_map_.end());
   assert(dispatch_map_[fd] == dispatch);
@@ -64,7 +64,7 @@ void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
 }
 
 void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   const int idx = dispatch->index();
   const int fd = dispatch->Fd();
   if (idx == kNew || idx == kDeleted) {

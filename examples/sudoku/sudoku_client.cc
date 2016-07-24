@@ -47,7 +47,7 @@ class SudokuClient {
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
     ptr->SetCloseCallback(
-        std::bind(&SudokuClient::DisConnectCallback, this, _1));
+        std::bind(&SudokuClient::CloseCallback, this, _1));
     VOYAGER_LOG(INFO) << "Start solve sudoku...";
     start_ = voyager::Timestamp::Now();
     for (size_t i = 0; i < vec_.size(); ++i) {
@@ -81,9 +81,9 @@ class SudokuClient {
     }
   }
 
-  void DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->GetLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, 
-                                          ptr->GetLoop()));
+  void CloseCallback(const voyager::TcpConnectionPtr& ptr) {
+    ptr->OwnerLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, 
+                                            ptr->OwnerLoop()));
   }
 
   static const int kCells = 81;

@@ -141,7 +141,7 @@ void TimerEvent::DeleteTimer(Timer* timer) {
 
 #ifdef __linux__
 void TimerEvent::AddTimerInLoop(Timer* timer) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   bool isreset = Add(timer);
   if (isreset) {
     timeops::SetTimerfd(timerfd_, timer->time);
@@ -149,13 +149,13 @@ void TimerEvent::AddTimerInLoop(Timer* timer) {
 }
 #elif __APPLE__
 void TimerEvent::AddTimerInLoop(Timer* timer) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   Add(timer);
 }
 #endif 
 
 void TimerEvent::DeleteTimerInLoop(Timer* timer) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   Entry entry(timer->time, timer);
   std::set<Entry>::iterator it = timers_.find(entry);
   if (it != timers_.end()) {
@@ -168,7 +168,7 @@ void TimerEvent::DeleteTimerInLoop(Timer* timer) {
 
 #ifdef __linux__
 void TimerEvent::HandleRead() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   uint64_t exp;
   ssize_t s = ::read(timerfd_, &exp, sizeof(exp));
   if (s != sizeof(uint64_t)) {
@@ -189,7 +189,7 @@ void TimerEvent::HandleRead() {
 
 #elif __APPLE__
 void TimerEvent::HandleTimers() {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   Timestamp now = Timestamp::Now();
   std::vector<Timer*> res(GetExpired(now));
 
@@ -203,7 +203,7 @@ void TimerEvent::HandleTimers() {
 }
 
 int TimerEvent::GetTimeout() const {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   if (timers_.empty()) {
     return 100000;
   } else {
@@ -246,7 +246,7 @@ void TimerEvent::Next(const std::vector<Timer*>& expired, Timestamp now) {
 }
 
 bool TimerEvent::Add(Timer* timer) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   
   bool isreset = false;
   Timestamp t = timer->time;

@@ -43,7 +43,7 @@ void TcpServer::Start() {
 }
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
-  eventloop_->AssertThreadSafe();
+  eventloop_->AssertInMyLoop();
   char peer[64];
   sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
                             peer, sizeof(peer)); 

@@ -1,5 +1,6 @@
 #include "voyager/port/threadlocalstorage.h"
 #include <stdio.h>
+#include <inttypes.h>
 #include "voyager/port/thread.h"
 #include "voyager/port/currentthread.h"
 
@@ -9,11 +10,11 @@ namespace port {
 class ThreadLocalStorageTest {
  public:
   ThreadLocalStorageTest() {
-    printf("tid=%d, constructing %p\n", CurrentThread::Tid(), this);
+    printf("tid=%" PRIu64", constructing %p\n", CurrentThread::Tid(), this);
   }
 
   ~ThreadLocalStorageTest() {
-    printf("tid=%d, destructing %p\n", CurrentThread::Tid(), this);
+    printf("tid=%" PRIu64", destructing %p\n", CurrentThread::Tid(), this);
   }
 };
 

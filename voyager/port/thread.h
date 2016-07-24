@@ -27,7 +27,7 @@ class Thread {
 
   bool Started() const { return started_; }
   bool Joined() const { return joined_; }
-  pid_t Tid() const { return tid_; }
+  uint64_t Tid() const { return tid_; }
   const std::string& Name() const { return name_; }
   static int ThreadCreatedNum() { 
     return num_.load(std::memory_order_relaxed);
@@ -40,7 +40,7 @@ class Thread {
   bool started_;
   bool joined_;
   pthread_t pthread_id_;
-  pid_t tid_;
+  uint64_t tid_;
   ThreadFunc func_;
   std::string name_;
   static std::atomic<int> num_;

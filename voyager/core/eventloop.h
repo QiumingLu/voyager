@@ -40,12 +40,12 @@ class EventLoop {
 
   void DeleteTimer(Timer* t);
 
-  void AssertThreadSafe() {
-    if (!IsInCreatedThread()) {
-      AbortForNotInCreatedThread();
+  void AssertInMyLoop() {
+    if (!IsInMyLoop()) {
+      Abort();
     }
   }
-  bool IsInCreatedThread() const { 
+  bool IsInMyLoop() const { 
 	return tid_ == port::CurrentThread::Tid(); 
   }
 
@@ -61,14 +61,14 @@ class EventLoop {
  private:
   void RunFuncQueue();
   void HandleRead();
-  void AbortForNotInCreatedThread();
+  void Abort();
  
   void WakeUp();
  
   bool exit_;
   bool runfuncqueue_;
 
-  const pid_t tid_;
+  const uint64_t tid_;
   scoped_ptr<EventPoller> poller_;
 
   scoped_ptr<TimerEvent> timer_ev_;
