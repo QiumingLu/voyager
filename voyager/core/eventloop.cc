@@ -12,7 +12,6 @@
 #elif __APPLE__
 #include "voyager/core/event_poll.h"
 #endif
-#include "voyager/core/socket_util.h"
 #include "voyager/core/timer.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timestamp.h"
@@ -257,9 +256,9 @@ void EventLoop::RunFuncQueue() {
 void EventLoop::WakeUp() {
   uint64_t one = 1;
 #ifdef __linux__
-  ssize_t n  = sockets::Write(wakeup_fd_, &one, sizeof(one));
+  ssize_t n  = ::write(wakeup_fd_, &one, sizeof(one));
 #elif __APPLE__
-    ssize_t n  = sockets::Write(wakeup_fd_[1], &one, sizeof(one));
+    ssize_t n  = ::write(wakeup_fd_[1], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
     VOYAGER_LOG(ERROR) << "EventLoop::WakeUp - " << wakeup_fd_ << " writes "
@@ -270,9 +269,9 @@ void EventLoop::WakeUp() {
 void EventLoop::HandleRead() {
   uint64_t one = 1;
 #ifdef __linux__
-  ssize_t n = sockets::Read(wakeup_fd_, &one, sizeof(one));
+  ssize_t n = ::read(wakeup_fd_, &one, sizeof(one));
 #elif __APPLE__
-    ssize_t n = sockets::Read(wakeup_fd_[0], &one, sizeof(one));
+    ssize_t n = ::read(wakeup_fd_[0], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
     VOYAGER_LOG(ERROR) << "EventLoop::HandleRead - " << wakeup_fd_ << " reads "

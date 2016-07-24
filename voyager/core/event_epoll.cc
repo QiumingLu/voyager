@@ -4,7 +4,6 @@
 #include <string.h>
 #include <unistd.h>
 #include "voyager/core/dispatch.h"
-#include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {

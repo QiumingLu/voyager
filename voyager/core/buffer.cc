@@ -3,7 +3,6 @@
 #include <sys/uio.h>
 #include <errno.h>
 
-#include "voyager/core/socket_util.h"
 
 namespace voyager {
 
@@ -24,7 +23,7 @@ ssize_t Buffer::ReadV(int socketfd, int& err) {
   iov[1].iov_base = backup_buf;
   iov[1].iov_len = sizeof(backup_buf);
   int count = (writable_size < sizeof(backup_buf)) ? 2 : 1;
-  const ssize_t n = sockets::ReadV(socketfd, iov, count);
+  const ssize_t n = ::readv(socketfd, iov, count);
   if (n < 0) {
     err = errno;
   } else if (static_cast<size_t>(n) <= writable_size) {

@@ -29,18 +29,21 @@ namespace {
 uint64_t GetTid() {
   return static_cast<uint64_t>(::syscall(SYS_gettid));
 }
+
 #elif __APPLE__
 uint64_t GetTid() {
   return static_cast<uint64_t>(pthread_mach_thread_np(pthread_self()));
 }
-#endif
 
-// uint64_t GetTid() {
-//   pthread_t tid = pthread_self();
-//   uint64_t thread_id = 0;
-//   memcpy(&thread_id, &tid, std::min(sizeof(thread_id), sizeof(tid)));
-//   return thread_id;
-// }
+#else
+uint64_t GetTid() {
+  pthread_t tid = pthread_self();
+  uint64_t thread_id = 0;
+  memcpy(&thread_id, &tid, std::min(sizeof(thread_id), sizeof(tid)));
+  return thread_id;
+}
+
+#endif
 
 void AfterFork() {
   CurrentThread::cached_tid = 0;
@@ -91,9 +94,9 @@ void CurrentThread::CacheTid() {
   }
 }
 
-bool CurrentThread::IsMainThread() {
-  return Tid() == static_cast<uint64_t>(::getpid());
-}
+// bool CurrentThread::IsMainThread() {
+//   return Tid() == static_cast<uint64_t>(::getpid());
+// }
 
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)

@@ -8,7 +8,6 @@
 #endif
 
 #include "voyager/core/eventloop.h"
-#include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 

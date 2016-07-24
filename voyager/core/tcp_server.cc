@@ -5,7 +5,6 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/core/eventloop_threadpool.h"
 #include "voyager/core/online_connections.h"
-#include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
@@ -45,8 +44,8 @@ void TcpServer::Start() {
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertInMyLoop();
   char peer[64];
-  sockets::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
-                            peer, sizeof(peer)); 
+  SockAddr::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
+                             peer, sizeof(peer)); 
   std::string conn_name = StringPrintf("%s-%s#%d", 
                                        ipbuf_.c_str(), peer, ++conn_id_);
   

@@ -2,9 +2,9 @@
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/online_connections.h"
-#include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
+#include <unistd.h>
 
 #include <errno.h>
 
@@ -123,7 +123,7 @@ void TcpConnection::HandleRead() {
 void TcpConnection::HandleWrite() {
   eventloop_->AssertInMyLoop();
   if (dispatch_->IsWriting()) {
-    ssize_t n = sockets::Write(dispatch_->Fd(), 
+    ssize_t n = ::write(dispatch_->Fd(), 
                                writebuf_.Peek(), 
                                writebuf_.ReadableSize());
     int err = errno;
@@ -222,7 +222,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
   bool fault = false;
 
   if (!dispatch_->IsWriting() && writebuf_.ReadableSize() == 0) {
-    nwrote = sockets::Write(dispatch_->Fd(), data, size);
+    nwrote = ::write(dispatch_->Fd(), data, size);
     int err = errno;
     if (nwrote >= 0) {
       remaining = size - static_cast<size_t>(nwrote);

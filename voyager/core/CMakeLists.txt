@@ -13,7 +13,6 @@ set(core_SRCS
   event_poller.cc
   event_select.cc
   sockaddr.cc
-  socket_util.cc
   tcp_client.cc
   tcp_connection.cc
   tcp_server.cc

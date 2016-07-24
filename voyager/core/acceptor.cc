@@ -7,7 +7,6 @@
 
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/socket_util.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
