@@ -9,10 +9,8 @@
 namespace voyager {
 namespace cache {
 
-
 using port::Mutex;
 using port::MutexLock;
-
 
 struct LRUHandle {
  private:

@@ -49,7 +49,6 @@ class EventLoop {
 	return tid_ == port::CurrentThread::Tid(); 
   }
 
-  // Voyager创建的EvevntLoop，应由它自己来调用退出,用户不需要调用。
   void Exit();
 
   static EventLoop* EventLoopOfCurrentThread();
