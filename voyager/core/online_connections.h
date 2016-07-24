@@ -9,7 +9,6 @@ namespace voyager {
 
 static const int kNumShardBits = 4;
 static const int kNumShards = 1 << kNumShardBits;
-static const int kSystemBit = sizeof(size_t) * 8;
 
 template <typename K, typename V>
 class HashMap {
@@ -70,7 +69,7 @@ class ConcurrentMap {
   }
 
   static inline size_t Shard(size_t h) {
-    return h >> (kSystemBit - kNumShardBits);
+    return (h & (kNumShards - 1));
   }
 
   HashMap<K, V> shard_[kNumShards];

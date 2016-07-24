@@ -13,6 +13,7 @@
 #include "voyager/core/event_poll.h"
 #endif
 #include "voyager/core/socket_util.h"
+#include "voyager/core/timer.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timestamp.h"
 

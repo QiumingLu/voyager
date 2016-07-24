@@ -46,7 +46,6 @@ set(HEADERS
   base_socket.h
   client_socket.h
   server_socket.h
-  timer.h
   )
 
 install(FILES ${HEADERS} DESTINATION include/voyager/core)

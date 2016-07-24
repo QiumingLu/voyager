@@ -66,6 +66,30 @@ int FromNow(Timestamp t) {
 }  // namespace timeops
 #endif
 
+struct Timer {
+  TimeProcCallback timeproc;
+  Timestamp time;
+  double interval;
+  bool repeat;
+
+  Timer(const TimeProcCallback& func, Timestamp t, double inter)
+      : timeproc(func), time(t), interval(inter), repeat(false) {
+    if (interval > 0.0) {
+      repeat = true;
+    }
+  }
+
+  Timer(TimeProcCallback&& func, Timestamp t, double inter)
+      : timeproc(std::move(func)), 
+        time(t), 
+        interval(inter),
+        repeat(false) {
+    if (interval > 0.0) {
+      repeat = true;
+    }
+  }
+};
+
 #ifdef __linux__
 TimerEvent::TimerEvent(EventLoop* ev)
     : eventloop_(ev),
