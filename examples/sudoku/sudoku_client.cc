@@ -6,6 +6,7 @@
 #include "voyager/core/buffer.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
+#include "voyager/util/timestamp.h"
 #include <vector>
 
 using namespace std::placeholders;

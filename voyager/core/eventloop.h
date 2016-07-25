@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 
-#include "voyager/core/timer.h"
 #include "voyager/util/scoped_ptr.h"
 #include "voyager/port/currentthread.h"
 #include "voyager/port/mutexlock.h"
