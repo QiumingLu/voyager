@@ -1,109 +1,95 @@
 #ifndef VOYAGER_CORE_ONLINE_CONNECTIONS_H_
 #define VOYAGER_CORE_ONLINE_CONNECTIONS_H_
 
-#include "voyager/port/mutexlock.h"
-#include "voyager/port/singleton.h"
+#include <atomic>
+#include <functional>
+#include <map>
 #include <unordered_map>
 
-namespace voyager {
-
-static const int kNumShardBits = 4;
-static const int kNumShards = 1 << kNumShardBits;
-
-template <typename K, typename V>
-class HashMap {
- public:
-  HashMap() { }
-
-  void Insert(const K& key, const V& value) {
-    port::MutexLock lock(&mu_);
-    map_[key] = value;
-  }
-
-  void Erase(const K& key) {
-    port::MutexLock lock(&mu_);
-    map_.erase(key);
-  }
-
-  size_t size() const {
-    port::MutexLock lock(&mu_);
-    return  map_.size();
-  }
-
- private:
-  mutable port::Mutex mu_;
-  typename std::unordered_map<K, V> map_;
-
-  // No Copying allow
-  HashMap(const HashMap&);
-  void operator=(const HashMap&);
-};
-
-template <typename K, typename V>
-class ConcurrentMap {
- public:
-   ConcurrentMap() { }
-
-   void Insert(const K& key, const V& value) {
-     const size_t h = Hash(key);
-     shard_[Shard(h)].Insert(key, value);
-   }
-
-   void Erase(const K& key) {
-     const size_t h = Hash(key);
-     shard_[Shard(h)].Erase(key);
-   }
-
-   size_t size() const {
-     size_t total = 0;
-     for (int s = 0; s < kNumShards; ++s) {
-       total += shard_[s].size();
-     }
-     return total;
-   }
-
- private:
-  static inline size_t Hash(const K& key) {
-    typename std::hash<K> h;
-    return h(key);
-  }
-
-  static inline size_t Shard(size_t h) {
-    return (h & (kNumShards - 1));
-  }
-
-  HashMap<K, V> shard_[kNumShards];
-  
-  // No copying allow
-  ConcurrentMap(const ConcurrentMap&);
-  void operator=(const ConcurrentMap&);
-};
+#include "voyager/core/tcp_connection.h"
+#include "voyager/port/singleton.h"
 
 // 单例类，借助于port::Singleton模板类
+namespace voyager {
+
 class OnlineConnections
 {
  public:
-  OnlineConnections() { }
+  OnlineConnections() : size_(0) { }
 
-  void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
-    map_.Insert(name, ptr);
+  int OnlineUserNum(EventLoop* loop) {
+    typename std::map<
+        EventLoop*, std::unordered_map<std::string, TcpConnectionPtr> >::iterator it;
+    it = map_.find(loop);
+    if (it != map_.end()) {
+      return static_cast<int>((it->second).size());
+    } else {
+      return 0;
+    }
   }
 
-  void EraseCnnection(const TcpConnectionPtr& ptr) {
-    map_.Erase(ptr->name());
-  }
-
-  size_t OnlineUsersNum() const {
-    return map_.size();
+  int AllOnlineUsersNum() const {
+    return size_.load(std::memory_order_relaxed);
   }
 
  private:
-  ConcurrentMap<std::string, TcpConnectionPtr> map_;
+  friend class TcpConnection;
+
+  void NewConnection(const TcpConnectionPtr& ptr) {
+    EventLoop* loop = ptr->OwnerLoop();
+    if (map_.find(loop) != map_.end()) {
+      map_[loop][ptr->name()] = ptr;
+    } else {
+      std::unordered_map<std::string, TcpConnectionPtr> temp;
+      temp[ptr->name()] = ptr;
+      map_[loop] = std::move(temp);
+    }
+    ++size_;
+  }
+
+  void EraseCnnection(const TcpConnectionPtr& ptr) {
+    EventLoop* loop = ptr->OwnerLoop();
+    if (map_.find(loop) != map_.end()) {
+      assert(map_[loop].find(ptr->name) != map_[loop].end());
+      map_[loop].erase(ptr->name());
+      --size_;
+    }
+  }
+
+  std::atomic<int> size_;
+  typename std::map<
+      EventLoop*, std::unordered_map<std::string, TcpConnectionPtr> > map_;
 
   OnlineConnections(const OnlineConnections&);
-  void operator=(const OnlineConnections&);	
+  void operator=(const OnlineConnections&); 
 };
 
 }  // namespace voyager
+
+// #include "voyager/port/concurrent_map"
+
+// class OnlineConnections
+// {
+//  public:
+//   OnlineConnections() { }
+
+//   void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
+//     map_.Insert(name, ptr);
+//   }
+
+//   void EraseCnnection(const TcpConnectionPtr& ptr) {
+//     map_.Erase(ptr->name());
+//   }
+
+//   size_t OnlineUsersNum() const {
+//     return map_.size();
+//   }
+
+//  private:
+//   port::ConcurrentMap<std::string, TcpConnectionPtr> map_;
+
+//   OnlineConnections(const OnlineConnections&);
+//   void operator=(const OnlineConnections&);	
+// };
 
 #endif  // VOYAGER_CORE_ONLINE_CONNECTIONS_H_

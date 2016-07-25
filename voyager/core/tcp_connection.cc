@@ -45,8 +45,7 @@ void TcpConnection::StartWorking() {
   state_ = kConnected;
   dispatch_->Tie(shared_from_this());
   dispatch_->EnableRead();
-  port::Singleton<OnlineConnections>::Instance().NewConnection(
-      name_, shared_from_this());
+  port::Singleton<OnlineConnections>::Instance().NewConnection(shared_from_this());
   if (connection_cb_) {
     connection_cb_(shared_from_this());
   }

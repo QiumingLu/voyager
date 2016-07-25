@@ -22,10 +22,13 @@ class Schedule {
   bool Started() const { return started_; }
  
  private:
+  EventLoop* Next();  
+
   EventLoop* baseloop_;
   size_t size_;
   size_t next_;
   bool started_;
+  double percent_;  // For Load Balance
   
   scoped_array<scoped_ptr<BGEventLoop> > loops_;
   std::vector<EventLoop*> ptrs_;
