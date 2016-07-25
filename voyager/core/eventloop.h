@@ -15,7 +15,7 @@ namespace voyager {
 
 class Dispatch;
 class EventPoller;
-class Timer;
+struct Timer;
 class TimerEvent;
 class Timestamp;
 
