@@ -50,12 +50,14 @@ Status SockAddr::GetAddrInfo(const char* host, uint16_t port) {
   return Status::OK();
 }
 
-int SockAddr::FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size) {
+int SockAddr::FormatAddress(const char* ip, uint16_t port, 
+                            char* buf, size_t buf_size) {
   return snprintf(buf, buf_size, strchr(ip, ':') ?
                   "[%s]:%d" : "%s:%u", ip, port);
 }
 
-void SockAddr::SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size) {
+void SockAddr::SockAddrToIP(const struct sockaddr* sa, 
+                            char* ipbuf, size_t ipbuf_size) {
   if (sa->sa_family == AF_INET) {
     assert(ipbuf_size >= INET_ADDRSTRLEN);
     const struct sockaddr_in* sa4 = 
@@ -71,16 +73,18 @@ void SockAddr::SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf
   }
 }
 
-int SockAddr::SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size) {
+int SockAddr::SockAddrToIPPort(const struct sockaddr* sa, 
+                               char* buf, size_t buf_size) {
   char ip[INET6_ADDRSTRLEN];
   SockAddrToIP(sa, ip, sizeof(ip));
   const struct sockaddr_in* sa4 = 
       reinterpret_cast<const struct sockaddr_in*>(sa);
   uint16_t port = ntohs(sa4->sin_port);
-  return FormatAddr(ip, port, buf, buf_size);
+  return FormatAddress(ip, port, buf, buf_size);
 }
 
-void SockAddr::IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4) {
+void SockAddr::IPPortToSockAddr(const char* ip, uint16_t port, 
+                                struct sockaddr_in* sa4) {
   sa4->sin_family = AF_INET;
   sa4->sin_port = htons(port);
   if (::inet_pton(AF_INET, ip, &sa4->sin_addr) <= 0) {
@@ -88,9 +92,8 @@ void SockAddr::IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_i
   }
 }
 
-void SockAddr::IPPortToSockAddr(const char* ip, 
-                      uint16_t port, 
-                      struct sockaddr_in6* sa6) {
+void SockAddr::IPPortToSockAddr(const char* ip, uint16_t port, 
+                                struct sockaddr_in6* sa6) {
   sa6->sin6_family = AF_INET6;
   sa6->sin6_port = htons(port);
   if (::inet_pton(AF_INET6, ip, &sa6->sin6_addr) <= 0) {

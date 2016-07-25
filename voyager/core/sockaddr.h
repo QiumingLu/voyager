@@ -18,13 +18,16 @@ class SockAddr {
   sa_family_t Family() const { return sa_.ss_family; }
   std::string Ipbuf() const { return ipbuf_; }
 
-  
-  static int FormatAddr(const char* ip, uint16_t port, char* buf, size_t buf_size);
-
-  static void SockAddrToIP(const struct sockaddr* sa, char* ipbuf, size_t ipbuf_size);
-  static int SockAddrToIPPort(const struct sockaddr* sa, char* buf, size_t buf_size);
-  static void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in* sa4);
-  static void IPPortToSockAddr(const char* ip, uint16_t port, struct sockaddr_in6* sa6);
+  static int FormatAddress(const char* ip, uint16_t port, 
+                           char* buf, size_t buf_size);
+  static void SockAddrToIP(const struct sockaddr* sa, 
+                           char* ipbuf, size_t ipbuf_size);
+  static int SockAddrToIPPort(const struct sockaddr* sa, 
+                              char* buf, size_t buf_size);
+  static void IPPortToSockAddr(const char* ip, uint16_t port, 
+                               struct sockaddr_in* sa4);
+  static void IPPortToSockAddr(const char* ip, uint16_t port, 
+                               struct sockaddr_in6* sa6);
 
  private:
   Status GetAddrInfo(const char* host, uint16_t port);

@@ -1,25 +1,25 @@
-#include "voyager/core/eventloop_thread.h"
+#include "voyager/core/bg_eventloop.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/port/mutexlock.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
 
-EventLoopThread::EventLoopThread(const std::string& name)
+BGEventLoop::BGEventLoop(const std::string& name)
     : eventloop_(NULL),
       mu_(),
       cond_(&mu_),
-      thread_(std::bind(&EventLoopThread::ThreadFunc, this), name) {
+      thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {
 }
 
-EventLoopThread::~EventLoopThread() {
+BGEventLoop::~BGEventLoop() {
   if (eventloop_ != NULL) {
     eventloop_->Exit();
     thread_.Join();
   }
 }
 
-EventLoop* EventLoopThread::StartLoop() {
+EventLoop* BGEventLoop::StartLoop() {
   assert(!thread_.Started());
   thread_.Start();
   {
@@ -31,7 +31,7 @@ EventLoop* EventLoopThread::StartLoop() {
   return eventloop_;
 }
 
-void EventLoopThread::ThreadFunc() {
+void BGEventLoop::ThreadFunc() {
   EventLoop ev;
   { 
     port::MutexLock l(&mu_);

@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "voyager/core/acceptor.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/eventloop_threadpool.h"
+#include "voyager/core/schedule.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
@@ -21,7 +21,7 @@ TcpServer::TcpServer(EventLoop* eventloop,
       ipbuf_(addr.Ipbuf()),
       name_(name),
       acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
-      ev_pool_(new EventLoopThreadPool(eventloop_, name_, thread_size-1)),
+      schedule_(new Schedule(eventloop_, thread_size-1)),
       conn_id_(0) {
   acceptor_ptr_->SetNewConnectionCallback(
       std::bind(&TcpServer::NewConnection, this, _1, _2));
@@ -34,7 +34,7 @@ TcpServer::~TcpServer() {
 
 void TcpServer::Start() {
   if (seq_.GetNext() == 0) {
-    ev_pool_->Start();
+    schedule_->Start();
     assert(!acceptor_ptr_->IsListenning());
     eventloop_->RunInLoop(
         std::bind(&Acceptor::EnableListen, acceptor_ptr_.get()));
@@ -53,7 +53,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
                     << "] - new connection [" << conn_name
                     << "] from " << peer;
 
-  EventLoop* ev = ev_pool_->GetNext(); 
+  EventLoop* ev = schedule_->AssignLoop();
   TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
   
   conn_ptr->SetConnectionCallback(connection_cb_);

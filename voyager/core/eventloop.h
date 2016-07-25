@@ -13,12 +13,11 @@
 
 namespace voyager {
 
+struct Timer;
 class Dispatch;
 class EventPoller;
-struct Timer;
 class TimerEvent;
 class Timestamp;
-
 class EventLoop {
  public:
   typedef std::function<void()> Func;

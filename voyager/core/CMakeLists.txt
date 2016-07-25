@@ -1,17 +1,17 @@
 set(core_SRCS
   acceptor.cc
   base_socket.cc
-  client_socket.cc
-  server_socket.cc
+  bg_eventloop.cc
   buffer.cc
+  client_socket.cc
   connector.cc
   dispatch.cc
   eventloop.cc
-  eventloop_thread.cc
-  eventloop_threadpool.cc
   event_poll.cc
   event_poller.cc
   event_select.cc
+  schedule.cc
+  server_socket.cc
   sockaddr.cc
   tcp_client.cc
   tcp_connection.cc
@@ -32,12 +32,11 @@ target_link_libraries(voyager_core voyager_port)
 install(TARGETS voyager_core DESTINATION lib)
 
 set(HEADERS 
+  bg_eventloop.h
   buffer.h
   callback.h
   dispatch.h
   eventloop.h
-  eventloop_thread.h
-  eventloop_threadpool.h
   sockaddr.h
   tcp_client.h
   tcp_connection.h
@@ -45,6 +44,7 @@ set(HEADERS
   base_socket.h
   client_socket.h
   server_socket.h
+  schedule.h
   )
 
 install(FILES ${HEADERS} DESTINATION include/voyager/core)

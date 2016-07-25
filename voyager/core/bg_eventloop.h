@@ -1,5 +1,5 @@
-#ifndef VOYAGER_CORE_EVENTLOOP_THREAD_H_
-#define VOYAGER_CORE_EVENTLOOP_THREAD_H_
+#ifndef VOYAGER_CORE_BG_EVENTLOOP_H_
+#define VOYAGER_CORE_BG_EVENTLOOP_H_
 
 #include "voyager/port/mutex.h"
 #include "voyager/port/thread.h"
@@ -8,10 +8,10 @@ namespace voyager {
 
 class EventLoop;
 
-class EventLoopThread {
+class BGEventLoop {
  public:
-  EventLoopThread(const std::string& name = std::string());
-  ~EventLoopThread();
+  BGEventLoop(const std::string& name = std::string());
+  ~BGEventLoop();
 
   EventLoop* StartLoop();
 
@@ -24,10 +24,10 @@ class EventLoopThread {
   port::Thread thread_;
 
   // No copying allow
-  EventLoopThread(const EventLoopThread&);
-  void operator=(const EventLoopThread&);
+  BGEventLoop(const BGEventLoop&);
+  void operator=(const BGEventLoop&);
 };
 
 }  // namespace voyager
 
-#endif  // VOYAGER_CORE_EVENTLOOP_THREAD_H_
+#endif  // VOYAGER_CORE_BG_EVENTLOOP_H_

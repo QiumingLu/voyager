@@ -14,7 +14,7 @@ namespace voyager {
 
 class Acceptor;
 class EventLoop;
-class EventLoopThreadPool;
+class Schedule;
 
 class TcpServer {
  public:
@@ -68,7 +68,7 @@ class TcpServer {
   std::string ipbuf_;
   const std::string name_;
   scoped_ptr<Acceptor> acceptor_ptr_;
-  std::shared_ptr<EventLoopThreadPool> ev_pool_;
+  scoped_ptr<Schedule> schedule_;
   port::SequenceNumber seq_;
   uint64_t conn_id_;
 

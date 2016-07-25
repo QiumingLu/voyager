@@ -1,7 +1,7 @@
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/eventloop_threadpool.h"
+#include "voyager/core/schedule.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/tcp_connection.h"
@@ -86,7 +86,7 @@ class Client {
          int thread_count)
       : base_ev_(ev),
         thread_count_(thread_count),
-        ev_pool_(base_ev_, "client", thread_count - 1),
+        schedule_(base_ev_, thread_count - 1),
         session_count_(session_count),
         block_size_(block_size),
         timeout_(timeout),
@@ -99,10 +99,11 @@ class Client {
       message_.push_back(static_cast<char>(i % 128));
     }
 
-    ev_pool_.Start();
+    schedule_.Start();
     for (size_t i = 0; i < session_count; ++i) {
       std::string name = voyager::StringPrintf("session %d", i + 1);
-      Session* new_session = new Session(ev_pool_.GetNext(), addr, name, this);
+      Session* new_session = new Session(schedule_.AssignLoop(), 
+                                         addr, name, this);
       new_session->Connect();
       sessions_.push_back(new_session);
     }
@@ -156,7 +157,7 @@ class Client {
 
   voyager::EventLoop* base_ev_;
   int thread_count_;
-  voyager::EventLoopThreadPool ev_pool_;
+  voyager::Schedule schedule_;
   size_t session_count_;
   size_t block_size_;
   int timeout_;
