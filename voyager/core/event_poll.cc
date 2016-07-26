@@ -16,7 +16,6 @@ EventPoll::~EventPoll() {
 }
 
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  VOYAGER_LOG(DEBUG) << "poolfds: " << pollfds_.size();
   int ret = ::poll(&(*pollfds_.begin()), 
                    static_cast<nfds_t>(pollfds_.size()), timeout);
   int err = errno;

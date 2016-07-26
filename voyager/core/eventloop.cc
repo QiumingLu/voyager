@@ -51,7 +51,7 @@ EventLoop::EventLoop()
     : exit_(false),
       runfuncqueue_(false),
       tid_(port::CurrentThread::Tid()),
-      poller_(new EventPoll(this)),
+      poller_(new EventEpoll(this)),
       timer_ev_(new TimerEvent(this)),
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {

@@ -47,6 +47,7 @@ class EchoServer {
 
 }  // namespace voyager
 
+// 加入了Google PerfTools来测试,如果不需要可以去掉
 int main(int argc, char** argv) {
   ProfilerStart("MyProfile");
   voyager::SetLogHandler(NULL);
