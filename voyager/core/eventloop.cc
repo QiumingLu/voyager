@@ -9,9 +9,8 @@
 #include "voyager/core/dispatch.h"
 #ifdef __linux__
 #include "voyager/core/event_epoll.h"
-#elif __APPLE__
-#include "voyager/core/event_poll.h"
 #endif
+#include "voyager/core/event_poll.h"
 #include "voyager/core/timer.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timestamp.h"
@@ -52,7 +51,7 @@ EventLoop::EventLoop()
     : exit_(false),
       runfuncqueue_(false),
       tid_(port::CurrentThread::Tid()),
-      poller_(new EventEpoll(this)),
+      poller_(new EventPoll(this)),
       timer_ev_(new TimerEvent(this)),
       wakeup_fd_(CreateEventfd()),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {

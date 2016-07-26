@@ -46,7 +46,7 @@ EventLoop* Schedule::AssignLoop() {
       = port::Singleton<OnlineConnections>::Instance();
   size_t all = instance.AllOnlineUsersNum();
   while (all > 0 && run < 3) {
-    if (instance.OnlineUserNum(loop) > (percent_ * all)) {
+    if (instance.OnlineUserNum(loop) > (percent_ * static_cast<double>(all))) {
       loop = Next();
     } else {
       break;
