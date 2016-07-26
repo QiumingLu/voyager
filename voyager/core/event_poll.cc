@@ -16,6 +16,7 @@ EventPoll::~EventPoll() {
 }
 
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
+  VOYAGER_LOG(DEBUG) << "poolfds: " << pollfds_.size();
   int ret = ::poll(&(*pollfds_.begin()), 
                    static_cast<nfds_t>(pollfds_.size()), timeout);
   int err = errno;
@@ -29,7 +30,8 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
        it != pollfds_.end() && ret > 0; ++it) {
     if (it->revents > 0) {
       --ret;
-      std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(it->fd);
+      std::unordered_map<int, Dispatch*>::iterator iter 
+          = dispatch_map_.find(it->fd);
       assert(iter != dispatch_map_.end());
       Dispatch* dispatch = iter->second;
       assert(dispatch->Fd() == it->fd);

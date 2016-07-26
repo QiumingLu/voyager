@@ -6,6 +6,7 @@
 #include <voyager/util/logging.h>
 #include <unistd.h>
 #include <inttypes.h>
+#include <gperftools/profiler.h>
 
 using namespace std::placeholders;
 
@@ -47,12 +48,16 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
+  ProfilerStart("EchoServer");
   voyager::SetLogHandler(NULL);
-  printf("pid=%d, tid=%" PRIu64"\n", getpid(), voyager::port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64"\n",
+         getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
+  ev.RunAfter(50, std::bind(&voyager::EventLoop::Exit, &ev));
   server.Start();
   ev.Loop();
+  ProfilerStop();
   return 0;
 }

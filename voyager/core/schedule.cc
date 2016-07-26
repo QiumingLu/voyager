@@ -11,11 +11,11 @@ Schedule::Schedule(EventLoop* baseloop, int size)
       started_(false),
       loops_(new scoped_ptr<BGEventLoop>[size]) {
   if (size_ == 1) {
-    percent_ = 1.0;
+    percent_ = 2.0;
   } else if (size_ == 2) {
-    percent_ = 6.0 / 8.0;
+    percent_ = 5.0 / 8.0;
   } else if (size_ == 3) {
-    percent_ =  4.0 / 8.0;
+    percent_ =  4.0 / 9.0;
   } else {
     percent_ = 3.0 / 8.0;
   }
@@ -39,17 +39,19 @@ EventLoop* Schedule::AssignLoop() {
     return baseloop_;
   }
 
-  int test = 0;
   EventLoop* loop = Next();
 
-  OnlineConnections& instance = port::Singleton<OnlineConnections>::Instance();
-  while (instance.AllOnlineUsersNum() > 0 && test < 3) {
-    if (instance.OnlineUserNum(loop) > (percent_ * instance.AllOnlineUsersNum())) {
+  int run = 0;
+  OnlineConnections& instance 
+      = port::Singleton<OnlineConnections>::Instance();
+  size_t all = instance.AllOnlineUsersNum();
+  while (all > 0 && run < 3) {
+    if (instance.OnlineUserNum(loop) > (percent_ * all)) {
       loop = Next();
     } else {
       break;
     }
-    ++test;
+    ++run;
   }
 
   return loop;
