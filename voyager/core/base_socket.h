@@ -25,7 +25,7 @@ class BaseSocket {
   void SetReusePort(bool on) const;
   void SetKeepAlive(bool on) const;
   void SetTcpNoDelay(bool on) const;
-  
+ 
   Status CheckSocketError() const;
  
   struct sockaddr_storage PeerSockAddr() const; 
