@@ -36,6 +36,7 @@ class Logger {
   Logger& operator<<(const char* value);
   Logger& operator<<(const Slice& value);
   Logger& operator<<(const std::string& value);
+  Logger& operator<<(std::string&& value);
   Logger& operator<<(const Status& value);
 
  private:
@@ -76,8 +77,8 @@ typedef void LogHandler(LogLevel level, const char* filename,
                         int line, const std::string& message_);
 
 
-extern void DefaultLogHandler(LogLevel level, const char* filename, int line,
-                       const std::string& message);
+extern void DefaultLogHandler(LogLevel level, const char* filename, 
+                              int line, const std::string& message);
 
 
 extern void NullLogHandler(LogLevel /* level */, const char* /* filename */,

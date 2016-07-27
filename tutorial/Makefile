@@ -4,7 +4,6 @@ VOYAGER_INCLUDE = $(VOYAGER_DIRECTORY)/include
 VOYAGER_LIBRARY = $(VOYAGER_DIRECTORY)/lib
 
 GPERFTOOLS = /usr/local
-#GPERFTOOLS = /usr/local/Cellar/gperftools/2.5
 
 CXXFLAGS = -std=c++11 -g -O2 -Wall -Wextra -Werror \
 	   -Wconversion -Wno-unused-parameter \

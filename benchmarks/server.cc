@@ -25,9 +25,6 @@ class Server {
 
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-    if (ptr->IsConnected()) {
-      ptr->SetTcpNoDelay(true);
-    }
   }
   
   void MessageCallback(const voyager::TcpConnectionPtr& ptr,

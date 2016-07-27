@@ -67,7 +67,8 @@ std::pair<uint64_t, uint64_t> RunOnce() {
 
   uint64_t total_time = te.MicroSecondsSinceEpoch() - 
                             ta.MicroSecondsSinceEpoch();
-  uint64_t sub_time = te.MicroSecondsSinceEpoch() - ts.MicroSecondsSinceEpoch();
+  uint64_t sub_time = te.MicroSecondsSinceEpoch() -
+                          ts.MicroSecondsSinceEpoch();
   std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
 
   fprintf(stdout, "%8" PRId64 "%8" PRId64 "\n", total_time, sub_time);

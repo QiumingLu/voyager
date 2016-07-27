@@ -1,5 +1,6 @@
 #include "voyager/util/logging.h"
 
+#include <functional>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -46,6 +47,11 @@ Logger& Logger::operator<<(const Slice& value) {
 
 Logger& Logger::operator<<(const std::string& value) {
   message_ += value;
+  return *this;
+}
+
+Logger& Logger::operator<<(std::string&& value) {
+  message_ += std::move(value);
   return *this;
 }
 
