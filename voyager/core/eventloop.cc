@@ -43,7 +43,7 @@ EventLoop::EventLoop()
       timers_(new TimerList(this)),
       wakeup_fd_(::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC)),
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
-  if (fd == -1) {
+  if (wakeup_fd_ == -1) {
     VOYAGER_LOG(FATAL) << "eventfd: " << strerror(errno);
   }      
 

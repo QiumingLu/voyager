@@ -127,8 +127,8 @@ class Client {
       using namespace voyager;
       VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
       VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
-      VOYAGER_LOG(WARN) << static_cast<double>(
-                               total_bytes_read) / (timeout_ * 1024 * 1024)
+      VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / 
+                               static_cast<double>(timeout_ * 1024 * 1024)
                         << " MiB/s throughtput";
 
       std::fstream file;
@@ -137,7 +137,8 @@ class Client {
            << " Sessions: " << sessions_.size() << "\n";
       file << total_bytes_written << " total bytes written\n";
       file << total_bytes_read << " total bytes read\n";
-      file << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024) 
+      file << static_cast<double>(total_bytes_read) / 
+                  static_cast<double>(timeout_ * 1024 * 1024) 
            << " MiB/s throughtput\n\n\n";
       file.close();
       base_ev_->Exit();

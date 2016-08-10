@@ -5,7 +5,6 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
 #include <unistd.h>
-
 #include <errno.h>
 
 namespace voyager {

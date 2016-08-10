@@ -1,14 +1,16 @@
+#include "voyager/core/newtimer.h"
+
 #include <sys/timerfd.h>
 #include <unistd.h>
-
+#include <string.h>
 #include <map>
 #include <vector>
 #include <utility>
 
 #include "voyager/core/eventloop.h"
-#include "voyager/core/timeops.h"
 #include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
+#include "voyager/util/timeops.h"
 
 namespace voyager {
 
@@ -19,7 +21,7 @@ NewTimer::NewTimer(EventLoop* ev, const TimerProcCallback& cb)
       eventloop_(CHECK_NOTNULL(ev)),
       dispatch_(ev, timerfd_),
       timerproc_cb_(cb) {
-  if (timerfd == -1) {
+  if (timerfd_ == -1) {
     VOYAGER_LOG(FATAL) << "timerfd_create: " << strerror(errno);
   } else {
   	dispatch_.SetReadCallback(std::bind(&NewTimer::HandleRead, this));
@@ -34,7 +36,7 @@ NewTimer::NewTimer(EventLoop* ev, TimerProcCallback&& cb)
       eventloop_(CHECK_NOTNULL(ev)),
       dispatch_(ev, timerfd_),
       timerproc_cb_(std::move(cb)) {
-  if (timerfd == -1) {
+  if (timerfd_ == -1) {
     VOYAGER_LOG(FATAL) << "timerfd_create: " << strerror(errno);
   } else {
     dispatch_.SetReadCallback(std::bind(&NewTimer::HandleRead, this));
@@ -52,7 +54,7 @@ NewTimer::~NewTimer() {
 
 
 void NewTimer::SetTime(uint64_t nanos_value, uint64_t nanos_interval) {
-  eventloop_->RunInLoop(std::bind(&NewTimer::SetTimeInLoop, shared_from_this(), 
+  eventloop_->RunInLoop(std::bind(&NewTimer::SetTimeInLoop, this, 
                                   nanos_value, nanos_interval));
 }
 
