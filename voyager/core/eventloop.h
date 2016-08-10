@@ -76,7 +76,7 @@ class EventLoop {
 
   #ifdef __linux__
   int wakeup_fd_;
-  #elif __APPLE__
+  #else
   int wakeup_fd_[2];
   #endif
 

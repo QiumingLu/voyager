@@ -58,7 +58,8 @@ EventLoop::EventLoop()
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
   wakeup_dispatch_->EnableRead();
 }
-#elif __APPLE__
+
+#else
 EventLoop::EventLoop()
     : exit_(false),
       run_(false),
@@ -94,7 +95,7 @@ EventLoop::~EventLoop() {
   wakeup_dispatch_->RemoveEvents();
 #ifdef __linux__
   ::close(wakeup_fd_);
-#elif __APPLE__
+#else
   ::close(wakeup_fd_[0]);
   ::close(wakeup_fd_[1]);
 #endif
@@ -244,7 +245,7 @@ void EventLoop::WakeUp() {
   uint64_t one = 0;
 #ifdef __linux__
   ssize_t n  = ::write(wakeup_fd_, &one, sizeof(one));
-#elif __APPLE__
+#else 
   ssize_t n  = ::write(wakeup_fd_[1], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
@@ -257,7 +258,7 @@ void EventLoop::HandleRead() {
   uint64_t one = 0;
 #ifdef __linux__
   ssize_t n = ::read(wakeup_fd_, &one, sizeof(one));
-#elif __APPLE__
+#else
   ssize_t n = ::read(wakeup_fd_[0], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
