@@ -7,7 +7,6 @@
 
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/util/logging.h"
 
 namespace voyager {
 
@@ -48,8 +47,8 @@ void Acceptor::Accept() {
   int connectfd = socket_.Accept(reinterpret_cast<struct sockaddr*>(&sa),
                                  &salen);
   if (connectfd >= 0) {
-    if (connfunc_) {
-      connfunc_(connectfd, sa);
+    if (conn_cb_) {
+      conn_cb_(connectfd, sa);
     } else {
       ::close(connectfd);
     }

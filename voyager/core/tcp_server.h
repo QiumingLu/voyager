@@ -5,7 +5,7 @@
 #include <string>
 #include <netdb.h>
 
-#include "voyager/core/tcp_connection.h"
+#include "voyager/core/callback.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/port/atomic_sequence_num.h"
 #include "voyager/util/scoped_ptr.h"
@@ -18,7 +18,7 @@ class Schedule;
 
 class TcpServer {
  public:
-  TcpServer(EventLoop* eventloop,
+  TcpServer(EventLoop* ev,
             const SockAddr& addr,
             const std::string& name = std::string("VoyagerServer"),
             int thread_size = 1,
@@ -27,36 +27,30 @@ class TcpServer {
 
   const std::string& name() const { return name_; }
 
-  // 连接建立之后的回调
-  void SetConnectionCallback(const ConnectionCallback& func) {
-    connection_cb_ = func;
+  void SetConnectionCallback(const ConnectionCallback& cb) {
+    connection_cb_ = cb;
   }
-  void SetConnectionCallback(ConnectionCallback&& func) {
-    connection_cb_ = std::move(func);
+  void SetCloseCallback(const CloseCallback& cb) {
+    close_cb_ = cb;
   }
-
-  // 连接关闭之后的回调
-  void SetCloseCallback(const CloseCallback& func) {
-    close_cb_ = func;
+  void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writecomplete_cb_ = cb;
   }
-  void SetCloseCallback(CloseCallback&& func) {
-    close_cb_ = std::move(func);
+  void SetMessageCallback(const MessageCallback& cb) {
+    message_cb_ = cb;
   }
 
-  // 发送完消息之后的回调
-  void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
-    writecomplete_cb_ = func;
+  void SetConnectionCallback(ConnectionCallback&& cb) {
+    connection_cb_ = std::move(cb);
   }
-  void SetWriteCompleteCallback(WriteCompleteCallback&& func) {
-    writecomplete_cb_ = std::move(func);
+  void SetCloseCallback(CloseCallback&& cb) {
+    close_cb_ = std::move(cb);
   }
-
-  // 接收消息到来的回调
-  void SetMessageCallback(const MessageCallback& func) {
-    message_cb_ = func;
+  void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
+    writecomplete_cb_ = std::move(cb);
   }
-  void SetMessageCallback(MessageCallback&& func) {
-    message_cb_ = std::move(func);
+  void SetMessageCallback(MessageCallback&& cb) {
+    message_cb_ = std::move(cb);
   }
 
   void Start();

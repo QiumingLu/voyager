@@ -4,10 +4,9 @@
 #include "voyager/core/tcp_connection.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/buffer.h"
+#include "voyager/util/timeops.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
-#include "voyager/util/timestamp.h"
-#include <vector>
 
 using namespace std::placeholders;
 
@@ -20,25 +19,33 @@ class SudokuClient {
                const std::string& name,
                const std::vector<std::string>& vec)
       : num_(0),
+        start_(0),
+        stop_(0),
         client_(ev, addr, name),
         vec_(vec) {
     client_.SetConnectionCallback(
         std::bind(&SudokuClient::ConnectCallback,this,  _1));
     client_.SetMessageCallback(
         std::bind(&SudokuClient::MessageCallback, this, _1, _2));
+    client_.SetCloseCallback(
+        std::bind(&SudokuClient::CloseCallback, this, _1));
   }
 
-  SudokuClient(const std::string& name, 
-               voyager::EventLoop* ev, 
+  SudokuClient(voyager::EventLoop* ev,
+               const std::string& name,  
                const voyager::SockAddr& addr, 
                std::vector<std::string>&& vec)
       : num_(0),
+        start_(0),
+        stop_(0),
         client_(ev, addr, name),
         vec_(std::move(vec)) {
     client_.SetConnectionCallback(
         std::bind(&SudokuClient::ConnectCallback, this, _1));
     client_.SetMessageCallback(
         std::bind(&SudokuClient::MessageCallback, this, _1, _2));
+    client_.SetCloseCallback(
+        std::bind(&SudokuClient::CloseCallback, this, _1));
  }
 
   void Connect() {
@@ -47,10 +54,8 @@ class SudokuClient {
 
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->SetCloseCallback(
-        std::bind(&SudokuClient::CloseCallback, this, _1));
     VOYAGER_LOG(INFO) << "Start solve sudoku...";
-    start_ = voyager::Timestamp::Now();
+    start_ = voyager::timeops::NowMicros();
     for (size_t i = 0; i < vec_.size(); ++i) {
       ptr->SendMessage(vec_.at(i));
     }
@@ -67,13 +72,13 @@ class SudokuClient {
         size = buf->ReadableSize();
         VOYAGER_LOG(WARN) << "The result is: \n" << res;
         ++num_;
-        if (num_ == static_cast<int64_t>(vec_.size())) {
-          stop_ = voyager::Timestamp::Now();
-          VOYAGER_LOG(WARN) << "\nStart time is: " << start_.FormatTimestamp()
-                            << "\nFinish time is: " << stop_.FormatTimestamp()
-                            << "\nTake MicroSeconds: " 
-                            << stop_.MicroSecondsSinceEpoch() 
-                                   - start_.MicroSecondsSinceEpoch();
+        if (num_ == vec_.size()) {
+          stop_ = voyager::timeops::NowMicros();
+          VOYAGER_LOG(WARN) << "\nStart time is: " 
+                            << voyager::timeops::FormatTimestamp(start_)
+                            << "\nFinish time is: " 
+                            << voyager::timeops::FormatTimestamp(stop_)
+                            << "\nTake MicroSeconds: " << stop_ - start_;
           client_.Close();
         }
       } else {
@@ -83,18 +88,17 @@ class SudokuClient {
   }
 
   void CloseCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->OwnerLoop()->QueueInLoop(std::bind(&voyager::EventLoop::Exit, 
-                                            ptr->OwnerLoop()));
+    ptr->OwnerLoop()->Exit();
   }
 
   static const int kCells = 81;
-  int64_t num_;
+  size_t num_;
+  uint64_t start_;
+  uint64_t stop_;
   voyager::TcpClient client_;
   std::vector<std::string> vec_;
-  voyager::Timestamp start_;
-  voyager::Timestamp stop_;
 
-  // No copy allow
+  // No copying allow
   SudokuClient(const SudokuClient&);
   void operator=(const SudokuClient&);
 };

@@ -123,8 +123,8 @@ void TcpConnection::HandleWrite() {
   eventloop_->AssertInMyLoop();
   if (dispatch_->IsWriting()) {
     ssize_t n = ::write(dispatch_->Fd(), 
-                               writebuf_.Peek(), 
-                               writebuf_.ReadableSize());
+                        writebuf_.Peek(), 
+                        writebuf_.ReadableSize());
     int err = errno;
     if (n > 0) {
       writebuf_.Retrieve(static_cast<size_t>(n));
@@ -176,8 +176,8 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(&*message.begin(), message.size());
     } else {
-      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this,
-                                      &*message.begin(), message.size())); 
+      eventloop_->RunInLoop(
+          std::bind(&TcpConnection::SendInLoop, this, &*message.begin(), message.size())); 
     }
   }
 }
@@ -188,8 +188,8 @@ void TcpConnection::SendMessage(const Slice& message) {
       SendInLoop(message.data(), message.size());
     } else {
       std::string s(message.ToString());
-      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
-                                      &*s.begin(), s.size()));
+      eventloop_->RunInLoop(
+          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
     }
   }
 }
@@ -202,8 +202,8 @@ void TcpConnection::SendMessage(Buffer* message) {
       message->RetrieveAll();
     } else {
       std::string s(message->RetrieveAllAsString());
-      eventloop_->RunInLoop(std::bind(&TcpConnection::SendInLoop, this, 
-                                      &*s.begin(), s.size()));
+      eventloop_->RunInLoop(
+          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
     }
   }
 }

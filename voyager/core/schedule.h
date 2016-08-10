@@ -13,7 +13,7 @@ class EventLoop;
 
 class Schedule {
  public:
-  Schedule(EventLoop* evloop, int size);
+  Schedule(EventLoop* ev, int size);
 
   void Start();
 
@@ -22,7 +22,7 @@ class Schedule {
   bool Started() const { return started_; }
  
  private:
-  EventLoop* Next();  
+  EventLoop* NextLoop();  
 
   EventLoop* baseloop_;
   size_t size_;

@@ -4,15 +4,11 @@
 #include <string.h>
 #include <errno.h>
 
-#include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
-
-const double Connector::kMaxRetryTime = 30.0;
-const double Connector::kInitRetryTime = 2.0;
 
 Connector::Connector(EventLoop* ev, const SockAddr& addr) 
     : ev_(CHECK_NOTNULL(ev)),
@@ -22,6 +18,14 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
       connect_(false),
       dispatch_(),
       socket_() {
+}
+
+Connector::~Connector() {
+  connect_ = false;
+  if (dispatch_.get()) {
+    dispatch_->RemoveEvents();
+    dispatch_->DisableAll();
+  }
 }
 
 void Connector::Start() {
@@ -110,8 +114,8 @@ void Connector::Retry() {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.Ipbuf() << " in " << retry_time_ 
                       << " seconds.";
-    ev_->RunAfter(retry_time_, 
-                  std::bind(&Connector::StartInLoop, shared_from_this()));
+    ev_->RunAfter(std::bind(&Connector::StartInLoop, shared_from_this()),
+                  retry_time_);
     retry_time_ = 
         (retry_time_*2) < kMaxRetryTime ? retry_time_*2 : kMaxRetryTime;
   }

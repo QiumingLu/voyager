@@ -1,10 +1,6 @@
 #ifndef VOYAGER_CORE_TCP_CLIENT_H_
 #define VOYAGER_CORE_TCP_CLIENT_H_
 
-#include <memory>
-#include <string>
-#include <netdb.h>
-
 #include "voyager/core/tcp_connection.h"
 
 namespace voyager {
@@ -31,36 +27,30 @@ class TcpClient {
   
   bool IsRetry() const { return retry_; }
 
-  void SetConnectionCallback(const ConnectionCallback& func) {
-    connection_cb_ = func;
+  void SetConnectionCallback(const ConnectionCallback& cb) {
+    connection_cb_ = cb;
   }
-  
-  void SetConnectionCallback(ConnectionCallback&& func) {
-    connection_cb_ = std::move(func);
+  void SetCloseCallback(const CloseCallback& cb) {
+	  close_cb_ = cb;
   }
-
-  void SetCloseCallback(const CloseCallback& func) {
-	close_cb_ = func;
+  void SetMessageCallback(const MessageCallback& cb) {
+    message_cb_ = cb;
   }
-
-  void SetCloseCallback(CloseCallback&& func) {
-	close_cb_ = std::move(func);
+  void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writecomplete_cb_ = cb;
   }
 
-  void SetMessageCallback(const MessageCallback& func) {
-    message_cb_ = func;
+  void SetConnectionCallback(ConnectionCallback&& cb) {
+    connection_cb_ = std::move(cb);
   }
-
-  void SetMessageCallback(MessageCallback&& func) {
-    message_cb_ = std::move(func);
+  void SetCloseCallback(CloseCallback&& cb) {
+    close_cb_ = std::move(cb);
   }
-
-  void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
-    writecomplete_cb_ = func;
+  void SetMessageCallback(MessageCallback&& cb) {
+    message_cb_ = std::move(cb);
   }
-
-  void SetWriteCompleteCallback(WriteCompleteCallback&& func) {
-    writecomplete_cb_ = std::move(func);
+  void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
+    writecomplete_cb_ = std::move(cb);
   }
 
  private:

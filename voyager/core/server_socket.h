@@ -18,7 +18,6 @@ class ServerSocket : public BaseSocket {
   void Bind(const struct sockaddr* sa, socklen_t salen);
   void Listen(int backlog);
   int Accept(struct sockaddr* sa, socklen_t* salen);
-  int Connect(const struct sockaddr* sa, socklen_t salen);
 };
 
 }  // namespace voyager

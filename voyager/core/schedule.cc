@@ -1,11 +1,12 @@
 #include "voyager/core/schedule.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/online_connections.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 
-Schedule::Schedule(EventLoop* baseloop, int size)
-    : baseloop_(baseloop),
+Schedule::Schedule(EventLoop* ev, int size)
+    : baseloop_(CHECK_NOTNULL(ev)),
       size_(size),
       next_(0), 
       started_(false),
@@ -28,7 +29,7 @@ void Schedule::Start() {
   for (size_t i = 0; i < size_; ++i) {
     BGEventLoop* loop = new BGEventLoop();
     loops_[i].reset(loop);
-    ptrs_.push_back(loop->StartLoop());
+    ptrs_.push_back(loop->Loop());
   }
 }
 
@@ -39,7 +40,7 @@ EventLoop* Schedule::AssignLoop() {
     return baseloop_;
   }
 
-  EventLoop* loop = Next();
+  EventLoop* loop = NextLoop();
 
   int run = 0;
   OnlineConnections& instance 
@@ -47,7 +48,7 @@ EventLoop* Schedule::AssignLoop() {
   size_t all = instance.AllOnlineUsersNum();
   while (all > 0 && run < 3) {
     if (instance.OnlineUserNum(loop) > (percent_ * static_cast<double>(all))) {
-      loop = Next();
+      loop = NextLoop();
     } else {
       break;
     }
@@ -57,7 +58,7 @@ EventLoop* Schedule::AssignLoop() {
   return loop;
 }
 
-EventLoop* Schedule::Next() {
+EventLoop* Schedule::NextLoop() {
   if (next_ >= ptrs_.size()) {
     next_ = 0;
   }

@@ -82,18 +82,18 @@ class Client {
          const voyager::SockAddr& addr,
          size_t block_size,
          size_t session_count, 
-         int timeout,
+         uint64_t timeout,
          int thread_count)
       : base_ev_(ev),
         thread_count_(thread_count),
         schedule_(base_ev_, thread_count - 1),
         session_count_(session_count),
         block_size_(block_size),
-        timeout_(timeout),
         total_bytes_written(0),
-        total_bytes_read(0) {
-
-    ev->RunAfter(timeout, std::bind(&Client::HandleTimeout, this));
+        total_bytes_read(0),
+        timeout_(timeout) {
+          
+    ev->RunAfter(std::bind(&Client::HandleTimeout, this), timeout*1000000);
 
     for (size_t i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
@@ -140,8 +140,7 @@ class Client {
       file << static_cast<double>(total_bytes_read) / (timeout_ * 1024 * 1024) 
            << " MiB/s throughtput\n\n\n";
       file.close();
-
-      ptr->OwnerLoop()->QueueInLoop(std::bind(&Client::Exit, this));
+      base_ev_->Exit();
     }
   }
 
@@ -151,18 +150,14 @@ class Client {
   }
 
  private:
-  void Exit() {
-    base_ev_->QueueInLoop(std::bind(&voyager::EventLoop::Exit, base_ev_));
-  }
-
   voyager::EventLoop* base_ev_;
   int thread_count_;
   voyager::Schedule schedule_;
   size_t session_count_;
   size_t block_size_;
-  int timeout_;
   size_t total_bytes_written;
   size_t total_bytes_read;
+  uint64_t timeout_;
   std::list<Session*> sessions_;
   std::string message_;
   voyager::port::SequenceNumber seq_;

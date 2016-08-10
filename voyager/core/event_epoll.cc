@@ -27,9 +27,9 @@ EventEpoll::~EventEpoll() {
 
 void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
   int nfds = ::epoll_wait(epollfd_, 
-                       &*epollfds_.begin(), 
-                       static_cast<int>(epollfds_.size()),
-                       timeout);
+                          &*epollfds_.begin(), 
+                          static_cast<int>(epollfds_.size()),
+                          timeout);
   int err = errno;
   if (nfds == -1) {
     if (err != EINTR) {

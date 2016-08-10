@@ -1,10 +1,8 @@
 #include "voyager/core/tcp_server.h"
-
-#include <assert.h>
 #include "voyager/core/acceptor.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/schedule.h"
-#include "voyager/core/online_connections.h"
+#include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
@@ -12,12 +10,12 @@ using namespace std::placeholders;
 
 namespace voyager {
 
-TcpServer::TcpServer(EventLoop* eventloop, 
+TcpServer::TcpServer(EventLoop* ev, 
                      const SockAddr& addr,
                      const std::string& name,
                      int thread_size,
                      int backlog)
-    : eventloop_(CHECK_NOTNULL(eventloop)),
+    : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
       acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),

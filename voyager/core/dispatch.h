@@ -23,30 +23,15 @@ class Dispatch {
 
   void HandleEvent();
 
-  void SetReadCallback(const EventCallback& func) { 
-    readfunc_ = func;
-  }
-  void SetReadCallback(EventCallback&& func) { 
-    readfunc_ = std::move(func); 
-  }
-  void SetWriteCallback(const EventCallback& func) {
-    writefunc_ = func;
-  }
-  void SetWriteCallback(EventCallback&& func) { 
-    writefunc_ = std::move(func); 
-  }
-  void SetCloseCallback(const EventCallback& func) { 
-    closefunc_ = func; 
-  }
-  void SetCloseCallback(EventCallback&& func) { 
-    closefunc_ = std::move(func);
-  }
-  void SetErrorCallback(const EventCallback& func) { 
-    errorfunc_ = func;
-  }
-  void SetErrorCallback(EventCallback&& func) { 
-    errorfunc_ = std::move(func);
-  }
+  void SetReadCallback(const EventCallback& cb) { read_cb_ = cb; }
+  void SetWriteCallback(const EventCallback& cb) { write_cb_ = cb; }
+  void SetCloseCallback(const EventCallback& cb) { close_cb_ = cb; }
+  void SetErrorCallback(const EventCallback& cb) { error_cb_ = cb; }
+  
+  void SetReadCallback(EventCallback&& cb) { read_cb_ = std::move(cb); }
+  void SetWriteCallback(EventCallback&& cb) { write_cb_ = std::move(cb); }
+  void SetCloseCallback(EventCallback&& cb) { close_cb_ = std::move(cb); }
+  void SetErrorCallback(EventCallback&& cb) { error_cb_ = std::move(cb); }
 
   void EnableRead();
   void EnableWrite();
@@ -83,10 +68,10 @@ class Dispatch {
   bool tied_;
   bool event_handling_;
 
-  EventCallback readfunc_;
-  EventCallback writefunc_;
-  EventCallback closefunc_;
-  EventCallback errorfunc_;
+  EventCallback read_cb_;
+  EventCallback write_cb_;
+  EventCallback close_cb_;
+  EventCallback error_cb_;
 
   // No copy allow
   Dispatch(const Dispatch&);

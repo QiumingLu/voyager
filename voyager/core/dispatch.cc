@@ -68,29 +68,29 @@ void Dispatch::HandleEvent() {
 void Dispatch::HandleEventWithGuard() {
   event_handling_ = true;
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
-    if (closefunc_) { 
-      closefunc_(); 
+    if (close_cb_) { 
+      close_cb_(); 
     }
   }
   if (revents_ & POLLNVAL) {
     VOYAGER_LOG(WARN) << "Dispatch::HandleEvent() POLLNVAL";
   }
   if (revents_ & (POLLERR | POLLNVAL)) {
-    if (errorfunc_) { 
-      errorfunc_(); 
+    if (error_cb_) { 
+      error_cb_(); 
     }
   }
 #ifndef POLLRDHUP
   const int POLLRDHUP = 0;
 #endif
   if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
-    if (readfunc_) { 
-      readfunc_(); 
+    if (read_cb_) { 
+      read_cb_(); 
     }
   }
   if (revents_ & POLLOUT) {
-    if (writefunc_) {
-      writefunc_();
+    if (write_cb_) {
+      write_cb_();
     }
   }
   event_handling_ = false;

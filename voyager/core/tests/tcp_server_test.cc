@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   SockAddr addr(5666);
   g_server = new TcpServer(&eventloop, addr, "Voyager", 4);
   g_server->Start();
-  eventloop.RunAfter(20, std::bind(DeleteServer));
+  eventloop.RunAfter(std::bind(DeleteServer), 5000000);
   eventloop.Loop();
   return 0;
 }

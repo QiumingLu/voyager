@@ -19,7 +19,7 @@ BGEventLoop::~BGEventLoop() {
   }
 }
 
-EventLoop* BGEventLoop::StartLoop() {
+EventLoop* BGEventLoop::Loop() {
   assert(!thread_.Started());
   thread_.Start();
   {

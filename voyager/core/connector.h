@@ -7,12 +7,13 @@
 #include <netdb.h>
 
 #include "voyager/core/client_socket.h"
+#include "voyager/core/dispatch.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/scoped_ptr.h"
+#include "voyager/util/timeops.h"
 
 namespace voyager {
 
-class Dispatch;
 class EventLoop;
 
 class Connector : public std::enable_shared_from_this<Connector> {
@@ -20,6 +21,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   typedef std::function<void (int fd)> NewConnectionCallback;
 
   Connector(EventLoop* ev, const SockAddr& addr);
+  ~Connector();
 
   void SetNewConnectionCallback(const NewConnectionCallback& func) {
     newconnection_cb_ = func;
@@ -36,8 +38,8 @@ class Connector : public std::enable_shared_from_this<Connector> {
     kConnecting
   };
 
-  static const double kMaxRetryTime;
-  static const double kInitRetryTime;
+  static const uint64_t kMaxRetryTime = 30000000;
+  static const uint64_t kInitRetryTime = 2000000;
 
   void StartInLoop();
   void StopInLoop();
@@ -55,7 +57,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   EventLoop* ev_;
   SockAddr addr_;
   ConnectState state_;
-  double retry_time_;
+  uint64_t retry_time_;
   bool connect_;
   scoped_ptr<Dispatch> dispatch_;
   scoped_ptr<ClientSocket> socket_;

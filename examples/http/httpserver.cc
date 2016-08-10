@@ -2,6 +2,7 @@
 #include "examples/http/request.h"
 #include "examples/http/response.h"
 #include "voyager/util/logging.h"
+#include "voyager/core/tcp_connection.h"
 
 namespace http {
 

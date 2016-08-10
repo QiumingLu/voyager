@@ -10,8 +10,9 @@
 
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
+#include "voyager/core/timerlist.h"
 #include "voyager/util/scoped_ptr.h"
-#include "voyager/util/timestamp.h"
+#include "voyager/util/timeops.h"
 
 using namespace voyager;
 
@@ -42,7 +43,7 @@ void ReadCallback(int fd, int index) {
 
 std::pair<uint64_t, uint64_t> RunOnce() {
 
-  Timestamp ta(Timestamp::Now());
+  uint64_t ta = timeops::NowMicros();
 
   for (int i = 0; i < num_pipes; ++i)
   {
@@ -61,14 +62,12 @@ std::pair<uint64_t, uint64_t> RunOnce() {
   count = 0;
   writes = num_writes;
 
-  Timestamp ts(Timestamp::Now());
+  uint64_t ts = timeops::NowMicros();
   eventloop->Loop();
-  Timestamp te(Timestamp::Now());
+  uint64_t te = timeops::NowMicros();
 
-  uint64_t total_time = te.MicroSecondsSinceEpoch() - 
-                            ta.MicroSecondsSinceEpoch();
-  uint64_t sub_time = te.MicroSecondsSinceEpoch() -
-                          ts.MicroSecondsSinceEpoch();
+  uint64_t total_time = te - ta;
+  uint64_t sub_time = te - ts;
   std::pair<uint64_t, uint64_t> t = std::make_pair(total_time, sub_time);
 
   fprintf(stdout, "%8" PRId64 "%8" PRId64 "\n", total_time, sub_time);

@@ -13,7 +13,7 @@ class BGEventLoop {
   BGEventLoop(const std::string& name = std::string());
   ~BGEventLoop();
 
-  EventLoop* StartLoop();
+  EventLoop* Loop();
 
  private:
   void ThreadFunc();

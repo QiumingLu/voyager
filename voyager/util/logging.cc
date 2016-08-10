@@ -3,10 +3,11 @@
 #include <functional>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include "voyager/util/status.h"
 #include "voyager/util/slice.h"
-#include "voyager/util/timestamp.h"
 
 namespace voyager {
 
@@ -14,11 +15,26 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
   static const char* loglevel_names[] = {
      "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
-  std::string log_time = Timestamp::Now().FormatTimestamp();
+
+  char log_time[64];
+  struct timeval now_tv;
+  gettimeofday(&now_tv, NULL);
+  const time_t seconds = now_tv.tv_sec;
+  struct tm t;
+  localtime_r(&seconds, &t);
+  snprintf(log_time, sizeof(log_time),
+           "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
+           t.tm_year + 1900,
+           t.tm_mon + 1,
+           t.tm_mday,
+           t.tm_hour,
+           t.tm_min,
+           t.tm_sec,
+           static_cast<int>(now_tv.tv_usec));
 
   if (level >= LOGLEVEL_DEBUG) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
-            log_time.c_str(), loglevel_names[level], filename, line, 
+            log_time, loglevel_names[level], filename, line, 
             message.c_str());
   }
 }

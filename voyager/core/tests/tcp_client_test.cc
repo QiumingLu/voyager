@@ -12,7 +12,7 @@ voyager::TcpClient* g_client = NULL;
 
 namespace voyager {
 
-void Message(const TcpConnectionPtr& p, Buffer* buf) {
+void OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
   std::string s = buf->RetrieveAllAsString();
   VOYAGER_LOG(INFO)  <<  s;
   if (s == "Nice!") {
@@ -41,10 +41,10 @@ int main(int argc, char** argv) {
   voyager::SockAddr serveraddr("127.0.0.1", 5666);
   g_client = new voyager::TcpClient(&ev, serveraddr);
   g_client->SetMessageCallback(
-      std::bind(voyager::Message, _1, _2));
+      std::bind(voyager::OnMessage, _1, _2));
   g_client->Connect();
-//  ev.RunAfter(30, std::bind(voyager::DeleteClient));
-//  ev.RunAfter(40, std::bind(&voyager::EventLoop::Exit, &ev));
+  ev.RunAfter(std::bind(voyager::DeleteClient), 5000000);
+  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 10000000);
   ev.Loop();
   return 0;
 }

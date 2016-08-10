@@ -2,18 +2,16 @@
 #define VOYAGER_CORE_TCP_CONNECTION_H_
 
 #include <string>
-#include <netinet/in.h>
-#include <netdb.h>
 
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
-#include "voyager/core/dispatch.h"
 #include "voyager/core/base_socket.h"
 #include "voyager/util/scoped_ptr.h"
 #include "voyager/util/any.h"
 
 namespace voyager {
 
+class Dispatch;
 class EventLoop;
 class Slice;
 
@@ -22,29 +20,30 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   TcpConnection(const std::string& name, EventLoop* ev, int fd);
   ~TcpConnection();
 
-  void SetConnectionCallback(const ConnectionCallback& func) { 
-    connection_cb_ = func; 
+  void SetConnectionCallback(const ConnectionCallback& cb) { 
+    connection_cb_ = cb; 
   }
-  void SetConnectionCallback(ConnectionCallback&& func) {
-    connection_cb_ = std::move(func);
+  void SetCloseCallback(const CloseCallback& cb) { 
+    close_cb_ = cb; 
   }
-  void SetCloseCallback(const CloseCallback& func) { 
-    close_cb_ = func; 
+  void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writecomplete_cb_ = cb;
   }
-  void SetCloseCallback(CloseCallback&& func) {
-    close_cb_ = std::move(func);
+  void SetMessageCallback(const MessageCallback& cb) {
+    message_cb_ = cb;
   }
-  void SetWriteCompleteCallback(const WriteCompleteCallback& func) {
-    writecomplete_cb_ = func;
+  
+  void SetConnectionCallback(ConnectionCallback&& cb) {
+    connection_cb_ = std::move(cb);
   }
-  void SetWriteCompleteCallback(WriteCompleteCallback&& func) {
-    writecomplete_cb_ = std::move(func);
+  void SetCloseCallback(CloseCallback&& cb) {
+    close_cb_ = std::move(cb);
   }
-  void SetMessageCallback(const MessageCallback& func) {
-    message_cb_ = func;
+  void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
+    writecomplete_cb_ = std::move(cb);
   }
-  void SetMessageCallback(MessageCallback&& func) {
-    message_cb_ = std::move(func);
+  void SetMessageCallback(MessageCallback&& cb) {
+    message_cb_ = std::move(cb);
   }
 
   EventLoop* OwnerLoop() const { return eventloop_; }

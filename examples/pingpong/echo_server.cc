@@ -16,8 +16,10 @@ class EchoServer {
  public:
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "EchoServer", 4) {
-    server_.SetConnectionCallback(std::bind(&EchoServer::Connect, this, _1));
-    server_.SetMessageCallback(std::bind(&EchoServer::Message, this, _1, _2));
+    server_.SetConnectionCallback(
+        std::bind(&EchoServer::Connect, this, _1));
+    server_.SetMessageCallback(
+        std::bind(&EchoServer::Message, this, _1, _2));
   }
 
   void Start() {
@@ -32,8 +34,6 @@ class EchoServer {
   }
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
-    // std::string s = buf->RetrieveAllAsString();
-    // conn_ptr->SendMessage(std::move(s));
     conn_ptr->SendMessage(buf);
   }
 
@@ -43,7 +43,8 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%" PRIu64"\n", getpid(), voyager::port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64"\n", 
+         getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);

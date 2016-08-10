@@ -16,11 +16,11 @@ set(core_SRCS
   tcp_client.cc
   tcp_connection.cc
   tcp_server.cc
-  timer.cc
+  timerlist.cc
   )
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
-  list(APPEND core_SRCS "event_epoll.cc")
+  list(APPEND core_SRCS "event_epoll.cc" "newtimer.cc")
 elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
   list(APPEND core_SRCS "event_kqueue.cc")
 endif()
@@ -32,20 +32,25 @@ target_link_libraries(voyager_core voyager_port)
 install(TARGETS voyager_core DESTINATION lib)
 
 set(HEADERS 
+  base_socket.h
   bg_eventloop.h
   buffer.h
   callback.h
+  client_socket.h
   dispatch.h
   eventloop.h
+  schedule.h
+  server_socket.h
   sockaddr.h
   tcp_client.h
   tcp_connection.h
   tcp_server.h
-  base_socket.h
-  client_socket.h
-  server_socket.h
-  schedule.h
+  timerlist.h
   )
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
+  list(APPEND HEADERS "newtimer.h")
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/voyager/core)
 

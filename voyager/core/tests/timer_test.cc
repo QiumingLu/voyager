@@ -1,4 +1,4 @@
-#include "voyager/core/timer.h"
+#include "voyager/core/timerlist.h"
 #include "voyager/core/buffer.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
@@ -7,8 +7,9 @@
 #include "voyager/port/currentthread.h"
 #include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
-#include "voyager/util/slice.h"
-#include "voyager/util/timestamp.h"
+#include "voyager/util/timeops.h"
+
+#include <sys/types.h>
 #include <unistd.h>
 
 using namespace std::placeholders;
@@ -19,8 +20,7 @@ class TimerServer {
  public:
   TimerServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "TimerServer", 4),
-        ev_(ev),
-        num_(0) {
+        ev_(ev) {
     server_.SetConnectionCallback(
         std::bind(&TimerServer::OnConnect, this, _1));
     server_.SetMessageCallback(
@@ -33,24 +33,17 @@ class TimerServer {
     server_.Start();
   }
 
-  void ConnMessage() {
-    VOYAGER_LOG(INFO) << "Has " << num_ << " connections were built.";
-  }
-
   void TimerTest() {
     VOYAGER_LOG(INFO) << "TimerServer::TimerTest - "
                        << " pid=" << getpid()
                        << " tid=" << port::CurrentThread::Tid()
-                       << " timestamp=" << Timestamp::Now().FormatTimestamp();
+                       << " timestamp=" << timeops::NowMicros();
     ev_->Exit();
-  
   }
 
  private:
   void OnConnect(const TcpConnectionPtr& ptr) {
-    num_++;
-    Slice s("connect successfully!");
-    ptr->SendMessage(s);
+    ptr->SendMessage(Slice("connect successfully!"));
   }
 
   void OnMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
@@ -66,7 +59,6 @@ class TimerServer {
 
   TcpServer server_;
   EventLoop* ev_;
-  int64_t num_;
 };
 
 }  // namespace voyager
@@ -77,16 +69,9 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(5666);
   voyager::TimerServer server(&ev, addr);
   server.Start();
-  //voyager::Timer* t1 = ev.RunEvery(10, 
-  //    std::bind(&voyager::TimerServer::ConnMessage, &server));
-  voyager::Timer* t2 = ev.RunAfter(10,
-      std::bind(&voyager::TimerServer::TimerTest, &server));
-  //voyager::Timer* t3 = ev.RunAt(voyager::Timestamp::Now(),
-  //    std::bind(&voyager::TimerServer::TimerTest, &server));
-  //(void)t1;
+  voyager::TimerList::Timer* t2 = 
+      ev.RunAfter(std::bind(&voyager::TimerServer::TimerTest, &server), 
+                  10000000);
   (void)t2;
-  //(void)t3;
-  // ev.DeleteTimer(t1);
-  // ev.DeleteTimer(t2);
   ev.Loop();
 }

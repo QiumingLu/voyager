@@ -1,4 +1,4 @@
-Voyager是一个基于Linux的C++网络库。该网络库采用Reactor模式，IO模型为IO multiplexing + non-blocking IO, 线程模型为one loop per thread + threadpool，每个线程最多有一个事件轮询，每个TCP连接都必须归某一个线程来管理，它所有的IO都在该线程上完成。
+Voyager是一个运行于Linux/Mac OS上的C++多线程网络库。该网络库采用Reactor模式，IO模型为IO multiplexing + non-blocking IO, 线程模型为one loop per thread + threadpool，每个线程最多有一个事件轮询，每个TCP连接都必须归某一个线程来管理，它所有的IO都在该线程上完成。
 
 Voyager网络库的主要功能包括网络IO事件，定时任务管理，线程库和日志处理等。网络IO为非阻塞IO，基于事件的驱动和回调，支持Linux的IO多路复用技术poll(2)，epoll(4)。Voyager主要实现了TCP连接，并没有实现UDP连接。
 

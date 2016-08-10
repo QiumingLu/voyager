@@ -6,115 +6,115 @@
 
 #include "voyager/core/tcp_connection.h"
 #include "voyager/port/singleton.h"
-#include "voyager/port/mutex.h"
+#include "voyager/port/mutexlock.h"
 #include "voyager/util/stl_util.h"
 
-// 单例类，借助于port::Singleton模板类
 namespace voyager {
 
 class OneLoopConnections {
  public:
-  OneLoopConnections() :mu_() { }
+  OneLoopConnections() { }
+  ~OneLoopConnections() { CloseConnections(); }
 
   void Insert(const TcpConnectionPtr& ptr) {
-    port::MutexLock lock(&mu_);
     connections_[ptr->name()] = ptr;
   }
 
   void Erase(const TcpConnectionPtr& ptr) {
-    port::MutexLock lock(&mu_);
     connections_.erase(ptr->name());
   }
 
   size_t Size() const {
-    port::MutexLock lock(&mu_);
     return connections_.size();
   }
 
  private:
-  mutable port::Mutex mu_;
-  std::unordered_map<std::string, TcpConnectionPtr> connections_;
+  typedef std::unordered_map<std::string, TcpConnectionPtr> ConnectionMap;
+
+  void CloseConnections() {
+    for (ConnectionMap::iterator it = connections_.begin();
+         it != connections_.end(); ++it) {
+      it->second->ForceClose();
+    }
+  }
+
+  ConnectionMap connections_;
 
   OneLoopConnections(const OneLoopConnections&);
   void operator=(const OneLoopConnections&);
 };
 
+// 单例类，借助于port::Singleton模板类
+
 class OnlineConnections
 {
  public:
-  OnlineConnections() { }
-  ~OnlineConnections() { STLDeleteValues(&m_); }
+  OnlineConnections() : mu_() { }
+  ~OnlineConnections() { STLDeleteValues(&loop_map_); }
 
   size_t OnlineUserNum(EventLoop* loop) {
-    if (m_.find(loop) != m_.end()) {
-      return m_[loop]->Size();
+    port::MutexLock lock(&mu_);
+    if (loop_map_.find(loop) != loop_map_.end()) {
+      return loop_map_[loop]->Size();
     }
     return 0;
   }
 
   size_t AllOnlineUsersNum() const {
+    port::MutexLock lock(&mu_);
     size_t total = 0;
-    std::map<EventLoop*, OneLoopConnections*>::const_iterator it;
-    for (it = m_.begin(); it != m_.end(); ++it) {
+    for (LoopMap::const_iterator it = loop_map_.begin();
+         it != loop_map_.end(); ++it) {
       total += it->second->Size();
     }
     return total;
   }
 
- private:
-  friend class TcpConnection;
+  // 供Loop析构的时候调用，此函数将会强行关闭所有运行在该Loop上的连接，
+  void Erase(EventLoop* loop) {
+    port::MutexLock lock(&mu_);
+    LoopMap::iterator it = loop_map_.find(loop);
+    if (it != loop_map_.end()) {
+      delete it->second;
+      loop_map_.erase(it);
+    }
+  }
 
   // in voyager, insert and erase are in the same loop
   void NewConnection(const TcpConnectionPtr& ptr) {
+    port::MutexLock lock(&mu_);
     EventLoop* loop = ptr->OwnerLoop();
-    if (m_.find(loop) != m_.end()) {
-      m_[loop]->Insert(ptr);
+    loop->AssertInMyLoop();
+    if (loop_map_.find(loop) != loop_map_.end()) {
+      loop_map_[loop]->Insert(ptr);
     } else {
       OneLoopConnections* temp = new OneLoopConnections();
       temp->Insert(ptr);
-      m_[loop] = temp;
+      loop_map_[loop] = temp;
     }
   }
+
 
   void EraseCnnection(const TcpConnectionPtr& ptr) {
+    port::MutexLock lock(&mu_);
     EventLoop* loop = ptr->OwnerLoop();
-    if (m_.find(loop) != m_.end()) {
-      m_[loop]->Erase(ptr);
+    loop->AssertInMyLoop();
+    if (loop_map_.find(loop) != loop_map_.end()) {
+      loop_map_[loop]->Erase(ptr);
     }
   }
 
-  std::map<EventLoop*, OneLoopConnections*> m_;
+ private:
+  typedef std::map<EventLoop*, OneLoopConnections*> LoopMap;
 
+  mutable port::Mutex mu_;
+  LoopMap loop_map_;;
+
+  // No copying allow
   OnlineConnections(const OnlineConnections&);
   void operator=(const OnlineConnections&); 
 };
 
 }  // namespace voyager
-
-// #include "voyager/port/concurrent_map"
-
-// class OnlineConnections
-// {
-//  public:
-//   OnlineConnections() { }
-
-//   void NewConnection(const std::string& name, const TcpConnectionPtr& ptr) {
-//     map_.Insert(name, ptr);
-//   }
-
-//   void EraseCnnection(const TcpConnectionPtr& ptr) {
-//     map_.Erase(ptr->name());
-//   }
-
-//   size_t OnlineUsersNum() const {
-//     return map_.size();
-//   }
-
-//  private:
-//   port::ConcurrentMap<std::string, TcpConnectionPtr> map_;
-
-//   OnlineConnections(const OnlineConnections&);
-//   void operator=(const OnlineConnections&);	
-// };
 
 #endif  // VOYAGER_CORE_ONLINE_CONNECTIONS_H_

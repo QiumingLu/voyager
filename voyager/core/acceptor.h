@@ -10,6 +10,7 @@ namespace voyager {
 
 class SockAddr;
 class EventLoop;
+
 class Acceptor {
  public:
   typedef std::function<void (int fd, 
@@ -23,11 +24,11 @@ class Acceptor {
   void EnableListen();
   bool IsListenning() const { return listenning_; }
 
-  void SetNewConnectionCallback(const NewConnectionCallback& func) { 
-    connfunc_ = func; 
+  void SetNewConnectionCallback(const NewConnectionCallback& cb) { 
+    conn_cb_ = cb; 
   }
-  void SetNewConnectionCallback(NewConnectionCallback&& func) { 
-    connfunc_ = std::move(func); 
+  void SetNewConnectionCallback(NewConnectionCallback&& cb) { 
+    conn_cb_ = std::move(cb); 
   }
 
  private:
@@ -39,7 +40,7 @@ class Acceptor {
   int        backlog_;
   int        idlefd_;
   bool       listenning_;
-  NewConnectionCallback connfunc_;
+  NewConnectionCallback conn_cb_;
 
   // No copying allow
   Acceptor(const Acceptor&);

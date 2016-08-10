@@ -43,9 +43,8 @@ void TcpClient::ReConnect() {
 void TcpClient::Close() {
   connect_ = false;
   connector_ptr_->Stop();
-  TcpConnectionPtr ptr =  weak_ptr_.lock();
-  if (ptr.get() != NULL) {
-    ptr->ShutDown();
+  if (!weak_ptr_.expired()) {
+    weak_ptr_.lock()->ShutDown();
   }
 }
 

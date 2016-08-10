@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
-  ev.RunAfter(180, std::bind(&voyager::EventLoop::Exit, &ev));
+  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 180*1000000);
   server.Start();
   ev.Loop();
   ProfilerStop();

@@ -3,7 +3,7 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/string_util.h"
 #include "voyager/util/stringprintf.h"
-#include "voyager/util/timestamp.h"
+#include "voyager/util/timeops.h"
 
 namespace voyager {
 
@@ -11,7 +11,7 @@ class SliceTest  { };
 class StatusTest { };
 class StringUtilTest { };
 class StringPrintfTest { };
-class TimestampTest { };
+class TimeopsTest { };
 
 TEST(SliceTest, TestSlice) {
   Slice slice;
@@ -104,11 +104,9 @@ TEST(StringPrintfTest, TestStringPrintf) {
   ASSERT_EQ("123", StringPrintf("%d", 123));
 }
 
-TEST(TimestampTest, TestTimestamp) {
-  VOYAGER_LOG(INFO) << Timestamp::Now().FormatTimestamp();
-  Timestamp timestamp;
-  VOYAGER_LOG(INFO) << 
-    timestamp.FromUnixTimestamp(Timestamp::Now().ToUnixTimestamp()).FormatTimestamp();
+TEST(TimeopsTest, TestTimeops) {
+  VOYAGER_LOG(INFO) << timeops::NowMicros();
+  VOYAGER_LOG(INFO) << timeops::FormatTimestamp(timeops::NowMicros());
 }
 
 }  // namespace voyager

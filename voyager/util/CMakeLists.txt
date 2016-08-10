@@ -4,7 +4,7 @@ set(util_SRCS
   string_util.cc
   stringprintf.cc
   testharness.cc
-  timestamp.cc
+  timeops.cc
   json/json.cc
   base64/base64.cc
   base64/modp_base64/modp_b64.cc
