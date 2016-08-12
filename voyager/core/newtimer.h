@@ -17,8 +17,9 @@ class NewTimer {
   EventLoop* OwnerLoop() const { return eventloop_; }
   bool IsRepeat() const { return repeat_; }
 
-  // (1) 当 nanos_interval 不为 0 时，表示为周期定时
-  // (2) 当 nanos_value和nanos_interval 都为 0 时，表示不再定时
+  // (1) nanos_value 表示定时在距离当前的时间多久。
+  // (2) 当 nanos_interval 不为 0 时，表示为周期定时
+  // (3) 当 nanos_value和nanos_interval 都为 0 时，表示不再定时
   void SetTime(uint64_t nanos_value, uint64_t nanos_interval);
 
  private:

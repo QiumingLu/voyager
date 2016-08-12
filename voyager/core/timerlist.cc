@@ -92,6 +92,10 @@ uint64_t TimerList::TimeoutMicros() const {
 
 void TimerList::RunTimerProcs() {
   eventloop_->AssertInMyLoop();
+  if (timers_.empty()) {
+    return;
+  }
+
   uint64_t micros_now = timeops::NowMicros();
   std::vector<Timer*> res(ExpiredTimers(micros_now));
 
