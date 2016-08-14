@@ -3,12 +3,14 @@
 #include <voyager/core/sockaddr.h>
 #include <voyager/core/tcp_connection.h>
 #include <voyager/core/callback.h>
-#include <voyager/core/newtimer.h>
 #include <voyager/util/logging.h>
 #include <voyager/util/timeops.h>
 #include <unistd.h>
 #include <inttypes.h>
 #include <gperftools/profiler.h>
+#ifdef __linux__
+#include <voyager/core/newtimer.h>
+#endif
 
 using namespace std::placeholders;
 
@@ -56,8 +58,11 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
   voyager::NewTimer timer(&ev, std::bind(&voyager::EventLoop::Exit, &ev));
-  timer.SetTime(600 * (voyager::timeops::kNonasSecondsPerSecond), 0);
-  //ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 180*1000000);
+#ifdef __linux__
+  timer.SetTime(180 * (voyager::timeops::kNonasSecondsPerSecond), 0);
+#else
+  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 180*1000000);
+#endif
   server.Start();
   ev.Loop();
   ProfilerStop();

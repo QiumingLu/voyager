@@ -1,6 +1,10 @@
 #ifndef VOYAGER_CORE_EVENT_KQUEUE_H_
 #define VOYAGER_CORE_EVENT_KQUEUE_H_
 
+#include <sys/types.h>
+#include <sys/event.h>
+#include <sys/time.h>
+
 #include "voyager/core/event_poller.h"
 
 namespace voyager {
@@ -16,10 +20,10 @@ class EventKqueue : public EventPoller {
 
  private:
   static const size_t kInitKqueueFdSize = 16;
-  void KqueueCTL();
+  void KqueueCTL(u_short op, Dispatch* dispatch);
 
-  int kq_;
-  std::vector<kevent> events_;
+  const int kq_;
+  std::vector<struct kevent> events_;
 };
 
 }  // namespace voyager
