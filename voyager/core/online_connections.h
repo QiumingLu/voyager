@@ -14,7 +14,7 @@ namespace voyager {
 class OneLoopConnections {
  public:
   OneLoopConnections() { }
-  ~OneLoopConnections() { CloseConnections(); }
+  ~OneLoopConnections() { }
 
   void Insert(const TcpConnectionPtr& ptr) {
     connections_[ptr->name()] = ptr;
@@ -30,13 +30,6 @@ class OneLoopConnections {
 
  private:
   typedef std::unordered_map<std::string, TcpConnectionPtr> ConnectionMap;
-
-  void CloseConnections() {
-    for (ConnectionMap::iterator it = connections_.begin();
-         it != connections_.end(); ++it) {
-      it->second->ForceClose();
-    }
-  }
 
   ConnectionMap connections_;
 

@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
       std::bind(voyager::OnMessage, _1, _2));
   g_client->Connect();
   ev.RunAfter(std::bind(voyager::DeleteClient), 5000000);
-  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 10000000);
+  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 20000000);
   ev.Loop();
   return 0;
 }

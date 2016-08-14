@@ -35,7 +35,6 @@ TcpConnection::~TcpConnection() {
   VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ 
                      << "] at " << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
-  assert(state_ == kDisconnected);
 }
 
 void TcpConnection::StartWorking() {

@@ -3,6 +3,8 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/core/schedule.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/core/online_connections.h"
+#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 

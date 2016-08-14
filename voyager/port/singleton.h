@@ -2,6 +2,7 @@
 #define VOYAGER_PORT_SINGLETON_H_
 
 #include <assert.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 namespace voyager {
@@ -21,9 +22,10 @@ class Singleton {
   }
 
  private:
-  static void Init() {
+ static void Init() {
     assert(instance_ == NULL);
     instance_ = new T();
+    atexit(Shutdown);
   }
 
   static pthread_once_t once_;
