@@ -57,8 +57,8 @@ int main(int argc, char** argv) {
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
-  voyager::NewTimer timer(&ev, std::bind(&voyager::EventLoop::Exit, &ev));
 #ifdef __linux__
+ voyager::NewTimer timer(&ev, std::bind(&voyager::EventLoop::Exit, &ev));
   timer.SetTime(180 * (voyager::timeops::kNonasSecondsPerSecond), 0);
 #else
   ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 180*1000000);

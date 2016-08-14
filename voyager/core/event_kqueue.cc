@@ -29,7 +29,7 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   int nfds = kevent(kq_, NULL, 0,
                     &*events_.begin(), static_cast<int>(events_.size()), &out);
   if (nfds == -1) {
-    VOYAGER_LOG(ERROR) << "kevent: " << strerror(err);
+    VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
     return;
   }
 
@@ -85,9 +85,9 @@ void EventKqueue::KqueueCTL(u_short op, Dispatch* dispatch) {
     struct kevent event[2];
     EV_SET(&event[0], dispatch->Fd(), EVFILT_READ, 
            op, 0, 0, reinterpret_cast<void*>(dispatch));
-    EV_SET(&event[0], dispatch->Fd(), EVFILT_WRITE, 
+    EV_SET(&event[1], dispatch->Fd(), EVFILT_WRITE, 
            op, 0, 0, reinterpret_cast<void*>(dispatch));
-    if (::kevent(kq_, &event, 2, NULL, 0, NULL) == -1) { 
+    if (::kevent(kq_, event, 2, NULL, 0, NULL) == -1) { 
       VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
     }
   } else {
