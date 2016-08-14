@@ -50,6 +50,11 @@ class Dispatch {
 
   void Tie(const std::shared_ptr<void>& obj);
 
+  // 最新一次的变化组合
+  // bool为true的话表示enable，false表示disable
+  // int 为0表示读写，1表示读，2表示写
+  std::pair<bool, int> ChangeEvent() const { return change_; }
+
  private:
   void UpdateEvents();
   void HandleEventWithGuard();
@@ -67,6 +72,8 @@ class Dispatch {
   std::weak_ptr<void> tie_;
   bool tied_;
   bool event_handling_;
+
+  std::pair<bool, int> change_;
 
   EventCallback read_cb_;
   EventCallback write_cb_;

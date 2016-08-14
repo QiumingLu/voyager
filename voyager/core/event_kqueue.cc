@@ -3,15 +3,12 @@
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
+#include <poll.h>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
-
-const static int kNew = -1;
-const static int kAdded = 1;
-const static int kDeleted = 2;
 
 EventKqueue::EventKqueue(EventLoop* ev) 
     : EventPoller(ev),
@@ -35,9 +32,21 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(err);
     return;
   }
+
   for (int i = 0; i < nfds; ++i) {
     Dispatch *dis = reinterpret_cast<Dispatch*>(events_[i].udata);
-    dis->SetRevents(events_[i].filter);
+    int revents = 0;
+    if (events_[i].flags & EV_ERROR) {
+      revents |= POLLERR;
+    }
+    if (events_[i].filter == EVFILT_READ) {
+      revents |= POLLIN;
+    } else if (events_[i].filter == EVFILT_WRITE) {
+      revents |= POLLOUT;
+    } else {
+      revents = events_[i].filter;
+    }
+    dis->SetRevents(revents);
     dispatches->push_back(dis);
   }
   if (nfds == static_cast<int>(events_.size())) {
@@ -51,50 +60,44 @@ void EventKqueue::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch_map_.find(fd) != dispatch_map_.end());
   assert(dispatch_map_[fd] == dispatch);
   assert(dispatch->IsNoneEvent());
-
-  int idx = dispatch->index();
-  assert(idx == kAdded || idx == kDeleted);
   dispatch_map_.erase(fd);
-  if (idx == kAdded) {
-    KqueueCTL(EV_DELETE, dispatch);
-  }
-  dispatch->set_index(kNew);
 }
 
 void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
-  int idx = dispatch->index();
+  std::pair<bool, int> change(dispatch->ChangeEvent());
 
-  if (idx == kNew || idx == kDeleted) {
-    if (idx == kNew) {
-      assert(dispatch_map_.find(fd) == dispatch_map_.end());
+  if (change.first) {
+    if (dispatch_map_.find(fd) != dispatch_map_.end()) {
       dispatch_map_[fd] = dispatch;
-    } else {
-      assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      assert(dispatch_map_[fd] == dispatch);
     }
-    dispatch->set_index(kAdded);
-    KqueueCTL(EV_ADD, dispatch);
+    KqueueCTL(EV_ADD | EV_ENABLE, dispatch);
   } else {
     assert(dispatch_map_.find(fd) != dispatch_map_.end());
-    assert(dispatch_map_[fd] == dispatch);
-    assert(idx == kAdded);
-    if (dispatch->IsNoneEvent()) {
-      KqueueCTL(EV_DELETE, dispatch);
-      dispatch->set_index(kDeleted);
-    } else {
-      KqueueCTL(EV_ADD, dispatch);
-    }
+    KqueueCTL(EV_DELETE, dispatch);
   }
 }
 
 void EventKqueue::KqueueCTL(u_short op, Dispatch* dispatch) {
-  struct kevent event;
-  EV_SET(&event, dispatch->Fd(), static_cast<short>(dispatch->Events()), 
-         op, 0, 0, reinterpret_cast<void*>(dispatch));
-  if (::kevent(kq_, &event, 1, NULL, 0, NULL) == -1) { 
-    VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+  std::pair<bool, int> change(dispatch->ChangeEvent());
+  if (change.second == 0) {
+    struct kevent event[2];
+    EV_SET(&event[0], dispatch->Fd(), EVFILT_READ, 
+           op, 0, 0, reinterpret_cast<void*>(dispatch));
+    EV_SET(&event[0], dispatch->Fd(), EVFILT_WRITE, 
+           op, 0, 0, reinterpret_cast<void*>(dispatch));
+    if (::kevent(kq_, &event, 2, NULL, 0, NULL) == -1) { 
+      VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+    }
+  } else {
+    struct kevent event;
+    short filter = change.second == 1 ? EVFILT_READ : EVFILT_WRITE;
+    EV_SET(&event, dispatch->Fd(), filter, 
+           op, 0, 0, reinterpret_cast<void*>(dispatch));
+    if (::kevent(kq_, &event, 1, NULL, 0, NULL) == -1) { 
+      VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+    }
   }
 }
 

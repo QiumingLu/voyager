@@ -11,8 +11,8 @@ Dispatch::Dispatch(EventLoop* eventloop, int fd)
       revents_(0),
       index_(-1),
       tied_(false),
-      event_handling_(false) {
-
+      event_handling_(false),
+      change_(std::make_pair(false, -1)) {
 }
 
 Dispatch::~Dispatch() {
@@ -21,26 +21,40 @@ Dispatch::~Dispatch() {
 
 void Dispatch::EnableRead() {
   events_ |= kReadEvent;
+  change_ =  std::make_pair(true, 1);
   UpdateEvents();
 }
 
 void Dispatch::EnableWrite() {
   events_ |= kWriteEvent;
+  change_ = std::make_pair(true, 2);
   UpdateEvents();
 }
 
 void Dispatch::DisableRead() {
   events_ &= ~kReadEvent;
+  change_ = std::make_pair(false, 1);
   UpdateEvents();
 }
 
 void Dispatch::DisableWrite() {
   events_ &= ~kWriteEvent;
+  change_ = std::make_pair(false, 2);
   UpdateEvents();
 }
 
 void Dispatch::DisableAll() {
+  if (IsNoneEvent()) return;
+  int n = 0;
+  if (IsReading() && IsWriting()) {
+    n = 0;
+  } else if (IsReading()) {
+    n = 1;
+  }else if (IsWriting()) {
+    n = 2;
+  }
   events_ = kNoneEvent;
+  change_ = std::make_pair(false, n);
   UpdateEvents();
 }
 
