@@ -12,12 +12,14 @@
 #ifdef __linux__
 #include <sys/eventfd.h>
 #include "voyager/core/event_epoll.h"
+#else 
+#include "voyager/core/event_kqueue.h"
 #endif
 
 namespace voyager {
 namespace {
 
-__thread EventLoop* t_eventloop = NULL;
+__thread EventLoop* runloop = NULL;
 
 class IgnoreSIGPIPE {
  public:
@@ -30,8 +32,8 @@ IgnoreSIGPIPE ignore;
 
 }  // namespace anonymous
 
-EventLoop* EventLoop::EventLoopOfCurrentThread() {
-  return t_eventloop;
+EventLoop* EventLoop::RunLoop() {
+  return runloop;
 }
 
 #ifdef __linux__
@@ -48,11 +50,11 @@ EventLoop::EventLoop()
   }      
 
   VOYAGER_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
-  if (t_eventloop) {
-    VOYAGER_LOG(FATAL) << "Another EventLoop " << t_eventloop
+  if (runloop) {
+    VOYAGER_LOG(FATAL) << "Another EventLoop " << runloop
                        << " exists in this thread " << tid_;
   } else {
-    t_eventloop = this;
+    runloop = this;
   }
 
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
@@ -64,7 +66,7 @@ EventLoop::EventLoop()
     : exit_(false),
       run_(false),
       tid_(port::CurrentThread::Tid()),
-      poller_(new EventPoll(this)),
+      poller_(new EventKqueue(this)),
       timers_(new TimerList(this)) {
 
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, wakeup_fd_) == -1) {
@@ -73,11 +75,11 @@ EventLoop::EventLoop()
   wakeup_dispatch_.reset(new Dispatch(this, wakeup_fd_[0]));
 
   VOYAGER_LOG(DEBUG) << "EventLoop "<< this << " created in thread " << tid_;
-  if (t_eventloop) {
-    VOYAGER_LOG(FATAL) << "Another EventLoop " << t_eventloop
+  if (runloop) {
+    VOYAGER_LOG(FATAL) << "Another EventLoop " << runloop
                        << " exists in this thread " << tid_;
   } else {
-    t_eventloop = this;
+    runloop = this;
   }
 
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
@@ -86,7 +88,7 @@ EventLoop::EventLoop()
 #endif
 
 EventLoop::~EventLoop() {
-  t_eventloop = NULL;
+  runloop = NULL;
   VOYAGER_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
                      << " destructs in thread " << port::CurrentThread::Tid();
 
@@ -122,16 +124,7 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  this->QueueInLoop(std::bind(&EventLoop::ExitInLoop, this));
-}
-
-void EventLoop::ExitInLoop() {
-  this->AssertInMyLoop();
-  exit_ = true;
-  // 在必要时唤醒IO线程，让它及时终止循环。
-  if (!IsInMyLoop()) {
-    WakeUp();
-  }
+  this->RunInLoop([&]() { this->exit_ = true; });
 }
 
 void EventLoop::RunInLoop(const Func& func) {

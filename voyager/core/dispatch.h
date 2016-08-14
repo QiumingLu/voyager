@@ -73,7 +73,7 @@ class Dispatch {
   EventCallback close_cb_;
   EventCallback error_cb_;
 
-  // No copy allow
+  // No copying allow
   Dispatch(const Dispatch&);
   void operator=(const Dispatch&);
 };

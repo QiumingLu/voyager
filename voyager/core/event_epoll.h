@@ -16,7 +16,7 @@ class EventEpoll : public EventPoller {
   virtual void UpdateDispatch(Dispatch* dispatch);
 
  private:
-  static const int kInitEpollFdSize = 16;
+  static const size_t kInitEpollFdSize = 16;
 
   void EpollCTL(int op, Dispatch* dispatch);
 

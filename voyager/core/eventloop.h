@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <vector>
-#include <map>
 
 #include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"
@@ -53,7 +52,8 @@ class EventLoop {
 
   void Exit();
 
-  static EventLoop* EventLoopOfCurrentThread();
+  // the eventloop of current thread.
+  static EventLoop* RunLoop();
   
   // only internal use
   void RemoveDispatch(Dispatch* dispatch);
@@ -65,7 +65,6 @@ class EventLoop {
   void HandleRead();
   void Abort();
   void WakeUp();
-  void ExitInLoop();
  
   bool exit_;
   bool run_;
