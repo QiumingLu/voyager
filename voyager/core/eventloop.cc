@@ -124,7 +124,9 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  this->RunInLoop([&]() { this->exit_ = true; });
+  this->RunInLoop([&]() { 
+      this->exit_ = true; 
+  });
 }
 
 void EventLoop::RunInLoop(const Func& func) {

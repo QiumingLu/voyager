@@ -47,7 +47,6 @@ TEST(SingletonTest, TestSingleton) {
          port::CurrentThread::Tid(),
          &(port::Singleton<SingletonTest>::Instance()),
          port::Singleton<SingletonTest>::Instance().name().c_str());
-  port::Singleton<SingletonTest>::Shutdown();
 }
 
 }  // namespace voyager

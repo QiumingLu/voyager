@@ -16,16 +16,14 @@ class Singleton {
     return *instance_;
   }
 
-  static void Shutdown() {
-    delete instance_;
-    instance_ = NULL;
-  }
-
  private:
  static void Init() {
     assert(instance_ == NULL);
     instance_ = new T();
-    atexit(Shutdown);
+    atexit([]() { 
+        delete instance_; 
+        instance_ = NULL;
+    });
   }
 
   static pthread_once_t once_;

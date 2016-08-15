@@ -25,14 +25,15 @@ EventKqueue::~EventKqueue() {
 void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timespec out;
   out.tv_sec = timeout / 1000;
-  out.tv_nsec = timeout % 1000 *1000000000;
+  out.tv_nsec = timeout % 1000 * 1000000000;
   int nfds = kevent(kq_, NULL, 0,
-                    &*events_.begin(), static_cast<int>(events_.size()), &out);
+                    &*events_.begin(), static_cast<int>(events_.size()),
+                    &out);
   if (nfds == -1) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
     return;
   }
-
+  
   for (int i = 0; i < nfds; ++i) {
     Dispatch *dis = reinterpret_cast<Dispatch*>(events_[i].udata);
     int revents = 0;
@@ -44,7 +45,7 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
     } else if (events_[i].filter == EVFILT_WRITE) {
       revents |= POLLOUT;
     } else {
-      revents = events_[i].filter;
+      revents |= POLLERR;
     }
     dis->SetRevents(revents);
     dispatches->push_back(dis);
