@@ -124,7 +124,7 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  this->RunInLoop([&]() { 
+  this->QueueInLoop([&]() { 
       this->exit_ = true; 
   });
 }

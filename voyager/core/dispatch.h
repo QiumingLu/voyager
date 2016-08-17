@@ -8,6 +8,17 @@
 namespace voyager {
 
 class EventLoop;
+
+namespace {
+
+static const int kEnableRead = 0x0001;
+static const int kEnableWrite = 0x0002;
+static const int kDisableRead = 0x0004;
+static const int kDisableWrite = 0x0008;
+static const int kDisableAll = 0x0010;
+
+}
+
 class Dispatch {
  public:
   typedef std::function<void()> EventCallback;
@@ -50,10 +61,8 @@ class Dispatch {
 
   void Tie(const std::shared_ptr<void>& obj);
 
-  // 最新一次的变化组合
-  // bool为true的话表示enable，false表示disable
-  // int 为0表示读写，1表示读，2表示写
-  std::pair<bool, int> ChangeEvent() const { return change_; }
+
+  int ChangeEvent() const { return change_; }
 
  private:
   void UpdateEvents();
@@ -68,12 +77,12 @@ class Dispatch {
   int events_;
   int revents_;
   int index_;
+  int change_;
 
   std::weak_ptr<void> tie_;
   bool tied_;
   bool event_handling_;
 
-  std::pair<bool, int> change_;
 
   EventCallback read_cb_;
   EventCallback write_cb_;

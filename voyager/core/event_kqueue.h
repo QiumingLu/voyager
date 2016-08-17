@@ -20,8 +20,9 @@ class EventKqueue : public EventPoller {
 
  private:
   static const size_t kInitKqueueFdSize = 16;
-  void KqueueCTL(u_short op, Dispatch* dispatch);
 
+  int EventKqueue::KqueueCTL(int ident, short filter, u_short flags);
+  
   const int kq_;
   std::vector<struct kevent> events_;
 };
