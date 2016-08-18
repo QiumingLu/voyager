@@ -71,32 +71,33 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
 
   switch(change) {
     case kEnableRead: {
-      result = (fd, EVFILT_READ, EV_ADD | EV_ENABLE);
+      result = KqueueCTL(dispatch, EVFILT_READ, EV_ADD | EV_ENABLE);
       break;
     }
 
     case kEnableWrite: {
-      result = (fd, EVFILT_WRITE, EV_ADD | EV_ENABLE)
+      result = KqueueCTL(dispatch, EVFILT_WRITE, EV_ADD | EV_ENABLE);
       break;
     }
 
     case kDisableRead: {
       assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      result = KqueueCTL(fd, EVFILT_READ, EV_DELETE);
+      result = KqueueCTL(dispatch, EVFILT_READ, EV_DELETE);
       break;
     }
 
     case kDisableWrite: {
       assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      result = KqueueCTL(fd, EVFILT_WRITE, EV_DELETE);      
+      result = KqueueCTL(dispatch, EVFILT_WRITE, EV_DELETE);      
       break;
     }
 
     case kDisableAll: {
+      assert(dispatch_map_.find(fd) != dispatch_map_.end());
       struct kevent event[2];
-      EV_SET(&event[0], fd, EVFILT_READ, EV_DELETE
+      EV_SET(&event[0], fd, EVFILT_READ, EV_DELETE,
              0, 0, reinterpret_cast<void*>(dispatch));
-      EV_SET(&event[1], fd, EVFILT_WRITE, EV_DELETE
+      EV_SET(&event[1], fd, EVFILT_WRITE, EV_DELETE,
              0, 0, reinterpret_cast<void*>(dispatch));
       result = ::kevent(kq_, event, 2, NULL, 0, NULL);
       break;
@@ -110,9 +111,10 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   }
 }
 
-int EventKqueue::KqueueCTL(int ident, short filter, u_short flags) {
+int EventKqueue::KqueueCTL(Dispatch* dispatch, 
+                           short filter, u_short flags) {
   struct kevent event;
-  EV_SET(&event, ident, filter, flags, 
+  EV_SET(&event, dispatch->Fd(), filter, flags, 
          0, 0, reinterpret_cast<void*>(dispatch));
   return ::kevent(kq_, &event, 1, NULL, 0, NULL);
 }
