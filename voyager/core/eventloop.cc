@@ -92,7 +92,6 @@ EventLoop::~EventLoop() {
   VOYAGER_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
                      << " destructs in thread " << port::CurrentThread::Tid();
 
-  port::Singleton<OnlineConnections>::Instance().Erase(this);
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
 #ifdef __linux__
@@ -124,8 +123,9 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  this->QueueInLoop([&]() { 
-      this->exit_ = true; 
+  this->QueueInLoop([this]() { 
+      this->exit_ = true;
+      port::Singleton<OnlineConnections>::Instance().Erase(this);
   });
 }
 
@@ -172,30 +172,36 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-TimerList::Timer* EventLoop::RunAt(const TimerProcCallback& cb, uint64_t micros_value) {
+TimerList::Timer* EventLoop::RunAt(const TimerProcCallback& cb, 
+                                   uint64_t micros_value) {
   return timers_->Insert(cb, micros_value, 0);
 }
 
-TimerList::Timer* EventLoop::RunAfter(const TimerProcCallback& cb, uint64_t micros_delay) {
+TimerList::Timer* EventLoop::RunAfter(const TimerProcCallback& cb, 
+                                      uint64_t micros_delay) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(cb, micros_value, 0);
 }
 
-TimerList::Timer* EventLoop::RunEvery(const TimerProcCallback& cb, uint64_t micros_interval) {
+TimerList::Timer* EventLoop::RunEvery(const TimerProcCallback& cb, 
+                                      uint64_t micros_interval) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(cb, micros_value, micros_interval);
 }
 
-TimerList::Timer* EventLoop::RunAt(TimerProcCallback&& cb, uint64_t micros_value) {
+TimerList::Timer* EventLoop::RunAt(TimerProcCallback&& cb,
+                                   uint64_t micros_value) {
   return timers_->Insert(std::move(cb), micros_value, 0);
 }
 
-TimerList::Timer* EventLoop::RunAfter(TimerProcCallback&& cb, uint64_t micros_delay) {
+TimerList::Timer* EventLoop::RunAfter(TimerProcCallback&& cb, 
+                                      uint64_t micros_delay) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(std::move(cb), micros_value, 0);
 }
 
-TimerList::Timer* EventLoop::RunEvery(TimerProcCallback&& cb, uint64_t micros_interval) {
+TimerList::Timer* EventLoop::RunEvery(TimerProcCallback&& cb, 
+                                      uint64_t micros_interval) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(cb, micros_value, micros_interval);
 }

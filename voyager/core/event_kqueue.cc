@@ -25,7 +25,7 @@ EventKqueue::~EventKqueue() {
 void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timespec out;
   out.tv_sec = timeout / 1000;
-  out.tv_nsec = timeout % 1000 * 1000000000;
+  out.tv_nsec = (timeout % 1000) * 1000 * 1000;
   int nfds = ::kevent(kq_, NULL, 0,
                       &*events_.begin(), static_cast<int>(events_.size()),
                       &out);
@@ -34,20 +34,19 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   }
   
   for (int i = 0; i < nfds; ++i) {
-    Dispatch *dis = reinterpret_cast<Dispatch*>(events_[i].udata);
+    Dispatch *dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
     int revents = 0;
     if (events_[i].flags & EV_ERROR) {
       revents |= POLLERR;
     }
     if (events_[i].filter == EVFILT_READ) {
       revents |= POLLIN;
-    } 
-    if (events_[i].filter == EVFILT_WRITE) {
+    } else if (events_[i].filter == EVFILT_WRITE) {
       revents |= POLLOUT;
     }
 
-    dis->SetRevents(revents);
-    dispatches->push_back(dis);
+    dispatch->SetRevents(revents);
+    dispatches->push_back(dispatch);
   }
   if (nfds == static_cast<int>(events_.size())) {
     events_.resize(events_.size() * 2);
@@ -67,56 +66,42 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
   int change = dispatch->ChangeEvent();
-  int result;
-
+  
+  struct kevent ev[2];
+  int n = 0;
   switch(change) {
-    case kEnableRead: {
-      result = KqueueCTL(dispatch, EVFILT_READ, EV_ADD | EV_ENABLE);
+    case kEnableRead:
+      EV_SET(&ev[n++], fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 
+             reinterpret_cast<void*>(dispatch));
       break;
-    }
 
-    case kEnableWrite: {
-      result = KqueueCTL(dispatch, EVFILT_WRITE, EV_ADD | EV_ENABLE);
+    case kEnableWrite:
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
+             reinterpret_cast<void*>(dispatch));
       break;
-    }
 
-    case kDisableRead: {
-      assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      result = KqueueCTL(dispatch, EVFILT_READ, EV_DELETE);
+    case kDisableRead:
+      EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0,
+             reinterpret_cast<void*>(dispatch));
       break;
-    }
 
-    case kDisableWrite: {
-      assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      result = KqueueCTL(dispatch, EVFILT_WRITE, EV_DELETE);      
+    case kDisableWrite:
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0,
+             reinterpret_cast<void*>(dispatch));
       break;
-    }
 
-    case kDisableAll: {
-      assert(dispatch_map_.find(fd) != dispatch_map_.end());
-      struct kevent event[2];
-      EV_SET(&event[0], fd, EVFILT_READ, EV_DELETE,
-             0, 0, reinterpret_cast<void*>(dispatch));
-      EV_SET(&event[1], fd, EVFILT_WRITE, EV_DELETE,
-             0, 0, reinterpret_cast<void*>(dispatch));
-      result = ::kevent(kq_, event, 2, NULL, 0, NULL);
+    case kDisableAll:
+      EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0, 
+             reinterpret_cast<void*>(dispatch));
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0, 
+             reinterpret_cast<void*>(dispatch));
       break;
-    }
-
-    if (result == -1) { 
-      VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
-    } 
-    
-    dispatch_map_[fd] = dispatch;
   }
-}
 
-int EventKqueue::KqueueCTL(Dispatch* dispatch, 
-                           short filter, u_short flags) {
-  struct kevent event;
-  EV_SET(&event, dispatch->Fd(), filter, flags, 
-         0, 0, reinterpret_cast<void*>(dispatch));
-  return ::kevent(kq_, &event, 1, NULL, 0, NULL);
+  if (::kevent(kq_, ev, n, NULL, 0, NULL) == -1) {
+    VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+  }
+  dispatch_map_[fd] = dispatch;
 }
 
 }  // namespace voyager

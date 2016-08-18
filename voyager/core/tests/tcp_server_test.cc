@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
   g_server = new TcpServer(&eventloop, addr, "Voyager", 4);
   g_server->Start();
   eventloop.RunAfter(std::bind(DeleteServer), 5000000);
+  eventloop.RunAfter(std::bind(&EventLoop::Exit, &eventloop), 6000000);
   eventloop.Loop();
   return 0;
 }

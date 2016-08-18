@@ -34,8 +34,9 @@ void TcpServer::Start() {
   if (seq_.GetNext() == 0) {
     schedule_->Start();
     assert(!acceptor_ptr_->IsListenning());
-    eventloop_->RunInLoop(
-        std::bind(&Acceptor::EnableListen, acceptor_ptr_.get()));
+    eventloop_->RunInLoop([this]() {
+        this->acceptor_ptr_->EnableListen();
+    });
   }
 }
 
@@ -59,7 +60,9 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
   
-  ev->RunInLoop(std::bind(&TcpConnection::StartWorking, conn_ptr));
+  ev->RunInLoop([conn_ptr]() {
+      conn_ptr->StartWorking(); 
+  });
 }
 
 }  // namespace voyager

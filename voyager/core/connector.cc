@@ -5,6 +5,7 @@
 #include <errno.h>
 
 #include "voyager/core/eventloop.h"
+#include "voyager/core/tcp_client.h"
 #include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
 
@@ -22,43 +23,41 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
 
 Connector::~Connector() {
   connect_ = false;
-  if (dispatch_.get()) {
-    dispatch_->RemoveEvents();
-    dispatch_->DisableAll();
-  }
+  assert(!dispatch_.get());
 }
 
 void Connector::Start() {
-  connect_ = true;
-  ev_->RunInLoop(std::bind(&Connector::StartInLoop, this));
+  ev_->RunInLoop([this]() {
+    this->connect_ = true;
+    this->StartInLoop();
+  });
 }
 
 void Connector::StartInLoop() {
   ev_->AssertInMyLoop();
-  assert(state_ == kDisConnected);
+  assert(this->state_ == kDisconnected);
   if (connect_) {
     Connect();
   }
 }
 
 void Connector::ReStart() {
+  ev_->AssertInMyLoop();
   state_ = kDisConnected;
   retry_time_ = kInitRetryTime;
   connect_ = true;
-  StartInLoop();
+  Connect();
 }
 
 void Connector::Stop() {
-  connect_ = false;
-  ev_->QueueInLoop(std::bind(&Connector::StopInLoop, this));
-}
-
-void Connector::StopInLoop() {
-  ev_->AssertInMyLoop();
-  if (state_ == kConnecting) {
-    state_ = kDisConnected;
-    ResetDispatch();
-  }
+  ConnectorPtr ptr(shared_from_this());
+  ev_->QueueInLoop([ptr]() {
+    ptr->connect_ = false;
+    if (ptr->state_ == kConnecting) {
+      ptr->state_ = kDisConnected;
+      ptr->ResetDispatch();
+    }
+  });
 }
 
 void Connector::Connect() {
@@ -66,7 +65,6 @@ void Connector::Connect() {
   int ret = socket_->Connect(addr_.GetSockAddr(),
                              sizeof(*(addr_.GetSockAddr())));
   int err = (ret == 0) ? 0 : errno;
-  VOYAGER_LOG(DEBUG) << "Connect: " << strerror(errno);
   switch (err) {
     case 0:
     case EINPROGRESS:
@@ -102,8 +100,8 @@ void Connector::Connect() {
 void Connector::Connecting() {
   state_ = kConnecting; 
   assert(!dispatch_.get());
-  
   dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
+  dispatch_->Tie(shared_from_this());
   dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
   dispatch_->EnableWrite();
 }
@@ -139,7 +137,6 @@ void Connector::ConnectCallback() {
         socket_->SetNoAutoCloseFd();
         newconnection_cb_(socket_->SocketFd());
       }
-      socket_.reset();
     }
   }
 }

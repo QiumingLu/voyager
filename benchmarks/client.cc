@@ -147,7 +147,7 @@ class Client {
 
   void HandleTimeout() {
     std::for_each(sessions_.begin(), sessions_.end(), 
-        std::mem_fn(&Session::Close));
+                  std::mem_fn(&Session::Close));
   }
 
  private:
@@ -169,7 +169,6 @@ class Client {
 };
 
 void Session::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  ptr->SetTcpNoDelay(true);
   ptr->SendMessage(owner_->Message());
 }
 
@@ -179,7 +178,7 @@ void Session::CloseCallback(const voyager::TcpConnectionPtr& ptr) {
 
 int main(int argc, char* argv[]) {
   if (argc != 7) {
-    std::cerr << "Usage: client <host> <port> <threads> < blocksize> ";
+    std::cerr << "Usage: client <host> <port> <threads> <blocksize> ";
     std::cerr << "<sessions> <time>\n";
     return 1;
   }
@@ -192,7 +191,7 @@ int main(int argc, char* argv[]) {
   voyager::EventLoop base_ev;
   voyager::SockAddr sockaddr(host, port);
   Client client(&base_ev, sockaddr, block_size,
-      session_count, timeout, thread_count);
+                session_count, timeout, thread_count);
   base_ev.Loop();
   return 0;
 }

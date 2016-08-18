@@ -54,8 +54,9 @@ NewTimer::~NewTimer() {
 
 
 void NewTimer::SetTime(uint64_t nanos_value, uint64_t nanos_interval) {
-  eventloop_->RunInLoop(std::bind(&NewTimer::SetTimeInLoop, this, 
-                                  nanos_value, nanos_interval));
+  eventloop_->RunInLoop([this, nanos_value, nanos_interval]() {
+      this->SetTimeInLoop(nanos_value, nanos_interval);
+  });
 }
 
 void NewTimer::SetTimeInLoop(uint64_t nanos_value, uint64_t nanos_interval) {

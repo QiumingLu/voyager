@@ -65,7 +65,9 @@ void TcpClient::NewConnection(int socketfd) {
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
 
-  ev_->RunInLoop(std::bind(&TcpConnection::StartWorking, ptr));
+  ev_->RunInLoop([ptr]() {
+      ptr->StartWorking();
+  });
 }
 
 void TcpClient::HandleClose(const TcpConnectionPtr& ptr) {

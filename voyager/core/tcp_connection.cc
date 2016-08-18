@@ -50,7 +50,9 @@ void TcpConnection::StartWorking() {
 }
 
 void TcpConnection::StartRead() {
-  eventloop_->RunInLoop(std::bind(&TcpConnection::StartReadInLoop, this));
+  eventloop_->RunInLoop([this]() {
+    this->StartReadInLoop();
+  });
 }
 
 void TcpConnection::StartReadInLoop() {
@@ -61,7 +63,9 @@ void TcpConnection::StartReadInLoop() {
 }
 
 void TcpConnection::StopRead() {
-  eventloop_->RunInLoop(std::bind(&TcpConnection::StopReadInLoop, this));
+  eventloop_->RunInLoop([this]() {
+    this->StopReadInLoop();
+  });
 }
 
 void TcpConnection::StopReadInLoop() {
@@ -74,7 +78,9 @@ void TcpConnection::StopReadInLoop() {
 void TcpConnection::ShutDown() {
   if (state_ == kConnected) {
     state_ = kDisconnecting;
-    eventloop_->RunInLoop(std::bind(&TcpConnection::ShutDownInLoop, this));
+    eventloop_->RunInLoop([this]() {
+      this->ShutDownInLoop();
+    });
   }
 }
 

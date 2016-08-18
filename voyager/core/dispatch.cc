@@ -44,7 +44,13 @@ void Dispatch::DisableWrite() {
 }
 
 void Dispatch::DisableAll() {
-  change_ = kDisableAll;
+  if (IsReading() && IsWriting()) { 
+    change_ = kDisableAll;
+  } else if (IsReading()) {
+    change_ = kDisableRead;
+  } else if (IsWriting()) {
+    change_ = kDisableWrite;
+  }
   events_ = kNoneEvent;
   UpdateEvents();
 }

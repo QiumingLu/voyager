@@ -42,8 +42,6 @@ class Connector : public std::enable_shared_from_this<Connector> {
   static const uint64_t kInitRetryTime = 2000000;
 
   void StartInLoop();
-  void StopInLoop();
-
   void Connect();
   void Connecting();
   void Retry();
