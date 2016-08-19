@@ -8,20 +8,20 @@
 namespace voyager {
 
 struct TimerList::Timer {
-  Timer(const TimerProcCallback& cb, uint64_t value, uint64_t interval)
-      : timerproc_cb(cb), 
-        micros_value(value), 
+  Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
+      : micros_value(value), 
         micros_interval(interval), 
+        timerproc_cb(cb), 
         repeat(false) {
     if (micros_interval > 0) {
       repeat = true;
     }
   }
 
-  Timer(TimerProcCallback&& cb, uint64_t value, uint64_t interval)
-      : timerproc_cb(std::move(cb)), 
-        micros_value(value), 
+  Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
+      : micros_value(value), 
         micros_interval(interval), 
+        timerproc_cb(std::move(cb)),
         repeat(false) {
     if (micros_interval > 0) {
       repeat = true;
@@ -31,9 +31,9 @@ struct TimerList::Timer {
 private:
   friend class TimerList;
 
-  TimerProcCallback timerproc_cb;
   uint64_t micros_value;
   uint64_t micros_interval;
+  TimerProcCallback timerproc_cb;
   bool repeat;
 };
 
@@ -46,20 +46,20 @@ TimerList::~TimerList() {
   STLDeleteValues(&timers_);
 }
 
-TimerList::Timer* TimerList::Insert(const TimerProcCallback& cb, 
-                                    uint64_t micros_value, 
-                                    uint64_t micros_interval) {
-  Timer* timer = new Timer(cb, micros_value, micros_interval);
+TimerList::Timer* TimerList::Insert(uint64_t micros_value, 
+                                    uint64_t micros_interval,
+                                    const TimerProcCallback& cb) {
+  Timer* timer = new Timer(micros_value, micros_interval, cb);
   eventloop_->RunInLoop([this, timer]() {
       this->InsertInLoop(timer);
   });
   return timer;
 }
 
-TimerList::Timer* TimerList::Insert(TimerProcCallback&& cb,
-                                    uint64_t micros_value, 
-                                    uint64_t micros_interval) {
-  Timer* timer = new Timer(std::move(cb), micros_value, micros_interval);
+TimerList::Timer* TimerList::Insert(uint64_t micros_value, 
+                                    uint64_t micros_interval,
+                                    TimerProcCallback&& cb) {
+  Timer* timer = new Timer(micros_value, micros_interval, std::move(cb));
   eventloop_->RunInLoop([this, timer]() {
       this->InsertInLoop(timer);
   });

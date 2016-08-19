@@ -101,4 +101,39 @@ void SockAddr::IPPortToSockAddr(const char* ip, uint16_t port,
   }
 }
 
+struct sockaddr_storage SockAddr::LocalSockAddr(int socketfd) {
+  struct sockaddr_storage sa;
+  socklen_t salen = sizeof(sa);
+  if (::getsockname(socketfd, 
+                    reinterpret_cast<struct sockaddr*>(&sa), &salen) == -1) {
+    VOYAGER_LOG(ERROR) << "getsockname failed";
+  }
+  return sa;
+}
+
+struct sockaddr_storage SockAddr::PeerSockAddr(int socketfd) {
+  struct sockaddr_storage sa;
+  socklen_t salen = sizeof(sa);
+
+  if (::getpeername(socketfd, 
+                    reinterpret_cast<struct sockaddr*>(&sa), &salen) == -1) {
+    VOYAGER_LOG(ERROR) << "getpeername failed";
+  }
+  return sa;
+}
+
+int SockAddr::FormatPeer(int socketfd, char* buf, size_t buf_size) {
+  struct sockaddr_storage sa(PeerSockAddr(socketfd));
+  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
+                          buf, 
+                          buf_size);
+}
+
+int SockAddr::FormatLocal(int socketfd, char* buf, size_t buf_size) {
+  struct  sockaddr_storage sa(LocalSockAddr(socketfd));
+  return SockAddrToIPPort(reinterpret_cast<struct sockaddr*>(&sa), 
+                          buf, 
+                          buf_size);
+}
+
 }  // namespace voyager

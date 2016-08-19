@@ -172,38 +172,38 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-TimerList::Timer* EventLoop::RunAt(const TimerProcCallback& cb, 
-                                   uint64_t micros_value) {
-  return timers_->Insert(cb, micros_value, 0);
+TimerList::Timer* EventLoop::RunAt(uint64_t micros_value,
+                                   const TimerProcCallback& cb) {
+  return timers_->Insert(micros_value, 0, cb);
 }
 
-TimerList::Timer* EventLoop::RunAfter(const TimerProcCallback& cb, 
-                                      uint64_t micros_delay) {
+TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay,
+                                      const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
-  return timers_->Insert(cb, micros_value, 0);
+  return timers_->Insert(micros_value, 0, cb);
 }
 
-TimerList::Timer* EventLoop::RunEvery(const TimerProcCallback& cb, 
-                                      uint64_t micros_interval) {
+TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval,
+                                      const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
-  return timers_->Insert(cb, micros_value, micros_interval);
+  return timers_->Insert(micros_value, micros_interval, cb);
 }
 
-TimerList::Timer* EventLoop::RunAt(TimerProcCallback&& cb,
-                                   uint64_t micros_value) {
-  return timers_->Insert(std::move(cb), micros_value, 0);
+TimerList::Timer* EventLoop::RunAt(uint64_t micros_value, 
+                                   TimerProcCallback&& cb) {
+  return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunAfter(TimerProcCallback&& cb, 
-                                      uint64_t micros_delay) {
+TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay, 
+                                      TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
-  return timers_->Insert(std::move(cb), micros_value, 0);
+  return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunEvery(TimerProcCallback&& cb, 
-                                      uint64_t micros_interval) {
+TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval, 
+                                      TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
-  return timers_->Insert(cb, micros_value, micros_interval);
+  return timers_->Insert(micros_value, micros_interval, std::move(cb));
 }
 
 void EventLoop::RemoveTimer(TimerList::Timer* t) {

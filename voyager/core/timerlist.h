@@ -17,10 +17,10 @@ class TimerList {
   TimerList(EventLoop* ev);
   ~TimerList();
 
-  Timer* Insert(const TimerProcCallback& cb, 
-                uint64_t micros_value, uint64_t micros_interval);
-  Timer* Insert(TimerProcCallback&& cb,
-                uint64_t micros_value, uint64_t micros_interval);
+  Timer* Insert(uint64_t micros_value, uint64_t micros_interval,
+                const TimerProcCallback& cb);
+  Timer* Insert(uint64_t micros_value, uint64_t micros_interval, 
+                TimerProcCallback&& cb);
   void Erase(Timer* timer);
 
   uint64_t TimeoutMicros() const;

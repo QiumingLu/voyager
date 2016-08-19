@@ -21,10 +21,6 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
       socket_() {
 }
 
-Connector::~Connector() {
-  connect_ = false;
-}
-
 void Connector::Start() {
   ConnectorPtr ptr(shared_from_this());
   ev_->RunInLoop([ptr]() {
@@ -91,7 +87,6 @@ void Connector::Connect() {
 
 void Connector::Connecting() {
   state_ = kConnecting; 
-  assert(!dispatch_.get());
   dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
   dispatch_->Tie(shared_from_this());
   dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
@@ -104,8 +99,17 @@ void Connector::Retry() {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.Ipbuf() << " in " << retry_time_ 
                       << " seconds.";
-    ev_->RunAfter(std::bind(&Connector::StartInLoop, shared_from_this()),
-                  retry_time_);
+
+    ConnectorPtr ptr(shared_from_this());
+#ifdef __linux__
+    if (!timer_.get()) {
+      timer_.reset(new NewTimer(ev_, [ptr]() { ptr->StartInLoop(); }));
+    }
+    timer_->SetTime(retry_time_ * 1000, 0);
+#else
+    ev_->RunAfter(retry_time_, [ptr]() {ptr->StartInLoop();});
+#endif
+
     retry_time_ = 
         (retry_time_*2) < kMaxRetryTime ? retry_time_*2 : kMaxRetryTime;
   }

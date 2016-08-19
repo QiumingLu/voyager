@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
   g_client->SetMessageCallback(
       std::bind(voyager::OnMessage, _1, _2));
   g_client->Connect();
-  ev.RunAfter(std::bind(voyager::DeleteClient), 5000000);
-  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 20000000);
+  ev.RunAfter(5000000, []() { voyager::DeleteClient(); });
+  ev.RunAfter(20000000, [&ev]() { ev.Exit(); });
   ev.Loop();
   return 0;
 }

@@ -11,6 +11,9 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/scoped_ptr.h"
 #include "voyager/util/timeops.h"
+#ifdef __linux__
+#include "voyager/core/newtimer.h"
+#endif
 
 namespace voyager {
 
@@ -21,7 +24,6 @@ class Connector : public std::enable_shared_from_this<Connector> {
   typedef std::function<void (int fd)> NewConnectionCallback;
 
   Connector(EventLoop* ev, const SockAddr& addr);
-  ~Connector();
 
   void SetNewConnectionCallback(const NewConnectionCallback& cb) {
     newconnection_cb_ = cb;
@@ -62,6 +64,10 @@ class Connector : public std::enable_shared_from_this<Connector> {
   scoped_ptr<Dispatch> dispatch_;
   scoped_ptr<ClientSocket> socket_;
   NewConnectionCallback newconnection_cb_;
+
+#ifdef __linux__
+  scoped_ptr<NewTimer> timer_;
+#endif
 
   // No copying allow
   Connector(const Connector&);

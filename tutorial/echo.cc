@@ -58,10 +58,10 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
 #ifdef __linux__
- voyager::NewTimer timer(&ev, std::bind(&voyager::EventLoop::Exit, &ev));
+ voyager::NewTimer timer(&ev, [&ev]() { ev.Exit(); });
   timer.SetTime(180 * (voyager::timeops::kNonasSecondsPerSecond), 0);
 #else
-  ev.RunAfter(std::bind(&voyager::EventLoop::Exit, &ev), 180*1000000);
+  ev.RunAfter(180*1000000, [&ev]() { ev.Exit(); });
 #endif
   server.Start();
   ev.Loop();

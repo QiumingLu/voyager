@@ -41,68 +41,54 @@ void TcpConnection::StartWorking() {
   eventloop_->AssertInMyLoop();
   assert(state_ == kConnecting);
   state_ = kConnected;
-  dispatch_->Tie(shared_from_this());
+  TcpConnectionPtr ptr(shared_from_this());
+  dispatch_->Tie(ptr);
   dispatch_->EnableRead();
-  port::Singleton<OnlineConnections>::Instance().NewConnection(shared_from_this());
+  port::Singleton<OnlineConnections>::Instance().NewConnection(ptr);
   if (connection_cb_) {
-    connection_cb_(shared_from_this());
+    connection_cb_(ptr);
   }
 }
 
 void TcpConnection::StartRead() {
-  eventloop_->RunInLoop([this]() {
-    this->StartReadInLoop();
+  TcpConnectionPtr ptr(shared_from_this());
+  eventloop_->RunInLoop([ptr]() {
+    if (!ptr->dispatch_->IsReading()) {
+      ptr->dispatch_->EnableRead();
+    }  
   });
-}
-
-void TcpConnection::StartReadInLoop() {
-  eventloop_->AssertInMyLoop();
-  if (!dispatch_->IsReading()) {
-    dispatch_->EnableRead();
-  }
 }
 
 void TcpConnection::StopRead() {
-  eventloop_->RunInLoop([this]() {
-    this->StopReadInLoop();
+  TcpConnectionPtr ptr(shared_from_this());
+  eventloop_->RunInLoop([ptr]() {
+    if (ptr->dispatch_->IsReading()) {
+      ptr->dispatch_->DisableRead();
+    }  
   });
-}
-
-void TcpConnection::StopReadInLoop() {
-  eventloop_->AssertInMyLoop();
-  if (dispatch_->IsReading()) {
-    dispatch_->DisableRead();
-  }
 }
 
 void TcpConnection::ShutDown() {
   if (state_ == kConnected) {
     state_ = kDisconnecting;
-    eventloop_->RunInLoop([this]() {
-      this->ShutDownInLoop();
+    TcpConnectionPtr ptr(shared_from_this());
+    eventloop_->RunInLoop([ptr]() {
+      if (!ptr->dispatch_->IsWriting()) {
+        ptr->socket_.ShutDownWrite();
+      }    
     });
-  }
-}
-
-void TcpConnection::ShutDownInLoop() {
-  eventloop_->AssertInMyLoop();
-  if (!dispatch_->IsWriting()) {
-    socket_.ShutDownWrite();
   }
 }
 
 void TcpConnection::ForceClose() {
   if (state_ == kConnected || state_ == kDisconnecting) {
     state_ = kDisconnecting;
-    eventloop_->QueueInLoop(
-        std::bind(&TcpConnection::ForceCloseInLoop, shared_from_this()));
-  }
-}
-
-void TcpConnection::ForceCloseInLoop() {
-  eventloop_->AssertInMyLoop();
-  if (state_ == kConnected || state_ == kDisconnecting) {
-    HandleClose();
+    TcpConnectionPtr ptr(shared_from_this());
+    eventloop_->QueueInLoop([ptr]() {
+      if (ptr->state_ == kConnected || ptr->state_ == kDisconnecting) {
+        ptr->HandleClose();
+      }   
+    });
   }
 }
 
@@ -139,7 +125,7 @@ void TcpConnection::HandleWrite() {
               std::bind(writecomplete_cb_, shared_from_this()));
         }
         if (state_ == kDisconnecting) {
-          ShutDownInLoop();
+          HandleClose();
         }
       }
     } else {

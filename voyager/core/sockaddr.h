@@ -29,6 +29,11 @@ class SockAddr {
   static void IPPortToSockAddr(const char* ip, uint16_t port, 
                                struct sockaddr_in6* sa6);
 
+  static struct sockaddr_storage LocalSockAddr(int socketfd);
+  static struct sockaddr_storage PeerSockAddr(int socketfd);
+  static int FormatLocal(int socketfd, char* buf, size_t buf_size);
+  static int FormatPeer(int socketfd, char* buf, size_t buf_size);
+
  private:
   Status GetAddrInfo(const char* host, uint16_t port);
 

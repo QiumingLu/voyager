@@ -1,0 +1,6 @@
+Bufsize: 43 Threads: 4 Sessions: 3
+129 total bytes written
+129 total bytes read
+1.23024e-05 MiB/s throughtput
+
+

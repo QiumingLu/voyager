@@ -70,8 +70,7 @@ int main(int argc, char** argv) {
   voyager::TimerServer server(&ev, addr);
   server.Start();
   voyager::TimerList::Timer* t2 = 
-      ev.RunAfter(std::bind(&voyager::TimerServer::TimerTest, &server), 
-                  10000000);
+      ev.RunAfter(10000000, [&server]() {server.TimerTest(); });
   (void)t2;
   ev.Loop();
 }
