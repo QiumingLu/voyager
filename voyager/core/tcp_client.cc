@@ -13,10 +13,7 @@ TcpClient::TcpClient(EventLoop* ev,
     : name_(name),
       server_ipbuf_(addr.Ipbuf()),
       ev_(CHECK_NOTNULL(ev)),
-      connector_ptr_(new Connector(ev, addr)),
-      conn_id_(0),
-      connect_(false),
-      retry_(false) {
+      connector_ptr_(new Connector(ev, addr)) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
@@ -29,54 +26,33 @@ TcpClient::~TcpClient() {
 void TcpClient::Connect() {
   VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " 
                     << server_ipbuf_;
-  connect_ = true;
   connector_ptr_->Start();
 }
 
-void TcpClient::ReConnect() {
-  VOYAGER_LOG(INFO) << "TcpClient::ReConnect -reconnecting to " 
-                    << server_ipbuf_;
-  connect_ = true;
-  connector_ptr_->ReStart();
-}
-
 void TcpClient::Close() {
-  connect_ = false;
   connector_ptr_->Stop();
-  if (!weak_ptr_.expired()) {
-    weak_ptr_.lock()->ShutDown();
+  TcpConnectionPtr ptr = weak_ptr_.lock();
+  if (ptr) {
+    ptr->ShutDown();
   }
 }
 
 void TcpClient::NewConnection(int socketfd) {
   ev_->AssertInMyLoop();
-
-  std::string conn_name = StringPrintf("%s-%s#%d", name_.c_str(), 
-                          server_ipbuf_.c_str(), ++conn_id_);
-
+  char ipbuf[64];
+  std::string conn_name = StringPrintf("%s-%s#%s", ipbuf,
+                          server_ipbuf_.c_str(), name_.c_str());
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
+  
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
- 
-  weak_ptr_ = ptr;
-
   ptr->SetConnectionCallback(connection_cb_);
-  ptr->SetCloseCallback(std::bind(&TcpClient::HandleClose, 
-                                  this, std::placeholders::_1));
+  ptr->SetCloseCallback(close_cb_);
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
-
   ev_->RunInLoop([ptr]() {
       ptr->StartWorking();
   });
-}
-
-void TcpClient::HandleClose(const TcpConnectionPtr& ptr) {
-  if (close_cb_) {
-    close_cb_(ptr);
-  }
-  if (retry_ && connect_) {
-    connector_ptr_->ReStart();
-  }
+  weak_ptr_ = ptr;
 }
 
 }  // namespace voyager

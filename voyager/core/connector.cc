@@ -23,13 +23,13 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
 
 Connector::~Connector() {
   connect_ = false;
-  assert(!dispatch_.get());
 }
 
 void Connector::Start() {
-  ev_->RunInLoop([this]() {
-    this->connect_ = true;
-    this->StartInLoop();
+  ConnectorPtr ptr(shared_from_this());
+  ev_->RunInLoop([ptr]() {
+    ptr->connect_ = true;
+    ptr->StartInLoop();
   });
 }
 
@@ -39,14 +39,6 @@ void Connector::StartInLoop() {
   if (connect_) {
     Connect();
   }
-}
-
-void Connector::ReStart() {
-  ev_->AssertInMyLoop();
-  state_ = kDisConnected;
-  retry_time_ = kInitRetryTime;
-  connect_ = true;
-  Connect();
 }
 
 void Connector::Stop() {
@@ -138,6 +130,7 @@ void Connector::ConnectCallback() {
         newconnection_cb_(socket_->SocketFd());
       }
     }
+    socket_.reset();
   }
 }
 
@@ -165,7 +158,10 @@ void Connector::ResetDispatch() {
   if (dispatch_.get()) {
     dispatch_->DisableAll();
     dispatch_->RemoveEvents();
-    dispatch_.reset();
+    ConnectorPtr ptr(shared_from_this());
+    ev_->QueueInLoop([ptr]() {
+      ptr->dispatch_.reset();
+    });
   }
 }
 

@@ -23,12 +23,14 @@ class Connector : public std::enable_shared_from_this<Connector> {
   Connector(EventLoop* ev, const SockAddr& addr);
   ~Connector();
 
-  void SetNewConnectionCallback(const NewConnectionCallback& func) {
-    newconnection_cb_ = func;
+  void SetNewConnectionCallback(const NewConnectionCallback& cb) {
+    newconnection_cb_ = cb;
+  }
+  void SetNewConnectionCallback(NewConnectionCallback&& cb) {
+    newconnection_cb_ = std::move(cb);
   }
 
   void Start();
-  void ReStart();
   void Stop();
 
  private:

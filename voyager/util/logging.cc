@@ -32,7 +32,7 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
            t.tm_sec,
            static_cast<int>(now_tv.tv_usec));
 
-  if (level >= LOGLEVEL_DEBUG) {
+  if (level >= LOGLEVEL_INFO) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
             log_time, loglevel_names[level], filename, line, 
             message.c_str());

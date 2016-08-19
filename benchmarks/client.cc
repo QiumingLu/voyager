@@ -9,8 +9,8 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"
-
-#include <list>
+#include "voyager/util/scoped_ptr.h"
+#include <vector>
 #include <iostream>
 #include <fstream>
 
@@ -92,9 +92,12 @@ class Client {
         total_bytes_written(0),
         total_bytes_read(0),
         timeout_(timeout) {
-          
+#ifdef __linux__
+    timer_.reset(new NewTimer(ev, std::bind(&Client::HandleTimeout, this)));
+    timer.SetTime(timeout * 1000000000);
+#else
     ev->RunAfter(std::bind(&Client::HandleTimeout, this), timeout*1000000);
-
+#endif
     for (size_t i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
     }
@@ -116,33 +119,32 @@ class Client {
   const std::string& Message() const { return message_; }
 
   void Print(const voyager::TcpConnectionPtr& ptr) {
-  
-    if (static_cast<size_t>(seq_.GetNext() + 1) == session_count_) {
-      for (std::list<Session*>::iterator it = sessions_.begin();
-           it != sessions_.end(); ++it) {
-        total_bytes_written += (*it)->BytesWritten();
-        total_bytes_read += (*it)->BytesRead();
-      }
+    if ( seq_.GetNext() < static_cast<int>(session_count_-1)) return; 
 
-      using namespace voyager;
-      VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
-      VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
-      VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / 
-                               static_cast<double>(timeout_ * 1024 * 1024)
-                        << " MiB/s throughtput";
-
-      std::fstream file;
-      file.open("test.txt", std::ofstream::out | std::ofstream::app);
-      file << "Bufsize: " << block_size_ << " Threads: " << thread_count_
-           << " Sessions: " << sessions_.size() << "\n";
-      file << total_bytes_written << " total bytes written\n";
-      file << total_bytes_read << " total bytes read\n";
-      file << static_cast<double>(total_bytes_read) / 
-                  static_cast<double>(timeout_ * 1024 * 1024) 
-           << " MiB/s throughtput\n\n\n";
-      file.close();
-      base_ev_->Exit();
+    for (std::vector<Session*>::iterator it = sessions_.begin();
+         it != sessions_.end(); ++it) {
+      total_bytes_written += (*it)->BytesWritten();
+      total_bytes_read += (*it)->BytesRead();
     }
+
+    using namespace voyager;
+    VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
+    VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
+    VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / 
+                             static_cast<double>(timeout_ * 1024 * 1024)
+                      << " MiB/s throughtput";
+
+    std::fstream file;
+    file.open("test.txt", std::ofstream::out | std::ofstream::app);
+    file << "Bufsize: " << block_size_ << " Threads: " << thread_count_
+         << " Sessions: " << sessions_.size() << "\n";
+    file << total_bytes_written << " total bytes written\n";
+    file << total_bytes_read << " total bytes read\n";
+    file << static_cast<double>(total_bytes_read) / 
+                static_cast<double>(timeout_ * 1024 * 1024) 
+         << " MiB/s throughtput\n\n\n";
+    file.close();
+    base_ev_->Exit();
   }
 
   void HandleTimeout() {
@@ -159,11 +161,13 @@ class Client {
   size_t total_bytes_written;
   size_t total_bytes_read;
   uint64_t timeout_;
-  std::list<Session*> sessions_;
-  std::string message_;
   voyager::port::SequenceNumber seq_;
-
-  // No copy allow
+  std::vector<Session*> sessions_;
+  std::string message_;
+#ifdef __linux__
+  scoped_ptr<NewTimer> timer_;
+#endif
+  // No copying allow
   Client(const Client&);
   void operator=(const Client&);
 };
