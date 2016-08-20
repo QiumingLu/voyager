@@ -55,8 +55,8 @@ void TcpClient::NewConnection(int socketfd) {
   ev_->AssertInMyLoop();
   char ipbuf[64];
   SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
-  std::string conn_name = StringPrintf("%s-%s#%s", ipbuf,
-                          server_ipbuf_.c_str(), name_.c_str());
+  std::string conn_name = 
+      StringPrintf("%s-%s#%s", server_ipbuf_.c_str(), ipbuf, name_.c_str());
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
   
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));

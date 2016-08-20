@@ -103,7 +103,7 @@ void TcpConnection::HandleRead() {
     HandleClose();
   } else {
     if (errno == EPIPE || errno == ECONNRESET) {
-      dispatch_->DisableAll();
+      HandleClose();
     }
     if (errno != EWOULDBLOCK || errno != EAGAIN) {
       VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
@@ -118,7 +118,7 @@ void TcpConnection::HandleWrite() {
     ssize_t n = ::write(dispatch_->Fd(), 
                         writebuf_.Peek(), 
                         writebuf_.ReadableSize());
-    if (n > 0) {
+    if (n >= 0) {
       writebuf_.Retrieve(static_cast<size_t>(n));
       if (writebuf_.ReadableSize() == 0) {
         dispatch_->DisableWrite();
@@ -131,7 +131,7 @@ void TcpConnection::HandleWrite() {
       }
     } else {
       if (errno == EPIPE || errno == ECONNRESET) {
-        dispatch_->DisableAll();
+        HandleClose();
       }
       if (errno != EWOULDBLOCK || errno != EAGAIN) {
         VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
@@ -235,12 +235,13 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
       }
     } else {
       nwrote = 0;
+      if (errno == EPIPE || errno == ECONNRESET) {
+        HandleClose();
+        fault = true;
+      }
       if (errno != EWOULDBLOCK || errno != EAGAIN) {
         VOYAGER_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - write: " << strerror(errno);
-        if (errno == EPIPE || errno == ECONNRESET) {
-          fault = true;
-        }
       }
     }
   }
@@ -251,6 +252,8 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     if (!dispatch_->IsWriting()) {
       dispatch_->EnableWrite();
     }
+  } else if (dispatch_->IsWriting()) {
+    dispatch_->DisableWrite();
   }
 }
 
