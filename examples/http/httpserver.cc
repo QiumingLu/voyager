@@ -24,20 +24,12 @@ void HttpServer::Start() {
 }
 
 void HttpServer::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  ptr->SetContext(voyager::any(new Request()));
-  ptr->SetCloseCallback(std::bind(&HttpServer::DisConnectCallback,
-                        this, 
-                        std::placeholders::_1));
-}
-
-void HttpServer::DisConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  Request *request = ptr->MutableContext()->cast<Request *>();
-  if (request) delete request;
+  ptr->SetUserData(std::shared_ptr<Request>(new Request()));
 }
 
 void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
                                   voyager::Buffer* buf) {
-  Request* request = ptr->MutableContext()->cast<Request *>();
+  Request* request(reinterpret_cast<Request*>(ptr->UserData().get()));
 
   if (!ProcessRequest(buf, request)) {
     std::string s("HTTP/1.1 400 Bad Request\r\n\r\n");
@@ -46,7 +38,6 @@ void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
   } 
   
   if (request->state() == 2) {
-    /*
     VOYAGER_LOG(WARN) << request->MethodToString() << " "
                       << request->path() << request->query_string()
                       << " " << request->VersionToString();
@@ -54,7 +45,6 @@ void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
     for (it = request->headers().begin(); it != request->headers().end(); ++it) {
       VOYAGER_LOG(WARN) << it->first << ":" << it->second;
     }
-    */
   
     std::string s = request->GetHeader("Connection");
     char* tmp = &*(s.begin());

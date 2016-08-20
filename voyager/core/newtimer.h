@@ -28,7 +28,6 @@ class NewTimer {
 
   const int timerfd_;
   bool repeat_;
-  bool set_time_;
   EventLoop* eventloop_;
   Dispatch dispatch_;
 

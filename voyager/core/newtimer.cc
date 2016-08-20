@@ -17,7 +17,6 @@ namespace voyager {
 NewTimer::NewTimer(EventLoop* ev, const TimerProcCallback& cb)
     : timerfd_(::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC)),
       repeat_(false),
-      set_time_(false),
       eventloop_(CHECK_NOTNULL(ev)),
       dispatch_(ev, timerfd_),
       timerproc_cb_(cb) {
@@ -32,7 +31,6 @@ NewTimer::NewTimer(EventLoop* ev, const TimerProcCallback& cb)
 NewTimer::NewTimer(EventLoop* ev, TimerProcCallback&& cb)
     : timerfd_(::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC)),
       repeat_(false),
-      set_time_(false),
       eventloop_(CHECK_NOTNULL(ev)),
       dispatch_(ev, timerfd_),
       timerproc_cb_(std::move(cb)) {

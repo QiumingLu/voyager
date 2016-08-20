@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include "voyager/core/tcp_connection.h"
+#include "voyager/port/atomic_sequence_num.h"
 
 namespace voyager {
 
@@ -57,6 +58,7 @@ class TcpClient {
   EventLoop* ev_;
   ConnectorPtr connector_ptr_;
   std::atomic<bool> connect_;
+  static port::SequenceNumber conn_id_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

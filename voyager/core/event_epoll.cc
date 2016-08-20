@@ -30,15 +30,14 @@ void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
                           &*epollfds_.begin(), 
                           static_cast<int>(epollfds_.size()),
                           timeout);
-  int err = errno;
   if (nfds == -1) {
-    if (err != EINTR) {
-      VOYAGER_LOG(ERROR) << "epoll_wait: " << strerror(err);
+    if (errno != EINTR) {
+      VOYAGER_LOG(ERROR) << "epoll_wait: " << strerror(errno);
     }
     return;
   }
   for (int i = 0; i < nfds; ++i) {
-    Dispatch* dis = static_cast<Dispatch*>(epollfds_[i].data.ptr);
+    Dispatch* dis = reinterpret_cast<Dispatch*>(epollfds_[i].data.ptr);
     dis->SetRevents(epollfds_[i].events);
     dispatches->push_back(dis);
   }
@@ -77,8 +76,8 @@ void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
     dispatch->set_index(kAdded);
     EpollCTL(EPOLL_CTL_ADD, dispatch);
   } else {
-    assert(dispatch_map_.find(fd)  != dispatch_map_.end());
-    assert(dispatch_map_[fd] = dispatch);
+    assert(dispatch_map_.find(fd) != dispatch_map_.end());
+    assert(dispatch_map_[fd] == dispatch);
     assert(idx == kAdded);
     if (dispatch->IsNoneEvent()) {
       EpollCTL(EPOLL_CTL_DEL, dispatch);

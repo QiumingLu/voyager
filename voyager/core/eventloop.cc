@@ -123,9 +123,9 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  this->QueueInLoop([this]() { 
-      this->exit_ = true;
-      port::Singleton<OnlineConnections>::Instance().Erase(this);
+  QueueInLoop([this]() { 
+    this->exit_ = true;
+    port::Singleton<OnlineConnections>::Instance().Erase(this);
   });
 }
 

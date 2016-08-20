@@ -6,7 +6,6 @@
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
 
-
 namespace voyager {
 
 EventPoll::EventPoll(EventLoop* ev) : EventPoller(ev) {
@@ -18,10 +17,9 @@ EventPoll::~EventPoll() {
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
   int ret = ::poll(&(*pollfds_.begin()), 
                    static_cast<nfds_t>(pollfds_.size()), timeout);
-  int err = errno;
   if (ret == -1) {
-    if (err != EINTR) {
-      VOYAGER_LOG(ERROR) << "poll: " << strerror(err);
+    if (errno != EINTR) {
+      VOYAGER_LOG(ERROR) << "poll: " << strerror(errno);
     }
     return;
   }
@@ -75,7 +73,6 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     pollfds_.push_back(p);
     dispatch->set_index(static_cast<int>(pollfds_.size()) - 1);
     dispatch_map_[p.fd] = dispatch;
-    // std::unordered_map<int, Dispatch*>::iterator iter = dispatch_map_.find(p.fd);
   } else {
     assert(dispatch_map_.find(dispatch->Fd()) != dispatch_map_.end());
     assert(dispatch_map_[dispatch->Fd()] == dispatch);

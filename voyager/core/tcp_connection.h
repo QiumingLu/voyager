@@ -1,11 +1,12 @@
 #ifndef VOYAGER_CORE_TCP_CONNECTION_H_
 #define VOYAGER_CORE_TCP_CONNECTION_H_
 
+#include <atomic>
+
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/base_socket.h"
 #include "voyager/util/scoped_ptr.h"
-#include "voyager/util/any.h"
 
 namespace voyager {
 
@@ -45,7 +46,10 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
 
   EventLoop* OwnerLoop() const { return eventloop_; }
-  const std::string& name() const { return name_; }
+  std::string name() const { return name_; }
+
+  void SetUserData(const std::shared_ptr<void>& data) { user_data_ = data; }
+  std::shared_ptr<void> UserData() { return user_data_; }
 
   void StartRead();
   void StopRead();
@@ -65,18 +69,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   // 默认为ture
   void SetTcpNoDelay(bool on) { socket_.SetTcpNoDelay(on); }
-
-  void SetContext(const any& context) {
-    context_ = context;
-  }
-
-  const any& Context() const {
-    return context_;
-  }
-
-  any* MutableContext() {
-    return &context_;
-  }
 
   // Internal use only, use in TcpClient and TcpServer.
   void StartWorking();
@@ -99,13 +91,13 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   const std::string name_;
   EventLoop* eventloop_;
   BaseSocket socket_;
-  ConnectState state_;
+  std::atomic<ConnectState> state_;
   scoped_ptr<Dispatch> dispatch_;
 
   Buffer readbuf_;
   Buffer writebuf_;
 
-  any context_;
+  std::shared_ptr<void> user_data_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

@@ -69,8 +69,8 @@ void TcpConnection::StopRead() {
 }
 
 void TcpConnection::ShutDown() {
-  if (state_ == kConnected) {
-    state_ = kDisconnecting;
+  ConnectState expected = kConnected;
+  if (state_.compare_exchange_weak(expected, kDisconnecting)) {
     TcpConnectionPtr ptr(shared_from_this());
     eventloop_->RunInLoop([ptr]() {
       if (!ptr->dispatch_->IsWriting()) {
@@ -81,8 +81,9 @@ void TcpConnection::ShutDown() {
 }
 
 void TcpConnection::ForceClose() {
-  if (state_ == kConnected || state_ == kDisconnecting) {
-    state_ = kDisconnecting;
+  ConnectState expected = kConnected;
+  if (state_.compare_exchange_weak(expected, kDisconnecting) || 
+      state_ == kDisconnecting) {
     TcpConnectionPtr ptr(shared_from_this());
     eventloop_->QueueInLoop([ptr]() {
       if (ptr->state_ == kConnected || ptr->state_ == kDisconnecting) {
