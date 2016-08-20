@@ -105,8 +105,10 @@ void TcpConnection::HandleRead() {
     if (errno == EPIPE || errno == ECONNRESET) {
       dispatch_->DisableAll();
     }
-    VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
-                       <<"] - readv: " << strerror(errno);
+    if (errno != EWOULDBLOCK || errno != EAGAIN) {
+      VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
+                         <<"] - readv: " << strerror(errno);
+    }
   }
 }
 
@@ -131,8 +133,10 @@ void TcpConnection::HandleWrite() {
       if (errno == EPIPE || errno == ECONNRESET) {
         dispatch_->DisableAll();
       }
-      VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
-                         << "] - write: " << strerror(errno);
+      if (errno != EWOULDBLOCK || errno != EAGAIN) {
+        VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
+                           << "] - write: " << strerror(errno);
+      }
     }
   } else {
     VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ 
@@ -231,7 +235,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
       }
     } else {
       nwrote = 0;
-      if (errno != EWOULDBLOCK) {
+      if (errno != EWOULDBLOCK || errno != EAGAIN) {
         VOYAGER_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - write: " << strerror(errno);
         if (errno == EPIPE || errno == ECONNRESET) {

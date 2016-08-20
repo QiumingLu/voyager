@@ -112,9 +112,9 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   }
 
   if (::kevent(kq_, ev, n, NULL, 0, NULL) == -1) {
-    dispatch_map_[fd] = dispatch;
+    VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
   }
-  VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+  dispatch_map_[fd] = dispatch;
 }
 
 }  // namespace voyager
