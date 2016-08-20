@@ -102,6 +102,9 @@ void TcpConnection::HandleRead() {
   } else if (n == 0) {
     HandleClose();
   } else {
+    if (errno == EPIPE || errno == ECONNRESET) {
+      dispatch_->DisableAll();
+    }
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
                        <<"] - readv: " << strerror(errno);
   }
@@ -125,6 +128,9 @@ void TcpConnection::HandleWrite() {
         }
       }
     } else {
+      if (errno == EPIPE || errno == ECONNRESET) {
+        dispatch_->DisableAll();
+      }
       VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
                          << "] - write: " << strerror(errno);
     }

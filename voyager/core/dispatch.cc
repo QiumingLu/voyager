@@ -44,13 +44,11 @@ void Dispatch::DisableRead() {
 }
 
 void Dispatch::DisableWrite() {
-  events_ &= ~kWriteEvent;
   if (add_write_) {
+    events_ &= ~kWriteEvent;
     modify_ = kDisableWrite;
-  } else {
-    modify_ = kNoModify;
+    UpdateEvents();
   }
-  UpdateEvents();
 }
 
 void Dispatch::DisableAll() {
@@ -62,6 +60,7 @@ void Dispatch::DisableAll() {
     modify_ = kDeleteWrite;
   } else {
     modify_ = kNoModify;
+    return;
   }
   events_ = kNoneEvent;
   UpdateEvents();

@@ -70,54 +70,51 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   struct kevent ev[2];
   int n = 0;
   switch(modify) {
-    case kAddRead:
+    case Dispatch::kAddRead:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kAddWrite:
+    case Dispatch::kAddWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDeleteRead:
+    case Dispatch::kDeleteRead:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDeleteWrite:
+    case Dispatch::kDeleteWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kEnableWrite:
+    case Dispatch::kEnableWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_ENABLE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDisableWrite:
+    case Dispatch::kDisableWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DISABLE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDeleteAll:
+    case Dispatch::kDeleteAll:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kNoModify:
+    case Dispatch::kNoModify:
       break;
   }
 
-  if (n && ::kevent(kq_, ev, n, NULL, 0, NULL)) {
+  if (::kevent(kq_, ev, n, NULL, 0, NULL) == -1) {
     dispatch_map_[fd] = dispatch;
-  } else if (n) {
-    VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
-  } else {
-    VOYAGER_LOG(ERROR) << "Dispatch::DisableWrite()|DisableAll() nothing done";
   }
+  VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
 }
 
 }  // namespace voyager
