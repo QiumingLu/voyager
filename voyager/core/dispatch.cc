@@ -10,7 +10,8 @@ Dispatch::Dispatch(EventLoop* eventloop, int fd)
       events_(0),
       revents_(0),
       index_(-1),
-      change_(0),
+      modify_(kNoModify),
+      add_write_(false),
       tied_(false),
       event_handling_(false) {
 }
@@ -21,35 +22,46 @@ Dispatch::~Dispatch() {
 
 void Dispatch::EnableRead() {
   events_ |= kReadEvent;
-  change_ = kEnableRead;
+  modify_ = kAddRead;
   UpdateEvents();
 }
 
 void Dispatch::EnableWrite() {
   events_ |= kWriteEvent;
-  change_ = kEnableWrite;
+  if (add_write_) {
+    modify_ = kEnableWrite;
+  } else {
+    modify_ = kAddWrite;
+    add_write_ = true;
+  }
   UpdateEvents();
 }
 
 void Dispatch::DisableRead() {
   events_ &= ~kReadEvent;
-  change_ = kDisableRead;
+  modify_ = kDeleteRead;
   UpdateEvents();
 }
 
 void Dispatch::DisableWrite() {
   events_ &= ~kWriteEvent;
-  change_ = kDisableWrite;
+  if (add_write_) {
+    modify_ = kDisableWrite;
+  } else {
+    modify_ = kNoModify;
+  }
   UpdateEvents();
 }
 
 void Dispatch::DisableAll() {
-  if (IsReading() && IsWriting()) { 
-    change_ = kDisableAll;
+  if (IsReading() && add_write_) { 
+    modify_ = kDeleteAll;
   } else if (IsReading()) {
-    change_ = kDisableRead;
-  } else if (IsWriting()) {
-    change_ = kDisableWrite;
+    modify_ = kDeleteRead;
+  } else if (add_write_) {
+    modify_ = kDeleteWrite;
+  } else {
+    modify_ = kNoModify;
   }
   events_ = kNoneEvent;
   UpdateEvents();

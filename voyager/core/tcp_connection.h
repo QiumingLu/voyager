@@ -1,8 +1,6 @@
 #ifndef VOYAGER_CORE_TCP_CONNECTION_H_
 #define VOYAGER_CORE_TCP_CONNECTION_H_
 
-#include <string>
-
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/base_socket.h"

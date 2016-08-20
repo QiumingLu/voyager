@@ -65,43 +65,59 @@ void EventKqueue::RemoveDispatch(Dispatch* dispatch) {
 void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
-  int change = dispatch->ChangeEvent();
+  int modify = dispatch->Modify();
   
   struct kevent ev[2];
   int n = 0;
-  switch(change) {
-    case kEnableRead:
+  switch(modify) {
+    case kAddRead:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kEnableWrite:
+    case kAddWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDisableRead:
+    case kDeleteRead:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDisableWrite:
+    case kDeleteWrite:
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
-    case kDisableAll:
+    case kEnableWrite:
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_ENABLE, 0, 0,
+             reinterpret_cast<void*>(dispatch));
+      break;
+
+    case kDisableWrite:
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DISABLE, 0, 0,
+             reinterpret_cast<void*>(dispatch));
+      break;
+
+    case kDeleteAll:
       EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0, 
              reinterpret_cast<void*>(dispatch));
       break;
+
+    case kNoModify:
+      break;
   }
 
-  if (::kevent(kq_, ev, n, NULL, 0, NULL) == -1) {
+  if (n && ::kevent(kq_, ev, n, NULL, 0, NULL)) {
+    dispatch_map_[fd] = dispatch;
+  } else if (n) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
+  } else {
+    VOYAGER_LOG(ERROR) << "Dispatch::DisableWrite()|DisableAll() nothing done";
   }
-  dispatch_map_[fd] = dispatch;
 }
 
 }  // namespace voyager

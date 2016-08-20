@@ -9,19 +9,20 @@ namespace voyager {
 
 class EventLoop;
 
-namespace {
-
-static const int kEnableRead = 0x0001;
-static const int kEnableWrite = 0x0002;
-static const int kDisableRead = 0x0004;
-static const int kDisableWrite = 0x0008;
-static const int kDisableAll = 0x0010;
-
-}
-
 class Dispatch {
  public:
   typedef std::function<void()> EventCallback;
+  
+  enum ModifyEvent {
+    kNoModify = 0,
+    kAddRead = 1,
+    kAddWrite = 2,
+    kDeleteRead = 3,
+    kDeleteWrite = 4,
+    kEnableWrite = 5,
+    kDisableWrite = 6,
+    kDeleteAll = 7,
+  };
 
   Dispatch(EventLoop* eventloop, int fd);
   ~Dispatch();
@@ -62,7 +63,7 @@ class Dispatch {
   void Tie(const std::shared_ptr<void>& obj);
 
 
-  int ChangeEvent() const { return change_; }
+  int Modify() const { return modify_; }
 
  private:
   void UpdateEvents();
@@ -77,7 +78,8 @@ class Dispatch {
   int events_;
   int revents_;
   int index_;
-  int change_;
+  ModifyEvent modify_;
+  bool add_write_;
 
   std::weak_ptr<void> tie_;
   bool tied_;

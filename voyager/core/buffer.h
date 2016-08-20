@@ -16,7 +16,7 @@ class Buffer {
  public:
   Buffer(size_t init_size = kInitBufferSize);
   
-  ssize_t ReadV(int socketfd, int& err);
+  ssize_t ReadV(int socketfd);
 
   size_t ReadableSize() const { return write_index_ - read_index_; }
   size_t WritableSize() const { return buf_.size() - write_index_; }

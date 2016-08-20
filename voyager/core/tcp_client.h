@@ -1,6 +1,7 @@
 #ifndef VOYAGER_CORE_TCP_CLIENT_H_
 #define VOYAGER_CORE_TCP_CLIENT_H_
 
+#include <atomic>
 #include "voyager/core/tcp_connection.h"
 
 namespace voyager {
@@ -55,6 +56,7 @@ class TcpClient {
   std::string server_ipbuf_;
   EventLoop* ev_;
   ConnectorPtr connector_ptr_;
+  std::atomic<bool> connect_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

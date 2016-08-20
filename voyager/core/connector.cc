@@ -133,8 +133,9 @@ void Connector::ConnectCallback() {
         socket_->SetNoAutoCloseFd();
         newconnection_cb_(socket_->SocketFd());
       }
+     
+      socket_.reset();
     }
-    socket_.reset();
   }
 }
 

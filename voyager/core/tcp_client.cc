@@ -13,7 +13,8 @@ TcpClient::TcpClient(EventLoop* ev,
     : name_(name),
       server_ipbuf_(addr.Ipbuf()),
       ev_(CHECK_NOTNULL(ev)),
-      connector_ptr_(new Connector(ev, addr)) {
+      connector_ptr_(new Connector(ev, addr)),
+      connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
@@ -24,16 +25,29 @@ TcpClient::~TcpClient() {
 }
 
 void TcpClient::Connect() {
-  VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " 
-                    << server_ipbuf_;
-  connector_ptr_->Start();
+  // 表示已经经过连接建立和连接断开的过程
+  TcpConnectionPtr ptr = weak_ptr_.lock();
+  if (!ptr && connect_) {
+    connect_ = false;
+  }
+  if (!connect_) {
+    VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " 
+                      << server_ipbuf_;
+    connector_ptr_->Start();
+    connect_ = true;
+  }
 }
 
 void TcpClient::Close() {
-  connector_ptr_->Stop();
-  TcpConnectionPtr ptr = weak_ptr_.lock();
-  if (ptr) {
-    ptr->ShutDown();
+  //（1) 连接未成功
+  //（2）连接成功但未断开
+  if (connect_) {
+    connector_ptr_->Stop();
+    TcpConnectionPtr ptr = weak_ptr_.lock();
+    if (ptr) {
+      ptr->ShutDown();
+    }
+    connect_ = false;
   }
 }
 
@@ -47,9 +61,9 @@ void TcpClient::NewConnection(int socketfd) {
   
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
   ptr->SetConnectionCallback(connection_cb_);
-  ptr->SetCloseCallback(close_cb_);
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
+  ptr->SetCloseCallback(close_cb_);
   ev_->RunInLoop([ptr]() {
       ptr->StartWorking();
   });

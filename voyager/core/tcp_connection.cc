@@ -94,8 +94,7 @@ void TcpConnection::ForceClose() {
 
 void TcpConnection::HandleRead() {
   eventloop_->AssertInMyLoop();
-  int err;
-  ssize_t n = readbuf_.ReadV(dispatch_->Fd(), err);
+  ssize_t n = readbuf_.ReadV(dispatch_->Fd());
   if (n > 0) {
     if (message_cb_) {
       message_cb_(shared_from_this(), &readbuf_);
@@ -103,7 +102,6 @@ void TcpConnection::HandleRead() {
   } else if (n == 0) {
     HandleClose();
   } else {
-    errno = err;
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
                        <<"] - readv: " << strerror(errno);
   }
@@ -115,14 +113,12 @@ void TcpConnection::HandleWrite() {
     ssize_t n = ::write(dispatch_->Fd(), 
                         writebuf_.Peek(), 
                         writebuf_.ReadableSize());
-    int err = errno;
     if (n > 0) {
       writebuf_.Retrieve(static_cast<size_t>(n));
       if (writebuf_.ReadableSize() == 0) {
         dispatch_->DisableWrite();
         if (writecomplete_cb_) {
-          eventloop_->QueueInLoop(
-              std::bind(writecomplete_cb_, shared_from_this()));
+          writecomplete_cb_(shared_from_this());
         }
         if (state_ == kDisconnecting) {
           HandleClose();
@@ -130,7 +126,7 @@ void TcpConnection::HandleWrite() {
       }
     } else {
       VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
-                         << "] - write: " << strerror(err);
+                         << "] - write: " << strerror(errno);
     }
   } else {
     VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ 
@@ -142,15 +138,16 @@ void TcpConnection::HandleWrite() {
 void TcpConnection::HandleClose() {
   eventloop_->AssertInMyLoop();
   assert(state_ == kConnected || state_ == kDisconnecting);
-  TcpConnectionPtr guard(shared_from_this());
   state_ = kDisconnected;
   dispatch_->DisableAll();
-  if (close_cb_) {
-    close_cb_(guard);
-  }
   dispatch_->RemoveEvents();
   
-  port::Singleton<OnlineConnections>::Instance().EraseCnnection(guard);
+  port::Singleton<OnlineConnections>::Instance().EraseCnnection(
+      shared_from_this());
+ 
+  if (close_cb_) {
+    close_cb_(shared_from_this());
+  }
 }
 
 void TcpConnection::HandleError() {
@@ -166,8 +163,10 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(&*message.begin(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, this, &*message.begin(), message.size())); 
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop([ptr, message]() {
+          ptr->SendInLoop(&*message.begin(), message.size());
+      });
     }
   }
 }
@@ -177,9 +176,12 @@ void TcpConnection::SendMessage(const Slice& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      std::string s(message.ToString());
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+      std::string *s = new std::string(message.data(), message.size());
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(&*s->begin(), s->size());
+        delete s;
+      });
     }
   }
 }
@@ -191,9 +193,13 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      std::string s(message->RetrieveAllAsString());
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::SendInLoop, this, &*s.begin(), s.size()));
+      std::string *s = new std::string(message->Peek(), message->ReadableSize());
+      message->RetrieveAll();
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(&*s->begin(), s->size());
+        delete s;
+      });
     }
   }
 }
@@ -212,16 +218,13 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
 
   if (!dispatch_->IsWriting() && writebuf_.ReadableSize() == 0) {
     nwrote = ::write(dispatch_->Fd(), data, size);
-    int err = errno;
     if (nwrote >= 0) {
       remaining = size - static_cast<size_t>(nwrote);
       if (remaining == 0 && writecomplete_cb_) {
-        eventloop_->QueueInLoop(
-            std::bind(writecomplete_cb_, shared_from_this()));
+        writecomplete_cb_(shared_from_this());
       }
     } else {
       nwrote = 0;
-      errno = err;
       if (errno != EWOULDBLOCK) {
         VOYAGER_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
                            << "] - write: " << strerror(errno);

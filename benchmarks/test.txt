@@ -1,54 +1,126 @@
+Bufsize: 16384 Threads: 1 Sessions: 1
+72475541504 total bytes written
+72475541504 total bytes read
+691.181 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 2 Sessions: 1
+60547694592 total bytes written
+60547694592 total bytes read
+577.428 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 3 Sessions: 1
+62167498752 total bytes written
+62167498752 total bytes read
+592.875 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 4 Sessions: 1
+70263767040 total bytes written
+70263767040 total bytes read
+670.087 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 1 Sessions: 10
+195178889216 total bytes written
+195178889216 total bytes read
+1861.37 MiB/s throughtput
+
+
 Bufsize: 16384 Threads: 2 Sessions: 10
-162429009920 total bytes written
-162429009920 total bytes read
-1549.04 MiB/s throughtput
+127756566528 total bytes written
+127756566528 total bytes read
+1218.38 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 3 Sessions: 10
-189606379520 total bytes written
-189606379520 total bytes read
-1808.23 MiB/s throughtput
+155105312768 total bytes written
+155105312768 total bytes read
+1479.2 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 4 Sessions: 10
-158096195584 total bytes written
-158096195584 total bytes read
-1507.72 MiB/s throughtput
+145171021824 total bytes written
+145171021824 total bytes read
+1384.46 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 1 Sessions: 100
+120287215616 total bytes written
+120287215616 total bytes read
+1147.15 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 2 Sessions: 100
-116725579776 total bytes written
-116725579776 total bytes read
-1113.18 MiB/s throughtput
+100002611200 total bytes written
+100002611200 total bytes read
+953.699 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 3 Sessions: 100
-132156342272 total bytes written
-132156342272 total bytes read
-1260.34 MiB/s throughtput
+119010689024 total bytes written
+119010689024 total bytes read
+1134.97 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 4 Sessions: 100
-145649188864 total bytes written
-145649188864 total bytes read
-1389.02 MiB/s throughtput
+139205246976 total bytes written
+139205246976 total bytes read
+1327.56 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 1 Sessions: 1000
+145606197248 total bytes written
+145606197248 total bytes read
+1388.61 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 2 Sessions: 1000
-123176583168 total bytes written
-123176583168 total bytes read
-1174.7 MiB/s throughtput
+122650640384 total bytes written
+122650640384 total bytes read
+1169.69 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 3 Sessions: 1000
-137817309184 total bytes written
-137817309184 total bytes read
-1314.33 MiB/s throughtput
+136913747968 total bytes written
+136913747968 total bytes read
+1305.71 MiB/s throughtput
 
 
 Bufsize: 16384 Threads: 4 Sessions: 1000
-113021517448 total bytes written
-113021517448 total bytes read
-1077.86 MiB/s throughtput
+136385159208 total bytes written
+136385159208 total bytes read
+1300.67 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 1 Sessions: 10000
+127617466368 total bytes written
+127617466368 total bytes read
+1217.06 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 2 Sessions: 10000
+95193415680 total bytes written
+95193415680 total bytes read
+907.835 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 3 Sessions: 10000
+101717883560 total bytes written
+101717883560 total bytes read
+970.057 MiB/s throughtput
+
+
+Bufsize: 16384 Threads: 4 Sessions: 10000
+96421260392 total bytes written
+96421260392 total bytes read
+919.545 MiB/s throughtput
+
+
+Bufsize: 1024 Threads: 2 Sessions: 20
+20480 total bytes written
+20480 total bytes read
+0.000651042 MiB/s throughtput
 
 
