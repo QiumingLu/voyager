@@ -4,11 +4,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
 
 namespace voyager {
-
-class Dispatch;
 
 class EventPoller {
  public:
@@ -21,7 +20,9 @@ class EventPoller {
   virtual bool HasDispatch(Dispatch* dispatch) const;
 
  protected:
-  std::unordered_map<int, Dispatch*> dispatch_map_;
+  typedef std::unordered_map<int, Dispatch*> DispatchMap;
+
+  DispatchMap dispatch_map_;
   EventLoop* eventloop_;
 
   // No copying allow

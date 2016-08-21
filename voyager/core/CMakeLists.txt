@@ -21,7 +21,7 @@ set(core_SRCS
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
   list(APPEND core_SRCS "event_epoll.cc" "newtimer.cc")
-elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+else()
   list(APPEND core_SRCS "event_kqueue.cc")
 endif()
 
@@ -39,6 +39,8 @@ set(HEADERS
   client_socket.h
   dispatch.h
   eventloop.h
+  event_poll.h
+  event_select.h
   schedule.h
   server_socket.h
   sockaddr.h
@@ -49,7 +51,9 @@ set(HEADERS
   )
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
-  list(APPEND HEADERS "newtimer.h")
+  list(APPEND HEADERS "event_epoll.h" "newtimer.h")
+else()
+  list(APPEND core_SRCS "event_kqueue.h")
 endif()
 
 install(FILES ${HEADERS} DESTINATION include/voyager/core)

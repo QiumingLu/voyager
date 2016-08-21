@@ -2,7 +2,6 @@
 
 #include <utility>
 #include <string.h>
-#include <unistd.h>
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
 

@@ -4,7 +4,7 @@ killall server
 timeout=100
 bufsize=16384
 
-for nosessions in 1 10 100 1000 10000; do
+for nosessions in 10 100 1000 10000; do
   for nothreads in 1 2 3 4; do
     sleep 5
     echo "Bufsize: $bufsize Threads: $nothreads Sessions: $nosessions"

@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <vector>
+#include <unistd.h>
 
 #include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"

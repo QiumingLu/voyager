@@ -1,10 +1,10 @@
 #include "voyager/core/eventloop.h"
 
 #include <signal.h>
-#include <unistd.h>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/core/event_poll.h"
+#include "voyager/core/event_select.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"

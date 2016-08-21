@@ -1,9 +1,6 @@
 #ifndef VOYAGER_CORE_EVENT_POLL_H_
 #define VOYAGER_CORE_EVENT_POLL_H_
 
-#include <vector>
-#include <sys/poll.h>
-
 #include "voyager/core/event_poller.h"
 
 namespace voyager {
