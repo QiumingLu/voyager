@@ -174,9 +174,11 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(&*message.begin(), message.size());
     } else {
+      std::string *s = new std::string(std::move(message));
       TcpConnectionPtr ptr(shared_from_this());
-      eventloop_->RunInLoop([ptr, message]() {
-          ptr->SendInLoop(&*message.begin(), message.size());
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(&*s->begin(), s->size());
+        delete s;
       });
     }
   }
@@ -247,8 +249,10 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
     }
   }
 
+  if (fault) { return; }
+
   assert(remaining <= size);
-  if (!fault && remaining > 0) {
+  if (remaining > 0) {
     writebuf_.Append(static_cast<const char*>(data)+nwrote, remaining);
     if (!dispatch_->IsWriting()) {
       dispatch_->EnableWrite();
