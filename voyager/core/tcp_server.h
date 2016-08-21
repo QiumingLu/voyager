@@ -8,7 +8,6 @@
 #include "voyager/core/callback.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/port/atomic_sequence_num.h"
-#include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 
@@ -61,8 +60,8 @@ class TcpServer {
   EventLoop* eventloop_;
   std::string ipbuf_;
   const std::string name_;
-  scoped_ptr<Acceptor> acceptor_ptr_;
-  scoped_ptr<Schedule> schedule_;
+  std::unique_ptr<Acceptor> acceptor_;
+  std::unique_ptr<Schedule> schedule_;
   port::SequenceNumber seq_;
   uint64_t conn_id_;
 

@@ -3,11 +3,12 @@
 
 #include <deque>
 #include <functional>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "voyager/port/mutex.h"
 #include "voyager/port/thread.h"
-#include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 namespace port {
@@ -36,11 +37,11 @@ class ThreadPool {
 
   mutable Mutex mutex_;
   Condition cond_;
-  int poolsize_;
-  std::string poolname_;
-  scoped_array<scoped_ptr<Thread> > threads_;
-  std::deque<Task> tasks_;
+  const int poolsize_;
   bool running_;
+  std::string poolname_;
+  std::vector<std::unique_ptr<Thread>> threads_;
+  std::deque<Task> tasks_;
 
   // No copying allow
   ThreadPool(const ThreadPool&);

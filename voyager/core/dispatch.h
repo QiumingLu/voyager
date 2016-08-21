@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <assert.h>
 #include <sys/poll.h>
 
 namespace voyager {

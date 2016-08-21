@@ -18,10 +18,10 @@ TcpServer::TcpServer(EventLoop* ev,
     : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
-      acceptor_ptr_(new Acceptor(eventloop_, addr, backlog)),
+      acceptor_(new Acceptor(eventloop_, addr, backlog)),
       schedule_(new Schedule(eventloop_, thread_size-1)),
       conn_id_(0) {
-  acceptor_ptr_->SetNewConnectionCallback(
+  acceptor_->SetNewConnectionCallback(
       std::bind(&TcpServer::NewConnection, this, _1, _2));
   VOYAGER_LOG(INFO) << "TcpServer::TcpServer [" << name_ << "] is running";
 }
@@ -33,9 +33,9 @@ TcpServer::~TcpServer() {
 void TcpServer::Start() {
   if (seq_.GetNext() == 0) {
     schedule_->Start();
-    assert(!acceptor_ptr_->IsListenning());
+    assert(!acceptor_->IsListenning());
     eventloop_->RunInLoop([this]() {
-        this->acceptor_ptr_->EnableListen();
+        this->acceptor_->EnableListen();
     });
   }
 }

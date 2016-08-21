@@ -2,6 +2,7 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/port/mutexlock.h"
 #include "voyager/util/logging.h"
+#include <assert.h>
 
 namespace voyager {
 

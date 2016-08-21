@@ -102,7 +102,7 @@ void Connector::Retry() {
 
     ConnectorPtr ptr(shared_from_this());
 #ifdef __linux__
-    if (!timer_.get()) {
+    if (!timer_) {
       timer_.reset(new NewTimer(ev_, [ptr]() { ptr->StartInLoop(); }));
     }
     timer_->SetTime(retry_time_ * 1000, 0);
@@ -160,7 +160,7 @@ std::string Connector::StateToString() const {
 }
 
 void Connector::ResetDispatch() {
-  if (dispatch_.get()) {
+  if (dispatch_) {
     dispatch_->DisableAll();
     dispatch_->RemoveEvents();
     ConnectorPtr ptr(shared_from_this());

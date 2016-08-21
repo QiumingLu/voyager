@@ -2,13 +2,13 @@
 #define VOYAGER_CORE_EVENTLOOP_H_
 
 #include <functional>
+#include <memory>
 #include <vector>
 #include <unistd.h>
 
 #include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"
 #include "voyager/port/mutexlock.h"
-#include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 
@@ -71,8 +71,8 @@ class EventLoop {
   bool run_;
 
   const uint64_t tid_;
-  scoped_ptr<EventPoller> poller_;
-  scoped_ptr<TimerList> timers_;
+  std::unique_ptr<EventPoller> poller_;
+  std::unique_ptr<TimerList> timers_;
 
   #ifdef __linux__
   int wakeup_fd_;
@@ -80,7 +80,7 @@ class EventLoop {
   int wakeup_fd_[2];
   #endif
 
-  scoped_ptr<Dispatch> wakeup_dispatch_;
+  std::unique_ptr<Dispatch> wakeup_dispatch_;
 
   port::Mutex mu_;
   std::vector<Func> funcs_;

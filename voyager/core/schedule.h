@@ -1,11 +1,11 @@
 #ifndef VOYAGER_CORE_SCHEDULE_H_
 #define VOYAGER_CORE_SCHEDULE_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "voyager/core/bg_eventloop.h"
-#include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 
@@ -30,7 +30,7 @@ class Schedule {
   bool started_;
   double percent_;  // For Load Balance
   
-  scoped_array<scoped_ptr<BGEventLoop> > loops_;
+  std::vector<std::unique_ptr<BGEventLoop>> loops_;
   std::vector<EventLoop*> ptrs_;
 
   // No copying allow

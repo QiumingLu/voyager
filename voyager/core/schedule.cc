@@ -9,8 +9,7 @@ Schedule::Schedule(EventLoop* ev, int size)
     : baseloop_(CHECK_NOTNULL(ev)),
       size_(size),
       next_(0), 
-      started_(false),
-      loops_(new scoped_ptr<BGEventLoop>[size]) {
+      started_(false) {
   if (size_ == 1) {
     percent_ = 2.0;
   } else if (size_ == 2) {
@@ -27,9 +26,9 @@ void Schedule::Start() {
   baseloop_->AssertInMyLoop();
   started_ = true;
   for (size_t i = 0; i < size_; ++i) {
-    BGEventLoop* loop = new BGEventLoop();
-    loops_[i].reset(loop);
+    std::unique_ptr<BGEventLoop> loop(new BGEventLoop());
     ptrs_.push_back(loop->Loop());
+    loops_.push_back(std::move(loop));
   }
 }
 

@@ -9,7 +9,6 @@
 #include "voyager/core/client_socket.h"
 #include "voyager/core/dispatch.h"
 #include "voyager/core/sockaddr.h"
-#include "voyager/util/scoped_ptr.h"
 #include "voyager/util/timeops.h"
 #ifdef __linux__
 #include "voyager/core/newtimer.h"
@@ -61,12 +60,12 @@ class Connector : public std::enable_shared_from_this<Connector> {
   ConnectState state_;
   uint64_t retry_time_;
   bool connect_;
-  scoped_ptr<Dispatch> dispatch_;
-  scoped_ptr<ClientSocket> socket_;
+  std::unique_ptr<Dispatch> dispatch_;
+  std::unique_ptr<ClientSocket> socket_;
   NewConnectionCallback newconnection_cb_;
 
 #ifdef __linux__
-  scoped_ptr<NewTimer> timer_;
+  std::unique_ptr<NewTimer> timer_;
 #endif
 
   // No copying allow
