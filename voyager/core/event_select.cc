@@ -71,6 +71,7 @@ void EventSelect::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch_map_[fd] == dispatch);
   assert(dispatch->IsNoneEvent());
   dispatch_map_.erase(fd);
+  dispatch->set_index(-1);
 }
 
 void EventSelect::UpdateDispatch(Dispatch* dispatch) {
@@ -112,8 +113,13 @@ void EventSelect::UpdateDispatch(Dispatch* dispatch) {
       break;
   }
 
-  dispatch_map_[fd] = dispatch;
-
+  if (dispatch->index() == -1) {
+    assert(dispatch_map_.find(fd) == dispatch_map_.end());
+    dispatch_map_[fd] = dispatch;
+    dispatch->set_index(0);
+  } else {
+    assert(dispatch_map_.find(fd) != dispatch_map_.end());
+  }
   
   if (dispatch->IsNoneEvent()) {
     if (worker_map_.find(fd) != worker_map_.end()) {
