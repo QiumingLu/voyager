@@ -9,9 +9,9 @@ namespace voyager {
 
 struct TimerList::Timer {
   Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
-      : micros_value(value), 
-        micros_interval(interval), 
-        timerproc_cb(cb), 
+      : micros_value(value),
+        micros_interval(interval),
+        timerproc_cb(cb),
         repeat(false) {
     if (micros_interval > 0) {
       repeat = true;
@@ -19,8 +19,8 @@ struct TimerList::Timer {
   }
 
   Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
-      : micros_value(value), 
-        micros_interval(interval), 
+      : micros_value(value),
+        micros_interval(interval),
         timerproc_cb(std::move(cb)),
         repeat(false) {
     if (micros_interval > 0) {
@@ -28,7 +28,7 @@ struct TimerList::Timer {
     }
   }
 
-private:
+ private:
   friend class TimerList;
 
   uint64_t micros_value;
@@ -46,7 +46,7 @@ TimerList::~TimerList() {
   STLDeleteValues(&timers_);
 }
 
-TimerList::Timer* TimerList::Insert(uint64_t micros_value, 
+TimerList::Timer* TimerList::Insert(uint64_t micros_value,
                                     uint64_t micros_interval,
                                     const TimerProcCallback& cb) {
   Timer* timer = new Timer(micros_value, micros_interval, cb);
@@ -56,7 +56,7 @@ TimerList::Timer* TimerList::Insert(uint64_t micros_value,
   return timer;
 }
 
-TimerList::Timer* TimerList::Insert(uint64_t micros_value, 
+TimerList::Timer* TimerList::Insert(uint64_t micros_value,
                                     uint64_t micros_interval,
                                     TimerProcCallback&& cb) {
   Timer* timer = new Timer(micros_value, micros_interval, std::move(cb));
@@ -75,7 +75,7 @@ void TimerList::Erase(Timer* timer) {
 void TimerList::InsertInLoop(Timer* timer) {
   eventloop_->AssertInMyLoop();
   timers_.insert(Entry(timer->micros_value, timer));
-} 
+}
 
 void TimerList::EraseInLoop(Timer* timer) {
   eventloop_->AssertInMyLoop();

@@ -10,7 +10,7 @@
 
 namespace voyager {
 
-EventKqueue::EventKqueue(EventLoop* ev) 
+EventKqueue::EventKqueue(EventLoop* ev)
     : EventPoller(ev),
       kq_(::kqueue()),
       events_(kInitKqueueFdSize) {
@@ -32,7 +32,7 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   if (nfds == -1) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
   }
-  
+
   for (int i = 0; i < nfds; ++i) {
     Dispatch *dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
     int revents = 0;
@@ -67,12 +67,12 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
   int modify = dispatch->Modify();
-  
+
   struct kevent ev[2];
   int n = 0;
-  switch(modify) {
+  switch (modify) {
     case Dispatch::kAddRead:
-      EV_SET(&ev[n++], fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 
+      EV_SET(&ev[n++], fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 
@@ -102,9 +102,9 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
       break;
 
     case Dispatch::kDeleteAll:
-      EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0, 
+      EV_SET(&ev[n++], fd, EVFILT_READ, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
-      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0, 
+      EV_SET(&ev[n++], fd, EVFILT_WRITE, EV_DELETE, 0, 0,
              reinterpret_cast<void*>(dispatch));
       break;
 

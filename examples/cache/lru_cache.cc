@@ -37,7 +37,7 @@ LRUHandle** HandleTable::FindPointer(const Slice& key, size_t hash) {
          ((*ptr)->hash != hash || key != (*ptr)->key())) {
     ptr = &(*ptr)->next_hash;
   }
-  return ptr;    
+  return ptr;
 }
 
 void HandleTable::Resize() {
@@ -75,7 +75,8 @@ LRUCache::LRUCache()
 }
 
 LRUCache::~LRUCache() {
-  assert(in_use_.next == &in_use_); // Error if caller has an unreleased handle
+  // Error if caller has an unreleased handle
+  assert(in_use_.next == &in_use_);
   for (LRUHandle* e = lru_.next; e != &lru_; ) {
     LRUHandle* next = e->next;
     assert(e->in_cache);
@@ -87,7 +88,7 @@ LRUCache::~LRUCache() {
 }
 
 void LRUCache::Ref(LRUHandle* e) {
-  if (e->refs == 1 && e->in_cache) { // if in lru list, move to in_use list
+  if (e->refs == 1 && e->in_cache) {  // if in lru list, move to in_use list
     LRU_Remove(e);
     LRU_Append(&in_use_, e);
   }
@@ -101,7 +102,8 @@ void LRUCache::UnRef(LRUHandle* e) {
     assert(!e->in_cache);
     (*e->deleter)(e->key(), e->value);
     free(e);
-  } else if (e->in_cache && e->refs == 1) { // No longer in use;move to lru_list
+  } else if (e->in_cache && e->refs == 1) {
+    // No longer in use;move to lru_list
     LRU_Remove(e);
     LRU_Append(&lru_, e);
   }
@@ -122,7 +124,7 @@ void LRUCache::LRU_Append(LRUHandle* list, LRUHandle* e) {
 
 LRUHandle* LRUCache::Lookup(const Slice& key, size_t hash) {
   MutexLock lock(&mu_);
-  LRUHandle* e= table_.Lookup(key, hash);
+  LRUHandle* e = table_.Lookup(key, hash);
   if (e != NULL) {
     Ref(e);
   }
@@ -156,13 +158,13 @@ LRUHandle* LRUCache::Insert(
     LRU_Append(&in_use_, e);
     usage_ += charge;
     FinishErase(table_.Insert(e));
-  } // else don't cache, Tests use capacity_==0 turning off caching.
+  }  // else don't cache, Tests use capacity_==0 turning off caching.
 
   while (usage_ > capacity_ && lru_.next != &lru_) {
     LRUHandle* old = lru_.next;
     assert(old->refs == 1);
     bool erased = FinishErase(table_.Remove(old->key(), old->hash));
-    if (!erased) { // to avoid unused variable compiled NDEBUG
+    if (!erased) {  // to avoid unused variable compiled NDEBUG
       assert(erased);
     }
   }
@@ -215,7 +217,7 @@ LRUHandle* ShardedLRUCache::Insert(
   return shard_[Shard(hash)].Insert(key, hash, value, charge, deleter);
 }
 
-LRUHandle* ShardedLRUCache::Lookup(const Slice& key) { 
+LRUHandle* ShardedLRUCache::Lookup(const Slice& key) {
   const size_t hash = HashSlice(key);
   return shard_[Shard(hash)].Lookup(key, hash);
 }
@@ -224,7 +226,7 @@ void ShardedLRUCache::Release(LRUHandle* handle) {
   shard_[Shard(handle->hash)].Release(handle);
 }
 
-void* ShardedLRUCache::Value(LRUHandle* handle) { 
+void* ShardedLRUCache::Value(LRUHandle* handle) {
   return handle->value;
 }
 

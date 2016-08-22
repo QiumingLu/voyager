@@ -3,7 +3,9 @@
 #include <math.h>
 
 #include <cctype>
+#include <map>
 #include <sstream>
+#include <string>
 #include <iomanip>
 
 namespace voyager {
@@ -30,7 +32,7 @@ Status Json::Stringify(const JsonValuePtr& p, std::string* result) {
       return Status::InvalidArgument(info);
   }
 }
-  
+
 Status Json::Parse(const std::string& str, JsonValuePtr* p) {
   JsonReader reader;
   reader.SetBuffer(str.c_str(), str.length());
@@ -75,7 +77,7 @@ Status Json::WriteString(const std::string& s, std::string* result) {
   return Status::OK();
 }
 
-  
+
 Status Json::WriteString(const JsonValuePtr& p, std::string* result) {
   JsonValueString* str_p = dynamic_cast<JsonValueString*>(p.get());
   const std::string& s = str_p->Value();
@@ -93,7 +95,7 @@ Status Json::WriteNum(const JsonValuePtr& p, std::string* result) {
   result->append(s.str());
   return Status::OK();
 }
-  
+
 Status Json::WriteObj(const JsonValuePtr& p, std::string* result) {
   result->append("{ ");
   JsonValueObj* obj_p = dynamic_cast<JsonValueObj*>(p.get());
@@ -110,7 +112,7 @@ Status Json::WriteObj(const JsonValuePtr& p, std::string* result) {
   result->append(" }");
   return Status::OK();
 }
-  
+
 Status Json:: WriteArray(const JsonValuePtr& p, std::string* result) {
   result->append("[ ");
   JsonValueArray* array_p = dynamic_cast<JsonValueArray*>(p.get());
@@ -126,7 +128,7 @@ Status Json:: WriteArray(const JsonValuePtr& p, std::string* result) {
 
   return Status::OK();
 }
-  
+
 Status Json::WriteBoolean(const JsonValuePtr& p, std::string* result) {
   JsonValueBoolean* bool_p = dynamic_cast<JsonValueBoolean*>(p.get());
   if (bool_p->Value()) {
@@ -136,25 +138,25 @@ Status Json::WriteBoolean(const JsonValuePtr& p, std::string* result) {
   }
   return Status::OK();
 }
-  
+
 Status Json::GetValue(JsonReader& reader, JsonValuePtr* p) {
   char c = SkipWhiteSpace(reader);
   switch (c) {
     case '{':
       return GetObj(reader, p);
-      
+
     case '[':
       return GetArray(reader, p);
-      
+
     case '"':
       return GetString(reader, c, p);
-      
+
     case 'T':
     case 't':
     case 'F':
     case 'f':
       return GetBoolean(reader, c, p);
-      
+
     case '0':
     case '1':
     case '2':
@@ -167,16 +169,18 @@ Status Json::GetValue(JsonReader& reader, JsonValuePtr* p) {
     case '9':
     case '-':
       return GetNum(reader, c, p);
-    
+
     case 'n':
     case 'N':
       return GetNull(reader, c, p);
-      
+
     default:
       break;
   }
   char s[64];
-  snprintf(s, sizeof(s), "buffer overflow when peekBuf, over %u.", (uint32_t)(uint32_t)reader.Current());
+  snprintf(s, sizeof(s),
+           "buffer overflow when peekBuf, over %u.",
+           (uint32_t)(uint32_t)reader.Current());
   Slice info(s);
   return Status::InvalidArgument(info);
 }
@@ -221,14 +225,14 @@ Status Json::GetString(JsonReader& reader, char head, JsonValuePtr* p) {
         peek += 4;
         str_p->value_.append(1, static_cast<char>(icode));
       }
-  
+
     } else if (c == head) {
       break;
     } else {
       ++i;
     }
   }
-  
+
   if (c != head) {
     char s[64];
     snprintf(s, sizeof(s),
@@ -237,10 +241,10 @@ Status Json::GetString(JsonReader& reader, char head, JsonValuePtr* p) {
     Slice info(s);
     return Status::InvalidArgument(info);
   }
-  
+
   str_p->value_.append(peek, i);
   p->reset(str_p);
-  
+
   return Status::OK();
 }
 
@@ -254,14 +258,14 @@ Status Json::GetNum(JsonReader &reader, char head, JsonValuePtr* p) {
   double float_value = 0;
   double float_rat_value = 0;
   int64_t exponential_value = 0;
-  
+
   if (head == '-') {
     is_ok = false;
     is_negative = true;
   } else {
     int_value = head-0x30;
   }
-  
+
   char c;
   bool is_needback = false;
   while (1) {
@@ -307,7 +311,7 @@ Status Json::GetNum(JsonReader &reader, char head, JsonValuePtr* p) {
       break;
     }
   }
-  
+
   if (!is_ok) {
     char s[64];
     snprintf(s, sizeof(s),
@@ -315,27 +319,27 @@ Status Json::GetNum(JsonReader &reader, char head, JsonValuePtr* p) {
     Slice info(s);
     return Status::InvalidArgument(info);
   }
-  
+
   if (is_needback) {
     reader.Back();
   }
   if (is_exponential_negative) {
     exponential_value = 0 - exponential_value;
   }
-  
+
   double result = (static_cast<double>(int_value)+ float_value) *
                       pow(static_cast<double>(10),
                            static_cast<double>(exponential_value));
   if (is_negative) {
     result = 0 - result;
   }
-  
+
   JsonValueNum* num_p = new JsonValueNum();
   num_p->value_ = result;
-  
+
   return Status::OK();
 }
-  
+
 Status Json::GetObj(JsonReader& reader, JsonValuePtr* p) {
   JsonValueObj* obj_p = new JsonValueObj();
   bool is_first = true;
@@ -347,7 +351,7 @@ Status Json::GetObj(JsonReader& reader, JsonValuePtr* p) {
       return Status::OK();
     }
     is_first = false;
-    
+
     if (c != '"') {
       p->reset();
       char s[64];
@@ -357,14 +361,14 @@ Status Json::GetObj(JsonReader& reader, JsonValuePtr* p) {
       Slice info(s);
       return Status::InvalidArgument(info);
     }
-    
+
     JsonValuePtr str_ptr;
     st = GetString(reader, '\"', &str_ptr);
     if (!st.ok()) {
       return st;
     }
     JsonValueString* str_p = dynamic_cast<JsonValueString*>(str_ptr.get());
-    
+
     c = SkipWhiteSpace(reader);
     if (c != ':') {
       p->reset();
@@ -375,25 +379,25 @@ Status Json::GetObj(JsonReader& reader, JsonValuePtr* p) {
       Slice info(s);
       return Status::InvalidArgument(info);
     }
-    
+
     JsonValuePtr temp;
     st = GetValue(reader, &temp);
     if (!st.ok()) {
       return st;
     }
     obj_p->value_[str_p->value_] = temp;
-    
+
     c = SkipWhiteSpace(reader);
-    
+
     if (c == ',') {
       continue;
     }
-    
+
     if (c == '}') {
       p->reset(obj_p);
       return Status::OK();
     }
-    
+
     char s[64];
     snprintf(s, sizeof(s),
              "get obj error(, not find)[pos:%u]",
@@ -402,12 +406,12 @@ Status Json::GetObj(JsonReader& reader, JsonValuePtr* p) {
     return Status::InvalidArgument(info);
   }
 }
-  
+
 Status Json::GetArray(JsonReader& reader, JsonValuePtr* p) {
   JsonValueArray* array_p = new JsonValueArray();
   bool is_first = true;
   char c = SkipWhiteSpace(reader);
-  
+
   while (!reader.HasEnd()) {
     if (is_first) {
       if (c == ']') {
@@ -417,25 +421,25 @@ Status Json::GetArray(JsonReader& reader, JsonValuePtr* p) {
       reader.Back();
     }
     is_first = false;
-    
+
     JsonValuePtr value_ptr;
     Status st = GetValue(reader, &value_ptr);
     if (!st.ok()) {
       return st;
     }
-    
+
     array_p->push_back(value_ptr);
-    
+
     c = SkipWhiteSpace(reader);
     if (c == ',') {
       continue;
     }
-    
+
     if (c == ']') {
       p->reset(array_p);
       return Status::OK();
     }
-    
+
     char s[64];
     snprintf(s, sizeof(s),
              "get vector error(, not find )[pos:%u]",
@@ -443,7 +447,7 @@ Status Json::GetArray(JsonReader& reader, JsonValuePtr* p) {
     Slice info(s);
     return Status::InvalidArgument(info);
   }
-  
+
   char s[64];
   snprintf(s, sizeof(s),
            "get vector error(] not find )[pos:%u]",
@@ -451,7 +455,7 @@ Status Json::GetArray(JsonReader& reader, JsonValuePtr* p) {
   Slice info(s);
   return Status::InvalidArgument(info);
 }
-  
+
 Status Json::GetBoolean(JsonReader &reader, char c, JsonValuePtr* p) {
   bool is_ok = false;
   bool value = false;
@@ -472,7 +476,7 @@ Status Json::GetBoolean(JsonReader &reader, char c, JsonValuePtr* p) {
       }
     }
   }
-  
+
   if (!is_ok) {
     char s[64];
     snprintf(s, sizeof(s),
@@ -481,14 +485,14 @@ Status Json::GetBoolean(JsonReader &reader, char c, JsonValuePtr* p) {
     Slice info(s);
     return Status::InvalidArgument(info);
   }
-  
+
   JsonValueBoolean* bool_p = new JsonValueBoolean();
   bool_p->value_ = value;
   p->reset(bool_p);
   return Status::OK();
 }
 
-Status Json::GetNull(JsonReader &reader, char c, JsonValuePtr* /* p */) {
+Status Json::GetNull(JsonReader& reader, char c, JsonValuePtr* /* p */) {
   assert(c == 'n' || c == 'N');
   bool is_ok = false;
   if (!strncasecmp(reader.Peek(), "null", 4)) {
@@ -507,21 +511,19 @@ Status Json::GetNull(JsonReader &reader, char c, JsonValuePtr* /* p */) {
   }
   return Status::OK();
 }
-  
-Status Json::GetHex(JsonReader &reader, uint16_t& result) {
-  uint16_t iCode=0;
+
+Status Json::GetHex(JsonReader& reader, uint16_t& result) {
+  uint16_t iCode = 0;
   char c;
-  for(int iLoop = 0;iLoop < 4;++iLoop)
-  {
+  for (int iLoop = 0; iLoop < 4; ++iLoop) {
     c = reader.Read();
-    if(c >= 'a'&& c <= 'f') {
+    if (c >= 'a' && c <= 'f') {
       iCode = static_cast<uint16_t>(iCode * 16 + c - 'a' + 10);
-    } else if(c >= 'A' && c <= 'F') {
+    } else if (c >= 'A' && c <= 'F') {
       iCode = static_cast<uint16_t>(iCode * 16 + c - 'A' + 10);
-    } else if(c >= '0' && c <= '9') {
+    } else if (c >= '0' && c <= '9') {
       iCode = static_cast<uint16_t>(iCode * 16 + c - '0');
-    } else
-    {
+    } else {
       char s[64];
       snprintf(s, sizeof(s), "get string error(\\u)[pos:%u]",
                (uint32_t)reader.Current());
@@ -532,7 +534,7 @@ Status Json::GetHex(JsonReader &reader, uint16_t& result) {
   result = iCode;
   return Status::OK();
 }
-  
+
 char Json::SkipWhiteSpace(JsonReader& reader) {
   char c = ' ';
   while (!reader.HasEnd() &&
@@ -541,6 +543,6 @@ char Json::SkipWhiteSpace(JsonReader& reader) {
   }
   return c;
 }
-  
+
 }  // namespace json
 }  // namespace voyager

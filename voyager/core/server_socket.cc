@@ -2,7 +2,7 @@
 #include "voyager/util/logging.h"
 
 namespace voyager {
-  
+
 void ServerSocket::Bind(const struct sockaddr* sa, socklen_t salen) {
   if (::bind(fd_, sa, salen) == -1) {
     VOYAGER_LOG(FATAL) << "bind: " << strerror(errno);
@@ -23,9 +23,9 @@ int ServerSocket::Accept(struct sockaddr* sa, socklen_t* salen) {
       case EAGAIN:
       case ECONNABORTED:
       case EINTR:
-      case EPROTO: 
+      case EPROTO:
       case EPERM:
-      case EMFILE: 
+      case EMFILE:
         VOYAGER_LOG(ERROR) << "accept: " << strerror(err);
         break;
       case EBADF:
@@ -39,7 +39,7 @@ int ServerSocket::Accept(struct sockaddr* sa, socklen_t* salen) {
         VOYAGER_LOG(FATAL) << "accept: " << strerror(err);
         break;
       default:
-        VOYAGER_LOG(FATAL) << "accept: " << strerror(err);      
+        VOYAGER_LOG(FATAL) << "accept: " << strerror(err);
     }
   }
   return connectfd;

@@ -1,10 +1,12 @@
 #ifndef VOYAGER_CORE_CONNECTOR_H_
 #define VOYAGER_CORE_CONNECTOR_H_
 
+#include <netdb.h>
+
 #include <functional>
 #include <memory>
 #include <string>
-#include <netdb.h>
+#include <utility>
 
 #include "voyager/core/client_socket.h"
 #include "voyager/core/dispatch.h"

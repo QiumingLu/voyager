@@ -4,10 +4,10 @@
 #include <string.h>
 
 #include "voyager/util/logging.h"
-      
+
 namespace voyager {
 
-EventSelect::EventSelect(EventLoop* ev) 
+EventSelect::EventSelect(EventLoop* ev)
     : EventPoller(ev),
       nfds_(0) {
   FD_ZERO(&readfds_);
@@ -22,28 +22,28 @@ void EventSelect::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timeval out;
   out.tv_sec = static_cast<time_t>(timeout / 1000);
   out.tv_usec = static_cast<suseconds_t>(timeout % 1000);
-  
+
   fd_set readfds;
   fd_set writefds;
   fd_set exceptfds;
-  
+
   FD_ZERO(&readfds);
   FD_ZERO(&writefds);
   FD_ZERO(&exceptfds);
-  
+
   memcpy(&readfds, &readfds_, sizeof(readfds_));
   memcpy(&writefds, &writefds_, sizeof(writefds_));
   memcpy(&exceptfds, &exceptfds_, sizeof(exceptfds_));
 
   int ret = ::select(nfds_, &readfds, &writefds, &exceptfds, &out);
-  
+
   if (ret == -1) {
     if (errno != EINTR) {
       VOYAGER_LOG(ERROR) << "poll: " << strerror(errno);
     }
     return;
   }
-  
+
   for (std::map<int, Dispatch*>::iterator it = worker_map_.begin();
        it != worker_map_.end(); ++it) {
     int revents = 0;
@@ -78,8 +78,8 @@ void EventSelect::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
   int fd = dispatch->Fd();
   int modify = dispatch->Modify();
-  
-  switch(modify) {
+
+  switch (modify) {
     case Dispatch::kAddRead:
       FD_SET(fd, &readfds_);
       break;
@@ -120,7 +120,7 @@ void EventSelect::UpdateDispatch(Dispatch* dispatch) {
   } else {
     assert(dispatch_map_.find(fd) != dispatch_map_.end());
   }
-  
+
   if (dispatch->IsNoneEvent()) {
     if (worker_map_.find(fd) != worker_map_.end()) {
       worker_map_.erase(fd);

@@ -1,5 +1,5 @@
-#ifndef VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
-#define VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#ifndef EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#define EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
 
 #include <string>
 #include "voyager/util/slice.h"
@@ -8,16 +8,17 @@ namespace sudoku {
 
 class SudokuSolver {
  public:
-  SudokuSolver(const voyager::Slice& s);
-  SudokuSolver(std::string&& s);
+  explicit SudokuSolver(const voyager::Slice& s);
+  explicit SudokuSolver(std::string&& s);
 
   std::string Solve();
 
  private:
+  static const int kSize = 9;
+
   bool InitSudoku();
   bool Solve(int row, int col);
 
-  const static int kSize = 9;
   bool rows_[kSize][kSize];
   bool cols_[kSize][kSize];
   bool subboard_[kSize][kSize];
@@ -26,4 +27,4 @@ class SudokuSolver {
 
 }  // namespace sudoku
 
-#endif  // VOYAGER_EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_
+#endif  // EXAMPLES_SUDOKU_SUDOKU_SOLVER_H_

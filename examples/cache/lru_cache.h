@@ -1,8 +1,11 @@
 #ifndef EXAMPLES_CACHE_LRU_CACHE_H_
 #define EXAMPLES_CACHE_LRU_CACHE_H_
 
-#include <functional>
 #include <stdint.h>
+
+#include <functional>
+#include <string>
+
 #include "voyager/port/mutexlock.h"
 #include "voyager/util/slice.h"
 
@@ -25,10 +28,10 @@ struct LRUHandle {
   LRUHandle* prev;
   size_t charge;
   size_t key_length;
-  size_t hash;      // Hash of key(); used for fast sharding and comparisons
-  uint32_t refs;    // References, including cache reference, if present.
-  bool in_cache;    // Whether entry is in the cache.
-  char key_data[1]; // Beginning of key
+  size_t hash;       // Hash of key(); used for fast sharding and comparisons
+  uint32_t refs;     // References, including cache reference, if present.
+  bool in_cache;     // Whether entry is in the cache.
+  char key_data[1];  // Beginning of key
 
   Slice key() const {
     // For cheaper lookups, we allow a temporary Handle object
@@ -135,7 +138,7 @@ class ShardedLRUCache {
   // The caller call this->Release(handle) when the returned mapping
   // is no longer needed.
   LRUHandle* Lookup(const Slice& key);
- 
+
   // Release a mapping returned by a previous Lookup().
   // REQUIRES: handle must not have been released yet.
   // REQUIRES: handle must have been returned by a method on *this.
@@ -154,18 +157,18 @@ class ShardedLRUCache {
 
   // Return a new numberic id. May be used by multiple clients who are
   // sharing the same cache to partition the key space. Typically the
-  // client will allocate a new id at startup and prepend the id to 
+  // client will allocate a new id at startup and prepend the id to
   // it cache keys.
   uint64_t NewId();
 
-  // Remove all cache entries taht are not activity in use. 
+  // Remove all cache entries taht are not activity in use.
   // Memory-constrained applications may wish to call this method to
   // reduce memory usage.
-  // Default implementation of Prune() does nothing. Subclasses are 
+  // Default implementation of Prune() does nothing. Subclasses are
   // strongly encouraged to override the default implementation.
   void Purne();
 
-  // Return an estimate of the combined charges of all elements stored in 
+  // Return an estimate of the combined charges of all elements stored in
   // the cache.
   size_t TotalCharge() const;
 
@@ -192,7 +195,7 @@ class ShardedLRUCache {
   void operator=(const ShardedLRUCache&);
 };
 
-} // namespace cache
-} // namespace voyager
+}  // namespace cache
+}  // namespace voyager
 
-#endif // EXAMPLES_CACHE_LRU_CACHE_H_
+#endif  // EXAMPLES_CACHE_LRU_CACHE_H_

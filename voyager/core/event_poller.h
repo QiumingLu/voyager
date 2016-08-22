@@ -11,7 +11,7 @@ namespace voyager {
 
 class EventPoller {
  public:
-  EventPoller(EventLoop* ev);
+  explicit EventPoller(EventLoop* ev);
   virtual ~EventPoller();
 
   virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches) = 0;

@@ -11,7 +11,7 @@
 
 namespace voyager {
 
-Connector::Connector(EventLoop* ev, const SockAddr& addr) 
+Connector::Connector(EventLoop* ev, const SockAddr& addr)
     : ev_(CHECK_NOTNULL(ev)),
       addr_(addr),
       state_(kDisConnected),
@@ -77,7 +77,7 @@ void Connector::Connect() {
     case EFAULT:
     case ENOTSOCK:
     case ENAMETOOLONG:
-    
+
     default:
       VOYAGER_LOG(ERROR) << "connect: " << strerror(err);
       socket_.reset();
@@ -86,7 +86,7 @@ void Connector::Connect() {
 }
 
 void Connector::Connecting() {
-  state_ = kConnecting; 
+  state_ = kConnecting;
   dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
   dispatch_->Tie(shared_from_this());
   dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
@@ -97,7 +97,7 @@ void Connector::Retry() {
   state_ = kDisConnected;
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
-                      << addr_.Ipbuf() << " in " << retry_time_ 
+                      << addr_.Ipbuf() << " in " << retry_time_
                       << " seconds.";
 
     ConnectorPtr ptr(shared_from_this());
@@ -110,7 +110,7 @@ void Connector::Retry() {
     ev_->RunAfter(retry_time_, [ptr]() {ptr->StartInLoop();});
 #endif
 
-    retry_time_ = 
+    retry_time_ =
         (retry_time_*2) < kMaxRetryTime ? retry_time_*2 : kMaxRetryTime;
   }
 }
@@ -127,13 +127,13 @@ void Connector::ConnectCallback() {
       Retry();
     } else {
       state_ = kConnected;
-      VOYAGER_LOG(INFO) << "Connector::ConnectCallback - " 
+      VOYAGER_LOG(INFO) << "Connector::ConnectCallback - "
                         << StateToString();
       if (connect_ && newconnection_cb_) {
         socket_->SetNoAutoCloseFd();
         newconnection_cb_(socket_->SocketFd());
       }
-     
+
       socket_.reset();
     }
   }

@@ -14,7 +14,7 @@ uint64_t NowMicros() {
   return static_cast<uint64_t>(tv.tv_sec) * kMicroSecondsPerSecond + tv.tv_usec;
 }
 
-std::string FormatTimestamp(uint64_t micros) {  
+std::string FormatTimestamp(uint64_t micros) {
   const time_t seconds = static_cast<time_t>(
       micros / (timeops::kMicroSecondsPerSecond));
   micros = static_cast<int>(
@@ -22,7 +22,7 @@ std::string FormatTimestamp(uint64_t micros) {
 
   struct tm t;
   localtime_r(&seconds, &t);
-  
+
   return StringPrintf("%04d/%02d/%02d-%02d:%02d:%02d.%06d",
                       t.tm_year + 1900,
                       t.tm_mon + 1,

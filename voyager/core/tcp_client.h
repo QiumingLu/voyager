@@ -2,6 +2,10 @@
 #define VOYAGER_CORE_TCP_CLIENT_H_
 
 #include <atomic>
+#include <memory>
+#include <string>
+#include <utility>
+
 #include "voyager/core/tcp_connection.h"
 #include "voyager/port/atomic_sequence_num.h"
 
@@ -15,7 +19,7 @@ typedef std::shared_ptr<Connector> ConnectorPtr;
 
 class TcpClient {
  public:
-  TcpClient(EventLoop* ev, const SockAddr& addr, 
+  TcpClient(EventLoop* ev, const SockAddr& addr,
             const std::string& name = "VoyagerClient");
   ~TcpClient();
 
@@ -28,7 +32,7 @@ class TcpClient {
     connection_cb_ = cb;
   }
   void SetCloseCallback(const CloseCallback& cb) {
-	  close_cb_ = cb;
+    close_cb_ = cb;
   }
   void SetMessageCallback(const MessageCallback& cb) {
     message_cb_ = cb;

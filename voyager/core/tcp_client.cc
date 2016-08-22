@@ -7,10 +7,10 @@
 
 namespace voyager {
 
-port::SequenceNumber TcpClient::conn_id_; 
+port::SequenceNumber TcpClient::conn_id_;
 
-TcpClient::TcpClient(EventLoop* ev, 
-                     const SockAddr& addr, 
+TcpClient::TcpClient(EventLoop* ev,
+                     const SockAddr& addr,
                      const std::string& name)
     : name_(name),
       server_ipbuf_(addr.Ipbuf()),
@@ -29,13 +29,13 @@ TcpClient::~TcpClient() {
 void TcpClient::Connect() {
   // 表示已经经过连接建立和连接断开的过程
   bool expected = true;
-  
+
   if (!weak_ptr_.lock()) {
     connect_.compare_exchange_weak(expected, false);
   }
-  
+
   if (!connect_) {
-    VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to " 
+    VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to "
                       << server_ipbuf_;
     connector_ptr_->Start();
     connect_ = true;
@@ -43,8 +43,8 @@ void TcpClient::Connect() {
 }
 
 void TcpClient::Close() {
-  //（1) 连接未成功
-  //（2）连接成功但未断开
+  // （1) 连接未成功
+  // （2）连接成功但未断开
   if (connect_) {
     connector_ptr_->Stop();
     TcpConnectionPtr ptr = weak_ptr_.lock();
@@ -59,12 +59,12 @@ void TcpClient::NewConnection(int socketfd) {
   ev_->AssertInMyLoop();
   char ipbuf[64];
   SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
-  std::string conn_name = StringPrintf("%s-%s#%d", 
-                                       server_ipbuf_.c_str(), 
-                                       ipbuf, 
+  std::string conn_name = StringPrintf("%s-%s#%d",
+                                       server_ipbuf_.c_str(),
+                                       ipbuf,
                                        conn_id_.GetNext());
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
-  
+
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
   ptr->SetConnectionCallback(connection_cb_);
   ptr->SetMessageCallback(message_cb_);

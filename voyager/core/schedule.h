@@ -20,16 +20,16 @@ class Schedule {
   EventLoop* AssignLoop();
 
   bool Started() const { return started_; }
- 
+
  private:
-  EventLoop* NextLoop();  
+  EventLoop* NextLoop();
 
   EventLoop* baseloop_;
   size_t size_;
   size_t next_;
   bool started_;
   double percent_;  // For Load Balance
-  
+
   std::vector<std::unique_ptr<BGEventLoop>> loops_;
   std::vector<EventLoop*> ptrs_;
 

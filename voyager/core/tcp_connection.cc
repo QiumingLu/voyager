@@ -1,17 +1,19 @@
 #include "voyager/core/tcp_connection.h"
+
+#include <unistd.h>
+#include <errno.h>
+
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
-#include <unistd.h>
-#include <errno.h>
 
 namespace voyager {
 
-TcpConnection::TcpConnection(const std::string& name, 
+TcpConnection::TcpConnection(const std::string& name,
                              EventLoop* ev, int fd)
-    : name_(name), 
+    : name_(name),
       eventloop_(CHECK_NOTNULL(ev)),
       socket_(fd),
       state_(kConnecting),
@@ -27,12 +29,12 @@ TcpConnection::TcpConnection(const std::string& name,
   socket_.SetNonBlockAndCloseOnExec(true);
   socket_.SetKeepAlive(true);
   socket_.SetTcpNoDelay(true);
-  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ 
+  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_
                      << "] at " << this << " fd=" << fd;
 }
- 
+
 TcpConnection::~TcpConnection() {
-  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ 
+  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_
                      << "] at " << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
 }
@@ -55,7 +57,7 @@ void TcpConnection::StartRead() {
   eventloop_->RunInLoop([ptr]() {
     if (!ptr->dispatch_->IsReading()) {
       ptr->dispatch_->EnableRead();
-    }  
+    }
   });
 }
 
@@ -64,7 +66,7 @@ void TcpConnection::StopRead() {
   eventloop_->RunInLoop([ptr]() {
     if (ptr->dispatch_->IsReading()) {
       ptr->dispatch_->DisableRead();
-    }  
+    }
   });
 }
 
@@ -75,20 +77,20 @@ void TcpConnection::ShutDown() {
     eventloop_->RunInLoop([ptr]() {
       if (!ptr->dispatch_->IsWriting()) {
         ptr->socket_.ShutDownWrite();
-      }    
+      }
     });
   }
 }
 
 void TcpConnection::ForceClose() {
   ConnectState expected = kConnected;
-  if (state_.compare_exchange_weak(expected, kDisconnecting) || 
+  if (state_.compare_exchange_weak(expected, kDisconnecting) ||
       state_ == kDisconnecting) {
     TcpConnectionPtr ptr(shared_from_this());
     eventloop_->QueueInLoop([ptr]() {
       if (ptr->state_ == kConnected || ptr->state_ == kDisconnecting) {
         ptr->HandleClose();
-      }   
+      }
     });
   }
 }
@@ -107,7 +109,7 @@ void TcpConnection::HandleRead() {
       HandleClose();
     }
     if (errno != EWOULDBLOCK || errno != EAGAIN) {
-      VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_ 
+      VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_
                          <<"] - readv: " << strerror(errno);
     }
   }
@@ -116,8 +118,8 @@ void TcpConnection::HandleRead() {
 void TcpConnection::HandleWrite() {
   eventloop_->AssertInMyLoop();
   if (dispatch_->IsWriting()) {
-    ssize_t n = ::write(dispatch_->Fd(), 
-                        writebuf_.Peek(), 
+    ssize_t n = ::write(dispatch_->Fd(),
+                        writebuf_.Peek(),
                         writebuf_.ReadableSize());
     if (n >= 0) {
       writebuf_.Retrieve(static_cast<size_t>(n));
@@ -135,13 +137,13 @@ void TcpConnection::HandleWrite() {
         HandleClose();
       }
       if (errno != EWOULDBLOCK || errno != EAGAIN) {
-        VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_ 
+        VOYAGER_LOG(ERROR) << "TcpConnection::HandleWrite [" << name_
                            << "] - write: " << strerror(errno);
       }
     }
   } else {
-    VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_ 
-                      << "] - fd=" << dispatch_->Fd() 
+    VOYAGER_LOG(INFO) << "TcpConnection::HandleWrite [" << name_
+                      << "] - fd=" << dispatch_->Fd()
                       << " is down, no more writing";
   }
 }
@@ -152,10 +154,10 @@ void TcpConnection::HandleClose() {
   state_ = kDisconnected;
   dispatch_->DisableAll();
   dispatch_->RemoveEvents();
-  
+
   port::Singleton<OnlineConnections>::Instance().EraseCnnection(
       shared_from_this());
- 
+
   if (close_cb_) {
     close_cb_(shared_from_this());
   }
@@ -206,7 +208,8 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      std::string *s = new std::string(message->Peek(), message->ReadableSize());
+      std::string *s = new std::string(message->Peek(),
+                                       message->ReadableSize());
       message->RetrieveAll();
       TcpConnectionPtr ptr(shared_from_this());
       eventloop_->RunInLoop([ptr, s]() {
@@ -243,7 +246,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
         fault = true;
       }
       if (errno != EWOULDBLOCK || errno != EAGAIN) {
-        VOYAGER_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_ 
+        VOYAGER_LOG(ERROR) << "TcpConnection::SendInLoop [" << name_
                            << "] - write: " << strerror(errno);
       }
     }

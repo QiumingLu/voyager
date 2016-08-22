@@ -21,4 +21,4 @@ extern std::string FormatTimestamp(uint64_t micros);
 }  // namespace timeops
 }  // namespace voyager
 
-#endif  //  VOYAGER_UTIL_TIMEOPS_H_
+#endif  // VOYAGER_UTIL_TIMEOPS_H_

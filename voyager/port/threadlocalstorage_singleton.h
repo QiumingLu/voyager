@@ -54,7 +54,8 @@ template<typename T>
 __thread T* ThreadLocalStorageSingleton<T>::value_ = NULL;
 
 template<typename T>
-typename ThreadLocalStorageSingleton<T>::Helper ThreadLocalStorageSingleton<T>::helper_;
+typename ThreadLocalStorageSingleton<T>::Helper
+    ThreadLocalStorageSingleton<T>::helper_;
 
 }  // namespace port
 }  // namespace voyager

@@ -60,7 +60,7 @@ class LogFinisher {
       ::voyager::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
 
 template<typename T>
-T* CheckNotNull(const char* /* filename */, int /* line */, 
+T* CheckNotNull(const char* /* filename */, int /* line */,
                 const char* logmessage, T* ptr) {
   if (ptr == NULL) {
     VOYAGER_LOG(FATAL) << logmessage;
@@ -73,11 +73,11 @@ T* CheckNotNull(const char* /* filename */, int /* line */,
       "'" #value "' Must not be NULL", (value))
 
 
-typedef void LogHandler(LogLevel level, const char* filename, 
+typedef void LogHandler(LogLevel level, const char* filename,
                         int line, const std::string& message_);
 
 
-extern void DefaultLogHandler(LogLevel level, const char* filename, 
+extern void DefaultLogHandler(LogLevel level, const char* filename,
                               int line, const std::string& message);
 
 

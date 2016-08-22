@@ -14,12 +14,11 @@ class SudukuServer {
  public:
   SudukuServer(voyager::EventLoop* ev, const voyager::SockAddr& addr)
       : server_(ev, addr, "SudukuServer", 5) {
-    
-    using namespace std::placeholders;
     server_.SetConnectionCallback(
-        std::bind(&SudukuServer::ConnectCallback, this, _1));
+        std::bind(&SudukuServer::ConnectCallback, this, std::placeholders::_1));
     server_.SetMessageCallback(
-        std::bind(&SudukuServer::MessageCallback, this, _1, _2));
+        std::bind(&SudukuServer::MessageCallback, this,
+                  std::placeholders::_1, std::placeholders::_2));
   }
 
   void Start() {
@@ -27,10 +26,12 @@ class SudukuServer {
   }
 
  private:
+  static const int kCells = 81;
+
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   }
 
-  void MessageCallback(const voyager::TcpConnectionPtr& ptr, 
+  void MessageCallback(const voyager::TcpConnectionPtr& ptr,
                        voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
     while (size >= kCells + 2) {
@@ -76,8 +77,6 @@ class SudukuServer {
     }
     return true;
   }
-
-  const static int kCells = 81;
 
   voyager::TcpServer server_;
 };

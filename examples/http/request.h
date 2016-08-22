@@ -1,10 +1,12 @@
-#ifndef VOYAGER_EXAMPLES_HTTP_REQUEST_H_
-#define VOYAGER_EXAMPLES_HTTP_REQUEST_H_
+#ifndef EXAMPLES_HTTP_REQUEST_H_
+#define EXAMPLES_HTTP_REQUEST_H_
 
 #include <map>
 #include <utility>
-#include <strings.h>
+#include <string>
+
 #include "voyager/util/logging.h"
+
 namespace http {
 
 class Request {
@@ -60,7 +62,7 @@ class Request {
   std::string MethodToString() const;
 
   void set_version(Version version) {
-    version_ = version; 
+    version_ = version;
   }
 
   Version version() const {
@@ -111,7 +113,8 @@ class Request {
 
   std::string GetHeader(const std::string& field) const {
     std::string value;
-    std::map<std::string, std::string>::const_iterator it = headers_.find(field);
+    std::map<std::string, std::string>::const_iterator it =
+        headers_.find(field);
     if (it != headers_.end()) {
       value = it->second;
     }
@@ -142,4 +145,4 @@ class Request {
 
 }  // namespace http
 
-#endif  // VOYAGER_EXAMPLES_HTTP_REQUEST_H_
+#endif  // EXAMPLES_HTTP_REQUEST_H_

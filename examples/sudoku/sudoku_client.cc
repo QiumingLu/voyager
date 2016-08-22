@@ -8,13 +8,11 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
-using namespace std::placeholders;
-
 namespace sudoku {
 
 class SudokuClient {
  public:
-  SudokuClient(voyager::EventLoop* ev, 
+  SudokuClient(voyager::EventLoop* ev,
                const voyager::SockAddr& addr,
                const std::string& name,
                const std::vector<std::string>& vec)
@@ -24,29 +22,36 @@ class SudokuClient {
         client_(ev, addr, name),
         vec_(vec) {
     client_.SetConnectionCallback(
-        std::bind(&SudokuClient::ConnectCallback,this,  _1));
+        std::bind(&SudokuClient::ConnectCallback, this, std::placeholders::_1));
     client_.SetMessageCallback(
-        std::bind(&SudokuClient::MessageCallback, this, _1, _2));
+        std::bind(&SudokuClient::MessageCallback, this,
+                  std::placeholders::_1,
+                  std::placeholders::_2));
     client_.SetCloseCallback(
-        std::bind(&SudokuClient::CloseCallback, this, _1));
+        std::bind(&SudokuClient::CloseCallback, this,
+                  std::placeholders::_1));
   }
 
   SudokuClient(voyager::EventLoop* ev,
-               const std::string& name,  
-               const voyager::SockAddr& addr, 
+               const std::string& name,
+               const voyager::SockAddr& addr,
                std::vector<std::string>&& vec)
       : num_(0),
         start_(0),
         stop_(0),
         client_(ev, addr, name),
         vec_(std::move(vec)) {
-    client_.SetConnectionCallback(
-        std::bind(&SudokuClient::ConnectCallback, this, _1));
-    client_.SetMessageCallback(
-        std::bind(&SudokuClient::MessageCallback, this, _1, _2));
-    client_.SetCloseCallback(
-        std::bind(&SudokuClient::CloseCallback, this, _1));
- }
+    client_.SetConnectionCallback(std::bind(&SudokuClient::ConnectCallback,
+                                            this,
+                                            std::placeholders:: _1));
+    client_.SetMessageCallback(std::bind(&SudokuClient::MessageCallback,
+                                         this,
+                                         std::placeholders::_1,
+                                         std::placeholders::_2));
+    client_.SetCloseCallback(std::bind(&SudokuClient::CloseCallback,
+                                       this,
+                                       std::placeholders::_1));
+  }
 
   void Connect() {
     client_.Connect();
@@ -74,9 +79,9 @@ class SudokuClient {
         ++num_;
         if (num_ == vec_.size()) {
           stop_ = voyager::timeops::NowMicros();
-          VOYAGER_LOG(WARN) << "\nStart time is: " 
+          VOYAGER_LOG(WARN) << "\nStart time is: "
                             << voyager::timeops::FormatTimestamp(start_)
-                            << "\nFinish time is: " 
+                            << "\nFinish time is: "
                             << voyager::timeops::FormatTimestamp(stop_)
                             << "\nTake MicroSeconds: " << stop_ - start_;
           client_.Close();
@@ -114,7 +119,7 @@ int main(int argc, char** argv) {
   if (dotimes <= 0) {
     return 0;
   }
-  
+
   std::string message = "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  5    8  79\r\n";
   std::vector<std::string> vec;
   for (int i = 0; i < dotimes; ++i) {

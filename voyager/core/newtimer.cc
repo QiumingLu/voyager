@@ -23,7 +23,7 @@ NewTimer::NewTimer(EventLoop* ev, const TimerProcCallback& cb)
   if (timerfd_ == -1) {
     VOYAGER_LOG(FATAL) << "timerfd_create: " << strerror(errno);
   } else {
-  	dispatch_.SetReadCallback(std::bind(&NewTimer::HandleRead, this));
+    dispatch_.SetReadCallback(std::bind(&NewTimer::HandleRead, this));
     dispatch_.EnableRead();
   }
 }
@@ -46,7 +46,7 @@ NewTimer::~NewTimer() {
   dispatch_.DisableAll();
   dispatch_.RemoveEvents();
   if (::close(timerfd_) == -1) {
-  	VOYAGER_LOG(ERROR) << "close: " << strerror(errno);
+    VOYAGER_LOG(ERROR) << "close: " << strerror(errno);
   }
 }
 
@@ -64,13 +64,13 @@ void NewTimer::SetTimeInLoop(uint64_t nanos_value, uint64_t nanos_interval) {
   memset(&new_value, 0, sizeof(new_value));
   memset(&old_value, 0, sizeof(old_value));
 
-  new_value.it_interval.tv_sec = 
+  new_value.it_interval.tv_sec =
       static_cast<time_t>(nanos_interval /timeops::kNonasSecondsPerSecond);
-  new_value.it_interval.tv_nsec = 
+  new_value.it_interval.tv_nsec =
       static_cast<long>(nanos_interval % timeops::kNonasSecondsPerSecond);
-  new_value.it_value.tv_sec = 
+  new_value.it_value.tv_sec =
       static_cast<time_t>(nanos_value / timeops::kNonasSecondsPerSecond);
-  new_value.it_value.tv_nsec = 
+  new_value.it_value.tv_nsec =
       static_cast<long>(nanos_value % timeops::kNonasSecondsPerSecond);
 
   if (::timerfd_settime(timerfd_, 0, &new_value, &old_value) == -1) {
@@ -95,4 +95,4 @@ void NewTimer::HandleRead() {
   }
 }
 
-}  // namespace timeops
+}  // namespace voyager

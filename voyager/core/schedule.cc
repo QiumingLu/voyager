@@ -1,4 +1,7 @@
 #include "voyager/core/schedule.h"
+
+#include <utility>
+
 #include "voyager/core/eventloop.h"
 #include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
@@ -8,7 +11,7 @@ namespace voyager {
 Schedule::Schedule(EventLoop* ev, int size)
     : baseloop_(CHECK_NOTNULL(ev)),
       size_(size),
-      next_(0), 
+      next_(0),
       started_(false) {
   if (size_ == 1) {
     percent_ = 2.0;
@@ -42,7 +45,7 @@ EventLoop* Schedule::AssignLoop() {
   EventLoop* loop = NextLoop();
 
   int run = 0;
-  OnlineConnections& instance 
+  OnlineConnections& instance
       = port::Singleton<OnlineConnections>::Instance();
   size_t all = instance.AllOnlineUsersNum();
   while (all > 0 && run < 3) {

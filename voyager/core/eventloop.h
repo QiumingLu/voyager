@@ -1,10 +1,11 @@
 #ifndef VOYAGER_CORE_EVENTLOOP_H_
 #define VOYAGER_CORE_EVENTLOOP_H_
 
+#include <unistd.h>
+
 #include <functional>
 #include <memory>
 #include <vector>
-#include <unistd.h>
 
 #include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"
@@ -21,9 +22,9 @@ class EventLoop {
 
   EventLoop();
   ~EventLoop();
- 
+
   void Loop();
- 
+
   void RunInLoop(const Func& func);
   void QueueInLoop(const Func& func);
 
@@ -36,7 +37,7 @@ class EventLoop {
                              const TimerProcCallback& cb);
   TimerList::Timer* RunEvery(uint64_t micros_interval,
                              const TimerProcCallback& cb);
-  
+
   TimerList::Timer* RunAt(uint64_t micros_value, TimerProcCallback&& cb);
   TimerList::Timer* RunAfter(uint64_t micros_delay, TimerProcCallback&& cb);
   TimerList::Timer* RunEvery(uint64_t micros_interval, TimerProcCallback&& cb);
@@ -55,7 +56,7 @@ class EventLoop {
 
   // the eventloop of current thread.
   static EventLoop* RunLoop();
-  
+
   // only internal use
   void RemoveDispatch(Dispatch* dispatch);
   void UpdateDispatch(Dispatch* dispatch);
@@ -66,7 +67,7 @@ class EventLoop {
   void HandleRead();
   void Abort();
   void WakeUp();
- 
+
   bool exit_;
   bool run_;
 

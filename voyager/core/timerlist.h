@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include <utility>
 
 #include "voyager/core/callback.h"
 
@@ -14,12 +15,12 @@ class TimerList {
  public:
   struct Timer;
 
-  TimerList(EventLoop* ev);
+  explicit TimerList(EventLoop* ev);
   ~TimerList();
 
   Timer* Insert(uint64_t micros_value, uint64_t micros_interval,
                 const TimerProcCallback& cb);
-  Timer* Insert(uint64_t micros_value, uint64_t micros_interval, 
+  Timer* Insert(uint64_t micros_value, uint64_t micros_interval,
                 TimerProcCallback&& cb);
   void Erase(Timer* timer);
 
@@ -33,7 +34,7 @@ class TimerList {
   void EraseInLoop(Timer* timer);
 
   std::vector<Timer*> ExpiredTimers(uint64_t micros);
-  
+
   EventLoop* eventloop_;
   std::set<Entry> timers_;
 

@@ -1,8 +1,10 @@
 #include "voyager/core/bg_eventloop.h"
+
+#include <assert.h>
+
 #include "voyager/core/eventloop.h"
 #include "voyager/port/mutexlock.h"
 #include "voyager/util/logging.h"
-#include <assert.h>
 
 namespace voyager {
 
@@ -34,7 +36,7 @@ EventLoop* BGEventLoop::Loop() {
 
 void BGEventLoop::ThreadFunc() {
   EventLoop ev;
-  { 
+  {
     port::MutexLock l(&mu_);
     eventloop_ = &ev;
     cond_.Signal();

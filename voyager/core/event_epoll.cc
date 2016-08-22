@@ -1,17 +1,20 @@
 #include "voyager/core/event_epoll.h"
 
-#include <utility>
 #include <string.h>
+
+#include <vector>
+#include <utility>
+
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
 
-const static int kNew = -1;
-const static int kAdded = 1;
-const static int kDeleted = 2;
+static const int kNew = -1;
+static const int kAdded = 1;
+static const int kDeleted = 2;
 
-EventEpoll::EventEpoll(EventLoop* ev) 
+EventEpoll::EventEpoll(EventLoop* ev)
     : EventPoller(ev),
       epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
       epollfds_(kInitEpollFdSize) {
@@ -25,8 +28,8 @@ EventEpoll::~EventEpoll() {
 }
 
 void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  int nfds = ::epoll_wait(epollfd_, 
-                          &*epollfds_.begin(), 
+  int nfds = ::epoll_wait(epollfd_,
+                          &*epollfds_.begin(),
                           static_cast<int>(epollfds_.size()),
                           timeout);
   if (nfds == -1) {

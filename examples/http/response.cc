@@ -15,8 +15,7 @@ void Response::AppendToBuffer(voyager::Buffer* buf) {
 
   for (std::map<std::string, std::string>::const_iterator it = headers_.begin();
        it != headers_.end();
-       ++it)
-  {
+       ++it) {
     buf->Append(it->first);
     buf->Append(": ");
     buf->Append(it->second);
@@ -29,7 +28,7 @@ void Response::AppendToBuffer(voyager::Buffer* buf) {
 
 std::string Response::StatusCodeToString() const {
   const char* c;
-  switch(code_) {
+  switch (code_) {
     case k200:
       c = "HTTP/1.1 200 OK\r\n";
       break;

@@ -5,13 +5,15 @@
 #include <sys/event.h>
 #include <sys/time.h>
 
+#include <vector>
+
 #include "voyager/core/event_poller.h"
 
 namespace voyager {
-  
+
 class EventKqueue : public EventPoller {
  public:
-  EventKqueue(EventLoop* ev);
+  explicit EventKqueue(EventLoop* ev);
   virtual ~EventKqueue();
 
   virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
@@ -20,11 +22,11 @@ class EventKqueue : public EventPoller {
 
  private:
   static const size_t kInitKqueueFdSize = 16;
-  
+
   const int kq_;
   std::vector<struct kevent> events_;
 };
 
 }  // namespace voyager
 
-#endif // VOYAGER_CORE_EVENT_KQUEUE_H_
+#endif  // VOYAGER_CORE_EVENT_KQUEUE_H_

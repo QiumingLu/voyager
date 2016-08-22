@@ -18,29 +18,29 @@ class Slice {
   Slice(std::string&& s) : data_(s.data()), size_(s.size()) { }
 
   const char* data() const { return data_; }
-  
+
   size_t size() const { return size_; }
-  
+
   bool empty() const { return size_ == 0; }
-  
+
   char operator[](size_t n) const {
     assert(n < size());
     return data_[n];
   }
-  
+
   void clear() { data_ = "", size_ = 0; }
-  
+
   void remove_prefix(size_t n) {
     assert(n <= size());
     data_ += n;
     size_ -= n;
   }
-  
+
   std::string ToString() const { return std::string(data_, size_); }
 
   // < 0 iff "this" < s
   // = 0 iff "this" = s
-  // > 0 iff "this" > s  
+  // > 0 iff "this" > s
   int compare(const Slice& s) const {
     const size_t min_len = (size_ < s.size_) ? size_ : s.size_;
     int r = memcmp(data_, s.data_, min_len);
@@ -50,7 +50,7 @@ class Slice {
     }
     return r;
   }
-  
+
   bool starts_with(const Slice& s) const {
     return ((size_ >= s.size_) &&
             memcmp(data_, s.data_, s.size_) == 0);

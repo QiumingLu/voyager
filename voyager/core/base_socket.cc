@@ -16,7 +16,7 @@ BaseSocket::BaseSocket(int domain, bool nonblocking)
   SetNonBlockAndCloseOnExec(nonblocking);
 }
 
-BaseSocket::BaseSocket(int socketfd) 
+BaseSocket::BaseSocket(int socketfd)
   : fd_(socketfd),
     need_close_(true) {
 }
@@ -59,8 +59,8 @@ void BaseSocket::SetNonBlockAndCloseOnExec(bool on) const {
 }
 
 void BaseSocket::SetReuseAddr(bool on) const {
-  int reuse= on ? 1 : 0;
-  if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, 
+  int reuse = on ? 1 : 0;
+  if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR,
                    &reuse, static_cast<socklen_t>(sizeof(reuse))) == -1) {
     VOYAGER_LOG(ERROR) << "setsockopt(SO_REUSEADDR): " << strerror(errno);
   }
@@ -69,7 +69,7 @@ void BaseSocket::SetReuseAddr(bool on) const {
 void BaseSocket::SetReusePort(bool on) const {
 #ifdef SO_REUSEPORT
   int reuse = on ? 1 : 0;
-  if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT, 
+  if (::setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT,
                    &reuse, static_cast<socklen_t>(sizeof(reuse))) == -1) {
     VOYAGER_LOG(ERROR) << "setsockopt(SO_REUSEPORT): " << strerror(errno);
   }
@@ -78,18 +78,18 @@ void BaseSocket::SetReusePort(bool on) const {
 
 void BaseSocket::SetKeepAlive(bool on) const {
   int alive = on ? 1 : 0;
-  if (::setsockopt(fd_, SOL_SOCKET, SO_KEEPALIVE, 
+  if (::setsockopt(fd_, SOL_SOCKET, SO_KEEPALIVE,
                    &alive, static_cast<socklen_t>(sizeof(alive))) == -1) {
     VOYAGER_LOG(ERROR) << "setsockopt(SO_KEEPALIVE): " << strerror(errno);
-  } 
+  }
 }
 
 void BaseSocket::SetTcpNoDelay(bool on) const {
   int no = on ? 1 : 0;
-  if (::setsockopt(fd_, IPPROTO_TCP, TCP_NODELAY, 
+  if (::setsockopt(fd_, IPPROTO_TCP, TCP_NODELAY,
                    &no, static_cast<socklen_t>(sizeof(no))) == -1) {
     VOYAGER_LOG(ERROR) << "setsockopt(TCP_NODELAY): " << strerror(errno);
-  } 
+  }
 }
 
 Status BaseSocket::CheckSocketError() const {
@@ -110,7 +110,7 @@ struct sockaddr_storage BaseSocket::PeerSockAddr() const {
   struct sockaddr_storage sa;
   socklen_t len = sizeof(sa);
 
-  if (::getpeername(fd_, 
+  if (::getpeername(fd_,
                     reinterpret_cast<struct sockaddr*>(&sa), &len) == -1) {
     VOYAGER_LOG(ERROR) << "getpeername: " << strerror(errno);
   }
@@ -120,7 +120,7 @@ struct sockaddr_storage BaseSocket::PeerSockAddr() const {
 struct sockaddr_storage BaseSocket::LocalSockAddr() const {
   struct sockaddr_storage sa;
   socklen_t len = sizeof(sa);
-  if (::getsockname(fd_, 
+  if (::getsockname(fd_,
                     reinterpret_cast<struct sockaddr*>(&sa), &len) == -1) {
     VOYAGER_LOG(ERROR) << "getsockname: " << strerror(errno);
   }

@@ -4,15 +4,16 @@
 
 #include "voyager/util/slice.h"
 #include "voyager/util/logging.h"
+
 namespace sudoku {
 
 SudokuSolver::SudokuSolver(const voyager::Slice& s) {
   memset(rows_, false, sizeof(rows_));
   memset(cols_, false, sizeof(cols_));
   memset(subboard_, false, sizeof(subboard_));
-  
+
   assert(s.size() == kSize*kSize);
-  
+
   for (size_t i = 0; i < s.size(); ++i) {
     if (s[i] != ' ') {
       board_[i/kSize][i%kSize] = s[i];
@@ -26,9 +27,9 @@ SudokuSolver::SudokuSolver(std::string&& s) {
   memset(rows_, false, sizeof(rows_));
   memset(cols_, false, sizeof(cols_));
   memset(subboard_, false, sizeof(subboard_));
-  
+
   assert(s.size() == kSize*kSize);
-  
+
   for (size_t i = 0; i < s.size(); ++i) {
     if (s[i] != ' ') {
       board_[i/kSize][i%kSize] = s[i];
@@ -75,7 +76,7 @@ bool SudokuSolver::InitSudoku() {
 }
 
 #pragma GCC diagnostic ignored "-Wconversion"
-bool SudokuSolver::Solve(int row, int col){
+bool SudokuSolver::Solve(int row, int col) {
   if (row >= kSize) {
     return true;
   }
@@ -106,4 +107,4 @@ bool SudokuSolver::Solve(int row, int col){
   return false;
 }
 
-}  // namespace suduku
+}  // namespace sudoku

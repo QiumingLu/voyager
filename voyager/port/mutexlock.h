@@ -8,7 +8,7 @@ namespace port {
 
 class MutexLock {
  public:
-  explicit MutexLock(Mutex* mutex) 
+  explicit MutexLock(Mutex* mutex)
       : mutex_(mutex) {
     mutex_->Lock();
   }

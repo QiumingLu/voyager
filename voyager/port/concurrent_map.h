@@ -1,8 +1,9 @@
 #ifndef VOYAGER_PORT_CONCURRENT_MAP_H_
 #define VOYAGER_PORT_CONCURRENT_MAP_H_
 
-#include "voyager/port/mutexlock.h"
 #include <unordered_map>
+
+#include "voyager/port/mutexlock.h"
 
 namespace voyager {
 namespace port {
@@ -42,25 +43,25 @@ class HashMap {
 template <typename K, typename V>
 class ConcurrentMap {
  public:
-   ConcurrentMap() { }
+  ConcurrentMap() { }
 
-   void Insert(const K& key, const V& value) {
-     const size_t h = Hash(key);
-     shard_[Shard(h)].Insert(key, value);
-   }
+  void Insert(const K& key, const V& value) {
+    const size_t h = Hash(key);
+    shard_[Shard(h)].Insert(key, value);
+  }
 
-   void Erase(const K& key) {
-     const size_t h = Hash(key);
-     shard_[Shard(h)].Erase(key);
-   }
+  void Erase(const K& key) {
+    const size_t h = Hash(key);
+    shard_[Shard(h)].Erase(key);
+  }
 
-   size_t size() const {
-     size_t total = 0;
-     for (int s = 0; s < kNumShards; ++s) {
-       total += shard_[s].size();
-     }
-     return total;
-   }
+  size_t size() const {
+    size_t total = 0;
+    for (int s = 0; s < kNumShards; ++s) {
+      total += shard_[s].size();
+    }
+    return total;
+  }
 
  private:
   static inline size_t Hash(const K& key) {
@@ -73,7 +74,7 @@ class ConcurrentMap {
   }
 
   HashMap<K, V> shard_[kNumShards];
-  
+
   // No copying allow
   ConcurrentMap(const ConcurrentMap&);
   void operator=(const ConcurrentMap&);
@@ -82,4 +83,4 @@ class ConcurrentMap {
 }  // namespace port
 }  // namespace voyager
 
-#endif // VOYAGER_PORT_CONCURRENT_MAP_H_
+#endif  // VOYAGER_PORT_CONCURRENT_MAP_H_

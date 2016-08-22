@@ -1,5 +1,8 @@
-#ifndef VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H
-#define VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H
+#ifndef EXAMPLES_HTTP_HTTPSERVER_H_
+#define EXAMPLES_HTTP_HTTPSERVER_H_
+
+#include <string>
+#include <utility>
 
 #include "voyager/core/tcp_server.h"
 
@@ -12,7 +15,7 @@ class HttpServer {
  public:
   typedef std::function<void (Request*, Response*)> HttpCallback;
 
-  HttpServer(voyager::EventLoop* ev, 
+  HttpServer(voyager::EventLoop* ev,
              const voyager::SockAddr& addr,
              const std::string& name = std::string("VoyagerServer"),
              int thread_size = 4);
@@ -33,7 +36,7 @@ class HttpServer {
                        voyager::Buffer* buf);
   void DisConnectCallback(const voyager::TcpConnectionPtr& ptr);
   bool ProcessRequest(voyager::Buffer* buf, Request* request);
-  bool ProcessRequestLine(const char* begin, 
+  bool ProcessRequestLine(const char* begin,
                           const char* end,
                           Request* request);
 
@@ -45,6 +48,6 @@ class HttpServer {
   void operator= (const HttpServer&);
 };
 
-} // namespace http
+}  // namespace http
 
-#endif  // VOYAGER_EXAMPLES_HTTP_HTTPSERVER_H
+#endif  // EXAMPLES_HTTP_HTTPSERVER_H_

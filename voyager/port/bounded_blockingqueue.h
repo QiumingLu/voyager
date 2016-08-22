@@ -1,9 +1,11 @@
 #ifndef VOYAGER_PORT_BOUNDED_BLOCKINGQUEUE_H_
 #define VOYAGER_PORT_BOUNDED_BLOCKINGQUEUE_H_
 
+#include <assert.h>
+
 #include <deque>
 #include <utility>
-#include <assert.h>
+
 #include "voyager/port/mutex.h"
 #include "voyager/port/mutexlock.h"
 
@@ -13,12 +15,12 @@ namespace port {
 template<typename T>
 class BoundedBlockingQueue {
  public:
-  BoundedBlockingQueue(size_t capacity) 
-      : mutex_(), 
+  explicit BoundedBlockingQueue(size_t capacity)
+      : mutex_(),
         not_full(&mutex_),
         not_empty(&mutex_),
-        capacity_(capacity)
-  { } 
+        capacity_(capacity) {
+  }
 
   void Put(const T& t) {
     MutexLock lock(&mutex_);
@@ -38,7 +40,7 @@ class BoundedBlockingQueue {
     assert(queue_.size() < capacity_);
     queue_.push_back(std::move(t));
     not_empty.Signal();
- }
+  }
 
   T Take() {
     MutexLock lock(&mutex_);
@@ -71,7 +73,7 @@ class BoundedBlockingQueue {
     MutexLock lock(&mutex_);
     if (queue_.size() == capacity_) {
       return true;
-    } 
+    }
     return false;
   }
 
@@ -90,4 +92,4 @@ class BoundedBlockingQueue {
 }  // namespace port
 }  // namespace voyager
 
-#endif // VOYAGER_PORT_BOUNDED_BLOCKINGQUEUE_H_
+#endif  // VOYAGER_PORT_BOUNDED_BLOCKINGQUEUE_H_

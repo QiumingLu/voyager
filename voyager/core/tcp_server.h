@@ -1,9 +1,12 @@
 #ifndef VOYAGER_CORE_TCP_SERVER_H_
 #define VOYAGER_CORE_TCP_SERVER_H_
 
-#include <map>
-#include <string>
 #include <netdb.h>
+
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "voyager/core/callback.h"
 #include "voyager/core/sockaddr.h"

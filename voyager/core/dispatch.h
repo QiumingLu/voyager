@@ -1,10 +1,12 @@
 #ifndef VOYAGER_CORE_DISPATCH_H_
 #define VOYAGER_CORE_DISPATCH_H_
 
-#include <functional>
-#include <memory>
 #include <assert.h>
 #include <sys/poll.h>
+
+#include <functional>
+#include <memory>
+#include <utility>
 
 namespace voyager {
 
@@ -13,7 +15,7 @@ class EventLoop;
 class Dispatch {
  public:
   typedef std::function<void()> EventCallback;
-  
+
   enum ModifyEvent {
     kNoModify = 0,
     kAddRead = 1,
@@ -40,7 +42,7 @@ class Dispatch {
   void SetWriteCallback(const EventCallback& cb) { write_cb_ = cb; }
   void SetCloseCallback(const EventCallback& cb) { close_cb_ = cb; }
   void SetErrorCallback(const EventCallback& cb) { error_cb_ = cb; }
-  
+
   void SetReadCallback(EventCallback&& cb) { read_cb_ = std::move(cb); }
   void SetWriteCallback(EventCallback&& cb) { write_cb_ = std::move(cb); }
   void SetCloseCallback(EventCallback&& cb) { close_cb_ = std::move(cb); }

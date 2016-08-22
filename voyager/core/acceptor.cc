@@ -10,13 +10,13 @@
 
 namespace voyager {
 
-Acceptor::Acceptor(EventLoop* eventloop, 
+Acceptor::Acceptor(EventLoop* eventloop,
                    const SockAddr& addr,
-                   int backlog, 
+                   int backlog,
                    bool reuseport)
     : eventloop_(eventloop),
       socket_(addr.Family(), true),
-      dispatch_(eventloop_, socket_.SocketFd()),     
+      dispatch_(eventloop_, socket_.SocketFd()),
       backlog_(backlog),
       idlefd_(::open("/dev/null", O_RDONLY | O_CLOEXEC)),
       listenning_(false) {

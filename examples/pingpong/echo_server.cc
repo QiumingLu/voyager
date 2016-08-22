@@ -1,3 +1,6 @@
+#include <unistd.h>
+#include <inttypes.h>
+
 #include "voyager/core/tcp_server.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
@@ -5,10 +8,6 @@
 #include "voyager/core/callback.h"
 #include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
-#include <unistd.h>
-#include <inttypes.h>
-
-using namespace std::placeholders;
 
 namespace voyager {
 
@@ -17,9 +16,11 @@ class EchoServer {
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "EchoServer", 4) {
     server_.SetConnectionCallback(
-        std::bind(&EchoServer::Connect, this, _1));
+        std::bind(&EchoServer::Connect, this, std::placeholders::_1));
     server_.SetMessageCallback(
-        std::bind(&EchoServer::Message, this, _1, _2));
+        std::bind(&EchoServer::Message, this,
+                  std::placeholders::_1,
+                  std::placeholders::_2));
   }
 
   void Start() {
@@ -40,7 +41,7 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%" PRIu64"\n", 
+  printf("pid=%d, tid=%" PRIu64"\n",
          getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);

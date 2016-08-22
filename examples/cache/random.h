@@ -7,6 +7,7 @@ namespace cache {
 class Random {
  private:
   uint32_t seed_;
+
  public:
   explicit Random(uint32_t s) : seed_(s & 0x7fffffffu) {
     // Avoid bad seeds.

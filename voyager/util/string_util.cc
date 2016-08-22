@@ -61,7 +61,7 @@ void StringReplace(const std::string& s, const std::string& oldsub,
     }
     res->append(s, start_pos, pos - start_pos);
     res->append(newsub);
-    start_pos = pos + oldsub.size(); // start searching again after the "old"
+    start_pos = pos + oldsub.size();  // start searching again after the "old"
   } while (replace_all);
   res->append(s, start_pos, s.length() - start_pos);
 }
@@ -133,7 +133,7 @@ static inline void SplitStringToIteratorAllowEmpty(const StringType& full,
   *result++ = full.substr(begin_index);
 }
 
-void SplitStringAllowEmpty(const std::string& full, 
+void SplitStringAllowEmpty(const std::string& full,
                            const char* delim,
                            std::vector<std::string>* result) {
   std::back_insert_iterator< std::vector<std::string> > it(*result);

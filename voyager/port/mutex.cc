@@ -13,11 +13,11 @@ static void PthreadCall(const char* label, int result) {
   }
 }
 
-Mutex::Mutex() { 
-  PthreadCall("pthread_mutex_init: ",pthread_mutex_init(&mutex_, NULL)); 
+Mutex::Mutex() {
+  PthreadCall("pthread_mutex_init: ", pthread_mutex_init(&mutex_, NULL));
 }
 
-Mutex::~Mutex() { 
+Mutex::~Mutex() {
   PthreadCall("pthread_mutex_destory: ", pthread_mutex_destroy(&mutex_));
 }
 
@@ -29,7 +29,7 @@ void Mutex::UnLock() {
   PthreadCall("pthread_mutex_unlock: ", pthread_mutex_unlock(&mutex_));
 }
 
-Condition::Condition(Mutex* mutex) : mutex_(mutex) { 
+Condition::Condition(Mutex* mutex) : mutex_(mutex) {
   PthreadCall("pthread_cond_init: ", pthread_cond_init(&cond_, NULL));
 }
 
@@ -38,7 +38,8 @@ Condition::~Condition() {
 }
 
 void Condition::Wait() {
-  PthreadCall("pthread_cond_wait: ", pthread_cond_wait(&cond_, &mutex_->mutex_));
+  PthreadCall("pthread_cond_wait: ",
+              pthread_cond_wait(&cond_, &mutex_->mutex_));
 }
 
 void Condition::Signal() {
@@ -49,5 +50,5 @@ void Condition::SignalAll() {
   PthreadCall("pthread_cond_broadcast: ", pthread_cond_broadcast(&cond_));
 }
 
-}  // namespace voyager 
 }  // namespace port
+}  // namespace voyager

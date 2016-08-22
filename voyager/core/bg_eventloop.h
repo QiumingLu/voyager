@@ -1,6 +1,8 @@
 #ifndef VOYAGER_CORE_BG_EVENTLOOP_H_
 #define VOYAGER_CORE_BG_EVENTLOOP_H_
 
+#include <string>
+
 #include "voyager/port/mutex.h"
 #include "voyager/port/thread.h"
 
@@ -10,7 +12,7 @@ class EventLoop;
 
 class BGEventLoop {
  public:
-  BGEventLoop(const std::string& name = std::string());
+  explicit BGEventLoop(const std::string& name = std::string());
   ~BGEventLoop();
 
   EventLoop* Loop();

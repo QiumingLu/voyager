@@ -2,7 +2,9 @@
 #define VOYAGER_CORE_ONLINE_CONNECTIONS_H_
 
 #include <map>
+#include <string>
 #include <unordered_map>
+#include <utility>
 
 #include "voyager/core/tcp_connection.h"
 #include "voyager/port/singleton.h"
@@ -39,8 +41,7 @@ class OneLoopConnections {
 
 // 单例类，借助于port::Singleton模板类
 
-class OnlineConnections
-{
+class OnlineConnections {
  public:
   OnlineConnections() : mu_() { }
   ~OnlineConnections() { STLDeleteValues(&loop_map_); }
@@ -105,7 +106,7 @@ class OnlineConnections
 
   // No copying allow
   OnlineConnections(const OnlineConnections&);
-  void operator=(const OnlineConnections&); 
+  void operator=(const OnlineConnections&);
 };
 
 }  // namespace voyager

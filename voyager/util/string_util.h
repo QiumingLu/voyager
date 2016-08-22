@@ -41,11 +41,11 @@ inline char ascii_tolower(char c) {
 }
 
 inline int hex_digit_to_int(char c) {
-  // Assume ASCII 
+  // Assume ASCII
   int x = static_cast<unsigned char>(c);
   if (x  > '9') {
     x += 9;
-  } 
+  }
   return x & 0xf;
 }
 
@@ -118,11 +118,11 @@ inline std::string ToUpper(const std::string& s) {
 std::string StringReplace(const std::string& s, const std::string& oldsub,
                           const std::string& newsub, bool replace_all);
 
-void SplitStringUsing(const std::string& full, 
+void SplitStringUsing(const std::string& full,
                       const char* delim,
                       std::vector<std::string>* res);
 
-void SplitStringAllowEmpty(const std::string& full, 
+void SplitStringAllowEmpty(const std::string& full,
                            const char* delim,
                            std::vector<std::string>* result);
 
@@ -139,7 +139,7 @@ inline std::vector<std::string> Split(const std::string& full,
   return result;
 }
 
-// These methods concatenate a vector of strings into a C++ string, using 
+// These methods concatenate a vector of strings into a C++ string, using
 // the C-string "delim" as a separator between components.
 void JoinStrings(const std::vector<std::string>& components,
                  const char* delim,

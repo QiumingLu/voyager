@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include <utility>
+
 namespace voyager {
 
 template<typename T> class scoped_ptr;
@@ -79,11 +81,11 @@ class scoped_array {
   }
 
   void reset(T* p = NULL) {
-   if (p != array_) {
-    enum { type_must_be_complete = sizeof(T) };
-    delete[] array_;
-    array_ = p;
-   }
+    if (p != array_) {
+      enum { type_must_be_complete = sizeof(T) };
+      delete[] array_;
+      array_ = p;
+    }
   }
 
   T& operator[](ptrdiff_t i) const {

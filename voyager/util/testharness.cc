@@ -1,5 +1,6 @@
 #include "voyager/util/testharness.h"
 
+#include <string>
 #include <vector>
 
 namespace voyager {

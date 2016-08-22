@@ -1,10 +1,12 @@
 #include "voyager/util/logging.h"
 
-#include <functional>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <time.h>
+
+#include <functional>
+#include <utility>
 
 #include "voyager/util/status.h"
 #include "voyager/util/slice.h"
@@ -34,7 +36,7 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
 
   if (level >= LOGLEVEL_WARN) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
-            log_time, loglevel_names[level], filename, line, 
+            log_time, loglevel_names[level], filename, line,
             message.c_str());
   }
 }
@@ -100,7 +102,6 @@ DECLARE_STREAM_OPERATOR(void*             , "%p"  )
 #undef DECLARE_STREAM_OPERATOR
 
 void Logger::Finish() {
-  //FIXME
   log_handler_(level_, filename_, line_, message_);
 
   if (level_ == LOGLEVEL_FATAL) {

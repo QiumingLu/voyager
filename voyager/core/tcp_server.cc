@@ -6,11 +6,9 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
 
-using namespace std::placeholders;
-
 namespace voyager {
 
-TcpServer::TcpServer(EventLoop* ev, 
+TcpServer::TcpServer(EventLoop* ev,
                      const SockAddr& addr,
                      const std::string& name,
                      int thread_size,
@@ -22,7 +20,8 @@ TcpServer::TcpServer(EventLoop* ev,
       schedule_(new Schedule(eventloop_, thread_size-1)),
       conn_id_(0) {
   acceptor_->SetNewConnectionCallback(
-      std::bind(&TcpServer::NewConnection, this, _1, _2));
+      std::bind(&TcpServer::NewConnection, this,
+                std::placeholders::_1, std::placeholders::_2));
   VOYAGER_LOG(INFO) << "TcpServer::TcpServer [" << name_ << "] is running";
 }
 
@@ -44,24 +43,24 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertInMyLoop();
   char peer[64];
   SockAddr::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
-                             peer, sizeof(peer)); 
-  std::string conn_name = StringPrintf("%s-%s#%d", 
+                             peer, sizeof(peer));
+  std::string conn_name = StringPrintf("%s-%s#%d",
                                        ipbuf_.c_str(), peer, ++conn_id_);
-  
-  VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_ 
+
+  VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_
                     << "] - new connection [" << conn_name
                     << "] from " << peer;
 
   EventLoop* ev = schedule_->AssignLoop();
   TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
-  
+
   conn_ptr->SetConnectionCallback(connection_cb_);
   conn_ptr->SetCloseCallback(close_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
-  
+
   ev->RunInLoop([conn_ptr]() {
-      conn_ptr->StartWorking(); 
+      conn_ptr->StartWorking();
   });
 }
 

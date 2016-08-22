@@ -1,5 +1,5 @@
 #ifndef VOYAGER_UTIL_TESTHARNESS_H_
-#define VOYAGER_UTIL_TESTHARNESS_H_ 
+#define VOYAGER_UTIL_TESTHARNESS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +22,7 @@ class Tester {
 
  public:
   Tester(const char* f, int l)
-      : ok_(true), fname_(f), line_(l) 
+      : ok_(true), fname_(f), line_(l)
   { }
 
   ~Tester() {

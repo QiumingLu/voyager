@@ -3,6 +3,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include <utility>
+
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
 
@@ -15,7 +17,7 @@ EventPoll::~EventPoll() {
 }
 
 void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  int ret = ::poll(&(*pollfds_.begin()), 
+  int ret = ::poll(&(*pollfds_.begin()),
                    static_cast<nfds_t>(pollfds_.size()), timeout);
   if (ret == -1) {
     if (errno != EINTR) {
@@ -23,7 +25,7 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
     }
     return;
   }
-  for (std::vector<pollfd>::const_iterator it = pollfds_.begin(); 
+  for (std::vector<pollfd>::const_iterator it = pollfds_.begin();
        it != pollfds_.end() && ret > 0; ++it) {
     if (it->revents > 0) {
       --ret;
@@ -77,9 +79,9 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     assert(dispatch_map_[dispatch->Fd()] == dispatch);
     int idx = dispatch->index();
     assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
-    assert(pollfds_[idx].fd == dispatch->Fd() || 
+    assert(pollfds_[idx].fd == dispatch->Fd() ||
            pollfds_[idx].fd == -dispatch->Fd()-1);
-    pollfds_[static_cast<size_t>(idx)].events 
+    pollfds_[static_cast<size_t>(idx)].events
         = static_cast<short>(dispatch->Events());
     pollfds_[static_cast<size_t>(idx)].revents = 0;
     if (dispatch->IsNoneEvent()) {

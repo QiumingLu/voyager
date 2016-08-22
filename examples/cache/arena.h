@@ -1,11 +1,12 @@
 #ifndef EXAMPLES_CACHE_ARENA_H_
 #define EXAMPLES_CACHE_ARENA_H_
 
-#include <atomic>
-#include <vector>
 #include <assert.h>
 #include <stdint.h>
 #include <stddef.h>
+
+#include <atomic>
+#include <vector>
 
 namespace voyager {
 namespace cache {
@@ -18,7 +19,7 @@ class Arena {
   char* Allocate(size_t bytes);
   char* AllocateAligned(size_t bytes);
   size_t MemoryUsage() const {
-	return memory_usage_.load(std::memory_order_relaxed);
+    return memory_usage_.load(std::memory_order_relaxed);
   }
 
  private:
@@ -40,16 +41,16 @@ class Arena {
 inline char* Arena::Allocate(size_t bytes) {
   assert(bytes > 0);
   if (bytes <= alloc_bytes_remaining_) {
-	char* result = alloc_ptr_;
-	alloc_ptr_ += bytes;
-	alloc_bytes_remaining_ -= bytes;
-	return result;
+    char* result = alloc_ptr_;
+    alloc_ptr_ += bytes;
+    alloc_bytes_remaining_ -= bytes;
+    return result;
   }
 
   return AllocateFallback(bytes);
 }
 
-}  // namespace cache 
+}  // namespace cache
 }  // namespace voyager
 
 #endif  // EXAMPLES_CACHE_ARENA_H_

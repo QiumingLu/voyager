@@ -1,8 +1,9 @@
-#ifndef VOYAGER_EXAMPLES_HTTP_RESPONSE_H_
-#define VOYAGER_EXAMPLES_HTTP_RESPONSE_H_
+#ifndef EXAMPLES_HTTP_RESPONSE_H_
+#define EXAMPLES_HTTP_RESPONSE_H_
 
-#include <string>
 #include <map>
+#include <string>
+
 #include "voyager/core/buffer.h"
 
 namespace http {
@@ -47,7 +48,7 @@ class Response {
   void set_headers(std::map<std::string, std::string>&& headers) {
     headers_ = headers;
   }
-  
+
   void AppendToBuffer(voyager::Buffer* buf);
 
  private:
@@ -61,4 +62,4 @@ class Response {
 
 }  // namespace http
 
-#endif  // VOYAGER_EXAMPLES_HTTP_RESPONSE_H_
+#endif  // EXAMPLES_HTTP_RESPONSE_H_

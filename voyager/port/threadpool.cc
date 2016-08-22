@@ -1,9 +1,9 @@
 #include "voyager/port/threadpool.h"
 
+#include <assert.h>
+
 #include <algorithm>
 #include <utility>
-
-#include <assert.h>
 
 #include "voyager/port/mutexlock.h"
 
@@ -57,7 +57,7 @@ void ThreadPool::AddTask(const Task& task) {
       cond_.Signal();
     }
   }
-} 
+}
 
 void ThreadPool::AddTask(Task&& task) {
   if (poolsize_ == 0) {

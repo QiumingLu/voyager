@@ -1,7 +1,7 @@
 #ifndef VOYAGER_UTIL_STL_UTIL_H_
 #define VOYAGER_UTIL_STL_UTIL_H_
 
-#include <string> 
+#include <string>
 
 namespace voyager {
 
@@ -10,7 +10,7 @@ inline char* string_as_array(std::string* str) {
 }
 
 template<typename ForwardIterator>
-void STLDeleteContainerPointers(ForwardIterator begin, 
+void STLDeleteContainerPointers(ForwardIterator begin,
                                 ForwardIterator end) {
   while (begin != end) {
     ForwardIterator temp = begin;

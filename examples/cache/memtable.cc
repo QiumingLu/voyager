@@ -7,4 +7,4 @@ MemTable::MemTable() {
 }
 
 }  // namespace cache
-}  // namespace voyager 
+}  // namespace voyager

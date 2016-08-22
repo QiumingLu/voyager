@@ -1,11 +1,14 @@
 #ifndef VOYAGER_CORE_BUFFER_H_
 #define VOYAGER_CORE_BUFFER_H_
 
-#include <algorithm>
-#include <vector>
 #include <assert.h>
 #include <stddef.h>
 #include <sys/types.h>
+
+#include <algorithm>
+#include <string>
+#include <vector>
+
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -14,8 +17,8 @@ namespace voyager {
 
 class Buffer {
  public:
-  Buffer(size_t init_size = kInitBufferSize);
-  
+  explicit Buffer(size_t init_size = kInitBufferSize);
+
   ssize_t ReadV(int socketfd);
 
   size_t ReadableSize() const { return write_index_ - read_index_; }

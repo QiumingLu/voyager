@@ -1,5 +1,5 @@
-#ifndef VOYAGER_ATOMIC_SEQUENCE_NUM_H_
-#define VOYAGER_ATOMIC_SEQUENCE_NUM_H_
+#ifndef VOYAGER_PORT_ATOMIC_SEQUENCE_NUM_H_
+#define VOYAGER_PORT_ATOMIC_SEQUENCE_NUM_H_
 
 #include <atomic>
 
@@ -8,7 +8,6 @@ namespace port {
 
 class SequenceNumber {
  public:
-
   SequenceNumber() : num_(0) { }
 
   int GetNext() {
@@ -22,4 +21,4 @@ class SequenceNumber {
 }  // namespace port
 }  // namespace voyager
 
-#endif  // VOYAGER_ATOMIC_SEQUENCE_NUM_H_
+#endif  // VOYAGER_PORT_ATOMIC_SEQUENCE_NUM_H_

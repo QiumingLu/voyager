@@ -2,6 +2,9 @@
 #define VOYAGER_CORE_TCP_CONNECTION_H_
 
 #include <atomic>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
@@ -18,11 +21,11 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   TcpConnection(const std::string& name, EventLoop* ev, int fd);
   ~TcpConnection();
 
-  void SetConnectionCallback(const ConnectionCallback& cb) { 
-    connection_cb_ = cb; 
+  void SetConnectionCallback(const ConnectionCallback& cb) {
+    connection_cb_ = cb;
   }
-  void SetCloseCallback(const CloseCallback& cb) { 
-    close_cb_ = cb; 
+  void SetCloseCallback(const CloseCallback& cb) {
+    close_cb_ = cb;
   }
   void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
     writecomplete_cb_ = cb;
@@ -30,7 +33,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetMessageCallback(const MessageCallback& cb) {
     message_cb_ = cb;
   }
-  
+
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
   }
@@ -71,7 +74,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   // Internal use only, use in TcpClient and TcpServer.
   void StartWorking();
- 
+
  private:
   enum ConnectState {
     kDisconnected,
@@ -102,7 +105,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
-  
+
   // No copying allow
   TcpConnection(const TcpConnection&);
   void operator=(const TcpConnection&);

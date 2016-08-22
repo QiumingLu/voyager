@@ -8,7 +8,7 @@ namespace voyager {
 
 const char Buffer::kCRLF[] = "\r\n";
 
-Buffer::Buffer(size_t init_size) 
+Buffer::Buffer(size_t init_size)
     : buf_(init_size),
       read_index_(0),
       write_index_(0) {

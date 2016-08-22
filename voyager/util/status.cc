@@ -33,7 +33,7 @@ std::string Status::ToString() const {
   } else {
     char tmp[30];
     const char* type;
-    switch(code()) {
+    switch (code()) {
       case kOk:
         type = "OK";
         break;

@@ -1,8 +1,11 @@
 #ifndef VOYAGER_CORE_ACCEPTOR_H_
 #define VOYAGER_CORE_ACCEPTOR_H_
 
-#include <functional>
 #include <netdb.h>
+
+#include <functional>
+#include <utility>
+
 #include "voyager/core/server_socket.h"
 #include "voyager/core/dispatch.h"
 
@@ -13,27 +16,27 @@ class EventLoop;
 
 class Acceptor {
  public:
-  typedef std::function<void (int fd, 
+  typedef std::function<void (int fd,
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
-  Acceptor(EventLoop* eventloop, 
-           const SockAddr& addr, 
+  Acceptor(EventLoop* eventloop,
+           const SockAddr& addr,
            int backlog, bool reuseport = false);
   ~Acceptor();
 
   void EnableListen();
   bool IsListenning() const { return listenning_; }
 
-  void SetNewConnectionCallback(const NewConnectionCallback& cb) { 
-    conn_cb_ = cb; 
+  void SetNewConnectionCallback(const NewConnectionCallback& cb) {
+    conn_cb_ = cb;
   }
-  void SetNewConnectionCallback(NewConnectionCallback&& cb) { 
-    conn_cb_ = std::move(cb); 
+  void SetNewConnectionCallback(NewConnectionCallback&& cb) {
+    conn_cb_ = std::move(cb);
   }
 
  private:
   void Accept();
- 
+
   EventLoop* eventloop_;
   ServerSocket socket_;
   Dispatch   dispatch_;

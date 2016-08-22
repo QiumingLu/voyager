@@ -4,8 +4,8 @@
 
 namespace voyager {
 
-Dispatch::Dispatch(EventLoop* eventloop, int fd) 
-    : eventloop_(eventloop), 
+Dispatch::Dispatch(EventLoop* eventloop, int fd)
+    : eventloop_(eventloop),
       fd_(fd),
       events_(0),
       revents_(0),
@@ -52,7 +52,7 @@ void Dispatch::DisableWrite() {
 }
 
 void Dispatch::DisableAll() {
-  if (IsReading() && add_write_) { 
+  if (IsReading() && add_write_) {
     modify_ = kDeleteAll;
   } else if (IsReading()) {
     modify_ = kDeleteRead;
@@ -90,24 +90,24 @@ void Dispatch::HandleEvent() {
 void Dispatch::HandleEventWithGuard() {
   event_handling_ = true;
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
-    if (close_cb_) { 
-      close_cb_(); 
+    if (close_cb_) {
+      close_cb_();
     }
   }
   if (revents_ & POLLNVAL) {
     VOYAGER_LOG(WARN) << "Dispatch::HandleEvent() POLLNVAL";
   }
   if (revents_ & (POLLERR | POLLNVAL)) {
-    if (error_cb_) { 
-      error_cb_(); 
+    if (error_cb_) {
+      error_cb_();
     }
   }
 #ifndef POLLRDHUP
   const int POLLRDHUP = 0;
 #endif
   if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
-    if (read_cb_) { 
-      read_cb_(); 
+    if (read_cb_) {
+      read_cb_();
     }
   }
   if (revents_ & POLLOUT) {

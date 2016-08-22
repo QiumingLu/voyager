@@ -15,9 +15,9 @@ extern void StringAppendV(std::string* dst, const char* format, va_list ap);
 // Return a C++ string.
 extern std::string StringPrintf(const char* format, ...);
 
-// Store result into a supplied string and return it. 
+// Store result into a supplied string and return it.
 // The previous dst will be clear.
-extern const std::string& SStringPrintf(std::string* dst, 
+extern const std::string& SStringPrintf(std::string* dst,
                                         const char* format, ...);
 
 // Append result into a supplied string.

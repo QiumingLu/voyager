@@ -7,7 +7,7 @@
 
 namespace voyager {
 namespace port {
-  
+
 template<typename T>
 class Singleton {
  public:
@@ -17,11 +17,11 @@ class Singleton {
   }
 
  private:
- static void Init() {
+  static void Init() {
     assert(instance_ == NULL);
     instance_ = new T();
-    atexit([]() { 
-        delete instance_; 
+    atexit([]() {
+        delete instance_;
         instance_ = NULL;
     });
   }

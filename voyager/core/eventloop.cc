@@ -2,6 +2,9 @@
 
 #include <signal.h>
 
+#include <algorithm>
+#include <utility>
+
 #include "voyager/core/dispatch.h"
 #include "voyager/core/event_poll.h"
 #include "voyager/core/event_select.h"
@@ -12,7 +15,7 @@
 #ifdef __linux__
 #include <sys/eventfd.h>
 #include "voyager/core/event_epoll.h"
-#else 
+#else
 #include "voyager/core/event_kqueue.h"
 #endif
 
@@ -30,7 +33,7 @@ class IgnoreSIGPIPE {
 
 IgnoreSIGPIPE ignore;
 
-}  // namespace anonymous
+}  // anonymous namespace
 
 EventLoop* EventLoop::RunLoop() {
   return runloop;
@@ -47,7 +50,7 @@ EventLoop::EventLoop()
       wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
   if (wakeup_fd_ == -1) {
     VOYAGER_LOG(FATAL) << "eventfd: " << strerror(errno);
-  }      
+  }
 
   VOYAGER_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
   if (runloop) {
@@ -106,7 +109,7 @@ void EventLoop::Loop() {
   AssertInMyLoop();
   exit_ = false;
 
-  while(!exit_) {
+  while (!exit_) {
     static const uint64_t kPollTimeMs = 10000;
     std::vector<Dispatch*> dispatches;
     uint64_t t = timers_->TimeoutMicros();
@@ -123,7 +126,7 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  QueueInLoop([this]() { 
+  QueueInLoop([this]() {
     this->exit_ = true;
     port::Singleton<OnlineConnections>::Instance().Erase(this);
   });
@@ -189,18 +192,18 @@ TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval,
   return timers_->Insert(micros_value, micros_interval, cb);
 }
 
-TimerList::Timer* EventLoop::RunAt(uint64_t micros_value, 
+TimerList::Timer* EventLoop::RunAt(uint64_t micros_value,
                                    TimerProcCallback&& cb) {
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay, 
+TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay,
                                       TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval, 
+TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval,
                                       TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, std::move(cb));
@@ -235,7 +238,7 @@ void EventLoop::RunFuncs() {
     port::MutexLock lock(&mu_);
     funcs.swap(funcs_);
   }
-  for (std::vector<Func>::iterator it = funcs.begin(); 
+  for (std::vector<Func>::iterator it = funcs.begin();
        it != funcs.end(); ++it) {
     (*it)();
   }
@@ -246,7 +249,7 @@ void EventLoop::WakeUp() {
   uint64_t one = 0;
 #ifdef __linux__
   ssize_t n  = ::write(wakeup_fd_, &one, sizeof(one));
-#else 
+#else
   ssize_t n  = ::write(wakeup_fd_[1], &one, sizeof(one));
 #endif
   if (n != sizeof(one)) {
@@ -269,9 +272,9 @@ void EventLoop::HandleRead() {
 }
 
 void EventLoop::Abort() {
-  VOYAGER_LOG(FATAL) << "EventLoop::Abort - (EventLoop " << this 
-                     << ") was created in tid_ = " << tid_ 
-                     << ", currentthread's tid_ = " 
+  VOYAGER_LOG(FATAL) << "EventLoop::Abort - (EventLoop " << this
+                     << ") was created in tid_ = " << tid_
+                     << ", currentthread's tid_ = "
                      << port::CurrentThread::Tid();
 }
 

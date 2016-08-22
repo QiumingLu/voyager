@@ -17,7 +17,7 @@ bool Base64Encode(const std::string& input, std::string* output) {
   output->swap(x);
   return true;
 }
-  
+
 bool Base64Decode(const std::string& input, std::string* output) {
   std::string x(modp_b64_decode_len(input.size()), '\0');
   int d = modp_b64_decode(string_as_array(&x),
@@ -30,5 +30,5 @@ bool Base64Decode(const std::string& input, std::string* output) {
   output->swap(x);
   return true;
 }
-  
+
 }  // namespace voyager

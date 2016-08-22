@@ -4,7 +4,7 @@ namespace http {
 
 std::string Request::MethodToString() const {
   const char* mt;
-  switch(method_) {
+  switch (method_) {
     case kGet:
       mt = "GET";
       break;
@@ -32,7 +32,7 @@ std::string Request::MethodToString() const {
 
 std::string Request::VersionToString() const {
   const char* v;
-  switch(version_) {
+  switch (version_) {
     case kHttp10:
       v = "HTTP/1.0";
       break;

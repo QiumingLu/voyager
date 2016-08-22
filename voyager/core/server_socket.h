@@ -7,11 +7,11 @@ namespace voyager {
 
 class ServerSocket : public BaseSocket {
  public:
-  ServerSocket(int domain, bool nonblocking) 
+  ServerSocket(int domain, bool nonblocking)
       : BaseSocket(domain, nonblocking) {
   }
-  
-  explicit ServerSocket(int socketfd) 
+
+  explicit ServerSocket(int socketfd)
       : BaseSocket(socketfd) {
   }
 

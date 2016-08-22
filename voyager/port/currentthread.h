@@ -1,5 +1,5 @@
-#ifndef VOYAGER_PORT_CURRENT_THREAD_H_
-#define VOYAGER_PORT_CURRENT_THREAD_H_
+#ifndef VOYAGER_PORT_CURRENTTHREAD_H_
+#define VOYAGER_PORT_CURRENTTHREAD_H_
 
 namespace voyager {
 namespace port {
@@ -26,4 +26,4 @@ inline const char* ThreadName() {
 }  // namespace port
 }  // namespace voyager
 
-#endif  // VOYAGER_PORT_CURRENT_THREAD_H_
+#endif  // VOYAGER_PORT_CURRENTTHREAD_H_

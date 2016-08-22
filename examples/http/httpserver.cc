@@ -1,4 +1,8 @@
 #include "examples/http/httpserver.h"
+
+#include <map>
+#include <memory>
+
 #include "examples/http/request.h"
 #include "examples/http/response.h"
 #include "voyager/util/logging.h"
@@ -6,17 +10,17 @@
 
 namespace http {
 
-using namespace std::placeholders;
-
 HttpServer::HttpServer(voyager::EventLoop* ev,
                        const voyager::SockAddr& addr,
                        const std::string& name,
                        int thread_size)
   : server_(ev, addr, name, thread_size) {
-  server_.SetConnectionCallback(std::bind(&HttpServer::ConnectCallback, 
-                                this, _1));
+  server_.SetConnectionCallback(std::bind(&HttpServer::ConnectCallback,
+                                this, std::placeholders::_1));
   server_.SetMessageCallback(std::bind(&HttpServer::MessageCallback,
-                             this, _1, _2));  
+                                       this,
+                                       std::placeholders::_1,
+                                       std::placeholders::_2));
 }
 
 void HttpServer::Start() {
@@ -35,22 +39,23 @@ void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
     std::string s("HTTP/1.1 400 Bad Request\r\n\r\n");
     ptr->SendMessage(std::move(s));
     ptr->ShutDown();
-  } 
-  
+  }
+
   if (request->state() == 2) {
     VOYAGER_LOG(WARN) << request->MethodToString() << " "
                       << request->path() << request->query_string()
                       << " " << request->VersionToString();
     std::map<std::string, std::string>::const_iterator it;
-    for (it = request->headers().begin(); it != request->headers().end(); ++it) {
+    for (it = request->headers().begin();
+         it != request->headers().end(); ++it) {
       VOYAGER_LOG(WARN) << it->first << ":" << it->second;
     }
-  
+
     std::string s = request->GetHeader("Connection");
     char* tmp = &*(s.begin());
     bool close;
-    if (strcasecmp(tmp, "close") == 0 || 
-        (request->version() == Request::kHttp10 && 
+    if (strcasecmp(tmp, "close") == 0 ||
+        (request->version() == Request::kHttp10 &&
            strcasecmp(tmp, "keep-alive"))) {
       close = true;
     } else {
@@ -58,7 +63,7 @@ void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
     }
 
     Response response(close);
-    
+
     if (http_cb_) {
       http_cb_(request, &response);
     } else {
@@ -116,7 +121,7 @@ bool HttpServer::ProcessRequest(voyager::Buffer* buf, Request* request) {
   return ok;
 }
 
-bool HttpServer::ProcessRequestLine(const char* begin, 
+bool HttpServer::ProcessRequestLine(const char* begin,
                                     const char* end,
                                     Request* request) {
   bool ok = false;
@@ -163,4 +168,4 @@ bool HttpServer::ProcessRequestLine(const char* begin,
   return ok;
 }
 
-} // namespace http
+}  // namespace http

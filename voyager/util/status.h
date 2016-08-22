@@ -9,7 +9,7 @@ namespace voyager {
 
 class Status {
  public:
-  Status() : state_(NULL) { } 
+  Status() : state_(NULL) { }
   ~Status() { delete[] state_; }
 
   // Copy the specified status.
@@ -34,7 +34,7 @@ class Status {
   static Status IOError(const Slice& msg, const Slice& msg2 = Slice()) {
     return Status(kIOError, msg, msg2);
   }
-  
+
   bool ok() const { return state_ == NULL; }
   bool IsNotFound() const { return code() == kNotFound; }
   bool IsCorruption() const { return code() == kCorruption; }

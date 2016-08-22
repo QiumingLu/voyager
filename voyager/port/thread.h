@@ -16,9 +16,9 @@ namespace port {
 class Thread {
  public:
   typedef std::function<void()> ThreadFunc;
-  explicit Thread(const ThreadFunc& func, 
+  explicit Thread(const ThreadFunc& func,
                   const std::string& name = std::string());
-  explicit Thread(ThreadFunc&& func, 
+  explicit Thread(ThreadFunc&& func,
                   const std::string& name = std::string());
   ~Thread();
 
@@ -29,7 +29,7 @@ class Thread {
   bool Joined() const { return joined_; }
   uint64_t Tid() const { return tid_; }
   const std::string& Name() const { return name_; }
-  static int ThreadCreatedNum() { 
+  static int ThreadCreatedNum() {
     return num_.load(std::memory_order_relaxed);
   }
 

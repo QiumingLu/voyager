@@ -2,13 +2,16 @@
 #define VOYAGER_CORE_EVENT_EPOLL_H_
 
 #include <sys/epoll.h>
+
+#include <vector>
+
 #include "voyager/core/event_poller.h"
 
 namespace voyager {
 
 class EventEpoll : public EventPoller {
  public:
-  EventEpoll(EventLoop* ev);
+  explicit EventEpoll(EventLoop* ev);
   virtual ~EventEpoll();
 
   virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
