@@ -264,7 +264,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
 
 std::string TcpConnection::StateToString() const {
   const char *type;
-  switch (state_) {
+  switch (state_.load(std::memory_order_relaxed)) {
     case kDisconnected:
       type = "Disconnected";
       break;

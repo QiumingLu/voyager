@@ -1,5 +1,6 @@
 #include "voyager/core/event_select.h"
 
+#include <errno.h>
 #include <string.h>
 
 #include "voyager/util/logging.h"
@@ -19,8 +20,8 @@ EventSelect::~EventSelect() {
 
 void EventSelect::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timeval out;
-  out.tv_sec = static_cast<long>(timeout / 1000);
-  out.tv_usec = static_cast<long>(timeout % 1000);
+  out.tv_sec = static_cast<time_t>(timeout / 1000);
+  out.tv_usec = static_cast<suseconds_t>(timeout % 1000);
   
   fd_set readfds;
   fd_set writefds;
