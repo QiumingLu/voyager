@@ -8,7 +8,7 @@
 #include "voyager/util/stringprintf.h"
 #include "voyager/util/slice.h"
 
-voyager::TcpClient* g_client = NULL;
+voyager::TcpClient* g_client = nullptr;
 
 namespace voyager {
 

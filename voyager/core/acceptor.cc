@@ -55,7 +55,7 @@ void Acceptor::Accept() {
   } else {
     if (errno == EMFILE) {
       ::close(idlefd_);
-      idlefd_ = ::accept(socket_.SocketFd(), NULL, NULL);
+      idlefd_ = ::accept(socket_.SocketFd(), nullptr, nullptr);
       ::close(idlefd_);
       idlefd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);
     }

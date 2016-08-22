@@ -5,11 +5,13 @@
 #include <unistd.h>
 #include <inttypes.h>
 
+#include <memory>
+#include <vector>
+
 #include "voyager/port/countdownlatch.h"
 #include "voyager/port/thread.h"
 #include "voyager/port/currentthread.h"
 #include "voyager/util/stringprintf.h"
-#include "voyager/util/scoped_ptr.h"
 
 namespace voyager {
 namespace port {
@@ -18,12 +20,11 @@ class BlockingQueueTest {
  public:
   BlockingQueueTest(int threads_size)
       : latch_(threads_size),
-        threads_size_(threads_size),
-        threads_(new scoped_ptr<Thread>[threads_size]) {
+        threads_size_(threads_size) {
     for (int i = 0; i < threads_size_; ++i) {
-      threads_[i].reset(new Thread(
+      threads_.push_back(std::unique_ptr<Thread>(new Thread(
           std::bind(&BlockingQueueTest::ThreadFunc, this),
-          StringPrintf("thread %d", i)));
+          StringPrintf("thread %d", i))));
       threads_[i]->Start();
     }
   }
@@ -67,7 +68,7 @@ class BlockingQueueTest {
   BlockingQueue<std::string> queue_;
   CountDownLatch latch_;
   int threads_size_;
-  scoped_array<scoped_ptr<Thread> > threads_;
+  std::vector<std::unique_ptr<Thread> > threads_;
 };
 
 }  // namespace port

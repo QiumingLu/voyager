@@ -10,7 +10,7 @@ namespace timeops {
 
 uint64_t NowMicros() {
   struct timeval tv;
-  gettimeofday(&tv, NULL);
+  gettimeofday(&tv, nullptr);
   return static_cast<uint64_t>(tv.tv_sec) * kMicroSecondsPerSecond + tv.tv_usec;
 }
 

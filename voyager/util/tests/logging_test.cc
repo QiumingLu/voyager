@@ -34,7 +34,7 @@ TEST(LoggingTest, Simple) {
   VOYAGER_LOG(FATAL) << "A fatal message!";
 
   char* p = v1;
-  char* q = NULL;
+  char* q = nullptr;
   CHECK_NOTNULL(p);
   CHECK_NOTNULL(q);
 }

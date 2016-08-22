@@ -9,14 +9,14 @@
 namespace voyager {
 
 BGEventLoop::BGEventLoop(const std::string& name)
-    : eventloop_(NULL),
+    : eventloop_(nullptr),
       mu_(),
       cond_(&mu_),
       thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {
 }
 
 BGEventLoop::~BGEventLoop() {
-  if (eventloop_ != NULL) {
+  if (eventloop_ != nullptr) {
     eventloop_->Exit();
     thread_.Join();
   }
@@ -27,7 +27,7 @@ EventLoop* BGEventLoop::Loop() {
   thread_.Start();
   {
     port::MutexLock l(&mu_);
-    while (eventloop_ == NULL) {
+    while (eventloop_ == nullptr) {
       cond_.Wait();
     }
   }
@@ -42,7 +42,7 @@ void BGEventLoop::ThreadFunc() {
     cond_.Signal();
   }
   eventloop_->Loop();
-  eventloop_ = NULL;
+  eventloop_ = nullptr;
 }
 
 }  // namespace voyager

@@ -58,7 +58,7 @@ class ThreadInitializer {
   ThreadInitializer() {
     CurrentThread::thread_name = "main";
     CurrentThread::Tid();
-    pthread_atfork(NULL, NULL, &AfterFork);
+    pthread_atfork(nullptr, nullptr, &AfterFork);
   }
 };
 
@@ -85,7 +85,7 @@ void* StartThreadWrapper(void* arg) {
   state->thread_func();
   CurrentThread::thread_name = "finished";
   delete state;
-  return NULL;
+  return nullptr;
 }
 
 }  // anonymous namespace
@@ -150,14 +150,14 @@ void Thread::Start() {
   started_ = true;
   StartThreadState* state = new StartThreadState(func_, name_, &tid_);
   PthreadCall("start thread: ",
-              pthread_create(&pthread_id_, NULL, &StartThreadWrapper, state));
+              pthread_create(&pthread_id_, nullptr, &StartThreadWrapper, state));
 }
 
 void Thread::Join() {
   assert(started_);
   assert(!joined_);
   joined_ = true;
-  PthreadCall("join thread: ", pthread_join(pthread_id_, NULL));
+  PthreadCall("join thread: ", pthread_join(pthread_id_, nullptr));
 }
 
 }  // namespace port

@@ -14,7 +14,7 @@ static void PthreadCall(const char* label, int result) {
 }
 
 Mutex::Mutex() {
-  PthreadCall("pthread_mutex_init: ", pthread_mutex_init(&mutex_, NULL));
+  PthreadCall("pthread_mutex_init: ", pthread_mutex_init(&mutex_, nullptr));
 }
 
 Mutex::~Mutex() {
@@ -30,7 +30,7 @@ void Mutex::UnLock() {
 }
 
 Condition::Condition(Mutex* mutex) : mutex_(mutex) {
-  PthreadCall("pthread_cond_init: ", pthread_cond_init(&cond_, NULL));
+  PthreadCall("pthread_cond_init: ", pthread_cond_init(&cond_, nullptr));
 }
 
 Condition::~Condition() {

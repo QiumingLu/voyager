@@ -18,11 +18,11 @@ class Singleton {
 
  private:
   static void Init() {
-    assert(instance_ == NULL);
+    assert(instance_ == nullptr);
     instance_ = new T();
     atexit([]() {
         delete instance_;
-        instance_ = NULL;
+        instance_ = nullptr;
     });
   }
 
@@ -38,7 +38,7 @@ template<typename T>
 pthread_once_t Singleton<T>::once_ = PTHREAD_ONCE_INIT;
 
 template<typename T>
-T* Singleton<T>::instance_ = NULL;
+T* Singleton<T>::instance_ = nullptr;
 
 }  // namespace port
 }  // namespace voyager

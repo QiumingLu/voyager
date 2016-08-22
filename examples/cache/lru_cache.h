@@ -46,7 +46,7 @@ struct LRUHandle {
 
 class HandleTable {
  public:
-  HandleTable() : length_(0), elems_(0), list_(NULL) { Resize(); }
+  HandleTable() : length_(0), elems_(0), list_(nullptr) { Resize(); }
   ~HandleTable() { delete[] list_; }
 
   LRUHandle* Lookup(const Slice& key, size_t hash);
@@ -132,7 +132,7 @@ class ShardedLRUCache {
   LRUHandle* Insert(const Slice& key, void* value, size_t charge,
                          void (*deleter)(const Slice& key, void* value));
 
-  // If the cache has no mapping for ""key", returns NULL
+  // If the cache has no mapping for ""key", returns nullptr
   //
   // Else return a handle that corresponds to the mapping.
   // The caller call this->Release(handle) when the returned mapping

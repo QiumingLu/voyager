@@ -29,7 +29,7 @@ class ThreadLocalStorageSingleton {
     }
 
     void set(T* value) {
-      assert(pthread_getspecific(key_) == NULL);
+      assert(pthread_getspecific(key_) == nullptr);
       pthread_setspecific(key_, value);
     }
 
@@ -51,7 +51,7 @@ class ThreadLocalStorageSingleton {
 };
 
 template<typename T>
-__thread T* ThreadLocalStorageSingleton<T>::value_ = NULL;
+__thread T* ThreadLocalStorageSingleton<T>::value_ = nullptr;
 
 template<typename T>
 typename ThreadLocalStorageSingleton<T>::Helper

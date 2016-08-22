@@ -10,9 +10,9 @@ LRUHandle* HandleTable::Lookup(const Slice& key, size_t hash) {
 LRUHandle* HandleTable::Insert(LRUHandle* h) {
   LRUHandle** ptr = FindPointer(h->key(), h->hash);
   LRUHandle* old = *ptr;
-  h->next_hash = (old == NULL ? NULL : old->next_hash);
+  h->next_hash = (old == nullptr ? nullptr : old->next_hash);
   *ptr = h;
-  if (old == NULL) {
+  if (old == nullptr) {
     ++elems_;
     if (elems_ > length_) {
       Resize();
@@ -24,7 +24,7 @@ LRUHandle* HandleTable::Insert(LRUHandle* h) {
 LRUHandle* HandleTable::Remove(const Slice& key, size_t hash) {
   LRUHandle** ptr = FindPointer(key, hash);
   LRUHandle* result = *ptr;
-  if (result != NULL) {
+  if (result != nullptr) {
     *ptr = result->next_hash;
     --elems_;
   }
@@ -33,7 +33,7 @@ LRUHandle* HandleTable::Remove(const Slice& key, size_t hash) {
 
 LRUHandle** HandleTable::FindPointer(const Slice& key, size_t hash) {
   LRUHandle** ptr = &list_[hash & (length_ - 1)];
-  while (*ptr != NULL &&
+  while (*ptr != nullptr &&
          ((*ptr)->hash != hash || key != (*ptr)->key())) {
     ptr = &(*ptr)->next_hash;
   }
@@ -50,7 +50,7 @@ void HandleTable::Resize() {
   uint32_t count = 0;
   for (uint32_t i = 0; i < length_; ++i) {
     LRUHandle* h = list_[i];
-    while (h != NULL) {
+    while (h != nullptr) {
       LRUHandle* next = h->next_hash;
       size_t hash = h->hash;
       LRUHandle** ptr = &new_list[hash & (new_length - 1)];
@@ -125,7 +125,7 @@ void LRUCache::LRU_Append(LRUHandle* list, LRUHandle* e) {
 LRUHandle* LRUCache::Lookup(const Slice& key, size_t hash) {
   MutexLock lock(&mu_);
   LRUHandle* e = table_.Lookup(key, hash);
-  if (e != NULL) {
+  if (e != nullptr) {
     Ref(e);
   }
   return e;
@@ -172,17 +172,17 @@ LRUHandle* LRUCache::Insert(
   return e;
 }
 
-// If e != NULL, finish removing *e from the cache; it has already been removed
-// from the hash table. Return whether e != NULL. Requires mu_ held.
+// If e != nullptr, finish removing *e from the cache; it has already been removed
+// from the hash table. Return whether e != nullptr. Requires mu_ held.
 bool LRUCache::FinishErase(LRUHandle* e) {
-  if (e != NULL) {
+  if (e != nullptr) {
     assert(e->in_cache);
     LRU_Remove(e);
     e->in_cache = false;
     usage_ -= e->charge;
     UnRef(e);
   }
-  return e != NULL;
+  return e != nullptr;
 }
 
 void LRUCache::Erase(const Slice& key, size_t hash) {

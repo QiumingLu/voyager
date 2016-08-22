@@ -28,7 +28,7 @@ const char* Status::CopyState(const char* state) {
 }
 
 std::string Status::ToString() const {
-  if (state_ == NULL) {
+  if (state_ == nullptr) {
     return "OK";
   } else {
     char tmp[30];

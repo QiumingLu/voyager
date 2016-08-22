@@ -11,7 +11,7 @@ namespace voyager {
 
 Timestamp Timestamp::Now() {
   struct timeval now_tv;
-  gettimeofday(&now_tv, NULL);
+  gettimeofday(&now_tv, nullptr);
   int64_t seconds = now_tv.tv_sec;
   return Timestamp(
       seconds * (timeops::kMicroSecondsPerSecond) + now_tv.tv_usec);

@@ -9,7 +9,7 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"
-#include "voyager/util/scoped_ptr.h"
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -26,7 +26,7 @@ class Client;
 
 class Session {
  public:
-  Session(voyager::EventLoop* ev, 
+  Session(voyager::EventLoop* ev,
           const voyager::SockAddr& addr,
           const std::string& name,
           Client* owner)
@@ -41,7 +41,7 @@ class Session {
     client_.SetCloseCallback(
         std::bind(&Session::CloseCallback, this, _1));
   }
-  
+
   void Connect() {
     client_.Connect();
   }
@@ -83,10 +83,10 @@ class Session {
 
 class Client {
  public:
-  Client(EventLoop* ev, 
+  Client(EventLoop* ev,
          const SockAddr& addr,
          size_t block_size,
-         size_t session_count, 
+         size_t session_count,
          uint64_t timeout,
          int thread_count)
       : base_ev_(ev),
@@ -111,7 +111,7 @@ class Client {
     schedule_.Start();
     for (size_t i = 0; i < session_count; ++i) {
       std::string name = StringPrintf("session %d", i + 1);
-      Session* new_session = new Session(schedule_.AssignLoop(), 
+      Session* new_session = new Session(schedule_.AssignLoop(),
                                          addr, name, this);
       new_session->Connect();
       sessions_.push_back(new_session);
@@ -125,7 +125,7 @@ class Client {
   const std::string& Message() const { return message_; }
 
   void Print(const TcpConnectionPtr& ptr) {
-    if ( seq_.GetNext() < static_cast<int>(session_count_-1)) return; 
+    if ( seq_.GetNext() < static_cast<int>(session_count_-1)) return;
 
     for (std::vector<Session*>::iterator it = sessions_.begin();
          it != sessions_.end(); ++it) {
@@ -135,7 +135,7 @@ class Client {
 
     VOYAGER_LOG(WARN) << total_bytes_written << " total bytes written";
     VOYAGER_LOG(WARN) << total_bytes_read << " total bytes read";
-    VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) / 
+    VOYAGER_LOG(WARN) << static_cast<double>(total_bytes_read) /
                              static_cast<double>(timeout_ * 1024 * 1024)
                       << " MiB/s throughtput";
 
@@ -145,15 +145,15 @@ class Client {
          << " Sessions: " << sessions_.size() << "\n";
     file << total_bytes_written << " total bytes written\n";
     file << total_bytes_read << " total bytes read\n";
-    file << static_cast<double>(total_bytes_read) / 
-                static_cast<double>(timeout_ * 1024 * 1024) 
+    file << static_cast<double>(total_bytes_read) /
+                static_cast<double>(timeout_ * 1024 * 1024)
          << " MiB/s throughtput\n\n\n";
     file.close();
     base_ev_->Exit();
   }
 
   void HandleTimeout() {
-    std::for_each(sessions_.begin(), sessions_.end(), 
+    std::for_each(sessions_.begin(), sessions_.end(),
                   std::mem_fn(&Session::Close));
   }
 
@@ -170,7 +170,7 @@ class Client {
   std::vector<Session*> sessions_;
   std::string message_;
 #ifdef __linux__
-  scoped_ptr<NewTimer> timer_;
+  std::unique_ptr<NewTimer> timer_;
 #endif
 
   // No copying allow

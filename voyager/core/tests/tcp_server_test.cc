@@ -4,7 +4,7 @@
 
 using namespace voyager;
 
-TcpServer* g_server = NULL;
+TcpServer* g_server = nullptr;
 
 void DeleteServer() {
   if (g_server) {

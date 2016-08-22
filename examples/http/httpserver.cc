@@ -134,7 +134,7 @@ bool HttpServer::ProcessRequestLine(const char* begin,
   if (tmp != end && request->set_method(begin, size)) {
     ++tmp;
     const char* start = tmp;
-    const char* p = NULL;
+    const char* p = nullptr;
     while (tmp != end && !isspace(*tmp)) {
       if (*tmp == '?') {
         p = tmp;
@@ -142,7 +142,7 @@ bool HttpServer::ProcessRequestLine(const char* begin,
       ++tmp;
     }
     if (tmp != end) {
-      if (p != NULL) {
+      if (p != nullptr) {
         std::string path(start, p);
         request->set_path(path);
         std::string query(p, tmp);

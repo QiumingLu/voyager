@@ -129,12 +129,12 @@ SkipList<Key, Comparator>::NewNode(const Key& key, int high) {
 template <typename Key, class Comparator>
 inline SkipList<Key, Comparator>::Iterator::Iterator(const SkipList* list) {
   list_ = list;
-  node_ = NULL;
+  node_ = nullptr;
 }
 
 template <typename Key, class Comparator>
 inline bool SkipList<Key, Comparator>::Iterator::Valid() const {
-  return node_ != NULL;
+  return node_ != nullptr;
 }
 
 template <typename Key, class Comparator>
@@ -154,13 +154,13 @@ inline void SkipList<Key, Comparator>::Iterator::Prev() {
   assert(Valid());
   node_ = list_->FindLessThan(node_->key);
   if (node_ == list_->head_) {
-    node_ = NULL;
+    node_ = nullptr;
   }
 }
 
 template <typename Key, class Comparator>
 inline void SkipList<Key, Comparator>::Iterator::Seek(const Key& target) {
-  node_ = list_->FindGreaterOrEqual(target, NULL);
+  node_ = list_->FindGreaterOrEqual(target, nullptr);
 }
 
 template <typename Key, class Comparator>
@@ -172,7 +172,7 @@ template <typename Key, class Comparator>
 inline void SkipList<Key, Comparator>::Iterator::SeekToLast() {
   node_ = list_->FindLast();
   if (node_ == list_->head_) {
-    node_ = NULL;
+    node_ = nullptr;
   }
 }
 
@@ -191,8 +191,8 @@ int SkipList<Key, Comparator>::RandomHeight() {
 
 template <typename Key, class Comparator>
 bool SkipList<Key, Comparator>::KeyIsAfterNode(const Key& key, Node* n) const {
-  // NULL n is considered infinite
-  return (n != NULL) && (compare_(n->key, key) < 0);
+  // nullptr n is considered infinite
+  return (n != nullptr) && (compare_(n->key, key) < 0);
 }
 
 template <typename Key, class Comparator>
@@ -207,7 +207,7 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
       // Keep seraching in this list
       x = next;
     } else {
-      if (prev != NULL) prev[level] = x;
+      if (prev != nullptr) prev[level] = x;
       if (level == 0) {
         return next;
       } else {
@@ -226,7 +226,7 @@ SkipList<Key, Comparator>::FindLessThan(const Key& key) const {
   while (true) {
     assert(x == head_ || compare_(x->key, key) < 0);
     Node* next = x->Next(level);
-    if (next == NULL || compare_(next->key, key) >= 0) {
+    if (next == nullptr || compare_(next->key, key) >= 0) {
       if (level == 0) {
         return x;
       } else {
@@ -246,7 +246,7 @@ SkipList<Key, Comparator>::FindLast() const {
   int level = GetMaxHeight() - 1;
   while (true) {
     Node* next = x->Next(level);
-    if (next == NULL) {
+    if (next == nullptr) {
       if (level == 0) {
         return x;
       } else {
@@ -265,7 +265,7 @@ SkipList<Key, Comparator>::SkipList(Comparator cmp, Arena* arena)
       head_(NewNode(0, kMaxHeight)),
       rnd_(0xdeadbeef) {
   for (int i = 0; i < kMaxHeight; ++i) {
-    head_->SetNext(i, NULL);
+    head_->SetNext(i, nullptr);
   }
 }
 
@@ -274,7 +274,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
   Node* prev[kMaxHeight];
   Node* x = FindGreaterOrEqual(key, prev);
 
-  assert(x == NULL || Equal(key, x->key));
+  assert(x == nullptr || Equal(key, x->key));
 
   int height = RandomHeight();
   if (height > GetMaxHeight()) {
@@ -295,8 +295,8 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 
 template <typename Key, class Comparator>
 bool SkipList<Key, Comparator>::Contains(const Key& key) const {
-  Node* x = FindGreaterOrEqual(key, NULL);
-  if (x != NULL && Equal(key, x->key)) {
+  Node* x = FindGreaterOrEqual(key, nullptr);
+  if (x != nullptr && Equal(key, x->key)) {
     return true;
   } else {
     return false;

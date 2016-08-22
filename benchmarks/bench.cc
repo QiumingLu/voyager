@@ -8,16 +8,18 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
+#include <memory>
+#include <vector>
+
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/timerlist.h"
-#include "voyager/util/scoped_ptr.h"
 #include "voyager/util/timeops.h"
 
 using namespace voyager;
 
 EventLoop *eventloop;
-scoped_array<scoped_ptr<Dispatch> > *g_dispatches;
+std::vector<std::unique_ptr<Dispatch> > *g_dispatches;
 
 static int count, writes, fired;
 static int *pipes;
@@ -100,7 +102,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
   }
-  
+
   printf("num_pipes:%d\n", num_pipes);
   printf("num_active:%d\n", num_active);
   printf("num_writes:%d\n", num_writes);
@@ -114,7 +116,7 @@ int main(int argc, char* argv[]) {
 #endif
 
   pipes = static_cast<int*>(calloc(num_pipes * 2, sizeof(int)));
-  if (pipes == NULL)
+  if (pipes == nullptr)
   {
     perror("malloc");
     exit(1);
@@ -133,11 +135,9 @@ int main(int argc, char* argv[]) {
   eventloop = &ev;
   int dispatch_size = num_pipes;
 
-  scoped_array<scoped_ptr<Dispatch> > dispatches(
-      new scoped_ptr<Dispatch>[dispatch_size]);
+  std::vector<std::unique_ptr<Dispatch> > dispatches;
   for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
-    Dispatch* dispatch = new Dispatch(&ev, *cp);
-    dispatches[i].reset(dispatch);
+    dispatches.push_back(std::unique_ptr<Dispatch>(new Dispatch(&ev, *cp)));
   }
 
   g_dispatches = &dispatches;
@@ -160,6 +160,6 @@ int main(int argc, char* argv[]) {
   }
 
   free(pipes);
-    
+
   return 0;
 }

@@ -44,7 +44,7 @@ class Buffer {
     const char* crlf = std::search(&*(buf_.begin() + SafeCast(read_index_)),
                                    &*(buf_.begin() + SafeCast(write_index_)),
                                    kCRLF, kCRLF + 2);
-    return crlf == &*(buf_.begin() + SafeCast(write_index_)) ? NULL : crlf;
+    return crlf == &*(buf_.begin() + SafeCast(write_index_)) ? nullptr : crlf;
   }
 
   void Retrieve(size_t size) {

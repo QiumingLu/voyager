@@ -6,7 +6,7 @@
 namespace voyager {
 
 inline char* string_as_array(std::string* str) {
-  return str->empty() ? NULL : &*str->begin();
+  return str->empty() ? nullptr : &*str->begin();
 }
 
 template<typename ForwardIterator>

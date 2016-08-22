@@ -20,7 +20,7 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
 
   char log_time[64];
   struct timeval now_tv;
-  gettimeofday(&now_tv, NULL);
+  gettimeofday(&now_tv, nullptr);
   const time_t seconds = now_tv.tv_sec;
   struct tm t;
   localtime_r(&seconds, &t);
@@ -120,9 +120,9 @@ void LogFinisher::operator=(Logger& logger) {
 LogHandler* SetLogHandler(LogHandler* new_func) {
   LogHandler* old = log_handler_;
   if (old == &NullLogHandler) {
-    old = NULL;
+    old = nullptr;
   }
-  if (new_func == NULL) {
+  if (new_func == nullptr) {
     log_handler_ = &NullLogHandler;
   } else {
     log_handler_ = new_func;

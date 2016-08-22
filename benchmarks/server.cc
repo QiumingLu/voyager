@@ -1,13 +1,15 @@
 #include "voyager/core/tcp_server.h"
+
+#include <iostream>
+
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
-#include <iostream>
 
 class Server {
  public:
-  Server(voyager::EventLoop* ev, 
+  Server(voyager::EventLoop* ev,
          const voyager::SockAddr& addr,
          const std::string& name,
          int thread_count)
@@ -26,7 +28,7 @@ class Server {
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
   }
-  
+
   void MessageCallback(const voyager::TcpConnectionPtr& ptr,
                        voyager::Buffer* buf) {
     size_t size = buf->ReadableSize();
@@ -50,7 +52,7 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(host, port);
   voyager::EventLoop ev;
   Server server(&ev, addr, "server", thread_count);
-    
+
   server.Start();
   ev.Loop();
 

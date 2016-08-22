@@ -18,7 +18,7 @@ class ThreadLocalStorage {
 
   T* GetValue() {
     T* value = static_cast<T*>(pthread_getspecific(key_));
-    if (value == NULL) {
+    if (value == nullptr) {
       value = new T();
       pthread_setspecific(key_, value);
     }

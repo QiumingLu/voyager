@@ -1,6 +1,8 @@
 #ifndef EXAMPLES_HTTP_REQUEST_H_
 #define EXAMPLES_HTTP_REQUEST_H_
 
+#include <string.h>
+
 #include <map>
 #include <utility>
 #include <string>

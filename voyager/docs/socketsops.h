@@ -139,7 +139,7 @@ const char *gai_strerror( int error );
 该函数以getaddrinfo返回的非0错误值的名字和含义为他的唯一参数，返回一个指向对应的出错信息串的指针。
 
 
-if ((status = getaddrinfo(NULL, "3490", &hints, &servinfo)) != 0) {
+if ((status = getaddrinfo(nullptr, "3490", &hints, &servinfo)) != 0) {
     fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
     exit(1);
 }

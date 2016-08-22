@@ -26,7 +26,7 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timespec out;
   out.tv_sec = timeout / 1000;
   out.tv_nsec = (timeout % 1000) * 1000 * 1000;
-  int nfds = ::kevent(kq_, NULL, 0,
+  int nfds = ::kevent(kq_, nullptr, 0,
                       &*events_.begin(), static_cast<int>(events_.size()),
                       &out);
   if (nfds == -1) {
@@ -112,7 +112,7 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
       break;
   }
 
-  if (::kevent(kq_, ev, n, NULL, 0, NULL) == -1) {
+  if (::kevent(kq_, ev, n, nullptr, 0, nullptr) == -1) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
   }
   if (dispatch->index() == -1) {

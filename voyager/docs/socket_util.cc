@@ -226,7 +226,7 @@ static Status GenericResolve(const char* hostname,
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  error = ::getaddrinfo(hostname, NULL, &hints, &result);
+  error = ::getaddrinfo(hostname, nullptr, &hints, &result);
   if (error != 0) {
     std::string str;
     StringAppendF(&str, "getaddrinfo: %s", gai_strerror(error));

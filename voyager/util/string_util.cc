@@ -11,7 +11,7 @@ void StripString(std::string* s, const char* remove, char replacewith) {
   const char* str_start = s->c_str();
   const char* str = str_start;
   for (str = strpbrk(str, remove);
-       str != NULL;
+       str != nullptr;
        str = strpbrk(str + 1, remove)) {
     (*s)[str - str_start] = replacewith;
   }
@@ -145,7 +145,7 @@ static void JoinStringsIterator(const ITERATOR& start,
                                 const ITERATOR& end,
                                 const char* delim,
                                 std::string* result) {
-  assert(result != NULL);
+  assert(result != nullptr);
   result->clear();
   size_t delim_length = strlen(delim);
 
