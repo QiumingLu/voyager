@@ -172,8 +172,9 @@ LRUHandle* LRUCache::Insert(
   return e;
 }
 
-// If e != nullptr, finish removing *e from the cache; it has already been removed
-// from the hash table. Return whether e != nullptr. Requires mu_ held.
+// If e != nullptr, finish removing *e from the cache;
+// it has already been removed from the hash table.
+// Return whether e != nullptr. Requires mu_ held.
 bool LRUCache::FinishErase(LRUHandle* e) {
   if (e != nullptr) {
     assert(e->in_cache);

@@ -149,8 +149,10 @@ void Thread::Start() {
   assert(!started_);
   started_ = true;
   StartThreadState* state = new StartThreadState(func_, name_, &tid_);
-  PthreadCall("start thread: ",
-              pthread_create(&pthread_id_, nullptr, &StartThreadWrapper, state));
+  PthreadCall("start thread: ", pthread_create(&pthread_id_,
+                                               nullptr,
+                                               &StartThreadWrapper,
+                                               state));
 }
 
 void Thread::Join() {

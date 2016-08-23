@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <inttypes.h>
 #include <voyager/core/tcp_server.h>
 #include <voyager/core/eventloop.h>
 #include <voyager/core/sockaddr.h>
@@ -5,14 +7,10 @@
 #include <voyager/core/callback.h>
 #include <voyager/util/logging.h>
 #include <voyager/util/timeops.h>
-#include <unistd.h>
-#include <inttypes.h>
 #include <gperftools/profiler.h>
 #ifdef __linux__
 #include <voyager/core/newtimer.h>
 #endif
-
-using namespace std::placeholders;
 
 namespace voyager {
 
@@ -20,10 +18,13 @@ class EchoServer {
  public:
   EchoServer(EventLoop* ev, const SockAddr& addr)
       : server_(ev, addr, "EchoServer", 4) {
-    server_.SetConnectionCallback(
-		std::bind(&EchoServer::Connect, this, _1));
-    server_.SetMessageCallback(
-		std::bind(&EchoServer::Message, this, _1, _2));
+    server_.SetConnectionCallback(std::bind(&EchoServer::Connect,
+                                            this,
+                                            std::placeholders::_1));
+    server_.SetMessageCallback(std::bind(&EchoServer::Message,
+                                         this,
+                                         std::placeholders::_1,
+                                         std::placeholders::_2));
   }
 
   void Start() {
@@ -51,14 +52,14 @@ class EchoServer {
 // 加入了Google PerfTools来测试,如果不需要可以去掉
 int main(int argc, char** argv) {
   ProfilerStart("MyProfile");
-  //voyager::SetLogHandler(nullptr);
+  // voyager::SetLogHandler(nullptr);
   printf("pid=%d, tid=%" PRIu64"\n",
          getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);
 #ifdef __linux__
- voyager::NewTimer timer(&ev, [&ev]() { ev.Exit(); });
+  voyager::NewTimer timer(&ev, [&ev]() { ev.Exit(); });
   timer.SetTime(180 * (voyager::timeops::kNonasSecondsPerSecond), 0);
 #else
   ev.RunAfter(180*1000000, [&ev]() { ev.Exit(); });

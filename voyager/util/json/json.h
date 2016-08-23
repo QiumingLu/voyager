@@ -78,16 +78,16 @@ class Json {
   static Status WriteArray(const JsonValuePtr& p, std::string* result);
   static Status WriteBoolean(const JsonValuePtr& p, std::string* result);
 
-  static Status GetValue(JsonReader& reader, JsonValuePtr* p);
-  static Status GetString(JsonReader& reader, char head, JsonValuePtr* p);
-  static Status GetNum(JsonReader& reader, char head, JsonValuePtr* p);
-  static Status GetObj(JsonReader& reader, JsonValuePtr* p);
-  static Status GetArray(JsonReader& reader, JsonValuePtr* p);
-  static Status GetBoolean(JsonReader& reader, char c, JsonValuePtr* p);
-  static Status GetNull(JsonReader& reader, char c, JsonValuePtr* /* p */);
+  static Status GetValue(JsonReader* reader, JsonValuePtr* p);
+  static Status GetString(JsonReader* reader, char head, JsonValuePtr* p);
+  static Status GetNum(JsonReader* reader, char head, JsonValuePtr* p);
+  static Status GetObj(JsonReader* reader, JsonValuePtr* p);
+  static Status GetArray(JsonReader* reader, JsonValuePtr* p);
+  static Status GetBoolean(JsonReader* reader, char c, JsonValuePtr* p);
+  static Status GetNull(JsonReader* reader, char c, JsonValuePtr* /* p */);
 
-  static Status GetHex(JsonReader& reader, uint16_t& result);
-  static char SkipWhiteSpace(JsonReader& reader);
+  static Status GetHex(JsonReader* reader, uint16_t* result);
+  static char SkipWhiteSpace(JsonReader* reader);
 };
 
 }  // namespace json
