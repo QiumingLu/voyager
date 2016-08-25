@@ -76,7 +76,7 @@ class Session {
   size_t bytes_read_;
   size_t bytes_written_;
 
-  // No copy allow
+  // No copying allow
   Session(const Session&);
   void operator=(const Session&);
 };

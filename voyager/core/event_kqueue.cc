@@ -36,13 +36,12 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   for (int i = 0; i < nfds; ++i) {
     Dispatch *dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
     int revents = 0;
-    if (events_[i].flags & EV_ERROR) {
-      revents |= POLLERR;
-    }
-    if (events_[i].filter == EVFILT_READ) {
-      revents |= POLLIN;
+    if (events_[i].flags == EV_ERROR) {
+      revents = POLLERR;
+    } else if (events_[i].filter == EVFILT_READ) {
+      revents = POLLIN;
     } else if (events_[i].filter == EVFILT_WRITE) {
-      revents |= POLLOUT;
+      revents = POLLOUT;
     }
 
     dispatch->SetRevents(revents);
