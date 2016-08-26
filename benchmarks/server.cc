@@ -6,6 +6,7 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/util/logging.h"
 
 class Server {
  public:
