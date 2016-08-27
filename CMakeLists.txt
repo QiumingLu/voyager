@@ -62,7 +62,7 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 add_subdirectory(voyager/util)
 add_subdirectory(voyager/port)
 add_subdirectory(voyager/core)
-#add_subdirectory(voyager/http)
+add_subdirectory(voyager/http)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/cache)

@@ -4,39 +4,42 @@
 #include <map>
 #include <string>
 
-#include "voyager/util/slice.h"
-
 namespace voyager {
 
 class HttpMessage {
  public:
   enum HttpVersion {
-    kHttp10 = 0,
-    kHttp11 = 1,
-    kHttp20 = 2,
-    kUnknown = 3
+    kHttp10,
+    kHttp11,
+    kHttp20,
+    kUnknown,
   };
 
-  void SetVersion(HttpVersion version) { version_ = version; }
-  HttpVersion GetVersion() const { return version_; }
-  std::string VersionToString() const;
+  HttpMessage() : version_(kHttp11) { }
 
-  void AppendContent(const Slice& s);
-  void SetContent(const std::string& s);
-  void SetContent(std::string&& s);
-  const std::string& GetContent() const { return content_; }
+  void SetVersion(HttpVersion v) { version_ = v; }
+  bool SetVersion(const char* begin, const char* end);
+  HttpVersion Version() const { return version_; }
+  const char* VersionToString() const;
 
   void AddHeader(const char* begin, const char* colon, const char* end);
   void AddHeader(const std::string& field, const std::string& value);
   void RemoveHeader(const std::string& field);
+  const std::string& Value(const std::string& field) {
+    return header_map_[field];
+  }
   const std::map<std::string, std::string>& HeaderMap() const {
     return header_map_;
   }
 
- private:
+  void SetBody(const std::string& body) { body_ = body; }
+  void SetBody(std::string&& body) { body_ = std::move(body); }
+  const std::string& Body() const { return body_; }
+
+ protected:
   HttpVersion version_;
-  std::string content_;
   std::map<std::string, std::string> header_map_;
+  std::string body_;
 };
 
 }  // namespace voyager

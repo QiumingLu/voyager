@@ -1,10 +1,25 @@
 #include "voyager/http/http_message.h"
 
-#include <utility>
+#include <string.h>
 
 namespace voyager {
 
-std::string HttpMessage::VersionToString() const {
+bool HttpMessage::SetVersion(const char* begin, const char* end) {
+  size_t size = end - begin;
+  if (strncasecmp(begin, "HTTP/1.0", size)) {
+    version_ = kHttp10;
+  } else if (strncasecmp(begin, "HTTP/1.1", size)) {
+    version_ = kHttp11;
+  } else if (strncasecmp(begin, "HTTP/2", size)) {
+    version_ = kHttp20;
+  } else {
+    version_ = kUnknown;
+    return false;
+  }
+  return true;
+}
+
+const char* HttpMessage::VersionToString() const {
   const char* c;
   switch (version_) {
     case kHttp10:
@@ -19,20 +34,7 @@ std::string HttpMessage::VersionToString() const {
     default:
       c = "";
   }
-  std::string result(c);
-  return result;
-}
-
-void HttpMessage::AppendContent(const Slice& s) {
-  content_.append(s.data(), s.size());
-}
-
-void HttpMessage::SetContent(const std::string& s) {
-  content_ = s;
-}
-
-void HttpMessage::SetContent(std::string&& s) {
-  content_ = std::move(s);
+  return c;
 }
 
 void HttpMessage::AddHeader(const char* begin,

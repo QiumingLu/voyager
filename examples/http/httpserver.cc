@@ -28,12 +28,12 @@ void HttpServer::Start() {
 }
 
 void HttpServer::ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  ptr->SetUserData(std::shared_ptr<Request>(new Request()));
+  ptr->SetUserData(new Request());
 }
 
 void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
                                   voyager::Buffer* buf) {
-  Request* request(reinterpret_cast<Request*>(ptr->UserData().get()));
+  Request* request(reinterpret_cast<Request*>(ptr->UserData()));
 
   if (!ProcessRequest(buf, request)) {
     std::string s("HTTP/1.1 400 Bad Request\r\n\r\n");
@@ -76,6 +76,7 @@ void HttpServer::MessageCallback(const voyager::TcpConnectionPtr& ptr,
     request->Reset();
     if (response.close_connection()) {
       ptr->ShutDown();
+      delete request;
     }
   }
 }

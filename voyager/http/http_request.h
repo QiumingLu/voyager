@@ -2,6 +2,7 @@
 #define VOYAGER_HTTP_HTTP_REQUEST_H_
 
 #include <string>
+#include <utility>
 
 #include "voyager/http/http_message.h"
 
@@ -10,28 +11,33 @@ namespace voyager {
 class HttpRequest : public HttpMessage {
  public:
   enum Method {
-    kOptions = 0,
-    kHead    = 1,
-    kGet     = 2,
-    kPost    = 3,
-    kPut     = 4,
-    kDelete  = 5,
-    kTrace   = 6,
-    kConnect = 7,
-    kPatch   = 8,
-    kUnknown = 9
+    kOptions,
+    kHead,
+    kGet,
+    kPost,
+    kPut,
+    kDelete,
+    kTrace,
+    kConnect,
+    kPatch,
+    kUnknown,
   };
 
-  void SetMethod(Method method) { method_ = method; }
+  bool SetMethod(const char* begin, const char* end);
   Method GetMethod() const { return method_; }
+  const char* MethodToString() const;
 
   void SetUri(const std::string& uri) { uri_ = uri; }
-  const std::string& GetUri() const { return uri_; }
+  const std::string& Uri() const { return uri_; }
 
-  void SetPath(const std::string& path) { path_ = path; }
-  const std::string& GetPath() const { return path_; }
+  void SetPath(const char* begin, const char* end) {
+    path_ = std::string(begin, end);
+  }
+  const std::string& Path() const { return path_; }
 
-  void SetQuery(const std::string& query) { query_ = query; }
+  void SetQuery(const char* begin, const char* end) {
+    query_ = std::string(begin, end);
+  }
   const std::string& Query() const { return query_; }
 
  private:

@@ -50,8 +50,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   EventLoop* OwnerLoop() const { return eventloop_; }
   std::string name() const { return name_; }
 
-  void SetUserData(const std::shared_ptr<void>& data) { user_data_ = data; }
-  std::shared_ptr<void> UserData() { return user_data_; }
+  void SetUserData(void* data) { user_data_ = data; }
+  void* UserData() { return user_data_; }
 
   void StartRead();
   void StopRead();
@@ -99,7 +99,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   Buffer readbuf_;
   Buffer writebuf_;
 
-  std::shared_ptr<void> user_data_;
+  void* user_data_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;
