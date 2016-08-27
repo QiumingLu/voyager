@@ -10,27 +10,22 @@ namespace voyager {
 
 class HttpResponse : public HttpMessage {
  public:
-  enum StatusCode {
-    k200,
-    k301,
-    k400,
-    k404,
-    k500,
-    k501,
-    kUnknown,
-  };
-
   HttpResponse()
-      :  status_code_(k200), reason_parse_("OK") {
+      :  status_code_("200"), reason_parse_("OK") {
   }
 
   void SetCloseState(bool close) { close_ =  close; }
   bool CloseState() const { return close_; }
 
-  void SetStatusCode(StatusCode code) { status_code_ = code; }
-  StatusCode GetStatusCode() const { return status_code_; }
-  const char* StatusCodeToString() const;
+  void SetStatusCode(const char* begin, const char* end) {
+    status_code_.assign(begin, end);
+  }
+  void SetStatusCode(const std::string& code) { status_code_ = code; }
+  const std::string& GetStatusCode() const { return status_code_; }
 
+  void SetReasonParse(const char* begin, const char* end) {
+    reason_parse_.assign(begin, end);
+  }
   void SetReasonParse(const std::string& s) { reason_parse_ = s; }
   const std::string& ReasonParse() const { return reason_parse_; }
 
@@ -38,7 +33,7 @@ class HttpResponse : public HttpMessage {
 
  private:
   bool close_;
-  StatusCode status_code_;
+  std::string status_code_;
   std::string reason_parse_;
   Buffer message_;
 };

@@ -13,7 +13,6 @@ bool HttpMessage::SetVersion(const char* begin, const char* end) {
   } else if (strncasecmp(begin, "HTTP/2", size)) {
     version_ = kHttp20;
   } else {
-    version_ = kUnknown;
     return false;
   }
   return true;

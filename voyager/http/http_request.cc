@@ -25,7 +25,6 @@ bool HttpRequest::SetMethod(const char* begin, const char* end) {
   } else if (strncasecmp(begin, "PATCH", size)) {
     method_ = kPatch;
   } else {
-    method_ = kUnknown;
     return false;
   }
   return true;
@@ -76,6 +75,30 @@ const char* HttpRequest::MethodToString() const {
   }
 
   return c;
+}
+
+Buffer& HttpRequest::RequestMessage() {
+  message_.Append(MethodToString());
+  message_.Append(" ");
+  message_.Append(path_);
+  if (!query_.empty()) {
+    message_.Append("?");
+    message_.Append(query_);
+  }
+  message_.Append(" ");
+  message_.Append(VersionToString());
+  message_.Append("\r\n");
+  for (std::map<std::string, std::string>::iterator it = header_map_.begin();
+       it != header_map_.end(); ++it) {
+    message_.Append(it->first);
+    message_.Append(":");
+    message_.Append(it->second);
+    message_.Append("\r\n");
+  }
+  message_.Append("\r\n");
+  message_.Append(body_);
+
+  return message_;
 }
 
 }  // namespace voyager

@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 #include <iostream>
-#include <sstream>  
+#include <sstream>
 
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
@@ -13,8 +13,8 @@
 
 namespace voyager {
 
-void HandleHttpRequest(const HttpRequest* request, HttpResponse* response) {
-  response->SetStatusCode(HttpResponse::k200);
+void HandleHttpRequest(const HttpRequest& request, HttpResponse* response) {
+  response->SetStatusCode("200");
   response->SetReasonParse("OK");
   response->AddHeader("Content-Type", "text/html; charset=UTF-8");
   response->AddHeader("Content-Encoding", "UTF-8");

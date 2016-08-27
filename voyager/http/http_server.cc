@@ -45,13 +45,13 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
   }
 
   if (parser->FinishParse()) {
-    HttpRequest* request = parser->GetRequest();
+    HttpRequest& request = parser->GetRequest();
     HttpResponse response;
 
-    const std::string& s = request->Value("Connection");
+    const std::string& s = request.Value("Connection");
     if (s == "close" ||
         s != "Keep-Alive" ||
-        (request->Version() == HttpRequest::kHttp10)) {
+        (request.Version() == HttpRequest::kHttp10)) {
       response.SetCloseState(true);
     }
 

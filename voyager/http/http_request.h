@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "voyager/http/http_message.h"
+#include "voyager/core/buffer.h"
 
 namespace voyager {
 
@@ -20,9 +21,9 @@ class HttpRequest : public HttpMessage {
     kTrace,
     kConnect,
     kPatch,
-    kUnknown,
   };
 
+  void SetMethod(Method method) { method_ = method; }
   bool SetMethod(const char* begin, const char* end);
   Method GetMethod() const { return method_; }
   const char* MethodToString() const;
@@ -30,21 +31,25 @@ class HttpRequest : public HttpMessage {
   void SetUri(const std::string& uri) { uri_ = uri; }
   const std::string& Uri() const { return uri_; }
 
+  void SetPath(const std::string& s) { path_ = s; }
   void SetPath(const char* begin, const char* end) {
-    path_ = std::string(begin, end);
+    path_.assign(begin, end);
   }
   const std::string& Path() const { return path_; }
 
   void SetQuery(const char* begin, const char* end) {
-    query_ = std::string(begin, end);
+    query_.assign(begin, end);
   }
   const std::string& Query() const { return query_; }
+
+  Buffer& RequestMessage();
 
  private:
   Method method_;
   std::string uri_;
   std::string path_;
   std::string query_;
+  Buffer message_;
 };
 
 }  // namespace voyager

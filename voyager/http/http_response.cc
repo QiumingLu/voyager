@@ -2,37 +2,10 @@
 
 namespace voyager {
 
-const char* HttpResponse::StatusCodeToString() const {
-  const char* c;
-  switch (status_code_) {
-    case k200:
-      c = "200";
-      break;
-    case k301:
-      c = "301";
-      break;
-    case k400:
-      c = "404";
-      break;
-    case k404:
-      c = "404";
-      break;
-    case k500:
-      c = "500";
-      break;
-    case k501:
-      c = "501";
-      break;
-    default:
-      c = "404";
-  }
-  return c;
-}
-
 Buffer& HttpResponse::ResponseMessage() {
   message_.Append(VersionToString());
   message_.Append(" ");
-  message_.Append(StatusCodeToString());
+  message_.Append(status_code_);
   message_.Append(" ");
   message_.Append(reason_parse_);
   message_.Append("\r\n");
@@ -45,7 +18,6 @@ Buffer& HttpResponse::ResponseMessage() {
   }
   message_.Append("\r\n");
   message_.Append(body_);
-  message_.Append("\r\n");
   return message_;
 }
 
