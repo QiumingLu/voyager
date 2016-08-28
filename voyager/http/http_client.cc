@@ -65,7 +65,7 @@ void HttpClient::Init(HttpRequest* request) {
     if (request_cb_) {
       HttpParser* parser = reinterpret_cast<HttpParser*>(ptr->UserData());
       parser->ParseBuffer(buffer);
-      request_cb_(&parser->GetResponse());
+      request_cb_(parser->GetResponse());
     }
   });
 

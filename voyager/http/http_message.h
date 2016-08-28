@@ -13,7 +13,7 @@ class HttpMessage {
     kHttp11,
     kHttp20,
   };
-
+  
   HttpMessage() : version_(kHttp10) { }
 
   void SetVersion(HttpVersion v) { version_ = v; }

@@ -11,7 +11,7 @@ namespace voyager {
 class HttpResponse : public HttpMessage {
  public:
   HttpResponse()
-      :  status_code_("200"), reason_parse_("OK") {
+      : close_(false), status_code_("200"), reason_parse_("OK") {
   }
 
   void SetCloseState(bool close) { close_ =  close; }

@@ -1,19 +1,28 @@
 #include "voyager/http/http_parser.h"
+#include "voyager/http/http_request.h"
+#include "voyager/http/http_response.h"
 #include "voyager/core/buffer.h"
 
 namespace voyager {
 
 HttpParser::HttpParser(HttpType type)
-    : type_(type), state_(kLine) {
+    : type_(type), state_(kLine), request_(nullptr), response_(nullptr) {
+  if (type_ == kHttpRequest) {
+    request_ = new HttpRequest();
+  } else {
+    response_ = new HttpResponse();
+  }
 }
 
 HttpParser::~HttpParser() {
+  delete request_;
+  delete response_;
 }
 
 bool HttpParser::ParseBuffer(Buffer* buf) {
   bool ok = true;
   bool flag = true;
-  while (flag) {
+  while (flag && ok) {
     if (state_ == kLine) {
       const char* crlf = buf->FindCRLF();
       if (crlf) {
@@ -35,24 +44,30 @@ bool HttpParser::ParseBuffer(Buffer* buf) {
       const char* crlf = buf->FindCRLF();
       if (crlf) {
         const char* colon = buf->Peek();
-        while (colon != crlf && *colon != ':') {
-          ++colon;
-        }
-        if (colon != crlf) {
-          request_.AddHeader(buf->Peek(), colon, crlf);
-        } else {
+        if (colon == crlf) {
           state_ = kBody;
+        } else {
+          while (colon != crlf && *colon != ':') {
+            ++colon;
+          }
+          if (colon == buf->Peek() || colon == crlf) {
+            ok = false;
+          } else {
+            if (type_ == kHttpRequest) {
+              request_->AddHeader(buf->Peek(), colon, crlf);
+            } else  {
+              response_->AddHeader(buf->Peek(), colon, crlf);
+            }
+          }
         }
         buf->RetrieveUntil(crlf + 2);
       } else {
         flag = false;
       }
     } else if (state_ == kBody) {
-      request_.SetBody(buf->RetrieveAllAsString());
-      flag = false;
+       flag = false;
     }
   }
-
   return ok;
 }
 
@@ -62,7 +77,7 @@ bool HttpParser::ParseRequestLine(const char* begin, const char* end) {
   while (tmp != end && !isspace(*tmp)) {
     ++tmp;
   }
-  if (tmp != end && request_.SetMethod(begin, tmp)) {
+  if (tmp != end && request_->SetMethod(begin, tmp)) {
     ++tmp;
     const char* start = tmp;
     const char* p = nullptr;
@@ -74,13 +89,13 @@ bool HttpParser::ParseRequestLine(const char* begin, const char* end) {
     }
     if (tmp != end) {
       if (p != nullptr) {
-        request_.SetPath(start, p);
-        request_.SetQuery(p, tmp);
+        request_->SetPath(start, p);
+        request_->SetQuery(p, tmp);
       } else {
-        request_.SetPath(start, tmp);
+        request_->SetPath(start, tmp);
       }
       start = tmp + 1;
-      ok = request_.SetVersion(start, end);
+      ok = request_->SetVersion(start, end);
     }
   }
   return ok;
@@ -91,7 +106,7 @@ bool HttpParser::ParseResponseLine(const char* begin, const char* end) {
   while (tmp != end && !isspace(*tmp)) {
     ++tmp;
   }
-  response_.SetVersion(begin, tmp);
+  response_->SetVersion(begin, tmp);
 
   while (tmp != end && isspace(*tmp)) {
     ++tmp;
@@ -101,12 +116,12 @@ bool HttpParser::ParseResponseLine(const char* begin, const char* end) {
   while (tmp != end && !isspace(*tmp)) {
     ++tmp;
   }
-  response_.SetStatusCode(begin, tmp);
+  response_->SetStatusCode(begin, tmp);
 
   while (tmp != end && isspace(*tmp)) {
     ++tmp;
   }
-  response_.SetReasonParse(tmp, end);
+  response_->SetReasonParse(tmp, end);
 
   return true;
 }

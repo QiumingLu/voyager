@@ -6,11 +6,11 @@ namespace voyager {
 
 bool HttpMessage::SetVersion(const char* begin, const char* end) {
   size_t size = end - begin;
-  if (strncasecmp(begin, "HTTP/1.0", size)) {
+  if (strncasecmp(begin, "HTTP/1.0", size) == 0) {
     version_ = kHttp10;
-  } else if (strncasecmp(begin, "HTTP/1.1", size)) {
+  } else if (strncasecmp(begin, "HTTP/1.1", size) == 0) {
     version_ = kHttp11;
-  } else if (strncasecmp(begin, "HTTP/2", size)) {
+  } else if (strncasecmp(begin, "HTTP/2", size) == 0) {
     version_ = kHttp20;
   } else {
     return false;
@@ -32,6 +32,7 @@ const char* HttpMessage::VersionToString() const {
       break;
     default:
       c = "";
+      break;
   }
   return c;
 }
@@ -41,17 +42,11 @@ void HttpMessage::AddHeader(const char* begin,
                             const char* end) {
   std::string field(begin, colon);
   ++colon;
-  while (colon < end && isspace(*colon)) {
+  while (colon != end && *colon == ' ') {
     ++colon;
   }
-  const char* tmp = end;
-  --tmp;
-  while (isspace(*tmp)) {
-    --tmp;
-  }
-  ++tmp;
-  std::string value(colon, tmp);
-  AddHeader(field, value);
+  std::string value(colon, end);
+  header_map_[field] = value;
 }
 
 void HttpMessage::AddHeader(const std::string& field,

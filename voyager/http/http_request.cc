@@ -6,23 +6,23 @@ namespace voyager {
 
 bool HttpRequest::SetMethod(const char* begin, const char* end) {
   size_t size = end - begin;
-  if (strncasecmp(begin, "OPTIONS", size)) {
+  if (strncasecmp(begin, "OPTIONS", size) == 0) {
     method_ = kOptions;
-  } else if (strncasecmp(begin, "HEAD", size)) {
+  } else if (strncasecmp(begin, "HEAD", size) == 0) {
     method_ = kHead;
-  } else if (strncasecmp(begin, "GET", size)) {
+  } else if (strncasecmp(begin, "GET", size) == 0) {
     method_ = kGet;
-  } else if (strncasecmp(begin, "POST", size)) {
+  } else if (strncasecmp(begin, "POST", size) == 0) {
     method_ = kPost;
-  } else if (strncasecmp(begin, "PUT", size)) {
+  } else if (strncasecmp(begin, "PUT", size) == 0) {
     method_ = kPut;
-  } else if (strncasecmp(begin, "DELETE", size)) {
+  } else if (strncasecmp(begin, "DELETE", size) == 0) {
     method_ = kDelete;
-  } else if (strncasecmp(begin, "TRACE", size)) {
+  } else if (strncasecmp(begin, "TRACE", size) == 0) {
     method_ = kTrace;
-  } else if (strncasecmp(begin, "CONNECT", size)) {
+  } else if (strncasecmp(begin, "CONNECT", size) == 0) {
     method_ = kConnect;
-  } else if (strncasecmp(begin, "PATCH", size)) {
+  } else if (strncasecmp(begin, "PATCH", size) == 0) {
     method_ = kPatch;
   } else {
     return false;

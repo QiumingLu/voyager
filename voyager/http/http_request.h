@@ -28,9 +28,6 @@ class HttpRequest : public HttpMessage {
   Method GetMethod() const { return method_; }
   const char* MethodToString() const;
 
-  void SetUri(const std::string& uri) { uri_ = uri; }
-  const std::string& Uri() const { return uri_; }
-
   void SetPath(const std::string& s) { path_ = s; }
   void SetPath(const char* begin, const char* end) {
     path_.assign(begin, end);
@@ -46,7 +43,6 @@ class HttpRequest : public HttpMessage {
 
  private:
   Method method_;
-  std::string uri_;
   std::string path_;
   std::string query_;
   Buffer message_;

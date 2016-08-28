@@ -1,11 +1,10 @@
 #include "voyager/http/http_server.h"
 
+#include <stdio.h>
+
 #include <functional>
-#include <fstream>
 #include <string>
 #include <utility>
-#include <iostream>
-#include <sstream>
 
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
@@ -13,14 +12,21 @@
 
 namespace voyager {
 
-void HandleHttpRequest(const HttpRequest& request, HttpResponse* response) {
+void HandleHttpRequest(const HttpRequest* request, HttpResponse* response) {
+  response->SetVersion(request->Version());
   response->SetStatusCode("200");
   response->SetReasonParse("OK");
   response->AddHeader("Content-Type", "text/html; charset=UTF-8");
   response->AddHeader("Content-Encoding", "UTF-8");
   response->AddHeader("Connection", "close");
+
   std::string s("Welcome to Voyager's WebServer!");
+  char buf[32];
+  snprintf(buf, sizeof(buf), "%zu", s.size());
+  response->AddHeader("Content-Length", buf);
   response->SetBody(std::move(s));
+  
+  response->SetCloseState(true);
 }
 
 }

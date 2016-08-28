@@ -12,14 +12,24 @@ void HandleResponse(HttpResponse* response) {
 
 }  // namespace voyager
 
-int main() {
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cerr << "Usage: httpclient <host>" << std::endl;
+    return 1;
+  }
+
+  const char* host =  argv[1];
+
   voyager::EventLoop ev;
   voyager::HttpClient client(&ev);
   client.SetRequestCallback(std::bind(voyager::HandleResponse,
                                       std::placeholders::_1));
   voyager::HttpRequest request;
-  request.SetPath("127.0.0.1:5666/");
   request.SetMethod(voyager::HttpRequest::kGet);
+  request.SetPath(host);
+  request.SetVersion(voyager::HttpMessage::kHttp11);
+  request.AddHeader("Connection", "close");
+
   client.DoHttpRequest(&request);
   ev.Loop();
 }
