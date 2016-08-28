@@ -1,11 +1,12 @@
 #ifndef VOYAGER_HTTP_HTTP_PARSER_H_
 #define VOYAGER_HTTP_HTTP_PARSER_H_
 
+#include "voyager/http/http_request.h"
+#include "voyager/http/http_response.h"
+
 namespace voyager {
 
 class Buffer;
-class HttpRequest;
-class HttpResponse;
 
 class HttpParser {
  public:
@@ -15,28 +16,29 @@ class HttpParser {
   };
 
   explicit HttpParser(HttpType type = kHttpRequest);
-  ~HttpParser();
 
   bool ParseBuffer(Buffer* buf);
-  bool FinishParse() const { return state_ == kBody; }
+  bool FinishParse() const { return state_ == kEnd; }
 
-  HttpRequest* GetRequest() { return request_; }
-  HttpResponse* GetResponse() { return response_; }
+  HttpRequestPtr GetRequest() { return request_; }
+  HttpResponsePtr GetResponse() { return response_; }
 
  private:
   enum ParserState {
     kLine,
     kHeaders,
     kBody,
+    kEnd
   };
 
   bool ParseRequestLine(const char* begin, const char* end);
   bool ParseResponseLine(const char* begin, const char* end);
+  bool ParseBody(Buffer* buf);
 
   HttpType type_;
   ParserState state_;
-  HttpRequest *request_;
-  HttpResponse *response_;
+  HttpRequestPtr request_;
+  HttpResponsePtr response_;
 
   // No Copying allow
   HttpParser(const HttpParser&);

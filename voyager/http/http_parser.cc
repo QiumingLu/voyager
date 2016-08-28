@@ -1,22 +1,18 @@
 #include "voyager/http/http_parser.h"
-#include "voyager/http/http_request.h"
-#include "voyager/http/http_response.h"
+
+#include <stdio.h>
+
 #include "voyager/core/buffer.h"
 
 namespace voyager {
 
 HttpParser::HttpParser(HttpType type)
-    : type_(type), state_(kLine), request_(nullptr), response_(nullptr) {
+    : type_(type), state_(kLine) {
   if (type_ == kHttpRequest) {
-    request_ = new HttpRequest();
+    request_.reset(new HttpRequest());
   } else {
-    response_ = new HttpResponse();
+    response_.reset(new HttpResponse());
   }
-}
-
-HttpParser::~HttpParser() {
-  delete request_;
-  delete response_;
 }
 
 bool HttpParser::ParseBuffer(Buffer* buf) {
@@ -65,7 +61,16 @@ bool HttpParser::ParseBuffer(Buffer* buf) {
         flag = false;
       }
     } else if (state_ == kBody) {
-       flag = false;
+      if (ParseBody(buf)) {
+        state_ = kEnd;
+      }
+      flag = false;
+    } else {
+      if (type_ == kHttpRequest) {
+        request_.reset(new HttpRequest());
+      } else {
+        response_.reset(new HttpResponse());
+      }
     }
   }
   return ok;
@@ -124,6 +129,26 @@ bool HttpParser::ParseResponseLine(const char* begin, const char* end) {
   response_->SetReasonParse(tmp, end);
 
   return true;
+}
+
+bool HttpParser::ParseBody(Buffer* buf) {
+  if (type_ == kHttpRequest) {
+    if (request_->GetMethod() != HttpRequest::kPost) {
+      return true;
+    }
+    if (static_cast<int>(buf->ReadableSize()) == 
+            atoi(&*(request_->Value("Content-Length")).begin())) {
+      request_->SetBody(buf->RetrieveAllAsString());
+      return true;
+    }
+  } else {
+    if (static_cast<int>(buf->ReadableSize()) == 
+            atoi(&*(request_->Value("Content-Length")).begin())) {
+      request_->SetBody(buf->RetrieveAllAsString());
+      return true;
+    }
+  }
+  return false;
 }
 
 }  // namespace voyager

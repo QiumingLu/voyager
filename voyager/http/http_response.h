@@ -1,6 +1,7 @@
 #ifndef VOYAGER_HTTP_HTTP_RESPONSE_H_
 #define VOYAGER_HTTP_HTTP_RESPONSE_H_
 
+#include <memory>
 #include <string>
 
 #include "voyager/http/http_message.h"
@@ -37,6 +38,8 @@ class HttpResponse : public HttpMessage {
   std::string reason_parse_;
   Buffer message_;
 };
+
+typedef std::shared_ptr<HttpResponse> HttpResponsePtr;
 
 }  // namespace voyager
 

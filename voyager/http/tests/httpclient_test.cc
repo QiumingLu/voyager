@@ -6,7 +6,7 @@
 
 namespace voyager {
 
-void HandleResponse(HttpResponse* response) {
+void HandleResponse(HttpResponsePtr response) {
   std::cout << response->ResponseMessage().RetrieveAllAsString();
 }
 
@@ -14,11 +14,11 @@ void HandleResponse(HttpResponse* response) {
 
 int main(int argc, char** argv) {
   if (argc != 2) {
-    std::cerr << "Usage: httpclient <host>" << std::endl;
+    std::cerr << "Usage: httpclient <path>" << std::endl;
     return 1;
   }
 
-  const char* host =  argv[1];
+  const char* path =  argv[1];
 
   voyager::EventLoop ev;
   voyager::HttpClient client(&ev);
@@ -26,9 +26,9 @@ int main(int argc, char** argv) {
                                       std::placeholders::_1));
   voyager::HttpRequest request;
   request.SetMethod(voyager::HttpRequest::kGet);
-  request.SetPath(host);
+  request.SetPath(path);
   request.SetVersion(voyager::HttpMessage::kHttp11);
-  request.AddHeader("Connection", "close");
+  request.AddHeader("Connection", "keep-alive");
 
   client.DoHttpRequest(&request);
   ev.Loop();

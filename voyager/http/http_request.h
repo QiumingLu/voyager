@@ -1,6 +1,7 @@
 #ifndef VOYAGER_HTTP_HTTP_REQUEST_H_
 #define VOYAGER_HTTP_HTTP_REQUEST_H_
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -37,6 +38,7 @@ class HttpRequest : public HttpMessage {
   void SetQuery(const char* begin, const char* end) {
     query_.assign(begin, end);
   }
+  void SetQuery(const std::string& query) { query_ = query; }
   const std::string& Query() const { return query_; }
 
   Buffer& RequestMessage();
@@ -47,6 +49,8 @@ class HttpRequest : public HttpMessage {
   std::string query_;
   Buffer message_;
 };
+
+typedef std::shared_ptr<HttpRequest> HttpRequestPtr;
 
 }  // namespace voyager
 

@@ -1,6 +1,5 @@
 #include "voyager/http/http_server.h"
 #include "voyager/http/http_parser.h"
-#include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
 #include "voyager/core/tcp_connection.h"
 
@@ -45,7 +44,7 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
   }
 
   if (parser->FinishParse()) {
-    HttpRequest* request = parser->GetRequest();
+    HttpRequestPtr request(parser->GetRequest());
     HttpResponse response;
     
     const std::string& s = request->Value("Connection");

@@ -12,7 +12,7 @@ namespace voyager {
 
 class HttpClient {
  public:
-  typedef std::function<void (HttpResponse*)> RequestCallback;
+  typedef std::function<void (HttpResponsePtr)> RequestCallback;
 
   HttpClient(EventLoop* ev);
 

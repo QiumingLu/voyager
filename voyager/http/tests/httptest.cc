@@ -12,7 +12,7 @@
 
 namespace voyager {
 
-void HandleHttpRequest(const HttpRequest* request, HttpResponse* response) {
+void HandleHttpRequest(const HttpRequestPtr& request, HttpResponse* response) {
   response->SetVersion(request->Version());
   response->SetStatusCode("200");
   response->SetReasonParse("OK");

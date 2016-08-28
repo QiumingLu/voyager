@@ -5,19 +5,20 @@
 #include <string>
 #include <utility>
 
+#include "voyager/http/http_request.h"
 #include "voyager/core/tcp_server.h"
 
 namespace voyager {
 
 class Buffer;
 class EventLoop;
-class HttpRequest;
 class HttpResponse;
 class SockAddr;
 
 class HttpServer {
  public:
-  typedef std::function<void (const HttpRequest*, HttpResponse*)> HttpCallback;
+  typedef std::function<void (const HttpRequestPtr&, 
+                              HttpResponse*)> HttpCallback;
 
   HttpServer(EventLoop* ev,
              const SockAddr& addr,
