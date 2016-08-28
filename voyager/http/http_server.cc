@@ -47,11 +47,11 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
     HttpRequestPtr request(parser->GetRequest());
     HttpResponse response;
     
-    const std::string& s = request->Value("Connection");
+    const std::string& s = request->Value(HttpMessage::kConnection);
 
     if (strcasecmp(&*s.begin(), "close") == 0 ||
         (strcasecmp(&*s.begin(), "keep-alive") != 0 &&
-        (request->Version() == HttpRequest::kHttp10))) {
+        (request->Version() == HttpMessage::kHttp10))) {
       response.SetCloseState(true);
     }
     if (http_cb_) {

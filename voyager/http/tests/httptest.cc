@@ -5,14 +5,18 @@
 #include <functional>
 #include <string>
 #include <utility>
+#include <iostream>
 
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
 #include "voyager/core/eventloop.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 
-void HandleHttpRequest(const HttpRequestPtr& request, HttpResponse* response) {
+void HandleHttpRequest(HttpRequestPtr request, HttpResponse* response) {
+  std::cout << request->RequestMessage().Peek() << std::endl;
+
   response->SetVersion(request->Version());
   response->SetStatusCode("200");
   response->SetReasonParse("OK");
@@ -25,7 +29,7 @@ void HandleHttpRequest(const HttpRequestPtr& request, HttpResponse* response) {
   snprintf(buf, sizeof(buf), "%zu", s.size());
   response->AddHeader("Content-Length", buf);
   response->SetBody(std::move(s));
-  
+
   response->SetCloseState(true);
 }
 

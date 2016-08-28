@@ -8,6 +8,10 @@ namespace voyager {
 
 class HttpMessage {
  public:
+  static const char* kContentLength;
+  static const char* kHost;
+  static const char* kConnection;
+  
   enum HttpVersion {
     kHttp10,
     kHttp11,
@@ -25,7 +29,7 @@ class HttpMessage {
   void AddHeader(const std::string& field, const std::string& value);
   void RemoveHeader(const std::string& field);
   const std::string& Value(const std::string& field) {
-    return header_map_[field];
+    return header_map_.find(field)->second;
   }
   const std::map<std::string, std::string>& HeaderMap() const {
     return header_map_;
@@ -36,6 +40,8 @@ class HttpMessage {
   const std::string& Body() const { return body_; }
 
  protected:
+  void TransferField(std::string* s);
+
   HttpVersion version_;
   std::map<std::string, std::string> header_map_;
   std::string body_;

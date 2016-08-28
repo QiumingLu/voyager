@@ -4,6 +4,10 @@
 
 namespace voyager {
 
+const char* HttpMessage::kConnection = "Connection";
+const char* HttpMessage::kContentLength = "Content-Length";
+const char* HttpMessage::kHost = "Host";
+
 bool HttpMessage::SetVersion(const char* begin, const char* end) {
   size_t size = end - begin;
   if (strncasecmp(begin, "HTTP/1.0", size) == 0) {
@@ -46,16 +50,31 @@ void HttpMessage::AddHeader(const char* begin,
     ++colon;
   }
   std::string value(colon, end);
-  header_map_[field] = value;
+  AddHeader(field, value);
 }
 
 void HttpMessage::AddHeader(const std::string& field,
                             const std::string& value) {
-  header_map_[field] = value;
+  if (!field.empty() && !value.empty()) {
+    std::string key(field);
+    TransferField(&key);
+    header_map_[key] = value;
+  }
 }
 
 void HttpMessage::RemoveHeader(const std::string& field) {
   header_map_.erase(field);
+}
+
+void HttpMessage::TransferField(std::string* s) {
+  const char* begin = &*s->begin();
+  if (strcasecmp(begin, kConnection) == 0) {
+    s->assign(kConnection);
+  } else if (strcasecmp(begin, kContentLength) == 0) {
+    s->assign(kContentLength);
+  } else if (strcasecmp(begin, kHost) == 0) {
+    s->assign(kHost);
+  }
 }
 
 }  // namespace voyager

@@ -127,24 +127,24 @@ bool HttpParser::ParseResponseLine(const char* begin, const char* end) {
     ++tmp;
   }
   response_->SetReasonParse(tmp, end);
-
   return true;
 }
 
 bool HttpParser::ParseBody(Buffer* buf) {
   if (type_ == kHttpRequest) {
-    if (request_->GetMethod() != HttpRequest::kPost) {
+    const std::string& s = request_->Value(HttpMessage::kContentLength);
+    if (request_->GetMethod() != HttpRequest::kPost || s.empty()) {
       return true;
     }
-    if (static_cast<int>(buf->ReadableSize()) == 
-            atoi(&*(request_->Value("Content-Length")).begin())) {
+    if (static_cast<int>(buf->ReadableSize()) == atoi(&*(s.begin()))) {
       request_->SetBody(buf->RetrieveAllAsString());
       return true;
     }
   } else {
-    if (static_cast<int>(buf->ReadableSize()) == 
-            atoi(&*(request_->Value("Content-Length")).begin())) {
-      request_->SetBody(buf->RetrieveAllAsString());
+    const std::string& s = response_->Value(HttpMessage::kContentLength);
+    if (s.empty()) { return true; }
+    if (static_cast<int>(buf->ReadableSize()) == atoi(&*(s.begin()))) {
+      response_->SetBody(buf->RetrieveAllAsString());
       return true;
     }
   }

@@ -17,8 +17,7 @@ class SockAddr;
 
 class HttpServer {
  public:
-  typedef std::function<void (const HttpRequestPtr&, 
-                              HttpResponse*)> HttpCallback;
+  typedef std::function<void (HttpRequestPtr, HttpResponse*)> HttpCallback;
 
   HttpServer(EventLoop* ev,
              const SockAddr& addr,

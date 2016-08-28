@@ -12,7 +12,7 @@ Buffer& HttpResponse::ResponseMessage() {
   for (std::map<std::string, std::string>::iterator it = header_map_.begin();
        it != header_map_.end(); ++it) {
     message_.Append(it->first);
-    message_.Append(" ");
+    message_.Append(": ");
     message_.Append(it->second);
     message_.Append("\r\n");
   }

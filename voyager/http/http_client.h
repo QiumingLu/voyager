@@ -19,11 +19,11 @@ class HttpClient {
   void SetRequestCallback(const RequestCallback& cb) { request_cb_ = cb; }
   void SetRequestCallback(RequestCallback&& cb) { request_cb_ = std::move(cb); }
 
-  void DoHttpRequest(HttpRequest* request);
+  void DoHttpRequest(const HttpRequestPtr& request);
 
  private:
-  void DoHttpRequestInLoop(HttpRequest* request);
-  void Init(HttpRequest* request);
+  void DoHttpRequestInLoop(const HttpRequestPtr& request);
+  void FirstRequest(const HttpRequestPtr& request);
 
   EventLoop* eventloop_;
   std::weak_ptr<TcpConnection> gaurd_;
