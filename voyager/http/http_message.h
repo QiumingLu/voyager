@@ -8,16 +8,16 @@ namespace voyager {
 
 class HttpMessage {
  public:
+  static const char* kConnection;
   static const char* kContentLength;
   static const char* kHost;
-  static const char* kConnection;
-  
+
   enum HttpVersion {
     kHttp10,
     kHttp11,
     kHttp20,
   };
-  
+
   HttpMessage() : version_(kHttp10) { }
 
   void SetVersion(HttpVersion v) { version_ = v; }
