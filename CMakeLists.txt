@@ -65,7 +65,6 @@ add_subdirectory(voyager/core)
 add_subdirectory(voyager/http)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
-  add_subdirectory(examples/cache)
   add_subdirectory(examples/sudoku)
   add_subdirectory(examples/pingpong)
   add_subdirectory(benchmarks)
