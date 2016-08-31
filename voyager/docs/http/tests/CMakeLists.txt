@@ -1,2 +1,0 @@
-add_executable(webserver webserver.cc)
-target_link_libraries(webserver examples_http)
