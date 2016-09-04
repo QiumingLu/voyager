@@ -45,7 +45,6 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
 
   if (parser->FinishParse()) {
     HttpRequestPtr request(parser->GetRequest());
-    parser->Reset();
     HttpResponse response;
 
     std::string s(request->Value(HttpMessage::kConnection));
@@ -54,7 +53,10 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
         (strcasecmp(&*s.begin(), "keep-alive") != 0 &&
         (request->Version() == HttpMessage::kHttp10))) {
       response.SetCloseState(true);
+    } else {
+      parser->Reset();
     }
+
     if (http_cb_) {
       http_cb_(request, &response);
     }
