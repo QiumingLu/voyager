@@ -29,7 +29,7 @@ void HttpClient::DoHttpRequestInLoop(const HttpRequestPtr& request) {
 }
 
 void HttpClient::FirstRequest(const HttpRequestPtr& request) {
-  std::string host = request->Value(HttpMessage::kHost);
+  std::string host(request->Value(HttpMessage::kHost));
   uint16_t port = 80;
   size_t found = host.find(":");
   if (found != std::string::npos) {
@@ -60,6 +60,7 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
       parser->ParseBuffer(buffer);
       if (parser->FinishParse()) {
         request_cb_(parser->GetResponse());
+        parser->Reset();
       }
     }
   });

@@ -20,8 +20,10 @@ class HttpParser {
   bool ParseBuffer(Buffer* buf);
   bool FinishParse() const { return state_ == kEnd; }
 
-  HttpRequestPtr GetRequest() { return request_; }
-  HttpResponsePtr GetResponse() { return response_; }
+  HttpRequestPtr GetRequest() const { return request_; }
+  HttpResponsePtr GetResponse() const { return response_; }
+
+  void Reset();
 
  private:
   enum ParserState {

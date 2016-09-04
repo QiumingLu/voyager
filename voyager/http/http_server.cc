@@ -45,9 +45,10 @@ void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
 
   if (parser->FinishParse()) {
     HttpRequestPtr request(parser->GetRequest());
+    parser->Reset();
     HttpResponse response;
-    
-    const std::string& s = request->Value(HttpMessage::kConnection);
+
+    std::string s(request->Value(HttpMessage::kConnection));
 
     if (strcasecmp(&*s.begin(), "close") == 0 ||
         (strcasecmp(&*s.begin(), "keep-alive") != 0 &&

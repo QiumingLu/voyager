@@ -66,14 +66,17 @@ bool HttpParser::ParseBuffer(Buffer* buf) {
       }
       flag = false;
     } else {
-      if (type_ == kHttpRequest) {
-        request_.reset(new HttpRequest());
-      } else {
-        response_.reset(new HttpResponse());
-      }
     }
   }
   return ok;
+}
+
+void HttpParser::Reset() {
+  if (type_ == kHttpRequest) {
+    request_.reset(new HttpRequest());
+  } else {
+    response_.reset(new HttpResponse());
+  }
 }
 
 bool HttpParser::ParseRequestLine(const char* begin, const char* end) {

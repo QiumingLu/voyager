@@ -28,8 +28,14 @@ class HttpMessage {
   void AddHeader(const char* begin, const char* colon, const char* end);
   void AddHeader(const std::string& field, const std::string& value);
   void RemoveHeader(const std::string& field);
-  const std::string& Value(const std::string& field) {
-    return header_map_.find(field)->second;
+  std::string Value(const std::string& field) {
+    std::string value;
+    std::map<std::string, std::string>::iterator it = header_map_.find(field);
+    if (it != header_map_.end()) {
+      value = it->second;
+    }
+
+    return value;
   }
   const std::map<std::string, std::string>& HeaderMap() const {
     return header_map_;
