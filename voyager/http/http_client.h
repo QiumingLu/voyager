@@ -17,7 +17,9 @@ class HttpClient {
   HttpClient(EventLoop* ev);
 
   void SetRequestCallback(const RequestCallback& cb) { request_cb_ = cb; }
-  void SetRequestCallback(RequestCallback&& cb) { request_cb_ = std::move(cb); }
+  void SetRequestCallback(RequestCallback&& cb) {
+    request_cb_ = std::move(cb);
+  }
 
   void DoHttpRequest(const HttpRequestPtr& request);
 
@@ -30,7 +32,7 @@ class HttpClient {
   std::unique_ptr<TcpClient> client_;
   RequestCallback request_cb_;
 
-  // No copyiny allow
+  // No copying allowed
   HttpClient(const HttpClient&);
   void operator=(const HttpClient&);
 };
