@@ -9,11 +9,10 @@
 
 namespace voyager {
 
-class EventLoop;
-
 class Schedule {
  public:
   Schedule(EventLoop* ev, int size);
+  ~Schedule();
 
   void Start();
 
@@ -22,18 +21,12 @@ class Schedule {
   bool Started() const { return started_; }
 
  private:
-  EventLoop* NextLoop();
-
   EventLoop* baseloop_;
   size_t size_;
-  size_t next_;
   bool started_;
-  double percent_;  // For Load Balance
-
   std::vector<std::unique_ptr<BGEventLoop>> loops_;
-  std::vector<EventLoop*> ptrs_;
 
-  // No copying allow
+  // No copying alloweded
   Schedule(const Schedule&);
   void operator=(const Schedule&);
 };

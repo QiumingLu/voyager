@@ -57,7 +57,7 @@ class BlockingQueue {
   Condition not_empty;
   std::deque<T> queue_;
 
-  // No copying allow
+  // No copying allowed
   BlockingQueue(const BlockingQueue&);
   void operator=(const BlockingQueue&);
 };

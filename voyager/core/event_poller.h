@@ -25,7 +25,7 @@ class EventPoller {
   DispatchMap dispatch_map_;
   EventLoop* eventloop_;
 
-  // No copying allow
+  // No copying allowed
   EventPoller(const EventPoller&);
   void operator=(const EventPoller&);
 };

@@ -76,7 +76,7 @@ class Session {
   size_t bytes_read_;
   size_t bytes_written_;
 
-  // No copying allow
+  // No copying allowed
   Session(const Session&);
   void operator=(const Session&);
 };
@@ -173,7 +173,7 @@ class Client {
   std::unique_ptr<NewTimer> timer_;
 #endif
 
-  // No copying allow
+  // No copying allowed
   Client(const Client&);
   void operator=(const Client&);
 };

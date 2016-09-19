@@ -33,7 +33,7 @@ class NewTimer {
 
   TimerProcCallback timerproc_cb_;
 
-  // No copying allow
+  // No copying allowed
   NewTimer(const NewTimer&);
   void operator=(const NewTimer&);
 };

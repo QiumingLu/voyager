@@ -70,7 +70,7 @@ class Connector : public std::enable_shared_from_this<Connector> {
   std::unique_ptr<NewTimer> timer_;
 #endif
 
-  // No copying allow
+  // No copying allowed
   Connector(const Connector&);
   void operator=(const Connector&);
 };

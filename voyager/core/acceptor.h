@@ -45,7 +45,7 @@ class Acceptor {
   bool       listenning_;
   NewConnectionCallback conn_cb_;
 
-  // No copying allow
+  // No copying alloweded
   Acceptor(const Acceptor&);
   void operator=(const Acceptor&);
 };

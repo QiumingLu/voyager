@@ -32,7 +32,7 @@ class ThreadLocalStorage {
 
   pthread_key_t key_;
 
-  // No copying allow
+  // No copying allowed
   ThreadLocalStorage(const ThreadLocalStorage&);
   void operator=(const ThreadLocalStorage&);
 };

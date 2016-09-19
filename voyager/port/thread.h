@@ -45,7 +45,7 @@ class Thread {
   std::string name_;
   static std::atomic<int> num_;
 
-  // No copying allow
+  // No copying allowed
   Thread(const Thread&);
   void operator=(const Thread&);
 };

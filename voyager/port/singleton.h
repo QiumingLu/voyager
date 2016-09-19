@@ -29,7 +29,7 @@ class Singleton {
   static pthread_once_t once_;
   static T* instance_;
 
-  // No copying allow
+  // No copying allowed
   Singleton(const Singleton&);
   void operator=(const Singleton&);
 };

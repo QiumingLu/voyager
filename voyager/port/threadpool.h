@@ -43,7 +43,7 @@ class ThreadPool {
   std::vector<std::unique_ptr<Thread>> threads_;
   std::deque<Task> tasks_;
 
-  // No copying allow
+  // No copying allowed
   ThreadPool(const ThreadPool&);
   void operator=(const ThreadPool&);
 };

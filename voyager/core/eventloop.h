@@ -86,7 +86,7 @@ class EventLoop {
   port::Mutex mu_;
   std::vector<Func> funcs_;
 
-  // No copying allow
+  // No copying allowed
   EventLoop(const EventLoop&);
   void operator=(const EventLoop&);
 };

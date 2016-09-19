@@ -45,7 +45,8 @@ class ThreadLocalStorageSingleton {
 
   ThreadLocalStorageSingleton();
   ~ThreadLocalStorageSingleton();
-  // No copying allow
+  
+  // No copying allowed
   ThreadLocalStorageSingleton(const ThreadLocalStorageSingleton&);
   void operator=(const ThreadLocalStorageSingleton&);
 };

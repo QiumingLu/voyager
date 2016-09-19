@@ -40,7 +40,7 @@ class BaseSocket {
  private:
   bool need_close_;
 
-  // No copying allow
+  // No copying allowed
   BaseSocket(const BaseSocket&);
   void operator=(const BaseSocket&);
 };

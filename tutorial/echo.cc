@@ -42,7 +42,7 @@ class EchoServer {
 
   TcpServer server_;
 
-  // No copying allow
+  // No copying allowed
   EchoServer(const EchoServer&);
   void operator=(const EchoServer&);
 };

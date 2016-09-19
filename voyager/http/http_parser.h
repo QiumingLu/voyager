@@ -42,7 +42,7 @@ class HttpParser {
   HttpRequestPtr request_;
   HttpResponsePtr response_;
 
-  // No Copying allow
+  // No copying allowed
   HttpParser(const HttpParser&);
   void operator=(const HttpParser&);
 };

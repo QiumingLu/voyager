@@ -71,7 +71,7 @@ class TcpClient {
 
   std::weak_ptr<TcpConnection> weak_ptr_;
 
-  // No copying allow
+  // No copying allowed
   TcpClient(const TcpClient&);
   void operator=(const TcpClient&);
 };

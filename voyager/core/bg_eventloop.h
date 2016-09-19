@@ -25,7 +25,7 @@ class BGEventLoop {
   port::Condition cond_;
   port::Thread thread_;
 
-  // No copying allow
+  // No copying allowed
   BGEventLoop(const BGEventLoop&);
   void operator=(const BGEventLoop&);
 };

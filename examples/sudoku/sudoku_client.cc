@@ -103,7 +103,7 @@ class SudokuClient {
   voyager::TcpClient client_;
   std::vector<std::string> vec_;
 
-  // No copying allow
+  // No copying allowed
   SudokuClient(const SudokuClient&);
   void operator=(const SudokuClient&);
 };

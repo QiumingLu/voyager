@@ -84,7 +84,7 @@ class BoundedBlockingQueue {
   const size_t capacity_;
   std::deque<T> queue_;
 
-  // No copying allow
+  // No copying allowed
   BoundedBlockingQueue(const BoundedBlockingQueue&);
   void operator=(const BoundedBlockingQueue&);
 };

@@ -20,7 +20,7 @@ class Mutex {
   friend class Condition;
   pthread_mutex_t mutex_;
 
-  // No copying allow
+  // No copying allowed
   Mutex(const Mutex&);
   void operator=(const Mutex&);
 };

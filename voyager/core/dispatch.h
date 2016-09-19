@@ -65,7 +65,6 @@ class Dispatch {
 
   void Tie(const std::shared_ptr<void>& obj);
 
-
   int Modify() const { return modify_; }
 
  private:
@@ -94,7 +93,7 @@ class Dispatch {
   EventCallback close_cb_;
   EventCallback error_cb_;
 
-  // No copying allow
+  // No copying allowed
   Dispatch(const Dispatch&);
   void operator=(const Dispatch&);
 };

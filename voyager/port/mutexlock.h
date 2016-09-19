@@ -18,7 +18,7 @@ class MutexLock {
  private:
   Mutex* const mutex_;
 
-  // No copying allow
+  // No copying allowed
   MutexLock(const MutexLock&);
   void operator=(const MutexLock&);
 };

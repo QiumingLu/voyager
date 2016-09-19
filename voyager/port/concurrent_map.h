@@ -35,7 +35,7 @@ class HashMap {
   mutable port::Mutex mu_;
   typename std::unordered_map<K, V> map_;
 
-  // No Copying allow
+  // No copying allowed
   HashMap(const HashMap&);
   void operator=(const HashMap&);
 };
@@ -75,7 +75,7 @@ class ConcurrentMap {
 
   HashMap<K, V> shard_[kNumShards];
 
-  // No copying allow
+  // No copying allowed
   ConcurrentMap(const ConcurrentMap&);
   void operator=(const ConcurrentMap&);
 };

@@ -106,7 +106,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
 
-  // No copying allow
+  // No copying allowed
   TcpConnection(const TcpConnection&);
   void operator=(const TcpConnection&);
 };

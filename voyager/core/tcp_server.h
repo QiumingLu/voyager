@@ -73,7 +73,7 @@ class TcpServer {
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
 
-  // No copying allow
+  // No copying allowed
   TcpServer(const TcpServer&);
   void operator=(const TcpServer&);
 };
