@@ -1,4 +1,4 @@
-#include "voyager/core/connector.h"
+#include "voyager/core/tcp_connector.h"
 
 #include <assert.h>
 #include <string.h>
@@ -11,7 +11,7 @@
 
 namespace voyager {
 
-Connector::Connector(EventLoop* ev, const SockAddr& addr)
+TcpConnector::TcpConnector(EventLoop* ev, const SockAddr& addr)
     : ev_(CHECK_NOTNULL(ev)),
       addr_(addr),
       state_(kDisConnected),
@@ -21,15 +21,15 @@ Connector::Connector(EventLoop* ev, const SockAddr& addr)
       socket_() {
 }
 
-void Connector::Start() {
-  ConnectorPtr ptr(shared_from_this());
+void TcpConnector::Start() {
+  TcpConnectorPtr ptr(shared_from_this());
   ev_->RunInLoop([ptr]() {
     ptr->connect_ = true;
     ptr->StartInLoop();
   });
 }
 
-void Connector::StartInLoop() {
+void TcpConnector::StartInLoop() {
   ev_->AssertInMyLoop();
   assert(this->state_ == kDisconnected);
   if (connect_) {
@@ -37,8 +37,8 @@ void Connector::StartInLoop() {
   }
 }
 
-void Connector::Stop() {
-  ConnectorPtr ptr(shared_from_this());
+void TcpConnector::Stop() {
+  TcpConnectorPtr ptr(shared_from_this());
   ev_->QueueInLoop([ptr]() {
     ptr->connect_ = false;
     if (ptr->state_ == kConnecting) {
@@ -48,7 +48,7 @@ void Connector::Stop() {
   });
 }
 
-void Connector::Connect() {
+void TcpConnector::Connect() {
   socket_.reset(new ClientSocket(addr_.Family(), true));
   int ret = socket_->Connect(addr_.GetSockAddr(),
                              sizeof(*(addr_.GetSockAddr())));
@@ -85,29 +85,31 @@ void Connector::Connect() {
   }
 }
 
-void Connector::Connecting() {
+void TcpConnector::Connecting() {
   state_ = kConnecting;
   dispatch_.reset(new Dispatch(ev_, socket_->SocketFd()));
   dispatch_->Tie(shared_from_this());
-  dispatch_->SetWriteCallback(std::bind(&Connector::ConnectCallback, this));
+  dispatch_->SetWriteCallback(std::bind(&TcpConnector::ConnectCallback, this));
   dispatch_->EnableWrite();
 }
 
-void Connector::Retry() {
+void TcpConnector::Retry() {
   state_ = kDisConnected;
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.Ipbuf() << " in " << retry_time_
                       << " seconds.";
 
-    ConnectorPtr ptr(shared_from_this());
+    TcpConnectorPtr ptr(shared_from_this());
 #ifdef __linux__
     if (!timer_) {
       timer_.reset(new NewTimer(ev_, [ptr]() { ptr->StartInLoop(); }));
     }
     timer_->SetTime(retry_time_ * 1000, 0);
 #else
-    ev_->RunAfter(retry_time_, [ptr]() {ptr->StartInLoop();});
+    ev_->RunAfter(retry_time_, [ptr]() {
+        ptr->StartInLoop();
+    });
 #endif
 
     retry_time_ =
@@ -115,7 +117,7 @@ void Connector::Retry() {
   }
 }
 
-void Connector::ConnectCallback() {
+void TcpConnector::ConnectCallback() {
   if (state_ == kConnecting) {
     ResetDispatch();
     Status st = socket_->CheckSocketError();
@@ -139,7 +141,7 @@ void Connector::ConnectCallback() {
   }
 }
 
-std::string Connector::StateToString() const {
+std::string TcpConnector::StateToString() const {
   const char* type;
   switch (state_) {
     case kDisConnected:
@@ -159,11 +161,11 @@ std::string Connector::StateToString() const {
   return result;
 }
 
-void Connector::ResetDispatch() {
+void TcpConnector::ResetDispatch() {
   if (dispatch_) {
     dispatch_->DisableAll();
     dispatch_->RemoveEvents();
-    ConnectorPtr ptr(shared_from_this());
+    TcpConnectorPtr ptr(shared_from_this());
     ev_->QueueInLoop([ptr]() {
       ptr->dispatch_.reset();
     });

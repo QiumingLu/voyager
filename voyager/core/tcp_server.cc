@@ -1,7 +1,7 @@
 #include "voyager/core/tcp_server.h"
-#include "voyager/core/acceptor.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/schedule.h"
+#include "voyager/core/tcp_acceptor.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
@@ -16,7 +16,7 @@ TcpServer::TcpServer(EventLoop* ev,
     : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
-      acceptor_(new Acceptor(eventloop_, addr, backlog)),
+      acceptor_(new TcpAcceptor(eventloop_, addr, backlog)),
       schedule_(new Schedule(eventloop_, thread_size-1)),
       conn_id_(0) {
   acceptor_->SetNewConnectionCallback(

@@ -1,5 +1,5 @@
 #include "voyager/core/tcp_client.h"
-#include "voyager/core/connector.h"
+#include "voyager/core/tcp_connector.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/logging.h"
@@ -15,7 +15,7 @@ TcpClient::TcpClient(EventLoop* ev,
     : name_(name),
       server_ipbuf_(addr.Ipbuf()),
       ev_(CHECK_NOTNULL(ev)),
-      connector_ptr_(new Connector(ev, addr)),
+      connector_ptr_(new TcpConnector(ev, addr)),
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));

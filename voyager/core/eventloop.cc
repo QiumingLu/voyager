@@ -45,8 +45,8 @@ EventLoop* EventLoop::RunLoop() {
 EventLoop::EventLoop()
     : exit_(false),
       run_(false),
-      connection_size_(0),
       tid_(port::CurrentThread::Tid()),
+      connection_size_(0),
       poller_(new EventEpoll(this)),
       timers_(new TimerList(this)),
       wakeup_fd_(::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC)),
@@ -237,6 +237,7 @@ bool EventLoop::HasDispatch(Dispatch* dispatch) {
 void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
   assert(ptr->OwnerEventLoop() == this);
   this->AssertInMyLoop();
+  assert(connections_.find(ptr->name()) == connections_.end());
   connections_[ptr->name()] = ptr;
   ++connection_size_;
 }
@@ -244,12 +245,9 @@ void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
 void EventLoop::RemoveCnnection(const TcpConnectionPtr& ptr) {
   assert(ptr->OwnerEventLoop() == this);
   this->AssertInMyLoop();
+  assert(connections_.find(ptr->name()) != connections_.end());
   connections_.erase(ptr->name());
   --connection_size_;
-}
-
-int EventLoop::UserNumber() const {
-  return connection_size_;
 }
 
 void EventLoop::RunFuncs() {

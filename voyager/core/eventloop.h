@@ -68,7 +68,7 @@ class EventLoop {
 
   void AddConnection(const TcpConnectionPtr& ptr);
   void RemoveCnnection(const TcpConnectionPtr& ptr);
-  int UserNumber() const;
+  int UserNumber() const { return connection_size_; }
 
  private:
   void RunFuncs();

@@ -1,5 +1,5 @@
-#ifndef VOYAGER_CORE_CONNECTOR_H_
-#define VOYAGER_CORE_CONNECTOR_H_
+#ifndef VOYAGER_CORE_TCP_CONNECTOR_H_
+#define VOYAGER_CORE_TCP_CONNECTOR_H_
 
 #include <netdb.h>
 
@@ -20,11 +20,11 @@ namespace voyager {
 
 class EventLoop;
 
-class Connector : public std::enable_shared_from_this<Connector> {
+class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
  public:
   typedef std::function<void (int fd)> NewConnectionCallback;
 
-  Connector(EventLoop* ev, const SockAddr& addr);
+  TcpConnector(EventLoop* ev, const SockAddr& addr);
 
   void SetNewConnectionCallback(const NewConnectionCallback& cb) {
     newconnection_cb_ = cb;
@@ -71,10 +71,10 @@ class Connector : public std::enable_shared_from_this<Connector> {
 #endif
 
   // No copying allowed
-  Connector(const Connector&);
-  void operator=(const Connector&);
+  TcpConnector(const TcpConnector&);
+  void operator=(const TcpConnector&);
 };
 
 }  // namespace voyager
 
-#endif  // VOYAGER_CORE_CONNECTOR_H_
+#endif  // VOYAGER_CORE_TCP_CONNECTOR_H_

@@ -38,7 +38,7 @@ class TimerList {
   EventLoop* eventloop_;
   std::set<Entry> timers_;
 
-  // No copy allow
+  // No copying allowed
   TimerList(const TimerList&);
   void operator=(const TimerList&);
 };

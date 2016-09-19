@@ -14,7 +14,7 @@
 
 namespace voyager {
 
-class Acceptor;
+class TcpAcceptor;
 class EventLoop;
 class Schedule;
 
@@ -63,7 +63,7 @@ class TcpServer {
   EventLoop* eventloop_;
   std::string ipbuf_;
   const std::string name_;
-  std::unique_ptr<Acceptor> acceptor_;
+  std::unique_ptr<TcpAcceptor> acceptor_;
   std::unique_ptr<Schedule> schedule_;
   port::SequenceNumber seq_;
   uint64_t conn_id_;

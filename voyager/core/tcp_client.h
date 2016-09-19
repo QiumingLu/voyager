@@ -12,10 +12,10 @@
 namespace voyager {
 
 class EventLoop;
-class Connector;
+class TcpConnector;
 class SockAddr;
 
-typedef std::shared_ptr<Connector> ConnectorPtr;
+typedef std::shared_ptr<TcpConnector> TcpConnectorPtr;
 
 class TcpClient {
  public:
@@ -60,7 +60,7 @@ class TcpClient {
   std::string name_;
   std::string server_ipbuf_;
   EventLoop* ev_;
-  ConnectorPtr connector_ptr_;
+  TcpConnectorPtr connector_ptr_;
   std::atomic<bool> connect_;
   static port::SequenceNumber conn_id_;
 

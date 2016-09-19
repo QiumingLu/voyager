@@ -1,5 +1,5 @@
-#ifndef VOYAGER_CORE_ACCEPTOR_H_
-#define VOYAGER_CORE_ACCEPTOR_H_
+#ifndef VOYAGER_CORE_TCP_ACCEPTOR_H_
+#define VOYAGER_CORE_TCP_ACCEPTOR_H_
 
 #include <netdb.h>
 
@@ -14,15 +14,15 @@ namespace voyager {
 class SockAddr;
 class EventLoop;
 
-class Acceptor {
+class TcpAcceptor {
  public:
   typedef std::function<void (int fd,
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
-  Acceptor(EventLoop* eventloop,
+  TcpAcceptor(EventLoop* eventloop,
            const SockAddr& addr,
            int backlog, bool reuseport = false);
-  ~Acceptor();
+  ~TcpAcceptor();
 
   void EnableListen();
   bool IsListenning() const { return listenning_; }
@@ -46,10 +46,10 @@ class Acceptor {
   NewConnectionCallback conn_cb_;
 
   // No copying alloweded
-  Acceptor(const Acceptor&);
-  void operator=(const Acceptor&);
+  TcpAcceptor(const TcpAcceptor&);
+  void operator=(const TcpAcceptor&);
 };
 
 }  // namespace voyager
 
-#endif  // VOYAGER_CORE_ACCEPTOR_H_
+#endif  // VOYAGER_CORE_TCP_ACCEPTOR_H_

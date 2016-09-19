@@ -24,6 +24,8 @@ class HttpRequest : public HttpMessage {
     kPatch,
   };
 
+  HttpRequest();
+
   void SetMethod(Method method) { method_ = method; }
   bool SetMethod(const char* begin, const char* end);
   Method GetMethod() const { return method_; }

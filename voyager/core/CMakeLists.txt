@@ -1,10 +1,8 @@
 set(core_SRCS
-  acceptor.cc
   base_socket.cc
   bg_eventloop.cc
   buffer.cc
   client_socket.cc
-  connector.cc
   dispatch.cc
   eventloop.cc
   event_poll.cc
@@ -13,6 +11,8 @@ set(core_SRCS
   schedule.cc
   server_socket.cc
   sockaddr.cc
+  tcp_acceptor.cc
+  tcp_connector.cc
   tcp_client.cc
   tcp_connection.cc
   tcp_server.cc

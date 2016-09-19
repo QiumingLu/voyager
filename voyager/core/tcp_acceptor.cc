@@ -1,4 +1,4 @@
-#include "voyager/core/acceptor.h"
+#include "voyager/core/tcp_acceptor.h"
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -10,10 +10,10 @@
 
 namespace voyager {
 
-Acceptor::Acceptor(EventLoop* eventloop,
-                   const SockAddr& addr,
-                   int backlog,
-                   bool reuseport)
+TcpAcceptor::TcpAcceptor(EventLoop* eventloop,
+                         const SockAddr& addr,
+                         int backlog,
+                         bool reuseport)
     : eventloop_(eventloop),
       socket_(addr.Family(), true),
       dispatch_(eventloop_, socket_.SocketFd()),
@@ -24,23 +24,23 @@ Acceptor::Acceptor(EventLoop* eventloop,
   socket_.SetReuseAddr(true);
   socket_.SetReusePort(reuseport);
   socket_.Bind(addr.GetSockAddr(), sizeof(*(addr.GetSockAddr())));
-  dispatch_.SetReadCallback(std::bind(&Acceptor::Accept, this));
+  dispatch_.SetReadCallback(std::bind(&TcpAcceptor::Accept, this));
 }
 
-Acceptor::~Acceptor() {
+TcpAcceptor::~TcpAcceptor() {
   dispatch_.DisableAll();
   dispatch_.RemoveEvents();
   ::close(idlefd_);
 }
 
-void Acceptor::EnableListen() {
+void TcpAcceptor::EnableListen() {
   eventloop_->AssertInMyLoop();
   listenning_ = true;
   socket_.Listen(backlog_);
   dispatch_.EnableRead();
 }
 
-void Acceptor::Accept() {
+void TcpAcceptor::Accept() {
   eventloop_->AssertInMyLoop();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
