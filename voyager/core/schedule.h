@@ -2,7 +2,6 @@
 #define VOYAGER_CORE_SCHEDULE_H_
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "voyager/core/bg_eventloop.h"
@@ -12,7 +11,6 @@ namespace voyager {
 class Schedule {
  public:
   Schedule(EventLoop* ev, int size);
-  ~Schedule();
 
   void Start();
 
@@ -24,7 +22,8 @@ class Schedule {
   EventLoop* baseloop_;
   size_t size_;
   bool started_;
-  std::vector<std::unique_ptr<BGEventLoop>> loops_;
+  std::vector<std::unique_ptr<BGEventLoop>> bg_loops_;
+  std::vector<EventLoop*> loops_;
 
   // No copying alloweded
   Schedule(const Schedule&);

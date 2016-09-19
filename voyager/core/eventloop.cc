@@ -1,6 +1,8 @@
 #include "voyager/core/eventloop.h"
 
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include <algorithm>
 #include <utility>
@@ -8,7 +10,7 @@
 #include "voyager/core/dispatch.h"
 #include "voyager/core/event_poll.h"
 #include "voyager/core/event_select.h"
-#include "voyager/core/online_connections.h"
+#include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
@@ -43,6 +45,7 @@ EventLoop* EventLoop::RunLoop() {
 EventLoop::EventLoop()
     : exit_(false),
       run_(false),
+      connection_size_(0),
       tid_(port::CurrentThread::Tid()),
       poller_(new EventEpoll(this)),
       timers_(new TimerList(this)),
@@ -69,6 +72,7 @@ EventLoop::EventLoop()
     : exit_(false),
       run_(false),
       tid_(port::CurrentThread::Tid()),
+      connection_size_(0),
       poller_(new EventKqueue(this)),
       timers_(new TimerList(this)) {
 
@@ -228,6 +232,24 @@ bool EventLoop::HasDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
   this->AssertInMyLoop();
   return poller_->HasDispatch(dispatch);
+}
+
+void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
+  assert(ptr->OwnerEventLoop() == this);
+  this->AssertInMyLoop();
+  connections_[ptr->name()] = ptr;
+  ++connection_size_;
+}
+
+void EventLoop::RemoveCnnection(const TcpConnectionPtr& ptr) {
+  assert(ptr->OwnerEventLoop() == this);
+  this->AssertInMyLoop();
+  connections_.erase(ptr->name());
+  --connection_size_;
+}
+
+int EventLoop::UserNumber() const {
+  return connection_size_;
 }
 
 void EventLoop::RunFuncs() {

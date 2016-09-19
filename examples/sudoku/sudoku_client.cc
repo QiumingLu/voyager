@@ -93,7 +93,7 @@ class SudokuClient {
   }
 
   void CloseCallback(const voyager::TcpConnectionPtr& ptr) {
-    ptr->OwnerLoop()->Exit();
+    ptr->OwnerEventLoop()->Exit();
   }
 
   static const int kCells = 81;

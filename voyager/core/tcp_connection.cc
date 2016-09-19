@@ -5,7 +5,6 @@
 
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/slice.h"
 
@@ -46,7 +45,7 @@ void TcpConnection::StartWorking() {
   TcpConnectionPtr ptr(shared_from_this());
   dispatch_->Tie(ptr);
   dispatch_->EnableRead();
-  port::Singleton<OnlineConnections>::Instance().NewConnection(ptr);
+  eventloop_->AddConnection(ptr);
   if (connection_cb_) {
     connection_cb_(ptr);
   }
@@ -154,10 +153,7 @@ void TcpConnection::HandleClose() {
   state_ = kDisconnected;
   dispatch_->DisableAll();
   dispatch_->RemoveEvents();
-
-  port::Singleton<OnlineConnections>::Instance().EraseCnnection(
-      shared_from_this());
-
+  eventloop_->RemoveCnnection(shared_from_this());
   if (close_cb_) {
     close_cb_(shared_from_this());
   }

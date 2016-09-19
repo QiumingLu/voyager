@@ -3,10 +3,14 @@
 
 #include <unistd.h>
 
+#include <atomic>
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
+#include <unordered_map>
 
+#include "voyager/core/callback.h"
 #include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"
 #include "voyager/port/mutexlock.h"
@@ -62,6 +66,10 @@ class EventLoop {
   void UpdateDispatch(Dispatch* dispatch);
   bool HasDispatch(Dispatch* dispatch);
 
+  void AddConnection(const TcpConnectionPtr& ptr);
+  void RemoveCnnection(const TcpConnectionPtr& ptr);
+  int UserNumber() const;
+
  private:
   void RunFuncs();
   void HandleRead();
@@ -72,6 +80,7 @@ class EventLoop {
   bool run_;
 
   const uint64_t tid_;
+  std::atomic<int> connection_size_;
   std::unique_ptr<EventPoller> poller_;
   std::unique_ptr<TimerList> timers_;
 
@@ -85,6 +94,7 @@ class EventLoop {
 
   port::Mutex mu_;
   std::vector<Func> funcs_;
+  std::unordered_map<std::string, TcpConnectionPtr> connections_;
 
   // No copying allowed
   EventLoop(const EventLoop&);

@@ -1,7 +1,8 @@
 #include "voyager/core/schedule.h"
 
+#include <assert.h>
+
 #include "voyager/core/eventloop.h"
-#include "voyager/core/online_connections.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
@@ -12,30 +13,36 @@ Schedule::Schedule(EventLoop* ev, int size)
       started_(false) {
 }
 
-Schedule::~Schedule() {
-  port::Singleton<OnlineConnections>::Instance().Clear();
-}
-
 void Schedule::Start() {
   assert(!started_);
   baseloop_->AssertInMyLoop();
   started_ = true;
-  OnlineConnections& instance
-      = port::Singleton<OnlineConnections>::Instance();
   for (size_t i = 0; i < size_; ++i) {
     std::unique_ptr<BGEventLoop> loop(new BGEventLoop());
-    instance.Insert(loop->Loop());
-    loops_.push_back(std::move(loop));
+    loops_.push_back(loop->Loop());
+    bg_loops_.push_back(std::move(loop));
   }
   if (size_ == 0) {
-    instance.Insert(baseloop_);
+    loops_.push_back(baseloop_);
   }
 }
 
 EventLoop* Schedule::AssignLoop() {
   baseloop_->AssertInMyLoop();
   assert(started_);
-  return port::Singleton<OnlineConnections>::Instance().GetLoop();
+  assert(!loops_.empty());
+  EventLoop* loop = loops_[0];
+  int min = loop->UserNumber();
+  size_t i = 1;
+  while (i < loops_.size()) {
+    if (loops_[i]->UserNumber() < min) {
+      loop = loops_[i];
+    }
+    ++i;
+  }
+
+  assert(loop != nullptr);
+  return loop;
 }
 
 }  // namespace voyager

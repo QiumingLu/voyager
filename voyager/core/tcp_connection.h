@@ -47,7 +47,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     message_cb_ = std::move(cb);
   }
 
-  EventLoop* OwnerLoop() const { return eventloop_; }
+  EventLoop* OwnerEventLoop() const { return eventloop_; }
   std::string name() const { return name_; }
 
   void SetUserData(void* data) { user_data_ = data; }
