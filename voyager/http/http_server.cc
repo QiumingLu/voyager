@@ -1,6 +1,6 @@
 #include "voyager/http/http_server.h"
-#include "voyager/http/http_parser.h"
 #include "voyager/http/http_response.h"
+#include "voyager/http/http_request_parser.h"
 #include "voyager/core/tcp_connection.h"
 
 namespace voyager {
@@ -27,16 +27,18 @@ void HttpServer::Start() {
 }
 
 void HttpServer::NewConnection(const TcpConnectionPtr& ptr) {
-  ptr->SetUserData(new HttpParser());
+  ptr->SetUserData(new HttpRequestParser());
 }
 
 void HttpServer::HandleClose(const TcpConnectionPtr& ptr) {
-  HttpParser* parser = reinterpret_cast<HttpParser*>(ptr->UserData());
+  HttpRequestParser* parser
+      = reinterpret_cast<HttpRequestParser*>(ptr->UserData());
   delete parser;
 }
 
 void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
-  HttpParser* parser = reinterpret_cast<HttpParser*>(ptr->UserData());
+  HttpRequestParser* parser
+      = reinterpret_cast<HttpRequestParser*>(ptr->UserData());
   bool ok = parser->ParseBuffer(buf);
   if (!ok) {
     ptr->SendMessage(std::string("HTTP/1.1 400 Bad Request\r\n\r\n"));

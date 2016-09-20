@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "voyager/http/http_parser.h"
+#include "voyager/http/http_response_parser.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/logging.h"
@@ -44,19 +44,21 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
 
   client_->SetConnectionCallback([this, request](const TcpConnectionPtr& ptr) {
     this->gaurd_ = ptr;
-    ptr->SetUserData(new HttpParser(HttpParser::kHttpResponse));
+    ptr->SetUserData(new HttpResponseParser());
     ptr->SendMessage(&request->RequestMessage());
   });
 
   client_->SetCloseCallback([](const TcpConnectionPtr& ptr) {
-    HttpParser* parser = reinterpret_cast<HttpParser*>(ptr->UserData());
+    HttpResponseParser* parser
+        = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
     delete parser;
   });
 
   client_->SetMessageCallback([this](const TcpConnectionPtr& ptr,
                                     Buffer* buffer) {
     if (request_cb_) {
-      HttpParser* parser = reinterpret_cast<HttpParser*>(ptr->UserData());
+      HttpResponseParser* parser
+          = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
       parser->ParseBuffer(buffer);
       if (parser->FinishParse()) {
         request_cb_(parser->GetResponse());

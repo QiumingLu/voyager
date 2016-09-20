@@ -7,7 +7,7 @@ set (paxos_SRCS
 
 add_library(voyager_paxos ${paxos_SRCS})
 
-target_link_libraries(voyager_core)
+target_link_libraries(voyager_paxos voyager_http)
 
 install(TARGETS voyager_paxos DESTINATION lib)
 
