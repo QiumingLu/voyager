@@ -1,7 +1,6 @@
 set(port_SRCS
   mutex.cc
   thread.cc
-  threadpool.cc
   )
 add_library(voyager_port ${port_SRCS})
 
