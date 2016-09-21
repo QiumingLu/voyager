@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "voyager/core/eventloop.h"
-#include "voyager/port/singleton.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
