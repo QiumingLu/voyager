@@ -164,9 +164,6 @@ void TcpConnection::HandleError() {
   if (!st.ok()) {
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_
                        << "] - " << st;
-    if (error_cb_) {
-      error_cb_(shared_from_this(), st);
-    }
   }
 }
 

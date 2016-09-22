@@ -45,9 +45,6 @@ class TcpClient {
   void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
     writecomplete_cb_ = cb;
   }
-  void SetErrorCallback(const ErrorCallback& cb) {
-    error_cb_ = cb;
-  }
 
   void SetConnectFailureCallback(ConnectFailureCallback&& cb) {
     failure_cb_ = std::move(cb);
@@ -63,9 +60,6 @@ class TcpClient {
   }
   void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
     writecomplete_cb_ = std::move(cb);
-  }
-  void SetErrorCallback(ErrorCallback&& cb) {
-    error_cb_ = cb;
   }
 
  private:
@@ -83,7 +77,6 @@ class TcpClient {
   CloseCallback close_cb_;
   MessageCallback message_cb_;
   WriteCompleteCallback writecomplete_cb_;
-  ErrorCallback error_cb_;
 
   std::weak_ptr<TcpConnection> weak_ptr_;
 

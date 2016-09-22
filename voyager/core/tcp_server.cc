@@ -58,7 +58,6 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   conn_ptr->SetCloseCallback(close_cb_);
   conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
   conn_ptr->SetMessageCallback(message_cb_);
-  conn_ptr->SetErrorCallback(error_cb_);
 
   ev->RunInLoop([conn_ptr]() {
       conn_ptr->StartWorking();

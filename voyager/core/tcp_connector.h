@@ -52,7 +52,8 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   void Connecting();
   void Retry();
 
-  void ConnectCallback();
+  void HandleWrite();
+  void HandleError();
 
   void ResetDispatch();
 

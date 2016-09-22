@@ -1,7 +1,4 @@
 #include "voyager/http/http_client.h"
-
-#include <stdio.h>
-
 #include "voyager/http/http_response_parser.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
@@ -42,6 +39,8 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
 
   client_.reset(new TcpClient(eventloop_, addr));
 
+  client_->SetConnectFailureCallback(error_cb_);
+
   client_->SetConnectionCallback([this, request](const TcpConnectionPtr& ptr) {
     this->gaurd_ = ptr;
     ptr->SetUserData(new HttpResponseParser());
@@ -66,15 +65,6 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
       }
     }
   });
-
-  client_->SetErrorCallback([this](const TcpConnectionPtr&,
-                                   const Status& s) {
-      if (!s.ok()) {
-        error_cb_(s);
-      }
-  });
-
-  client_->SetConnectFailureCallback(error_cb_);
 
   client_->Connect();
 }

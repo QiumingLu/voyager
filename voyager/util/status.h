@@ -34,6 +34,9 @@ class Status {
   static Status IOError(const Slice& msg, const Slice& msg2 = Slice()) {
     return Status(kIOError, msg, msg2);
   }
+  static Status NetworkError(const Slice& msg, const Slice& msg2 = Slice()) {
+    return Status(kNetworkError, msg, msg2);
+  }
 
   bool ok() const { return state_ == nullptr; }
   bool IsNotFound() const { return code() == kNotFound; }
@@ -41,6 +44,7 @@ class Status {
   bool IsNotSupported() const { return code() == kNotSupported; }
   bool IsInvalidArgument() const { return code() == kInvalidArgument; }
   bool IsIOError() const { return code() == kIOError; }
+  bool IsNetworkError() const { return code() == kNetworkError; }
 
   std::string ToString() const;
 
@@ -57,7 +61,8 @@ class Status {
     kCorruption = 2,
     kNotSupported = 3,
     kInvalidArgument = 4,
-    kIOError = 5
+    kIOError = 5,
+    kNetworkError = 6
   };
 
   Code code() const {

@@ -100,8 +100,9 @@ Status BaseSocket::CheckSocketError() const {
     VOYAGER_LOG(ERROR) << "getsockopt(SO_ERROR): " << strerror(errno);
   }
   if (err) {
-    errno = err;
-    return Status::IOError(strerror(errno));
+    char buf[32];
+    snprintf(buf, sizeof(buf), "errno:%d", err);
+    return Status::NetworkError(buf, strerror(err));
   }
   return Status::OK();
 }

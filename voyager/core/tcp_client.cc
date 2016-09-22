@@ -76,7 +76,6 @@ void TcpClient::NewConnection(const Status& st, int socketfd) {
     ptr->SetMessageCallback(message_cb_);
     ptr->SetWriteCompleteCallback(writecomplete_cb_);
     ptr->SetCloseCallback(close_cb_);
-    ptr->SetErrorCallback(error_cb_);
     ev_->RunInLoop([ptr]() {
         ptr->StartWorking();
     });

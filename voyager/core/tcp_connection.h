@@ -33,9 +33,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetMessageCallback(const MessageCallback& cb) {
     message_cb_ = cb;
   }
-  void SetErrorCallback(const ErrorCallback& cb) {
-    error_cb_ = cb;
-  }
 
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
@@ -48,9 +45,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
   void SetMessageCallback(MessageCallback&& cb) {
     message_cb_ = std::move(cb);
-  }
-  void SetErrorCallback(ErrorCallback&& cb) {
-    error_cb_ = cb;
   }
 
   EventLoop* OwnerEventLoop() const { return eventloop_; }
@@ -111,7 +105,6 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
-  ErrorCallback error_cb_;
 
   // No copying allowed
   TcpConnection(const TcpConnection&);

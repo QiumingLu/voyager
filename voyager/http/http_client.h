@@ -13,7 +13,7 @@ namespace voyager {
 class HttpClient {
  public:
   typedef std::function<void (HttpResponsePtr)> RequestCallback;
-  typedef std::function<void (const Status& s)> RequestErrorCallback;
+  typedef std::function<void (const Status& s)> RequestFailureCallback;
 
   HttpClient(EventLoop* ev);
 
@@ -22,10 +22,10 @@ class HttpClient {
     request_cb_ = std::move(cb);
   }
 
-  void SetRequestErrorCallback(const RequestErrorCallback& cb) {
+  void SetRequestFailureCallback(const RequestFailureCallback& cb) {
     error_cb_ = cb;
   }
-  void SteRequestErrorCallback(RequestErrorCallback&& cb) {
+  void SetRequestFailureCallback(RequestFailureCallback&& cb) {
     error_cb_ = std::move(cb);
   }
 
@@ -39,7 +39,7 @@ class HttpClient {
   std::weak_ptr<TcpConnection> gaurd_;
   std::unique_ptr<TcpClient> client_;
   RequestCallback request_cb_;
-  RequestErrorCallback error_cb_;
+  RequestFailureCallback error_cb_;
 
   // No copying allowed
   HttpClient(const HttpClient&);
