@@ -163,7 +163,10 @@ void TcpConnection::HandleError() {
   Status st = socket_.CheckSocketError();
   if (!st.ok()) {
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_
-                       << "] - " << st.ToString();
+                       << "] - " << st;
+    if (error_cb_) {
+      error_cb_(shared_from_this(), st);
+    }
   }
 }
 

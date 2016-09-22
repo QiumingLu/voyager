@@ -67,6 +67,15 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
     }
   });
 
+  client_->SetErrorCallback([this](const TcpConnectionPtr&,
+                                   const Status& s) {
+      if (!s.ok()) {
+        error_cb_(s);
+      }
+  });
+
+  client_->SetConnectFailureCallback(error_cb_);
+
   client_->Connect();
 }
 

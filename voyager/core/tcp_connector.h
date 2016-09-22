@@ -19,10 +19,11 @@
 namespace voyager {
 
 class EventLoop;
+class Status;
 
 class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
  public:
-  typedef std::function<void (int fd)> NewConnectionCallback;
+  typedef std::function<void (const Status&, int fd)> NewConnectionCallback;
 
   TcpConnector(EventLoop* ev, const SockAddr& addr);
 

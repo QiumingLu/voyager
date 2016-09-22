@@ -41,6 +41,9 @@ class TcpServer {
   void SetMessageCallback(const MessageCallback& cb) {
     message_cb_ = cb;
   }
+  void SetErrorCallback(const ErrorCallback& cb) {
+    error_cb_ = cb;
+  }
 
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
@@ -53,6 +56,9 @@ class TcpServer {
   }
   void SetMessageCallback(MessageCallback&& cb) {
     message_cb_ = std::move(cb);
+  }
+  void SetErrorCallback(ErrorCallback&& cb) {
+    error_cb_ = std::move(cb);
   }
 
   void Start();
@@ -72,6 +78,7 @@ class TcpServer {
   CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
+  ErrorCallback error_cb_;
 
   // No copying allowed
   TcpServer(const TcpServer&);
