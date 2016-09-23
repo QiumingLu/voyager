@@ -52,6 +52,9 @@ std::string Status::ToString() const {
       case kIOError:
         type = "IO error: ";
         break;
+      case kNetworkError:
+        type = "NetworkError: ";
+        break;
       default:
         snprintf(tmp, sizeof(tmp), "Unknown code(%d): ",
                  static_cast<int>(code()));

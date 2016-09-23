@@ -1,6 +1,7 @@
 #include "voyager/http/http_request.h"
 
 #include <string.h>
+#include <map>
 
 namespace voyager {
 

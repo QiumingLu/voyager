@@ -1,13 +1,18 @@
 #include "voyager/http/http_client.h"
 #include "voyager/core/eventloop.h"
+#include "voyager/util/status.h"
 
 #include <iostream>
 #include <functional>
 
 namespace voyager {
 
-void HandleResponse(HttpResponsePtr response) {
-  std::cout << response->ResponseMessage().RetrieveAllAsString() << std::endl;
+void HandleResponse(HttpResponsePtr response, const Status& s) {
+  if (s.ok()) {
+    std::cout << response->ResponseMessage().RetrieveAllAsString() << "\n";
+  } else {
+    std::cout << s.ToString() << "\n";
+  }
 }
 
 }  // namespace voyager
@@ -24,8 +29,6 @@ int main(int argc, char** argv) {
   voyager::EventLoop ev;
 
   voyager::HttpClient client(&ev);
-  client.SetRequestCallback(std::bind(voyager::HandleResponse,
-                                      std::placeholders::_1));
   voyager::HttpRequestPtr request(new voyager::HttpRequest());
   request->SetMethod(voyager::HttpRequest::kGet);
   request->SetPath(path);
@@ -33,6 +36,8 @@ int main(int argc, char** argv) {
   request->AddHeader("Host", host);
   request->AddHeader("Connection", "keep-alive");
 
-  client.DoHttpRequest(request);
+  client.DoHttpRequest(request, std::bind(voyager::HandleResponse,
+                                          std::placeholders::_1,
+                                          std::placeholders::_2));
   ev.Loop();
 }

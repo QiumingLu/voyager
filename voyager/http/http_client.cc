@@ -1,4 +1,7 @@
 #include "voyager/http/http_client.h"
+
+#include <string>
+
 #include "voyager/http/http_response_parser.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
@@ -6,17 +9,21 @@
 
 namespace voyager {
 
-HttpClient::HttpClient(EventLoop* ev)
-    : eventloop_(ev) {
+HttpClient::HttpClient(EventLoop* ev, int timeout)
+    : eventloop_(ev),
+      timeout_(timeout) {
 }
 
-void HttpClient::DoHttpRequest(const HttpRequestPtr& request) {
-  eventloop_->RunInLoop([this, request]() {
-    this->DoHttpRequestInLoop(request);
+void HttpClient::DoHttpRequest(const HttpRequestPtr& request,
+                               const RequestCallback& cb) {
+  eventloop_->RunInLoop([this, request, cb]() {
+    this->DoHttpRequestInLoop(request, cb);
   });
 }
 
-void HttpClient::DoHttpRequestInLoop(const HttpRequestPtr& request) {
+void HttpClient::DoHttpRequestInLoop(const HttpRequestPtr& request,
+                                     const RequestCallback& cb) {
+  queue_cb_.push_back(cb);
   TcpConnectionPtr ptr(gaurd_.lock());
   if (ptr) {
     ptr->SendMessage(&request->RequestMessage());
@@ -39,33 +46,45 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
 
   client_.reset(new TcpClient(eventloop_, addr));
 
-  client_->SetConnectFailureCallback(error_cb_);
-
   client_->SetConnectionCallback([this, request](const TcpConnectionPtr& ptr) {
     this->gaurd_ = ptr;
     ptr->SetUserData(new HttpResponseParser());
     ptr->SendMessage(&request->RequestMessage());
   });
 
-  client_->SetCloseCallback([](const TcpConnectionPtr& ptr) {
+  client_->SetCloseCallback([this](const TcpConnectionPtr& ptr) {
     HttpResponseParser* parser
         = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
+    for (std::deque<RequestCallback>::iterator it = queue_cb_.begin();
+         it != queue_cb_.end(); ++it) {
+      (*it)(nullptr, Status::NetworkError("Unknow error"));
+    }
+    queue_cb_.clear();
     delete parser;
   });
 
   client_->SetMessageCallback([this](const TcpConnectionPtr& ptr,
                                     Buffer* buffer) {
-    if (request_cb_) {
-      HttpResponseParser* parser
-          = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
-      parser->ParseBuffer(buffer);
-      if (parser->FinishParse()) {
-        request_cb_(parser->GetResponse());
-        parser->Reset();
-      }
+    assert(!queue_cb_.empty());
+    HttpResponseParser* parser
+        = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
+    parser->ParseBuffer(buffer);
+    if (parser->FinishParse()) {
+      RequestCallback cb = queue_cb_.front();
+      queue_cb_.pop_front();
+      cb(parser->GetResponse(), Status::OK());
+      parser->Reset();
     }
   });
 
+  eventloop_->RunAfter(timeout_*1000000, [this]() {
+      if (!gaurd_.lock()) {
+        client_->Close();
+        RequestCallback cb = queue_cb_.front();
+        queue_cb_.pop_front();
+        cb(nullptr, Status::NetworkError("Connect timeout"));
+      }
+  });
   client_->Connect();
 }
 

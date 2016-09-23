@@ -1,4 +1,5 @@
 #include "voyager/http/http_response.h"
+#include <map>
 
 namespace voyager {
 

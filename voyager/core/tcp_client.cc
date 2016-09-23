@@ -18,8 +18,7 @@ TcpClient::TcpClient(EventLoop* ev,
       connector_ptr_(new TcpConnector(ev, addr)),
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
-      std::bind(&TcpClient::NewConnection, this,
-                std::placeholders::_1, std::placeholders::_2));
+      std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
 }
 
@@ -56,31 +55,25 @@ void TcpClient::Close() {
   }
 }
 
-void TcpClient::NewConnection(const Status& st, int socketfd) {
+void TcpClient::NewConnection(int socketfd) {
   ev_->AssertInMyLoop();
-  if (!st.ok()) {
-    if (connection_cb_) {
-      failure_cb_(st);
-    }
-  } else {
-    char ipbuf[64];
-    SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
-    std::string conn_name = StringPrintf("%s-%s#%d",
-                                         server_ipbuf_.c_str(),
-                                         ipbuf,
-                                         conn_id_.GetNext());
-    VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
+  char ipbuf[64];
+  SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
+  std::string conn_name = StringPrintf("%s-%s#%d",
+                                       server_ipbuf_.c_str(),
+                                       ipbuf,
+                                       conn_id_.GetNext());
+  VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
 
-    TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
-    ptr->SetConnectionCallback(connection_cb_);
-    ptr->SetMessageCallback(message_cb_);
-    ptr->SetWriteCompleteCallback(writecomplete_cb_);
-    ptr->SetCloseCallback(close_cb_);
-    ev_->RunInLoop([ptr]() {
-        ptr->StartWorking();
-    });
-    weak_ptr_ = ptr;
-  }
+  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
+  ptr->SetConnectionCallback(connection_cb_);
+  ptr->SetMessageCallback(message_cb_);
+  ptr->SetWriteCompleteCallback(writecomplete_cb_);
+  ptr->SetCloseCallback(close_cb_);
+  ev_->RunInLoop([ptr]() {
+    ptr->StartWorking();
+  });
+  weak_ptr_ = ptr;
 }
 
 }  // namespace voyager

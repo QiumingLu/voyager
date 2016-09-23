@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <deque>
 
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
@@ -12,34 +13,24 @@ namespace voyager {
 
 class HttpClient {
  public:
-  typedef std::function<void (HttpResponsePtr)> RequestCallback;
-  typedef std::function<void (const Status& s)> RequestFailureCallback;
+  typedef std::function<void (HttpResponsePtr,
+                              const Status&)> RequestCallback;
+  explicit HttpClient(EventLoop* ev, int timeout = 30);
 
-  HttpClient(EventLoop* ev);
-
-  void SetRequestCallback(const RequestCallback& cb) { request_cb_ = cb; }
-  void SetRequestCallback(RequestCallback&& cb) {
-    request_cb_ = std::move(cb);
-  }
-
-  void SetRequestFailureCallback(const RequestFailureCallback& cb) {
-    error_cb_ = cb;
-  }
-  void SetRequestFailureCallback(RequestFailureCallback&& cb) {
-    error_cb_ = std::move(cb);
-  }
-
-  void DoHttpRequest(const HttpRequestPtr& request);
+  void DoHttpRequest(const HttpRequestPtr& request,
+                     const RequestCallback& cb);
 
  private:
-  void DoHttpRequestInLoop(const HttpRequestPtr& request);
+  void DoHttpRequestInLoop(const HttpRequestPtr& request,
+                           const RequestCallback& cb);
   void FirstRequest(const HttpRequestPtr& request);
 
   EventLoop* eventloop_;
+  int timeout_;
   std::weak_ptr<TcpConnection> gaurd_;
   std::unique_ptr<TcpClient> client_;
-  RequestCallback request_cb_;
-  RequestFailureCallback error_cb_;
+  typedef std::deque<RequestCallback> CallbackQueue;
+  CallbackQueue queue_cb_;
 
   // No copying allowed
   HttpClient(const HttpClient&);

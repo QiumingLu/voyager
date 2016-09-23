@@ -1,6 +1,7 @@
 #include "voyager/core/schedule.h"
 
 #include <assert.h>
+#include <utility>
 
 #include "voyager/core/eventloop.h"
 #include "voyager/util/logging.h"

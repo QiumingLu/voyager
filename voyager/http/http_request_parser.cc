@@ -1,6 +1,7 @@
 #include "voyager/http/http_request_parser.h"
 
 #include <stdio.h>
+#include <string>
 
 #include "voyager/core/buffer.h"
 

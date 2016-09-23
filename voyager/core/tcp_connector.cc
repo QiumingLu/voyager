@@ -136,7 +136,7 @@ void TcpConnector::HandleWrite() {
                         << StateToString();
       if (connect_ && newconnection_cb_) {
         socket_->SetNoAutoCloseFd();
-        newconnection_cb_(st, socket_->SocketFd());
+        newconnection_cb_(socket_->SocketFd());
       }
 
       socket_.reset();

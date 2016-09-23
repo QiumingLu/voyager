@@ -1,6 +1,7 @@
 #include "voyager/http/http_response_parser.h"
 
 #include <stdio.h>
+#include <string>
 
 #include "voyager/core/buffer.h"
 
@@ -88,8 +89,8 @@ bool HttpResponseParser::ParseResponseLine(const char* begin, const char* end) {
 
 bool HttpResponseParser::ParseResponseBody(Buffer* buf) {
   const std::string& s = response_->Value(HttpMessage::kContentLength);
-  if (s.empty()) { 
-    return true; 
+  if (s.empty()) {
+    return true;
   }
   if (static_cast<int>(buf->ReadableSize()) == atoi(&*(s.begin()))) {
     response_->SetBody(buf->RetrieveAllAsString());
