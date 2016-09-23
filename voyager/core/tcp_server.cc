@@ -34,7 +34,7 @@ void TcpServer::Start() {
     schedule_->Start();
     assert(!acceptor_->IsListenning());
     eventloop_->RunInLoop([this]() {
-        this->acceptor_->EnableListen();
+      this->acceptor_->EnableListen();
     });
   }
 }
@@ -60,7 +60,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   conn_ptr->SetMessageCallback(message_cb_);
 
   ev->RunInLoop([conn_ptr]() {
-      conn_ptr->StartWorking();
+    conn_ptr->StartWorking();
   });
 }
 

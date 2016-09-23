@@ -55,7 +55,7 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
   client_->SetCloseCallback([this](const TcpConnectionPtr& ptr) {
     HttpResponseParser* parser
         = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
-    for (std::deque<RequestCallback>::iterator it = queue_cb_.begin();
+    for (CallbackQueue::iterator it = queue_cb_.begin();
          it != queue_cb_.end(); ++it) {
       (*it)(nullptr, Status::NetworkError("Unknow error"));
     }
@@ -77,15 +77,27 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
     }
   });
 
-  eventloop_->RunAfter(timeout_*1000000, [this]() {
-      if (!gaurd_.lock()) {
-        client_->Close();
-        RequestCallback cb = queue_cb_.front();
-        queue_cb_.pop_front();
-        cb(nullptr, Status::NetworkError("Connect timeout"));
-      }
-  });
+#ifdef __linux__
+    if (!timer_) {
+      timer_.reset(new NewTimer(eventloop_,
+                                std::bind(&HttpClient::HandleTimeout, this)));
+    }
+    timer_->SetTime(timeout_*1000000000, 0);
+#else
+    eventloop_->RunAfter(timeout_*1000000,
+                         std::bind(&HttpClient::HandleTimeout, this));
+#endif
+
   client_->Connect();
+}
+
+void HttpClient::HandleTimeout() {
+  if (!gaurd_.lock()) {
+    client_->Close();
+    RequestCallback cb = queue_cb_.front();
+    queue_cb_.pop_front();
+    cb(nullptr, Status::NetworkError("Connect timeout"));
+  }
 }
 
 }  // namespace voyager

@@ -8,6 +8,9 @@
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
 #include "voyager/core/tcp_client.h"
+#ifdef __linux__
+#include "voyager/core/newtimer.h"
+#endif
 
 namespace voyager {
 
@@ -24,11 +27,15 @@ class HttpClient {
   void DoHttpRequestInLoop(const HttpRequestPtr& request,
                            const RequestCallback& cb);
   void FirstRequest(const HttpRequestPtr& request);
+  void HandleTimeout();
 
   EventLoop* eventloop_;
   int timeout_;
   std::weak_ptr<TcpConnection> gaurd_;
   std::unique_ptr<TcpClient> client_;
+#ifdef __linux__
+  std::unique_ptr<NewTimer> timer_;
+#endif
   typedef std::deque<RequestCallback> CallbackQueue;
   CallbackQueue queue_cb_;
 

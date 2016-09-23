@@ -51,7 +51,7 @@ TimerList::Timer* TimerList::Insert(uint64_t micros_value,
                                     const TimerProcCallback& cb) {
   Timer* timer = new Timer(micros_value, micros_interval, cb);
   eventloop_->RunInLoop([this, timer]() {
-      this->InsertInLoop(timer);
+    this->InsertInLoop(timer);
   });
   return timer;
 }
@@ -61,14 +61,14 @@ TimerList::Timer* TimerList::Insert(uint64_t micros_value,
                                     TimerProcCallback&& cb) {
   Timer* timer = new Timer(micros_value, micros_interval, std::move(cb));
   eventloop_->RunInLoop([this, timer]() {
-      this->InsertInLoop(timer);
+    this->InsertInLoop(timer);
   });
   return timer;
 }
 
 void TimerList::Erase(Timer* timer) {
   eventloop_->RunInLoop([this, timer]() {
-      this->EraseInLoop(timer);
+    this->EraseInLoop(timer);
   });
 }
 

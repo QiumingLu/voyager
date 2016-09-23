@@ -111,7 +111,7 @@ void TcpConnector::Retry() {
     timer_->SetTime(retry_time_ * 1000, 0);
 #else
     ev_->RunAfter(retry_time_, [ptr]() {
-        ptr->StartInLoop();
+      ptr->StartInLoop();
     });
 #endif
 
