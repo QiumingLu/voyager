@@ -53,7 +53,6 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   void Retry();
 
   void HandleWrite();
-  void HandleError();
 
   void ResetDispatch();
 

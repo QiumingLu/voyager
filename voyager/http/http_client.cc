@@ -9,7 +9,7 @@
 
 namespace voyager {
 
-HttpClient::HttpClient(EventLoop* ev, int timeout)
+HttpClient::HttpClient(EventLoop* ev, uint64_t timeout)
     : eventloop_(ev),
       timeout_(timeout) {
 }
@@ -47,12 +47,40 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
   client_.reset(new TcpClient(eventloop_, addr));
 
   client_->SetConnectionCallback([this, request](const TcpConnectionPtr& ptr) {
-    this->gaurd_ = ptr;
+    eventloop_->RemoveTimer(timer_);
+    gaurd_ = ptr;
     ptr->SetUserData(new HttpResponseParser());
     ptr->SendMessage(&request->RequestMessage());
   });
 
-  client_->SetCloseCallback([this](const TcpConnectionPtr& ptr) {
+  client_->SetCloseCallback(std::bind(&HttpClient::HandleClose, this,
+                                      std::placeholders::_1));
+  client_->SetMessageCallback(std::bind(&HttpClient::HandleMessage, this,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2));
+  timer_ = eventloop_->RunAfter(
+      timeout_*1000000, std::bind(&HttpClient::HandleTimeout, this));
+  client_->Connect();
+}
+
+void HttpClient::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buffer) {
+  assert(!queue_cb_.empty());
+  HttpResponseParser* parser
+      = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
+  bool success = parser->ParseBuffer(buffer);
+  if (parser->FinishParse()) {
+    RequestCallback cb = queue_cb_.front();
+    queue_cb_.pop_front();
+    if (success) {
+      cb(parser->GetResponse(), Status::OK());
+    } else {
+      cb(parser->GetResponse(), Status::NetworkError("ResponseMessage error"));
+    }
+    parser->Reset();
+  }
+}
+
+void HttpClient::HandleClose(const TcpConnectionPtr& ptr) {
     HttpResponseParser* parser
         = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
     for (CallbackQueue::iterator it = queue_cb_.begin();
@@ -61,38 +89,10 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
     }
     queue_cb_.clear();
     delete parser;
-  });
-
-  client_->SetMessageCallback([this](const TcpConnectionPtr& ptr,
-                                    Buffer* buffer) {
-    assert(!queue_cb_.empty());
-    HttpResponseParser* parser
-        = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
-    parser->ParseBuffer(buffer);
-    if (parser->FinishParse()) {
-      RequestCallback cb = queue_cb_.front();
-      queue_cb_.pop_front();
-      cb(parser->GetResponse(), Status::OK());
-      parser->Reset();
-    }
-  });
-
-#ifdef __linux__
-    if (!timer_) {
-      timer_.reset(new NewTimer(eventloop_,
-                                std::bind(&HttpClient::HandleTimeout, this)));
-    }
-    timer_->SetTime(timeout_*1000000000, 0);
-#else
-    eventloop_->RunAfter(timeout_*1000000,
-                         std::bind(&HttpClient::HandleTimeout, this));
-#endif
-
-  client_->Connect();
 }
 
 void HttpClient::HandleTimeout() {
-  if (!gaurd_.lock()) {
+  if (!(gaurd_.lock()) && !(queue_cb_.empty())) {
     client_->Close();
     RequestCallback cb = queue_cb_.front();
     queue_cb_.pop_front();

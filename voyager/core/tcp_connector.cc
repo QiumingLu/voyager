@@ -91,8 +91,6 @@ void TcpConnector::Connecting() {
   dispatch_->Tie(shared_from_this());
   dispatch_->SetWriteCallback(
       std::bind(&TcpConnector::HandleWrite, this));
-  dispatch_->SetErrorCallback(
-      std::bind(&TcpConnector::HandleError, this));
   dispatch_->EnableWrite();
 }
 
@@ -128,11 +126,11 @@ void TcpConnector::HandleWrite() {
       VOYAGER_LOG(WARN) << "TcpConnector::HandleWrite - " << st;
       Retry();
     } else if (socket_->IsSelfConnect() == 0) {
-      VOYAGER_LOG(WARN) << "Connector::ConnectCallback - Self connect";
+      VOYAGER_LOG(WARN) << "TcpConnector::ConnectCallback - Self connect";
       Retry();
     } else {
       state_ = kConnected;
-      VOYAGER_LOG(INFO) << "Connector::ConnectCallback - "
+      VOYAGER_LOG(INFO) << "TcpConnector::ConnectCallback - "
                         << StateToString();
       if (connect_ && newconnection_cb_) {
         socket_->SetNoAutoCloseFd();
@@ -140,15 +138,6 @@ void TcpConnector::HandleWrite() {
       }
 
       socket_.reset();
-    }
-  }
-}
-
-void TcpConnector::HandleError() {
-  if (socket_) {
-    Status st = socket_->CheckSocketError();
-    if (!st.ok()) {
-      VOYAGER_LOG(WARN) << "TcpConnector::HandleError - " << st;
     }
   }
 }
