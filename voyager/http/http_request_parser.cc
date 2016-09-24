@@ -60,6 +60,7 @@ bool HttpRequestParser::ParseBuffer(Buffer* buf) {
 }
 
 void HttpRequestParser::Reset() {
+  state_ = kLine;
   request_.reset(new HttpRequest());
 }
 
