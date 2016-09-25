@@ -67,15 +67,15 @@ void HttpClient::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buffer) {
   assert(!queue_cb_.empty());
   HttpResponseParser* parser
       = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
-  bool success = parser->ParseBuffer(buffer);
+  bool ok = parser->ParseBuffer(buffer);
+  if (!ok) {
+    ptr->ShutDown();
+  }
+
   if (parser->FinishParse()) {
     RequestCallback cb = queue_cb_.front();
     queue_cb_.pop_front();
-    if (success) {
-      cb(parser->GetResponse(), Status::OK());
-    } else {
-      cb(parser->GetResponse(), Status::NetworkError("ResponseMessage error"));
-    }
+    cb(parser->GetResponse(), Status::OK());
     parser->Reset();
   }
 }

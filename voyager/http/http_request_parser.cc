@@ -51,6 +51,8 @@ bool HttpRequestParser::ParseBuffer(Buffer* buf) {
     } else if (state_ == kBody) {
       if (ParseRequestBody(buf)) {
         state_ = kEnd;
+      } else {
+        ok = false;
       }
       flag = false;
     } else {

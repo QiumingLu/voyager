@@ -107,7 +107,10 @@ Status Json::WriteObj(const JsonValuePtr& p, std::string* result) {
     }
     WriteString(it->first, result);
     result->append(": ");
-    Stringify(it->second, result);
+    Status s = Stringify(it->second, result);
+    if (!s.ok()) {
+      return s;
+    }
   }
   result->append(" }");
   return Status::OK();
@@ -121,7 +124,10 @@ Status Json:: WriteArray(const JsonValuePtr& p, std::string* result) {
       result->append(", ");
     }
     std::string temp;
-    Stringify(array_p->Value()[i], &temp);
+    Status s = Stringify(array_p->Value()[i], &temp);
+    if (!s.ok()) {
+      return s;
+    }
     result->append(temp);
   }
   result->append(" ]");
@@ -182,7 +188,7 @@ Status Json::GetValue(JsonReader* reader, JsonValuePtr* p) {
            "buffer overflow when peekBuf, over %u.",
            (uint32_t)(uint32_t)reader->Current());
   Slice info(s);
-  return Status::InvalidArgument(info);
+  return Status::Corruption(info);
 }
 
 Status Json::GetString(JsonReader* reader, char head, JsonValuePtr* p) {
@@ -220,7 +226,7 @@ Status Json::GetString(JsonReader* reader, char head, JsonValuePtr* p) {
                    "get string error(\\u)[pos:%u]",
                    (uint32_t)reader->Current());
           Slice info(s);
-          return Status::InvalidArgument(info);
+          return Status::Corruption(info);
         }
         peek += 4;
         str_p->value_.append(1, static_cast<char>(icode));
@@ -239,7 +245,7 @@ Status Json::GetString(JsonReader* reader, char head, JsonValuePtr* p) {
              "get string error(\\u)[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
 
   str_p->value_.append(peek, i);
@@ -317,7 +323,7 @@ Status Json::GetNum(JsonReader* reader, char head, JsonValuePtr* p) {
     snprintf(s, sizeof(s),
              "get num error[pos:%u]", (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
 
   if (is_needback) {
@@ -359,7 +365,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
                "get obj error(key is not string)[pos:%u]",
                (uint32_t)reader->Current());
       Slice info(s);
-      return Status::InvalidArgument(info);
+      return Status::Corruption(info);
     }
 
     JsonValuePtr str_ptr;
@@ -377,7 +383,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
                "get obj error(: not find)[pos:%u]",
                (uint32_t)reader->Current());
       Slice info(s);
-      return Status::InvalidArgument(info);
+      return Status::Corruption(info);
     }
 
     JsonValuePtr temp;
@@ -403,7 +409,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
              "get obj error(, not find)[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
 }
 
@@ -445,7 +451,7 @@ Status Json::GetArray(JsonReader* reader, JsonValuePtr* p) {
              "get vector error(, not find )[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
 
   char s[64];
@@ -453,7 +459,7 @@ Status Json::GetArray(JsonReader* reader, JsonValuePtr* p) {
            "get vector error(] not find )[pos:%u]",
            (uint32_t)reader->Current());
   Slice info(s);
-  return Status::InvalidArgument(info);
+  return Status::Corruption(info);
 }
 
 Status Json::GetBoolean(JsonReader* reader, char c, JsonValuePtr* p) {
@@ -483,7 +489,7 @@ Status Json::GetBoolean(JsonReader* reader, char c, JsonValuePtr* p) {
              "get bool error[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
 
   JsonValueBoolean* bool_p = new JsonValueBoolean();
@@ -507,7 +513,7 @@ Status Json::GetNull(JsonReader* reader, char c, JsonValuePtr* /* p */) {
              "get NULL error[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
-    return Status::InvalidArgument(info);
+    return Status::Corruption(info);
   }
   return Status::OK();
 }
@@ -528,7 +534,7 @@ Status Json::GetHex(JsonReader* reader, uint16_t* result) {
       snprintf(s, sizeof(s), "get string error(\\u)[pos:%u]",
                (uint32_t)reader->Current());
       Slice info(s);
-      Status::InvalidArgument(info);
+      Status::Corruption(info);
     }
   }
   *result = code;
