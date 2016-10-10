@@ -14,7 +14,7 @@ class NewTimer {
   NewTimer(EventLoop* ev, TimerProcCallback&& cb);
   ~NewTimer();
 
-  EventLoop* OwnerLoop() const { return eventloop_; }
+  EventLoop* OwnerEventLoop() const { return eventloop_; }
   bool IsRepeat() const { return repeat_; }
 
   // (1) nanos_value 表示定时在距离当前的时间多久。

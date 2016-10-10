@@ -23,7 +23,7 @@ class JsonValue;
 typedef std::shared_ptr<JsonValue> JsonValuePtr;
 
 // Json 类型的基类，没有任何意义
-class JsonValue : public std::enable_shared_from_this<JsonValue> {
+class JsonValue {
  public:
   JsonValue() { }
   virtual ~JsonValue() { }

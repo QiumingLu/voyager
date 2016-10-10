@@ -20,8 +20,8 @@ class TcpAcceptor {
       const struct sockaddr_storage& sa)> NewConnectionCallback;
 
   TcpAcceptor(EventLoop* eventloop,
-           const SockAddr& addr,
-           int backlog, bool reuseport = false);
+              const SockAddr& addr,
+              int backlog, bool reuseport = false);
   ~TcpAcceptor();
 
   void EnableListen();

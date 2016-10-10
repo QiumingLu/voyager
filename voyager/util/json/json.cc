@@ -28,8 +28,8 @@ Status Json::Stringify(const JsonValuePtr& p, std::string* result) {
     case kJsonTypeBoolean:
       return WriteBoolean(p, result);
     default:
-      Slice info("Invalid JsonType");
-      return Status::InvalidArgument(info);
+      Slice info("Not supported json type");
+      return Status::NotSupported(info);
   }
 }
 
