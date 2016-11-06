@@ -1,9 +1,10 @@
 #include "voyager/paxos/learner.h"
+#include "voyager/paxos/config.h"
 
 namespace voyager {
 namespace paxos {
 
-Learner::Learner() {
+Learner::Learner(const Config* config) {
 }
 
 }  // namespace paxos

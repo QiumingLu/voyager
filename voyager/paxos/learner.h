@@ -4,9 +4,11 @@
 namespace voyager {
 namespace paxos {
 
+class Config;
+
 class Learner {
  public:
-  Learner();
+  Learner(const Config* config);
 
  private:
 
