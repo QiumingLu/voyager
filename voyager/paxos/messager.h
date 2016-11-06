@@ -1,5 +1,5 @@
-#ifndef VOYAGER_PAXOS_BASE_H_
-#define VOYAGER_PAXOS_BASE_H_
+#ifndef VOYAGER_PAXOS_MESSAGER_H_
+#define VOYAGER_PAXOS_MESSAGER_H_
 
 #include <string>
 
@@ -11,9 +11,9 @@ namespace paxos {
 
 class Config;
 
-class Base {
+class Messager {
  public:
-  Base(const Config* config);
+  Messager(const Config* config);
 
   Status PackMessage(const PaxosMessage& msg, std::string* s);
   Status UnPackMessage(const std::string& s, PaxosMessage* msg);
@@ -26,11 +26,11 @@ class Base {
   const Config* config_;
 
   // No copying allowed
-  Base(const Base&);
-  void operator=(const Base&);
+  Messager(const Messager&);
+  void operator=(const Messager&);
 };
 
 }  // namespace paxos
 }  // namespace voyager
 
-#endif  // VOYAGER_PAXOS_BASE_H_
+#endif  // VOYAGER_PAXOS_MESSAGER_H_

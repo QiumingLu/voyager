@@ -1,10 +1,10 @@
 set (paxos_SRCS
   acceptor.cc
-  base.cc
   counter.cc
   group.cc
   instance.cc
   learner.cc
+  messager.cc
   node.cc
   paxos_message.cc
   proposer.cc
