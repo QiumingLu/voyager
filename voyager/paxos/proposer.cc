@@ -6,10 +6,9 @@ namespace paxos {
 
 Proposer::Proposer(const Config* config)
     : config_(config),
-      ballot_(0, 0),
-      proposal_id_(1),
       hightest_proprosal_id_(0),
-      value_(),
+      instance_id_(0),
+      proposal_id_(1),
       counter_(config),
       messager_(config),
       preparing_(false),
@@ -24,7 +23,7 @@ void Proposer::Prepare(bool need_new_ballot) {
   skip_prepare_ = false;
   was_rejected_by_someone_ = false;
 
-  ballot_.Reset();
+  hightest_ballot_.Reset();
 
   if (need_new_ballot) {
     if (proposal_id_ < hightest_proprosal_id_) {
@@ -53,14 +52,16 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
         counter_.AddPromisorOrAcceptor(msg.node_id());
 
         BallotNumber b(msg.preaccept_proposal_id(), msg.preaccept_node_id());
-        if (b > ballot_) {
-          ballot_ = b;
+        if (b > hightest_ballot_) {
+          hightest_ballot_ = b;
           value_ = msg.value();
         }
       } else {
         counter_.AddRejector(msg.node_id());
         was_rejected_by_someone_ = true;
-        ResetHigestProposalId(msg.reject_for_promised_id());
+        if (hightest_proprosal_id_ < msg.reject_for_promised_id()) {
+          hightest_proprosal_id_ = msg.reject_for_promised_id();
+        }
       }
 
       if (counter_.IsPassedOnThisRound()) {
@@ -98,7 +99,9 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
       } else {
         counter_.AddRejector(msg.node_id());
         was_rejected_by_someone_ = true;
-        ResetHigestProposalId(msg.reject_for_promised_id());
+        if (hightest_proprosal_id_ < msg.reject_for_promised_id()) {
+          hightest_proprosal_id_ = msg.reject_for_promised_id();
+        }
       }
 
       if (counter_.IsPassedOnThisRound()) {
@@ -119,12 +122,6 @@ void Proposer::ExitPrepare() {
 void Proposer::ExitAccept() {
   if (accepting_) {
     accepting_ = false;
-  }
-}
-
-void Proposer::ResetHigestProposalId(uint64_t id) {
-  if (hightest_proprosal_id_ < id) {
-    hightest_proprosal_id_ = id;
   }
 }
 

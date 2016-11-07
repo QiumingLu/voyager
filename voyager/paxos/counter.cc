@@ -26,15 +26,15 @@ void Counter::AddPromisorOrAcceptor(uint64_t node_id) {
 }
 
 bool Counter::IsPassedOnThisRound() const {
-  return false;
+  return (promisors_or_acceptors_.size() >= config_->GetMajoritySize());
 }
 
 bool Counter::IsRejectedOnThisRound() const {
-  return false;
+  return (rejectors_.size() >= config_->GetMajoritySize());
 }
 
 bool Counter::IsReceiveAllOnThisRound() const {
-  return false;
+  return (received_nodes_.size() >= config_->GetNodeSize());
 }
 
 void Counter::StartNewRound() {

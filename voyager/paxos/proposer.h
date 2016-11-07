@@ -24,15 +24,13 @@ class Proposer {
   void ExitAccept();
 
  private:
-  void ResetHigestProposalId(uint64_t id);
-
   const Config* config_;
 
-  BallotNumber ballot_;
+  BallotNumber hightest_ballot_;
+  uint64_t hightest_proprosal_id_;
 
   uint64_t instance_id_;
   uint64_t proposal_id_;
-  uint64_t hightest_proprosal_id_;
   std::string value_;
 
   Counter counter_;

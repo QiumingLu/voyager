@@ -8,6 +8,8 @@ namespace paxos {
 
 class BallotNumber {
  public:
+  BallotNumber() : proposal_id_(0), node_id_(0) { }
+
   BallotNumber(uint64_t proposal_id, uint64_t node_id)
       : proposal_id_(proposal_id), node_id_(node_id) {
   }
@@ -25,7 +27,7 @@ class BallotNumber {
   }
 
   bool operator==(const BallotNumber& other) const {
-    return (proposal_id_ == other.proposal_id_) && (node_id_ == other.node_id_);    
+    return (proposal_id_ == other.proposal_id_) && (node_id_ == other.node_id_);
   }
 
   bool operator>(const BallotNumber& other) const {
