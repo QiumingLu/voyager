@@ -5,9 +5,9 @@ namespace paxos {
 
 Instance::Instance(const Config* config)
     : config_(config),
-      acceptor_(config, this),
+      acceptor_(config),
       learner_(config),
-      proposer_(config, this) {
+      proposer_(config) {
 }
 
 }  // namespace paxos

@@ -13,11 +13,10 @@ namespace voyager {
 namespace paxos {
 
 class Config;
-class Instance;
 
 class Proposer {
  public:
-  Proposer(const Config* config, const Instance* instance);
+  Proposer(const Config* config);
 
   void SetValue(const std::string& value) { value_ = value; }
   void SetValue(std::string&& value) { value_ = std::move(value); }
@@ -33,7 +32,6 @@ class Proposer {
 
  private:
   const Config* config_;
-  const Instance* instance_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;

@@ -1,13 +1,11 @@
 #include "voyager/paxos/acceptor.h"
 #include "voyager/paxos/config.h"
-#include "voyager/paxos/instance.h"
 
 namespace voyager {
 namespace paxos {
 
-Acceptor::Acceptor(const Config* config, const Instance* instance)
+Acceptor::Acceptor(const Config* config)
     : config_(config),
-      instance_(instance),
       messager_(config) {
 }
 

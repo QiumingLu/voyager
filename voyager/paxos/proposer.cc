@@ -1,13 +1,11 @@
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/config.h"
-#include "voyager/paxos/instance.h"
 
 namespace voyager {
 namespace paxos {
 
-Proposer::Proposer(const Config* config, const Instance* instance)
+Proposer::Proposer(const Config* config)
     : config_(config),
-      instance_(instance),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),

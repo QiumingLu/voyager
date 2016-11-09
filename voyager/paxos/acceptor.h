@@ -12,11 +12,10 @@ namespace voyager {
 namespace paxos {
 
 class Config;
-class Instance;
 
 class Acceptor {
  public:
-  Acceptor(const Config* config, const Instance* instance);
+  Acceptor(const Config* config);
 
   void OnPrepare(const PaxosMessage& msg);
   void OnAccpet(const PaxosMessage& msg);
@@ -26,7 +25,6 @@ class Acceptor {
   Status Persist(uint64_t instance_id, uint32_t last_checksum);
 
   const Config* config_;
-  const Instance* instance_;
 
   BallotNumber promise_ballot_;
   BallotNumber acceptd_ballot_;
