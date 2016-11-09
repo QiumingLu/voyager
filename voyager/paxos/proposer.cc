@@ -1,11 +1,13 @@
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/config.h"
+#include "voyager/paxos/instance.h"
 
 namespace voyager {
 namespace paxos {
 
-Proposer::Proposer(const Config* config)
+Proposer::Proposer(const Config* config, const Instance* instance)
     : config_(config),
+      instance_(instance),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),
@@ -50,7 +52,6 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
 
       if (msg.reject_for_promised_id() == 0) {
         counter_.AddPromisorOrAcceptor(msg.node_id());
-
         BallotNumber b(msg.preaccept_proposal_id(), msg.preaccept_node_id());
         if (b > hightest_ballot_) {
           hightest_ballot_ = b;

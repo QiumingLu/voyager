@@ -14,6 +14,9 @@ class BallotNumber {
       : proposal_id_(proposal_id), node_id_(node_id) {
   }
 
+  uint64_t GetProposalId() const { return proposal_id_; }
+  uint64_t GetNodeId() const { return node_id_; }
+
   bool operator>=(const BallotNumber& other) const {
     if (proposal_id_ == other.proposal_id_) {
       return node_id_ >= other.node_id_;

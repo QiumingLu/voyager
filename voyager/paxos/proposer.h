@@ -1,6 +1,9 @@
 #ifndef VOYAGER_PAXOS_PROPOSER_H_
 #define VOYAGER_PAXOS_PROPOSER_H_
 
+#include <string>
+#include <utility>
+
 #include "voyager/paxos/ballot_number.h"
 #include "voyager/paxos/counter.h"
 #include "voyager/paxos/messager.h"
@@ -10,12 +13,17 @@ namespace voyager {
 namespace paxos {
 
 class Config;
+class Instance;
 
 class Proposer {
  public:
-  Proposer(const Config* config);
+  Proposer(const Config* config, const Instance* instance);
 
-  void Prepare(bool need_new_ballot);
+  void SetValue(const std::string& value) { value_ = value; }
+  void SetValue(std::string&& value) { value_ = std::move(value); }
+  const std::string& GetValue() const { return value_; }
+
+  void Prepare(bool need_new_ballot = true);
   void OnPrepareReply(const PaxosMessage& msg);
   void Accept();
   void OnAccpetReply(const PaxosMessage& msg);
@@ -25,6 +33,7 @@ class Proposer {
 
  private:
   const Config* config_;
+  const Instance* instance_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;
