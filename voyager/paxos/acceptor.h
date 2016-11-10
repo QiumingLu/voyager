@@ -17,6 +17,13 @@ class Acceptor {
  public:
   Acceptor(const Config* config);
 
+  Status Init();
+
+  void SetInstanceId(uint64_t id) { instance_id_ = id; }
+  uint64_t GetInstanceId() const { return instance_id_; }
+
+  BallotNumber GetPromiseBallot() const { return promise_ballot_; }
+
   void OnPrepare(const PaxosMessage& msg);
   void OnAccpet(const PaxosMessage& msg);
 

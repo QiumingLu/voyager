@@ -23,13 +23,16 @@ class TcpClient {
             const std::string& name = "VoyagerClient");
   ~TcpClient();
 
-  void Connect();
+  void Connect(bool retry = true);
   void Close();
 
   EventLoop* GetLoop() const { return ev_; }
 
   void SetConnectionCallback(const ConnectionCallback& cb) {
     connection_cb_ = cb;
+  }
+  void SetConnectFailureCallback(const ConnectFailureCallback& cb) {
+    connect_failure_cb_ = cb;
   }
   void SetCloseCallback(const CloseCallback& cb) {
     close_cb_ = cb;
@@ -44,6 +47,9 @@ class TcpClient {
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
   }
+  void SetConnectFailureCallback(ConnectFailureCallback&& cb) {
+    connect_failure_cb_ = std::move(cb);
+  }
   void SetCloseCallback(CloseCallback&& cb) {
     close_cb_ = std::move(cb);
   }
@@ -56,6 +62,7 @@ class TcpClient {
 
  private:
   void NewConnection(int socketfd);
+  void ConnectFailure();
 
   std::string name_;
   std::string server_ipbuf_;
@@ -65,6 +72,7 @@ class TcpClient {
   static port::SequenceNumber conn_id_;
 
   ConnectionCallback connection_cb_;
+  ConnectFailureCallback connect_failure_cb_;
   CloseCallback close_cb_;
   MessageCallback message_cb_;
   WriteCompleteCallback writecomplete_cb_;

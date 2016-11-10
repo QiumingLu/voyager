@@ -17,6 +17,18 @@ Proposer::Proposer(const Config* config)
       was_rejected_by_someone_(false) {
 }
 
+void Proposer::NewValue(const std::string& value) {
+  if (value_.size() == 0) {
+    value_ = value;
+  }
+
+  if (skip_prepare_ && !was_rejected_by_someone_) {
+    Accept();
+  } else {
+    Prepare(was_rejected_by_someone_);
+  }
+}
+
 void Proposer::Prepare(bool need_new_ballot) {
   ExitAccept();
   preparing_ = true;

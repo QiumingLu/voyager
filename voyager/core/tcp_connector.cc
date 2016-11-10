@@ -15,15 +15,17 @@ TcpConnector::TcpConnector(EventLoop* ev, const SockAddr& addr)
     : ev_(CHECK_NOTNULL(ev)),
       addr_(addr),
       state_(kDisConnected),
-      retry_time_(kInitRetryTime),
       connect_(false),
+      retry_(true),
+      retry_time_(kInitRetryTime),
       dispatch_(),
       socket_() {
 }
 
-void TcpConnector::Start() {
+void TcpConnector::Start(bool retry) {
   TcpConnectorPtr ptr(shared_from_this());
-  ev_->RunInLoop([ptr]() {
+  ev_->RunInLoop([ptr, retry]() {
+    ptr->retry_ = retry;
     ptr->connect_ = true;
     ptr->StartInLoop();
   });
@@ -81,6 +83,9 @@ void TcpConnector::Connect() {
     default:
       VOYAGER_LOG(ERROR) << "connect: " << strerror(err);
       socket_.reset();
+      if (connect_failure_cb_) {
+        connect_failure_cb_();
+      }
       break;
   }
 }
@@ -96,6 +101,10 @@ void TcpConnector::Connecting() {
 
 void TcpConnector::Retry() {
   state_ = kDisConnected;
+  if (connect_failure_cb_) {
+    connect_failure_cb_();
+  }
+  if (!retry_) { return; }
   if (connect_) {
     VOYAGER_LOG(INFO) << "Connector::Retry - Retry connecting to "
                       << addr_.Ipbuf() << " in " << retry_time_

@@ -5,6 +5,7 @@ set (paxos_SRCS
   instance.cc
   learner.cc
   messager.cc
+  network.cc
   node.cc
   paxos_message.cc
   proposer.cc

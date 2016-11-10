@@ -1,9 +1,10 @@
 #include "voyager/paxos/group.h"
+#include "voyager/paxos/config.h"
 
 namespace voyager {
 namespace paxos {
 
-Group::Group() {
+Group::Group(const Config* config) : instance_(config) {
 }
 
 }  // namespace paxos

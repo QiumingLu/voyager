@@ -19,6 +19,8 @@ TcpClient::TcpClient(EventLoop* ev,
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
+  connector_ptr_->SetConnectFailureCallback(
+      std::bind(&TcpClient::ConnectFailure, this));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
 }
 
@@ -26,7 +28,7 @@ TcpClient::~TcpClient() {
   VOYAGER_LOG(INFO) << "TcpClient::~TcpClient [" << name_ << "] is down";
 }
 
-void TcpClient::Connect() {
+void TcpClient::Connect(bool retry) {
   // 表示已经经过连接建立和连接断开的过程
   bool expected = true;
 
@@ -37,7 +39,7 @@ void TcpClient::Connect() {
   if (!connect_) {
     VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to "
                       << server_ipbuf_;
-    connector_ptr_->Start();
+    connector_ptr_->Start(retry);
     connect_ = true;
   }
 }
@@ -74,6 +76,12 @@ void TcpClient::NewConnection(int socketfd) {
     ptr->StartWorking();
   });
   weak_ptr_ = ptr;
+}
+
+void TcpClient::ConnectFailure() {
+  if (connect_failure_cb_) {
+    connect_failure_cb_();
+  }
 }
 
 }  // namespace voyager

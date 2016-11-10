@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 
+#include "voyager/core/callback.h"
 #include "voyager/core/client_socket.h"
 #include "voyager/core/dispatch.h"
 #include "voyager/core/sockaddr.h"
@@ -30,11 +31,17 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   void SetNewConnectionCallback(const NewConnectionCallback& cb) {
     newconnection_cb_ = cb;
   }
+  void SetConnectFailureCallback(const ConnectFailureCallback& cb) {
+    connect_failure_cb_ = cb;
+  }
   void SetNewConnectionCallback(NewConnectionCallback&& cb) {
     newconnection_cb_ = std::move(cb);
   }
+  void SetConnectFailureCallback(ConnectFailureCallback&& cb) {
+    connect_failure_cb_ = std::move(cb);
+  }
 
-  void Start();
+  void Start(bool retry = true);
   void Stop();
 
  private:
@@ -61,11 +68,13 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   EventLoop* ev_;
   SockAddr addr_;
   ConnectState state_;
-  uint64_t retry_time_;
   bool connect_;
+  bool retry_;
+  uint64_t retry_time_;
   std::unique_ptr<Dispatch> dispatch_;
   std::unique_ptr<ClientSocket> socket_;
   NewConnectionCallback newconnection_cb_;
+  ConnectFailureCallback connect_failure_cb_;
 
 #ifdef __linux__
   std::unique_ptr<NewTimer> timer_;

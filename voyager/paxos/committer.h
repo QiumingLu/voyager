@@ -8,6 +8,8 @@ class Committer {
  public:
   Committer();
 
+  Status NewValue(const std::string& value);
+
  private:
   // No copying allowed
   Committer(const Committer&);

@@ -9,6 +9,16 @@ Acceptor::Acceptor(const Config* config)
       messager_(config) {
 }
 
+Status Acceptor::Init() {
+  uint64_t instance_id;
+  Status st = Load(&instance_id);
+  if (st.ok()) {
+    SetInstanceId(instance_id);
+  }
+
+  return st;
+}
+
 void Acceptor::OnPrepare(const PaxosMessage& msg) {
   PaxosMessage reply_msg;
   reply_msg.set_message_type(PaxosMessage::kPrepareReply);

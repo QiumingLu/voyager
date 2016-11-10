@@ -18,9 +18,10 @@ class Proposer {
  public:
   Proposer(const Config* config);
 
-  void SetValue(const std::string& value) { value_ = value; }
-  void SetValue(std::string&& value) { value_ = std::move(value); }
-  const std::string& GetValue() const { return value_; }
+  void SetInstanceId(uint64_t id) { instance_id_ = id; }
+  void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
+
+  void NewValue(const std::string& value);
 
   void Prepare(bool need_new_ballot = true);
   void OnPrepareReply(const PaxosMessage& msg);
