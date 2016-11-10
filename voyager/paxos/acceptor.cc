@@ -10,7 +10,7 @@ Acceptor::Acceptor(const Config* config)
 }
 
 Status Acceptor::Init() {
-  uint64_t instance_id;
+  uint64_t instance_id = 0;
   Status st = Load(&instance_id);
   if (st.ok()) {
     SetInstanceId(instance_id);

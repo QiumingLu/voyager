@@ -19,8 +19,6 @@ TcpClient::TcpClient(EventLoop* ev,
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));
-  connector_ptr_->SetConnectFailureCallback(
-      std::bind(&TcpClient::ConnectFailure, this));
   VOYAGER_LOG(INFO) << "TcpClient::TcpClient [" << name_ << "] is running";
 }
 
@@ -78,10 +76,12 @@ void TcpClient::NewConnection(int socketfd) {
   weak_ptr_ = ptr;
 }
 
-void TcpClient::ConnectFailure() {
-  if (connect_failure_cb_) {
-    connect_failure_cb_();
-  }
+void TcpClient::SetConnectFailureCallback(const ConnectFailureCallback& cb) {
+  connector_ptr_->SetConnectFailureCallback(cb);
+}
+
+void TcpClient::SetConnectFailureCallback(ConnectFailureCallback&& cb) {
+  connector_ptr_->SetConnectFailureCallback(std::move(cb));
 }
 
 }  // namespace voyager
