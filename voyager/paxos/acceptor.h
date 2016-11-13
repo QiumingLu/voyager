@@ -15,7 +15,7 @@ class Config;
 
 class Acceptor {
  public:
-  Acceptor(const Config* config, Messager* messager);
+  Acceptor(Config* config);
 
   Status Init();
 

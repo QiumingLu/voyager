@@ -1,12 +1,17 @@
 set (paxos_SRCS
   acceptor.cc
+  committer.cc
+  config.cc
   counter.cc
   group.cc
   instance.cc
+  ioloop.cc
   learner.cc
+  log_storage.cc
   messager.cc
   network.cc
   node.cc
+  nodeinfo.cc
   paxos_message.cc
   proposer.cc
   state_machine.cc
@@ -18,7 +23,10 @@ target_link_libraries(voyager_paxos voyager_http)
 
 install(TARGETS voyager_paxos DESTINATION lib)
 
-file(GLOB HEADERS ".h")
+set(HEADERS
+  options.h
+  nodeinfo.h
+  )
 install(FILES ${HEADERS} DESTINATION include/voyager/paxos)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)

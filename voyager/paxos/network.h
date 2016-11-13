@@ -29,10 +29,10 @@ class Network {
   void SendMessageInLoop(const SockAddr& addr, const std::string& message);
 
   SockAddr addr_;
-  std::map<std::string, TcpConnectionPtr> connection_map_;
-  std::unique_ptr<BGEventLoop> bg_loop_;
+  BGEventLoop bg_loop_;
   EventLoop* loop_;
   std::unique_ptr<TcpServer> server_;
+  std::map<std::string, TcpConnectionPtr> connection_map_;
 
   // No copying allowed
   Network(const Network&);

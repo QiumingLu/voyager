@@ -1,11 +1,17 @@
 #include "voyager/paxos/ioloop.h"
 
+#include <functional>
+
+#include "voyager/paxos/instance.h"
+#include "voyager/port/mutexlock.h"
+
 namespace voyager {
 namespace paxos {
 
 IOLoop::IOLoop(Instance* instance, const std::string& name)
-    : instance_(instance),
-      thread_(std::bind(&IOLoop::ThreadFunc, this, name)) {
+    : exit_(false),
+      instance_(instance),
+      thread_(std::bind(&IOLoop::ThreadFunc, this), name) {
 }
 
 IOLoop::~IOLoop() {
@@ -34,13 +40,13 @@ void IOLoop::ThreadFunc() {
   while(!exit_) {
     std::string* s = nullptr;
     {
-      MutexLock lock(&mutex_);
+      port::MutexLock lock(&mutex_);
       if (!messages_.empty()) {
         s = messages_.front();
         messages_.pop_front();
       }
     }
-    if (s != nullptr && !s.empty()) {
+    if (s != nullptr && !s->empty()) {
       instance_->HandleMessage(*s);
     }
     delete s;

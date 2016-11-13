@@ -1,5 +1,6 @@
 #include "voyager/paxos/nodeinfo.h"
 
+#include <assert.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -12,12 +13,12 @@ NodeInfo::NodeInfo()
 }
 
 NodeInfo::NodeInfo(uint64_t node_id)
-    : node_id_(node_id) {
-  ParseNodeId(node_id_);
+    : node_id_(node_id), ip_(), port_(-1) {
+  ParseNodeId();
 }
 
 NodeInfo::NodeInfo(const std::string& ip, uint16_t port)
-    : ip_(ip), port_(port) {
+    : node_id_(0), ip_(ip), port_(port) {
   MakeNodeId();
 }
 
@@ -30,7 +31,7 @@ void NodeInfo::MakeNodeId() {
 void NodeInfo::ParseNodeId() {
   port_ = static_cast<uint16_t>(node_id_ & (0xffffffff));
   in_addr addr;
-  addr.s_addr = node_id_ >> 32;
+  addr.s_addr = static_cast<in_addr_t>(node_id_ >> 32);
   ip_ = std::string(inet_ntoa(addr));
 }
 

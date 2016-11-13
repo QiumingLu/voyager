@@ -11,7 +11,7 @@ class Config;
 
 class Learner {
  public:
-  Learner(const Config* config, Messager* messager);
+  Learner(Config* config);
 
   void SetInstanceId(uint64_t instance_id) { instance_id_ = instance_id; }
 

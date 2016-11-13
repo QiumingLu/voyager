@@ -7,6 +7,7 @@ Committer::Committer() {
 }
 
 Status Committer::NewValue(const std::string& value) {
+  return Status::OK();
 }
 
 }  // namespace paxos

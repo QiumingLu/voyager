@@ -14,6 +14,7 @@ class Instance;
 class IOLoop {
  public:
   IOLoop(Instance* instance, const std::string& name = std::string());
+  ~IOLoop();
 
   void Loop();
   void Exit();
@@ -23,6 +24,7 @@ class IOLoop {
  private:
   void ThreadFunc();
 
+  bool exit_;
   Instance* instance_;
   port::Thread thread_;
 

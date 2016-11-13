@@ -1,6 +1,7 @@
 #ifndef VOYAGER_PAXOS_OPTIONS_H_
 #define VOYAGER_PAXOS_OPTIONS_H_
 
+#include <stdint.h>
 #include <string>
 
 namespace voyager {

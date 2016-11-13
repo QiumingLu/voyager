@@ -4,9 +4,9 @@
 namespace voyager {
 namespace paxos {
 
-Proposer::Proposer(const Config* config, Messager* messager)
+Proposer::Proposer(Config* config)
     : config_(config),
-      messager_(messager),
+      messager_(config->GetMessager()),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),

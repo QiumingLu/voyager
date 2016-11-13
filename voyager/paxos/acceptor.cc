@@ -4,9 +4,9 @@
 namespace voyager {
 namespace paxos {
 
-Acceptor::Acceptor(const Config* config, Messager* messager)
+Acceptor::Acceptor(Config* config)
     : config_(config),
-      messager_(messager) {
+      messager_(config->GetMessager()) {
 }
 
 Status Acceptor::Init() {

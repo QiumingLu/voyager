@@ -1,4 +1,4 @@
-#include "voyager/paxos/storage.h"
+#include "voyager/paxos/log_storage.h"
 
 namespace voyager {
 namespace paxos {

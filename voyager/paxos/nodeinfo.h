@@ -1,6 +1,9 @@
 #ifndef VOYAGER_PAXOS_NODEINFO_H_
 #define VOYAGER_PAXOS_NODEINFO_H_
 
+#include <stdint.h>
+#include <string>
+
 namespace voyager {
 namespace paxos {
 

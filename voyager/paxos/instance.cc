@@ -3,12 +3,12 @@
 namespace voyager {
 namespace paxos {
 
-Instance::Instance(const Config* config, Messager* messager)
+Instance::Instance(Config* config)
     : config_(config),
-      ioloop_(this),
-      acceptor_(config, messager),
-      learner_(config, messager),
-      proposer_(config, messager) {
+      acceptor_(config),
+      learner_(config),
+      proposer_(config),
+      ioloop_(this) {
 }
 
 Instance::~Instance() {

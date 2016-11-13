@@ -5,13 +5,17 @@
 #include <string>
 #include <vector>
 
-#include "voyager/paxos/group.h"
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/paxos/options.h"
 #include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
+
+class Group;
+class LogStorage;
+class Network;
+class Messager;
 
 class Node {
  public:
@@ -32,10 +36,11 @@ class Node {
 
   const Options* options_;
   NodeInfo my_info_;
-  std::vector<Group*> groups_;
+  LogStorage* storage_;
+  Network* network_;
+  Messager* messager_;
 
-  LogStorage storage_;
-  Network network_;
+  std::vector<Group*> groups_;
 
   // No copying allowed
   Node(const Node&);

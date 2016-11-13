@@ -4,18 +4,15 @@
 #include <string>
 
 #include "voyager/util/status.h"
-#include "voyager/paxos/config.h"
 #include "voyager/paxos/network.h"
 #include "voyager/paxos/paxos_message.h"
 
 namespace voyager {
 namespace paxos {
 
-class Config;
-
 class Messager {
  public:
-  Messager(const Config* config, Network* network);
+  Messager(Network* network);
 
   Status PackMessage(const PaxosMessage& msg, std::string* s);
   Status UnPackMessage(const std::string& s, PaxosMessage* msg);
@@ -25,7 +22,6 @@ class Messager {
   Status BroadcastMessageToFollower(const PaxosMessage& msg);
 
  private:
-  const Config* config_;
   Network* network_;
 
   // No copying allowed

@@ -1,6 +1,10 @@
 #ifndef VOYAGER_PAXOS_COMMITTER_H_
 #define VOYAGER_PAXOS_COMMITTER_H_
 
+#include <string>
+
+#include "voyager/util/status.h"
+
 namespace voyager {
 namespace paxos {
 

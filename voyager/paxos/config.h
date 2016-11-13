@@ -4,19 +4,24 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "voyager/paxos/storage.h"
-
 namespace voyager {
 namespace paxos {
+
+class LogStorage;
+class Messager;
 
 class Config {
  public:
   Config(LogStorage* storage,
+         Messager* messager,
          bool log_sync,
          int sync_interval,
          uint64_t node_id,
          size_t group_idx,
          size_t group_size);
+
+  LogStorage* GetStorage() const { return storage_; }
+  Messager* GetMessager() const { return messager_; }
 
   bool LogSync() const { return log_sync_; }
   int SyncInterval() const { return sync_interval_; }
@@ -31,6 +36,8 @@ class Config {
 
 
  private:
+  LogStorage* storage_;
+  Messager* messager_;
   bool log_sync_;
   int sync_interval_;
 

@@ -17,7 +17,7 @@ class Config;
 
 class Instance {
  public:
-  Instance(const Config* config, Messager* messager);
+  Instance(Config* config);
   ~Instance();
 
   Status Init();
@@ -34,13 +34,13 @@ class Instance {
   void ProposerHandleMessage(const PaxosMessage& msg);
 
  private:
-  const Config* config_;
-  IOLoop ioloop_;
+  Config* config_;
 
   Acceptor acceptor_;
   Learner learner_;
   Proposer proposer_;
   Committer committer_;
+  IOLoop ioloop_;
 
   // No copying allowed
   Instance(const Instance&);

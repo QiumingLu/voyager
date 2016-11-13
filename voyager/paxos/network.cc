@@ -4,12 +4,12 @@
 namespace voyager {
 namespace paxos {
 
-Network::Network(const Options* options) : addr_(options->ip, options->port) {
+Network::Network(const Options* options)
+    : addr_(options->ip, options->port) {
 }
 
 void Network::Start(const std::function<void (const char* s, size_t n)>& cb) {
-  bg_loop_.reset(new BGEventLoop());
-  loop_ = bg_loop_->Loop();
+  loop_ = bg_loop_.Loop();
   server_.reset(new TcpServer(loop_, addr_));
   server_->SetMessageCallback([&cb](const TcpConnectionPtr&, Buffer* buf) {
     cb(buf->Peek(), buf->ReadableSize());

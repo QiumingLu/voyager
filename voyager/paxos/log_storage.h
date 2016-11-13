@@ -1,5 +1,5 @@
-#ifndef VOYAGER_PAXOS_STORAGE_H_
-#define VOYAGER_PAXOS_STORAGE_H_
+#ifndef VOYAGER_PAXOS_LOG_STORAGE_H_
+#define VOYAGER_PAXOS_LOG_STORAGE_H_
 
 #include "voyager/paxos/options.h"
 
@@ -14,4 +14,4 @@ class LogStorage {
 }  // namespace paxos
 }  // namespace voyager
 
-#endif  // VOYAGER_PAXOS_STORAGE_H_
+#endif  // VOYAGER_PAXOS_LOG_STORAGE_H_
