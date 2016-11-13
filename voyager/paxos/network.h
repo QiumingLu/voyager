@@ -1,9 +1,12 @@
 #ifndef VOYAGER_PAXOS_NETWORK_H_
 #define VOYAGER_PAXOS_NETWORK_H_
 
-#include <set>
-#include <utility>
+#include <functional>
+#include <map>
+#include <memory>
 
+#include "voyager/paxos/options.h"
+#include "voyager/paxos/nodeinfo.h"
 #include "voyager/core/bg_eventloop.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
@@ -15,15 +18,17 @@ namespace paxos {
 
 class Network {
  public:
-  Network();
+  Network(const Options* options);
 
-  void Start(const SockAddr& addr);
+  void Start(const std::function<void (const char* s, size_t n)>& cb);
+  void Stop();
 
-  void SendMessage(const SockAddr& addr, const std::string& message);
+  void SendMessage(const NodeInfo& other, const std::string& message);
 
  private:
   void SendMessageInLoop(const SockAddr& addr, const std::string& message);
 
+  SockAddr addr_;
   std::map<std::string, TcpConnectionPtr> connection_map_;
   std::unique_ptr<BGEventLoop> bg_loop_;
   EventLoop* loop_;

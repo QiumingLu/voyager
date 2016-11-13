@@ -3,11 +3,16 @@
 namespace voyager {
 namespace paxos {
 
-Instance::Instance(const Config* config)
+Instance::Instance(const Config* config, Messager* messager)
     : config_(config),
-      acceptor_(config),
-      learner_(config),
-      proposer_(config) {
+      ioloop_(this),
+      acceptor_(config, messager),
+      learner_(config, messager),
+      proposer_(config, messager) {
+}
+
+Instance::~Instance() {
+  ioloop_.Exit();
 }
 
 Status Instance::Init() {
@@ -21,18 +26,25 @@ Status Instance::Init() {
   proposer_.SetInstanceId(now_instance_id);
   proposer_.SetStartProposalId(
       acceptor_.GetPromiseBallot().GetProposalId() + 1);
+
+  ioloop_.Loop();
+
   return Status::OK();
 }
 
-Status Instance::OnReceiveMessage(const char* buf, int len) {
+Status Instance::NewValue(const std::string& value, uint64_t* instance_id) {
+  proposer_.NewValue(value);
   return Status::OK();
 }
 
-Status Instance::OnReceive(const std::string& buf) {
-  return Status::OK();
+void Instance::OnReceiveMessage(const char* s, size_t n) {
+  ioloop_.NewMessage(s, n);
 }
 
-Status Instance::OnReceivePaxosMessage(const PaxosMessage& msg) {
+void Instance::HandleMessage(const std::string& s) {
+}
+
+void Instance::HandlePaxosMessage(const PaxosMessage& msg) {
   switch(msg.message_type()) {
     case PaxosMessage::kPrepareReply:
     case PaxosMessage::kAcceptReply:
@@ -41,19 +53,15 @@ Status Instance::OnReceivePaxosMessage(const PaxosMessage& msg) {
     case PaxosMessage::kAccept:
       break;
   }
-  return Status::OK();
 }
 
-Status Instance::ReceiveMessageForAcceptor(const PaxosMessage& msg) {
-  return Status::OK();
+void Instance::AcceptorHandleMessage(const PaxosMessage& msg) {
 }
 
-Status Instance::ReceiveMessageForLearner(const PaxosMessage& msg) {
-  return Status::OK();
+void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
 }
 
-Status Instance::ReceiveMessageForProposer(const PaxosMessage& msg) {
-  return Status::OK();
+void Instance::ProposerHandleMessage(const PaxosMessage& msg) {
 }
 
 }  // namespace paxos

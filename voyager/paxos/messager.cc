@@ -3,7 +3,8 @@
 namespace voyager {
 namespace paxos {
 
-Messager::Messager(const Config* config) : config_(config) {
+Messager::Messager(const Config* config, Network* network)
+    : config_(config), network_(network) {
 }
 
 Status Messager::PackMessage(const PaxosMessage& msg, std::string* s) {

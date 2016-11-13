@@ -4,13 +4,13 @@
 namespace voyager {
 namespace paxos {
 
-Proposer::Proposer(const Config* config)
+Proposer::Proposer(const Config* config, Messager* messager)
     : config_(config),
+      messager_(messager),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),
       counter_(config),
-      messager_(config),
       preparing_(false),
       accepting_(false),
       skip_prepare_(false),
@@ -52,7 +52,7 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   counter_.StartNewRound();
 
-  messager_.BroadcastMessage(msg);
+  messager_->BroadcastMessage(msg);
 }
 
 void Proposer::OnPrepareReply(const PaxosMessage& msg) {
@@ -97,7 +97,7 @@ void Proposer::Accept() {
   msg.set_value(value_);
 
   counter_.StartNewRound();
-  messager_.BroadcastMessage(msg);
+  messager_->BroadcastMessage(msg);
 }
 
 void Proposer::OnAccpetReply(const PaxosMessage& msg) {

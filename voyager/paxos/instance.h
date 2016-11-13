@@ -5,6 +5,7 @@
 
 #include "voyager/paxos/acceptor.h"
 #include "voyager/paxos/committer.h"
+#include "voyager/paxos/ioloop.h"
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
 #include "voyager/util/status.h"
@@ -16,20 +17,26 @@ class Config;
 
 class Instance {
  public:
-  Instance(const Config* config);
+  Instance(const Config* config, Messager* messager);
+  ~Instance();
 
   Status Init();
 
-  Status OnReceiveMessage(const char* buf, int len);
-  Status OnReceive(const std::string& buf);
-  Status OnReceivePaxosMessage(const PaxosMessage& msg);
+  Status NewValue(const std::string& value, uint64_t* instance_id);
 
-  Status ReceiveMessageForAcceptor(const PaxosMessage& msg);
-  Status ReceiveMessageForLearner(const PaxosMessage& msg);
-  Status ReceiveMessageForProposer(const PaxosMessage& msg);
+  void OnReceiveMessage(const char* s, size_t n);
+
+  void HandleMessage(const std::string& s);
+  void HandlePaxosMessage(const PaxosMessage& msg);
+
+  void AcceptorHandleMessage(const PaxosMessage& msg);
+  void LearnerHandleMessage(const PaxosMessage& msg);
+  void ProposerHandleMessage(const PaxosMessage& msg);
 
  private:
   const Config* config_;
+  IOLoop ioloop_;
+
   Acceptor acceptor_;
   Learner learner_;
   Proposer proposer_;

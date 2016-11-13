@@ -15,7 +15,7 @@ class Config;
 
 class Acceptor {
  public:
-  Acceptor(const Config* config);
+  Acceptor(const Config* config, Messager* messager);
 
   Status Init();
 
@@ -32,14 +32,13 @@ class Acceptor {
   Status Persist(uint64_t instance_id, uint32_t last_checksum);
 
   const Config* config_;
+  Messager* messager_;
 
   BallotNumber promise_ballot_;
   BallotNumber acceptd_ballot_;
 
   uint64_t instance_id_;
   std::string value_;
-
-  Messager messager_;
 
   // No copying allowed
   Acceptor(const Acceptor&);

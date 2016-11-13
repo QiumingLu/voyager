@@ -1,19 +1,30 @@
 #include "voyager/paxos/network.h"
+#include "voyager/core/buffer.h"
 
 namespace voyager {
 namespace paxos {
 
-Network::Network() {
+Network::Network(const Options* options) : addr_(options->ip, options->port) {
 }
 
-void Network::Start(const SockAddr& addr) {
+void Network::Start(const std::function<void (const char* s, size_t n)>& cb) {
   bg_loop_.reset(new BGEventLoop());
   loop_ = bg_loop_->Loop();
-  server_.reset(new TcpServer(loop_, addr));
+  server_.reset(new TcpServer(loop_, addr_));
+  server_->SetMessageCallback([&cb](const TcpConnectionPtr&, Buffer* buf) {
+    cb(buf->Peek(), buf->ReadableSize());
+    buf->RetrieveAll();
+  });
+
   server_->Start();
 }
 
-void Network::SendMessage(const SockAddr& addr, const std::string& message) {
+void Network::Stop() {
+  loop_->Exit();
+}
+
+void Network::SendMessage(const NodeInfo& other, const std::string& message) {
+  SockAddr addr(other.GetIP(), other.GetPort());
   loop_->RunInLoop(std::bind(&Network::SendMessageInLoop, this, addr, message));
 }
 

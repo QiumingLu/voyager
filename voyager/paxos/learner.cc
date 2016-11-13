@@ -4,7 +4,8 @@
 namespace voyager {
 namespace paxos {
 
-Learner::Learner(const Config* config) {
+Learner::Learner(const Config* config, Messager* messager)
+    : config_(config), messager_(messager) {
 }
 
 }  // namespace paxos

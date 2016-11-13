@@ -16,7 +16,7 @@ class Config;
 
 class Proposer {
  public:
-  Proposer(const Config* config);
+  Proposer(const Config* config, Messager* messager);
 
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
   void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
@@ -33,6 +33,7 @@ class Proposer {
 
  private:
   const Config* config_;
+  Messager* messager_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;
@@ -42,7 +43,6 @@ class Proposer {
   std::string value_;
 
   Counter counter_;
-  Messager messager_;
 
   bool preparing_;
   bool accepting_;

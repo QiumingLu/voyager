@@ -4,9 +4,9 @@
 namespace voyager {
 namespace paxos {
 
-Acceptor::Acceptor(const Config* config)
+Acceptor::Acceptor(const Config* config, Messager* messager)
     : config_(config),
-      messager_(config) {
+      messager_(messager) {
 }
 
 Status Acceptor::Init() {
@@ -42,7 +42,7 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     reply_msg.set_reject_for_promised_id(acceptd_ballot_.GetProposalId());
   }
 
-  messager_.SendMessage(msg.node_id(), reply_msg);
+  messager_->SendMessage(msg.node_id(), reply_msg);
 }
 
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
@@ -64,7 +64,7 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     reply_msg.set_reject_for_promised_id(promise_ballot_.GetProposalId());
   }
 
-  messager_.SendMessage(msg.node_id(), reply_msg);
+  messager_->SendMessage(msg.node_id(), reply_msg);
 }
 
 Status Acceptor::Load(uint64_t* instance_id) {
