@@ -24,7 +24,7 @@ class Node {
 
   void Start();
 
-  Status Propose(uint64_t group_idx, const std::string& value,
+  Status Propose(size_t group_idx, const std::string& value,
                  uint64_t* instance_id);
 
   Status BatchPropose();
