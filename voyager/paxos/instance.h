@@ -4,10 +4,11 @@
 #include <string>
 
 #include "voyager/paxos/acceptor.h"
-#include "voyager/paxos/committer.h"
 #include "voyager/paxos/ioloop.h"
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
+#include "voyager/paxos/transfer.h"
+#include "voyager/util/slice.h"
 #include "voyager/util/status.h"
 
 namespace voyager {
@@ -22,9 +23,9 @@ class Instance {
 
   Status Init();
 
-  Status NewValue(const std::string& value, uint64_t* instance_id);
+  Status NewValue(const Slice& value, uint64_t* new_instance_id);
 
-  void OnReceiveMessage(const char* s, size_t n);
+  void OnReceiveMessage(const Slice& s);
 
   void HandleMessage(const std::string& s);
   void HandlePaxosMessage(const PaxosMessage& msg);
@@ -39,7 +40,7 @@ class Instance {
   Acceptor acceptor_;
   Learner learner_;
   Proposer proposer_;
-  Committer committer_;
+  Transfer transfer_;
   IOLoop ioloop_;
 
   // No copying allowed

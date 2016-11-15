@@ -32,8 +32,8 @@ Status Instance::Init() {
   return Status::OK();
 }
 
-Status Instance::NewValue(const std::string& value, uint64_t* instance_id) {
-  proposer_.NewValue(value);
+Status Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
+  transfer_.NewValue(value);
   return Status::OK();
 }
 

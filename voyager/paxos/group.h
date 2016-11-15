@@ -3,6 +3,7 @@
 
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
+#include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
@@ -16,6 +17,10 @@ class Group {
         uint64_t node_id, size_t group_idx, size_t group_size);
 
   Instance* GetInstance() { return &instance_; }
+
+  Status NewValue(const Slice& value, uint64_t* new_instance_id);
+
+  void OnReceiveMessage(const Slice& s);
 
  private:
   Config config_;

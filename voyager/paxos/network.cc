@@ -12,7 +12,7 @@ void Network::Start(const std::function<void (const char* s, size_t n)>& cb) {
   loop_ = bg_loop_.Loop();
   server_.reset(new TcpServer(loop_, addr_));
   server_->SetMessageCallback([&cb](const TcpConnectionPtr&, Buffer* buf) {
-    cb(buf->Peek(), buf->ReadableSize());
+    cb(Slice(buf->Peek(), buf->ReadableSize()));
     buf->RetrieveAll();
   });
 
@@ -23,13 +23,14 @@ void Network::Stop() {
   loop_->Exit();
 }
 
-void Network::SendMessage(const NodeInfo& other, const std::string& message) {
+void Network::SendMessage(const NodeInfo& other, const Slice& message) {
   SockAddr addr(other.GetIP(), other.GetPort());
-  loop_->RunInLoop(std::bind(&Network::SendMessageInLoop, this, addr, message));
+  loop_->RunInLoop(std::bind(&Network::SendMessageInLoop, this,
+                   addr, message));
 }
 
 void Network::SendMessageInLoop(const SockAddr& addr,
-                                const std::string& message) {
+                                const Slice& message) {
   std::string ipbuf(addr.Ipbuf());
   auto it = connection_map_.find(ipbuf);
   if (it != connection_map_.end()) {

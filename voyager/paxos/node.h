@@ -7,6 +7,7 @@
 
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/paxos/options.h"
+#include "voyager/util/slice.h"
 #include "voyager/util/status.h"
 
 namespace voyager {
@@ -24,15 +25,13 @@ class Node {
 
   void Start();
 
-  Status Propose(size_t group_idx, const std::string& value,
-                 uint64_t* instance_id);
-
-  Status BatchPropose();
+  Status Propose(size_t group_idx, const Slice& value,
+                 uint64_t* new_instance_id);
 
   const NodeInfo& MyNodeInfo() const { return my_info_; }
 
  private:
-  void OnReceiveMessage(const char* s, size_t n);
+  void OnReceiveMessage(const Slice& s);
 
   const Options* options_;
   NodeInfo my_info_;

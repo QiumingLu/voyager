@@ -12,6 +12,7 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/tcp_server.h"
+#include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
@@ -20,13 +21,13 @@ class Network {
  public:
   Network(const Options* options);
 
-  void Start(const std::function<void (const char* s, size_t n)>& cb);
+  void Start(const std::function<void (const Slice& s)>& cb);
   void Stop();
 
-  void SendMessage(const NodeInfo& other, const std::string& message);
+  void SendMessage(const NodeInfo& other, const Slice& message);
 
  private:
-  void SendMessageInLoop(const SockAddr& addr, const std::string& message);
+  void SendMessageInLoop(const SockAddr& addr, const Slice& message);
 
   SockAddr addr_;
   BGEventLoop bg_loop_;

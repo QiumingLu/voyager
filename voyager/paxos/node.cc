@@ -33,19 +33,15 @@ void Node::Start() {
                            std::placeholders::_1, std::placeholders::_2));
 }
 
-Status Node::Propose(size_t group_idx, const std::string& value,
-                     uint64_t *instance_id) {
-  return groups_[group_idx]->GetInstance()->NewValue(value, instance_id);
+Status Node::Propose(size_t group_idx, const Slice& value,
+                     uint64_t *new_instance_id) {
+  return groups_[group_idx]->NewValue(value, new_instance_id);
 }
 
-Status Node::BatchPropose() {
-  return Status::OK();
-}
-
-void Node::OnReceiveMessage(const char* s, size_t n) {
+void Node::OnReceiveMessage(const Slice& s) {
   size_t group_idx;
-  memcpy(&group_idx, s, sizeof(size_t));
-  return groups_[group_idx]->GetInstance()->OnReceiveMessage(s, n);
+  memcpy(&group_idx, s.data(), sizeof(size_t));
+  return groups_[group_idx]->OnReceiveMessage(s);
 }
 
 }  // namespace paxos
