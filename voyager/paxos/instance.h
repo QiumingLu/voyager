@@ -27,6 +27,8 @@ class Instance {
 
   void OnReceiveMessage(const Slice& s);
 
+  void HandleNewValue(const Slice& value);
+
   void HandleMessage(const std::string& s);
   void HandlePaxosMessage(const PaxosMessage& msg);
 
@@ -40,8 +42,8 @@ class Instance {
   Acceptor acceptor_;
   Learner learner_;
   Proposer proposer_;
-  Transfer transfer_;
   IOLoop ioloop_;
+  Transfer transfer_;
 
   // No copying allowed
   Instance(const Instance&);

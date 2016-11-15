@@ -8,6 +8,7 @@
 #include "voyager/paxos/counter.h"
 #include "voyager/paxos/messager.h"
 #include "voyager/paxos/paxos_message.h"
+#include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
@@ -21,7 +22,7 @@ class Proposer {
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
   void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
 
-  void NewValue(const std::string& value);
+  void NewValue(const Slice& value);
 
   void Prepare(bool need_new_ballot = true);
   void OnPrepareReply(const PaxosMessage& msg);

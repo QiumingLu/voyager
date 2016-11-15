@@ -11,7 +11,10 @@ namespace paxos {
 IOLoop::IOLoop(Instance* instance, const std::string& name)
     : exit_(false),
       instance_(instance),
-      thread_(std::bind(&IOLoop::ThreadFunc, this), name) {
+      thread_(std::bind(&IOLoop::ThreadFunc, this), name),
+      mutex_(),
+      cond_(&mutex_),
+      value_() {
 }
 
 IOLoop::~IOLoop() {
@@ -30,9 +33,16 @@ void IOLoop::Exit() {
   exit_ = true;
 }
 
-void IOLoop::NewMessage(const char* s, size_t n) {
+void IOLoop::NewValue(const Slice& value) {
   port::MutexLock lock(&mutex_);
-  messages_.push_back(new std::string(s, n));
+  value_ = value;
+  cond_.Signal();
+}
+
+void IOLoop::NewMessage(const Slice& s) {
+  port::MutexLock lock(&mutex_);
+  messages_.push_back(new std::string(s.data(), s.size()));
+  cond_.Signal();
 }
 
 void IOLoop::ThreadFunc() {
@@ -41,15 +51,24 @@ void IOLoop::ThreadFunc() {
     std::string* s = nullptr;
     {
       port::MutexLock lock(&mutex_);
+      while (messages_.empty() && value_.empty() ) {
+        cond_.Wait();
+      }
       if (!messages_.empty()) {
         s = messages_.front();
         messages_.pop_front();
       }
     }
-    if (s != nullptr && !s->empty()) {
+
+    if (s != nullptr) {
       instance_->HandleMessage(*s);
+      delete s;
     }
-    delete s;
+
+    if (!value_.empty()) {
+      instance_->HandleNewValue(value_);
+      value_.clear();
+    }
   }
 }
 

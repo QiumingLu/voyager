@@ -1,6 +1,5 @@
 set (paxos_SRCS
   acceptor.cc
-  committer.cc
   config.cc
   counter.cc
   group.cc
@@ -14,7 +13,9 @@ set (paxos_SRCS
   nodeinfo.cc
   paxos_message.cc
   proposer.cc
-  state_machine.cc
+  #  state_machine.cc
+  transfer.cc
+  transfer_station.cc
   )
 
 add_library(voyager_paxos ${paxos_SRCS})

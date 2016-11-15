@@ -5,6 +5,7 @@
 
 #include "voyager/port/thread.h"
 #include "voyager/port/mutex.h"
+#include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
@@ -19,7 +20,8 @@ class IOLoop {
   void Loop();
   void Exit();
 
-  void NewMessage(const char* s, size_t n);
+  void NewValue(const Slice& value);
+  void NewMessage(const Slice& s);
 
  private:
   void ThreadFunc();
@@ -29,6 +31,8 @@ class IOLoop {
   port::Thread thread_;
 
   port::Mutex mutex_;
+  port::Condition cond_;
+  Slice value_;
   std::deque<std::string*> messages_;
 
   // No copying allowed

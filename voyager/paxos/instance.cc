@@ -8,7 +8,8 @@ Instance::Instance(Config* config)
       acceptor_(config),
       learner_(config),
       proposer_(config),
-      ioloop_(this) {
+      ioloop_(this),
+      transfer_(config, &ioloop_) {
 }
 
 Instance::~Instance() {
@@ -33,12 +34,15 @@ Status Instance::Init() {
 }
 
 Status Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
-  transfer_.NewValue(value);
-  return Status::OK();
+  return transfer_.NewValue(value, new_instance_id);
 }
 
-void Instance::OnReceiveMessage(const char* s, size_t n) {
-  ioloop_.NewMessage(s, n);
+void Instance::OnReceiveMessage(const Slice& s) {
+  ioloop_.NewMessage(s);
+}
+
+void Instance::HandleNewValue(const Slice& value) {
+  proposer_.NewValue(value);
 }
 
 void Instance::HandleMessage(const std::string& s) {

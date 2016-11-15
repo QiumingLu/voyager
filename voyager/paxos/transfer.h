@@ -1,8 +1,11 @@
 #ifndef VOYAGER_PAXOS_TRANSFER_H_
 #define VOYAGER_PAXOS_TRANSFER_H_
 
+#include "voyager/paxos/config.h"
+#include "voyager/paxos/transfer_station.h"
 #include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
+#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
@@ -17,6 +20,7 @@ class Transfer {
   Config* config_;
   IOLoop* loop_;
   port::Mutex mutex_;
+  TransferStation station_;
 
   // No copying allowed
   Transfer(const Transfer& );

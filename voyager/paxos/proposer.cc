@@ -17,9 +17,9 @@ Proposer::Proposer(Config* config)
       was_rejected_by_someone_(false) {
 }
 
-void Proposer::NewValue(const std::string& value) {
+void Proposer::NewValue(const Slice& value) {
   if (value_.size() == 0) {
-    value_ = value;
+    value_ = value.ToString();
   }
 
   if (skip_prepare_ && !was_rejected_by_someone_) {

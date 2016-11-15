@@ -29,8 +29,8 @@ void Node::Start() {
     groups_.push_back(group);
   }
 
-  network_->Start(std::bind(&Node::OnReceiveMessage, this,
-                           std::placeholders::_1, std::placeholders::_2));
+  network_->Start(
+      std::bind(&Node::OnReceiveMessage, this, std::placeholders::_1));
 }
 
 Status Node::Propose(size_t group_idx, const Slice& value,

@@ -15,7 +15,7 @@ Group::Group(const Options* options,
 }
 
 Status Group::NewValue(const Slice& value, uint64_t* new_instance_id) {
-  instance_.NewValue(value, new_instance_id);
+  return instance_.NewValue(value, new_instance_id);
 }
 
 void Group::OnReceiveMessage(const Slice& s) {

@@ -8,12 +8,15 @@ Network::Network(const Options* options)
     : addr_(options->ip, options->port) {
 }
 
-void Network::Start(const std::function<void (const char* s, size_t n)>& cb) {
+void Network::Start(const std::function<void (const Slice&) >& cb) {
   loop_ = bg_loop_.Loop();
   server_.reset(new TcpServer(loop_, addr_));
   server_->SetMessageCallback([&cb](const TcpConnectionPtr&, Buffer* buf) {
-    cb(Slice(buf->Peek(), buf->ReadableSize()));
-    buf->RetrieveAll();
+    Slice s(buf->Peek(), buf->ReadableSize());
+    if (!s.empty()) {
+      cb(s);
+      buf->RetrieveAll();
+    }
   });
 
   server_->Start();
