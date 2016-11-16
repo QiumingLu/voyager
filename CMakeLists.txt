@@ -65,6 +65,12 @@ add_subdirectory(voyager/core)
 add_subdirectory(voyager/http)
 add_subdirectory(voyager/paxos)
 
+set (LEVELDB_PATH ./third_party/leveldb)
+include_directories(${LEVELDB_PATH}/include)
+link_directories(${LEVELDB_PATH}/lib)
+
+message("LEVELDB_PATH = " ${LEVELDB_PATH})
+
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/sudoku)
   add_subdirectory(examples/pingpong)

@@ -23,9 +23,6 @@ add_library(voyager_paxos ${paxos_SRCS})
 
 target_link_libraries(voyager_paxos voyager_http)
 
-include_directories(/Users/mirantslu/Development/voyager/third_party/leveldb/include)
-link_libraries(/Users/mirantslu/Development/voyager/third_party/leveldb/out-static/libleveldb.a)
-
 install(TARGETS voyager_paxos DESTINATION lib)
 
 set(HEADERS
