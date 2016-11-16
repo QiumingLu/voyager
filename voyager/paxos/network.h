@@ -5,7 +5,6 @@
 #include <map>
 #include <memory>
 
-#include "voyager/paxos/options.h"
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/core/bg_eventloop.h"
 #include "voyager/core/eventloop.h"
@@ -19,10 +18,10 @@ namespace paxos {
 
 class Network {
  public:
-  Network(const Options* options);
+  Network(const NodeInfo& my);
 
-  void Start(const std::function<void (const Slice& s)>& cb);
-  void Stop();
+  void StartServer(const std::function<void (const Slice& s)>& cb);
+  void StopServer();
 
   void SendMessage(const NodeInfo& other, const Slice& message);
 

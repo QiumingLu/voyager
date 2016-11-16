@@ -20,7 +20,7 @@ class Messager;
 
 class Node {
  public:
-  Node(const Options* options);
+  Node(const Options& options);
   ~Node();
 
   void Start();
@@ -28,13 +28,9 @@ class Node {
   Status Propose(size_t group_idx, const Slice& value,
                  uint64_t* new_instance_id);
 
-  const NodeInfo& MyNodeInfo() const { return my_info_; }
-
  private:
   void OnReceiveMessage(const Slice& s);
 
-  const Options* options_;
-  NodeInfo my_info_;
   LogStorage* storage_;
   Network* network_;
   Messager* messager_;

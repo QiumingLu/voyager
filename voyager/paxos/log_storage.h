@@ -8,7 +8,7 @@ namespace paxos {
 
 class LogStorage {
  public:
-  LogStorage(const Options* options);
+  LogStorage(const Options& options);
 };
 
 }  // namespace paxos

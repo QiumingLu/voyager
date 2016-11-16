@@ -45,7 +45,7 @@ void Proposer::Prepare(bool need_new_ballot) {
   }
 
   PaxosMessage msg;
-  msg.set_message_type(PaxosMessage::kPrepare);
+  msg.set_message_type(kMsgTypePrepare);
   msg.set_instance_id(instance_id_);
   msg.set_node_id(config_->GetNodeId());
   msg.set_proposal_id(proposal_id_);
@@ -90,7 +90,7 @@ void Proposer::Accept() {
   accepting_ = true;
 
   PaxosMessage msg;
-  msg.set_message_type(PaxosMessage::kAccept);
+  msg.set_message_type(kMsgTypeAccept);
   msg.set_instance_id(instance_id_);
   msg.set_node_id(config_->GetNodeId());
   msg.set_proposal_id(proposal_id_);

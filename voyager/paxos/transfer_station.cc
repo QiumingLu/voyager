@@ -4,7 +4,7 @@
 namespace voyager {
 namespace paxos {
 
-TransferStation::TransferStation(IOLoop* loop)
+TransferStation::TransferStation(RunLoop* loop)
     : loop_(loop), mutex_(), cond_(&mutex_),
       instance_id_(-1), transfer_end_(false) {
 }

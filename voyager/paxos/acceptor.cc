@@ -21,7 +21,7 @@ Status Acceptor::Init() {
 
 void Acceptor::OnPrepare(const PaxosMessage& msg) {
   PaxosMessage reply_msg;
-  reply_msg.set_message_type(PaxosMessage::kPrepareReply);
+  reply_msg.set_message_type(kMsgTypePrepareReply);
   reply_msg.set_instance_id(instance_id_);
   reply_msg.set_node_id(config_->GetNodeId());
   reply_msg.set_proposal_id(msg.proposal_id());
@@ -47,7 +47,7 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
 
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
   PaxosMessage reply_msg;
-  reply_msg.set_message_type(PaxosMessage::kAcceptReply);
+  reply_msg.set_message_type(kMsgTypeAcceptReply);
   reply_msg.set_instance_id(instance_id_);
   reply_msg.set_node_id(config_->GetNodeId());
   reply_msg.set_proposal_id(msg.proposal_id());

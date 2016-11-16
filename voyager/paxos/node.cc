@@ -1,35 +1,33 @@
 #include "voyager/paxos/node.h"
 #include "voyager/paxos/group.h"
 #include "voyager/paxos/log_storage.h"
+#include "voyager/paxos/messager.h"
 #include "voyager/paxos/network.h"
 
 namespace voyager {
 namespace paxos {
 
-Node::Node(const Options* options)
-    : options_(options),
-      my_info_(options->ip, options->port),
-      storage_(new LogStorage(options)),
-      network_(new Network(options)),
+Node::Node(const Options& options)
+    : storage_(new LogStorage(options)),
+      network_(new Network(options.node_info)),
       messager_(new Messager(network_)) {
+  for (size_t i = 0; i < options.group_size; ++i) {
+    Group* group = new Group(i, options, storage_, messager_);
+    groups_.push_back(group);
+  }
 }
 
 Node::~Node() {
   for (size_t i = 0; i < groups_.size(); ++i) {
     delete groups_[i];
   }
+  delete messager_;
   delete network_;
   delete storage_;
 }
 
 void Node::Start() {
-  for (size_t i = 0; i < options_->group_size; ++i) {
-    Group* group = new Group(options_, storage_, messager_,
-                             my_info_.GetNodeId(), i, options_->group_size);
-    groups_.push_back(group);
-  }
-
-  network_->Start(
+  network_->StartServer(
       std::bind(&Node::OnReceiveMessage, this, std::placeholders::_1));
 }
 

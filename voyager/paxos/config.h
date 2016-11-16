@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <vector>
+
+#include "voyager/paxos/nodeinfo.h"
+#include "voyager/paxos/options.h"
 
 namespace voyager {
 namespace paxos {
@@ -12,13 +16,8 @@ class Messager;
 
 class Config {
  public:
-  Config(LogStorage* storage,
-         Messager* messager,
-         bool log_sync,
-         int sync_interval,
-         uint64_t node_id,
-         size_t group_idx,
-         size_t group_size);
+  Config(size_t group_idx, const Options& options,
+         LogStorage* storage, Messager* messager);
 
   LogStorage* GetStorage() const { return storage_; }
   Messager* GetMessager() const { return messager_; }
@@ -45,6 +44,9 @@ class Config {
   size_t node_size_;
   size_t group_idx_;
   size_t group_size_;
+
+  std::vector<NodeInfo> all_nodes_;
+  std::vector<NodeInfo> follow_nodes_;
 
   // No copying allowed
   Config(const Config&);

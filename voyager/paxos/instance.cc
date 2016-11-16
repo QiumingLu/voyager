@@ -8,12 +8,12 @@ Instance::Instance(Config* config)
       acceptor_(config),
       learner_(config),
       proposer_(config),
-      ioloop_(this),
-      transfer_(config, &ioloop_) {
+      loop_(this),
+      transfer_(config, &loop_) {
 }
 
 Instance::~Instance() {
-  ioloop_.Exit();
+  loop_.Exit();
 }
 
 Status Instance::Init() {
@@ -28,7 +28,7 @@ Status Instance::Init() {
   proposer_.SetStartProposalId(
       acceptor_.GetPromiseBallot().GetProposalId() + 1);
 
-  ioloop_.Loop();
+  loop_.Loop();
 
   return Status::OK();
 }
@@ -38,7 +38,7 @@ Status Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
 }
 
 void Instance::OnReceiveMessage(const Slice& s) {
-  ioloop_.NewMessage(s);
+  loop_.NewMessage(s);
 }
 
 void Instance::HandleNewValue(const Slice& value) {
@@ -50,22 +50,37 @@ void Instance::HandleMessage(const std::string& s) {
 
 void Instance::HandlePaxosMessage(const PaxosMessage& msg) {
   switch(msg.message_type()) {
-    case PaxosMessage::kPrepareReply:
-    case PaxosMessage::kAcceptReply:
+    case kMsgTypeProposerSendNewValue:
+    case kMsgTypePrepareReply:
+    case kMsgTypeAcceptReply:
+      ProposerHandleMessage(msg);
       break;
-    case PaxosMessage::kPrepare:
-    case PaxosMessage::kAccept:
+    case kMsgTypePrepare:
+    case kMsgTypeAccept:
+      AcceptorHandleMessage(msg);
       break;
   }
 }
 
 void Instance::AcceptorHandleMessage(const PaxosMessage& msg) {
+  if (msg.instance_id() == acceptor_.GetInstanceId() + 1) {
+    if (msg.message_type() == kMsgTypePrepare) {
+      acceptor_.OnPrepare(msg);
+    } else if (msg.message_type() == kMsgTypeAccept) {
+      acceptor_.OnAccpet(msg);
+    }
+  }
 }
 
 void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
 }
 
 void Instance::ProposerHandleMessage(const PaxosMessage& msg) {
+  if (msg.message_type() == kMsgTypePrepareReply) {
+    proposer_.OnPrepareReply(msg);
+  } else if (msg.message_type() == kMsgTypeAcceptReply) {
+    proposer_.OnAccpetReply(msg);
+  }
 }
 
 }  // namespace paxos

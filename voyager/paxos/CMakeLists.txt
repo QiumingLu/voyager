@@ -4,7 +4,6 @@ set (paxos_SRCS
   counter.cc
   group.cc
   instance.cc
-  ioloop.cc
   learner.cc
   log_storage.cc
   messager.cc
@@ -14,13 +13,18 @@ set (paxos_SRCS
   paxos_message.cc
   proposer.cc
   #  state_machine.cc
+  runloop.cc
   transfer.cc
   transfer_station.cc
+  storage/db.cc
   )
 
 add_library(voyager_paxos ${paxos_SRCS})
 
 target_link_libraries(voyager_paxos voyager_http)
+
+include_directories(/Users/mirantslu/Development/voyager/third_party/leveldb/include)
+link_libraries(/Users/mirantslu/Development/voyager/third_party/leveldb/out-static/libleveldb.a)
 
 install(TARGETS voyager_paxos DESTINATION lib)
 

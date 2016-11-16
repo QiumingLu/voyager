@@ -7,19 +7,20 @@
 namespace voyager {
 namespace paxos {
 
+enum PaxosMessageType {
+  kMsgTypeProposerSendNewValue = 0,
+  kMsgTypePrepare,
+  kMsgTypePrepareReply,
+  kMsgTypeAccept,
+  kMsgTypeAcceptReply,
+};
+
 class PaxosMessage {
  public:
-  enum MessageType {
-    kPrepare = 0,
-    kPrepareReply = 1,
-    kAccept = 2,
-    kAcceptReply = 3,
-  };
-
   PaxosMessage();
 
-  void set_message_type(MessageType type) { message_type_ = type; }
-  MessageType message_type() const { return message_type_; }
+  void set_message_type(PaxosMessageType type) { message_type_ = type; }
+  PaxosMessageType message_type() const { return message_type_; }
 
   void set_instance_id(uint64_t instance_id) { instance_id_ = instance_id; }
   uint64_t instance_id() const { return instance_id_; }
@@ -45,7 +46,7 @@ class PaxosMessage {
   void set_preaccept_node_id(uint64_t id) { preaccept_node_id_ = id; }
   uint64_t preaccept_node_id() const { return preaccept_node_id_;}
  private:
-  MessageType message_type_;
+  PaxosMessageType message_type_;
   uint64_t instance_id_;
   uint64_t proposal_id_;
   uint64_t node_id_;

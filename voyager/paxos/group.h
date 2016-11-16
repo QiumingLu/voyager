@@ -3,6 +3,7 @@
 
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
+#include "voyager/paxos/options.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -13,8 +14,8 @@ class Messager;
 
 class Group {
  public:
-  Group(const Options* options, LogStorage* storage, Messager* messager,
-        uint64_t node_id, size_t group_idx, size_t group_size);
+  Group(size_t group_idx, const Options& options,
+        LogStorage* storage, Messager* messager);
 
   Instance* GetInstance() { return &instance_; }
 

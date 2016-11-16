@@ -3,7 +3,7 @@
 namespace voyager {
 namespace paxos {
 
-LogStorage::LogStorage(const Options* options) {
+LogStorage::LogStorage(const Options& options) {
 }
 
 }  // namespace paxos

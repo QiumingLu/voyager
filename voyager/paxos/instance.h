@@ -4,7 +4,7 @@
 #include <string>
 
 #include "voyager/paxos/acceptor.h"
-#include "voyager/paxos/ioloop.h"
+#include "voyager/paxos/runloop.h"
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/transfer.h"
@@ -42,7 +42,7 @@ class Instance {
   Acceptor acceptor_;
   Learner learner_;
   Proposer proposer_;
-  IOLoop ioloop_;
+  RunLoop loop_;
   Transfer transfer_;
 
   // No copying allowed

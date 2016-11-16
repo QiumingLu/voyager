@@ -12,9 +12,12 @@ struct SMContext {
 class StateMachine {
  public:
   StateMachine();
+  virtual ~StateMachine();
 
-  bool Execute(size_t group_idx, uint64_t instance_id,
-               const std::string& value, SMContext* context);
+  virtual bool Execute(size_t group_idx, uint64_t instance_id,
+                       const std::string& value, SMContext* context) = 0;
+
+  virtual int GetId() const = 0;
 
  private:
   // No copying allowed

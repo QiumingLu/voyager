@@ -4,7 +4,7 @@
 namespace voyager {
 namespace paxos {
 
-Transfer::Transfer(Config* config, IOLoop* loop)
+Transfer::Transfer(Config* config, RunLoop* loop)
     : config_(config), loop_(loop), mutex_(), station_(loop) {
 }
 

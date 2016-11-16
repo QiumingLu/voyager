@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "voyager/paxos/ioloop.h"
+#include "voyager/paxos/runloop.h"
 #include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
 
@@ -12,7 +12,7 @@ namespace paxos {
 
 class TransferStation {
  public:
-  TransferStation(IOLoop* loop);
+  TransferStation(RunLoop* loop);
 
   void TransferToLoop(const Slice& value);
 
@@ -20,7 +20,7 @@ class TransferStation {
   void GetResult(uint64_t* new_instance_id);
 
  private:
-  IOLoop* loop_;
+  RunLoop* loop_;
 
   port::Mutex mutex_;
   port::Condition cond_;
