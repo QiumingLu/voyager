@@ -19,7 +19,7 @@ Voyager的编译流程是基于leveldb1.19版本，如果你自行下载了其�
 
 进入third_party/leveldb目录。
 make，编译完成后会在当前目录生成out-static/libleveldb.a文件。
-mkdir lib建立一个lib目录，然后cd lib;ln -s ../out-static/libleveldb.a libleveldb.a建立一个软链，PhxPaxos通过lib这个目录来寻址静态库。
+mkdir lib建立一个lib目录，然后cd lib;ln -s ../out-static/libleveldb.a libleveldb.a建立一个软链，Voyager通过lib这个目录来寻址静态库。
 
 (2) Voyager编译
 在voyager的根目录下，执行 sh build.sh
