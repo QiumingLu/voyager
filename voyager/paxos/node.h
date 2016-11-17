@@ -14,9 +14,9 @@ namespace voyager {
 namespace paxos {
 
 class Group;
-class LogStorage;
 class Network;
 class Messager;
+class MultiDB;
 
 class Node {
  public:
@@ -31,9 +31,9 @@ class Node {
  private:
   void OnReceiveMessage(const Slice& s);
 
-  LogStorage* storage_;
   Network* network_;
   Messager* messager_;
+  MultiDB* multi_db_;
 
   std::vector<Group*> groups_;
 

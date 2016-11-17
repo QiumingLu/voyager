@@ -4,18 +4,19 @@
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
 #include "voyager/paxos/options.h"
+#include "voyager/paxos/network/messager.h"
+#include "voyager/paxos/storage/db.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
 
-class LogStorage;
 class Messager;
 
 class Group {
  public:
   Group(size_t group_idx, const Options& options,
-        LogStorage* storage, Messager* messager);
+        DB* db, Messager* messager);
 
   Instance* GetInstance() { return &instance_; }
 

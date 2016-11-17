@@ -18,10 +18,10 @@ struct WriteOptions {
 
 class DB {
  public:
-  DB();
+  DB(size_t group_idx, const std::string& name);
   ~DB();
 
-  int Open(size_t group_idx, const std::string& name);
+  int Open(const std::string& name, size_t group_idx);
 
   int Put(const WriteOptions& options,
           uint64_t instance_id,
@@ -31,8 +31,9 @@ class DB {
 
   int Get(uint64_t instance_id, std::string* value);
 
+  int GetMaxInstanceId(uint64_t* instance_id);
+
  private:
-  bool has_open_;
   size_t group_idx_;
   leveldb::DB* db_;
   std::string name_;

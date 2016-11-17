@@ -7,19 +7,18 @@
 
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/paxos/options.h"
+#include "voyager/paxos/network/messager.h"
+#include "voyager/paxos/storage/db.h"
 
 namespace voyager {
 namespace paxos {
 
-class LogStorage;
-class Messager;
-
 class Config {
  public:
   Config(size_t group_idx, const Options& options,
-         LogStorage* storage, Messager* messager);
+         DB* db, Messager* messager);
 
-  LogStorage* GetStorage() const { return storage_; }
+  DB* db() const { return db_; }
   Messager* GetMessager() const { return messager_; }
 
   bool LogSync() const { return log_sync_; }
@@ -35,7 +34,7 @@ class Config {
 
 
  private:
-  LogStorage* storage_;
+  DB* db_;
   Messager* messager_;
   bool log_sync_;
   int sync_interval_;

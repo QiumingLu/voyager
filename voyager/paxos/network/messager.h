@@ -1,11 +1,11 @@
-#ifndef VOYAGER_PAXOS_MESSAGER_H_
-#define VOYAGER_PAXOS_MESSAGER_H_
+#ifndef VOYAGER_PAXOS_NETWORK_MESSAGER_H_
+#define VOYAGER_PAXOS_NETWORK_MESSAGER_H_
 
 #include <string>
 
-#include "voyager/util/status.h"
-#include "voyager/paxos/network.h"
 #include "voyager/paxos/paxos_message.h"
+#include "voyager/paxos/network/network.h"
+#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
@@ -32,4 +32,4 @@ class Messager {
 }  // namespace paxos
 }  // namespace voyager
 
-#endif  // VOYAGER_PAXOS_MESSAGER_H_
+#endif  // VOYAGER_PAXOS_NETWORK_MESSAGER_H_

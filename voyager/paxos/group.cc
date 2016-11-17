@@ -4,8 +4,8 @@ namespace voyager {
 namespace paxos {
 
 Group::Group(size_t group_idx, const Options& options,
-             LogStorage* storage, Messager* messager)
-    : config_(group_idx, options, storage, messager),
+             DB* db, Messager* messager)
+    : config_(group_idx, options, db, messager),
       instance_(&config_) {
 }
 

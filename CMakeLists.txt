@@ -59,17 +59,31 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
 
+set(LEVELDB_PATH ${PROJECT_SOURCE_DIR}/third_party/leveldb)
+set(LEVELDB_INCLUDE_DIR ${LEVELDB_PATH}/include)
+set(LEVELDB_LIBRARY_DIR ${LEVELDB_PATH}/lib)
+include_directories(${LEVELDB_INCLUDE_DIR})
+link_directories(${LEVELDB_LIBRARY_DIR})
+
+message(STATUS "LEVELDB_PATH = " ${LEVELDB_PATH})
+message(STATUS "LEVELDB_INCLUDE_DIR = " ${LEVELDB_INCLUDE_DIR})
+message(STATUS "LEVELDB_LIBRARY_DIR = " ${LEVELDB_LIBRARY_DIR})
+
+set(PROTOBUF_PATH ${PROJECT_SOURCE_DIR}/third_party/protobuf)
+set(PROTOBUF_INCLUDE_DIR ${PROTOBUF_PATH}/include)
+set(PROTOBUF_LIBRARY_DIR ${PROTOBUF_PATH}/lib)
+include_directories(${PROTOBUF_INCLUDE_DIR})
+link_directories(${PROTOBUF_LIBRARY_DIR})
+
+message(STATUS "PROTOBUF_PATH = " ${PROTOBUF_PATH})
+message(STATUS "PROTOBUF_INCLUDE_DIR = " ${PROTOBUF_INCLUDE_DIR})
+message(STATUS "PROTOBUF_LIBRARY_DIR = " ${PROTOBUF_LIBRARY_DIR})
+
 add_subdirectory(voyager/util)
 add_subdirectory(voyager/port)
 add_subdirectory(voyager/core)
 add_subdirectory(voyager/http)
 add_subdirectory(voyager/paxos)
-
-set (LEVELDB_PATH ./third_party/leveldb)
-include_directories(${LEVELDB_PATH}/include)
-link_directories(${LEVELDB_PATH}/lib)
-
-message("LEVELDB_PATH = " ${LEVELDB_PATH})
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
   add_subdirectory(examples/sudoku)

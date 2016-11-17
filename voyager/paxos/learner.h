@@ -2,7 +2,7 @@
 #define VOYAGER_PAXOS_LEARNER_H_
 
 #include <stdint.h>
-#include "voyager/paxos/messager.h"
+#include "voyager/paxos/network/messager.h"
 
 namespace voyager {
 namespace paxos {

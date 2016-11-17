@@ -6,8 +6,8 @@
 
 #include "voyager/paxos/ballot_number.h"
 #include "voyager/paxos/counter.h"
-#include "voyager/paxos/messager.h"
 #include "voyager/paxos/paxos_message.h"
+#include "voyager/paxos/network/messager.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {

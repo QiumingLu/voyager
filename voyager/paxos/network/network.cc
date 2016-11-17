@@ -1,4 +1,4 @@
-#include "voyager/paxos/network.h"
+#include "voyager/paxos/network/network.h"
 #include "voyager/core/buffer.h"
 
 namespace voyager {

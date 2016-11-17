@@ -1,5 +1,5 @@
-#ifndef VOYAGER_PAXOS_NETWORK_H_
-#define VOYAGER_PAXOS_NETWORK_H_
+#ifndef VOYAGER_PAXOS_NETWORK_NETWORK_H_
+#define VOYAGER_PAXOS_NETWORK_NETWORK_H_
 
 #include <functional>
 #include <map>
@@ -42,4 +42,4 @@ class Network {
 }  // namespace paxos
 }  // namespace voyager
 
-#endif   // VOYAGER_PAXOS_NETWORK_H_
+#endif   // VOYAGER_PAXOS_NETWORK_NETWORK_H_

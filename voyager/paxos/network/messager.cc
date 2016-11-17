@@ -1,4 +1,4 @@
-#include "voyager/paxos/messager.h"
+#include "voyager/paxos/network/messager.h"
 
 namespace voyager {
 namespace paxos {

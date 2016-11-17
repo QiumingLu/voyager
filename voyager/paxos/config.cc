@@ -4,8 +4,8 @@ namespace voyager {
 namespace paxos {
 
 Config::Config(size_t group_idx, const Options& options,
-               LogStorage* storage, Messager* messager)
-    : storage_(storage),
+               DB* db, Messager* messager)
+    : db_(db),
       messager_(messager),
       log_sync_(options.log_sync),
       sync_interval_(options.sync_interval),

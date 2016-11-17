@@ -5,18 +5,17 @@ set (paxos_SRCS
   group.cc
   instance.cc
   learner.cc
-  log_storage.cc
-  messager.cc
-  network.cc
   node.cc
   nodeinfo.cc
   paxos_message.cc
   proposer.cc
-  #  state_machine.cc
   runloop.cc
   transfer.cc
   transfer_station.cc
+  network/messager.cc
+  network/network.cc
   storage/db.cc
+  storage/multi_db.cc
   )
 
 add_library(voyager_paxos ${paxos_SRCS})
@@ -29,6 +28,7 @@ set(HEADERS
   options.h
   nodeinfo.h
   )
+
 install(FILES ${HEADERS} DESTINATION include/voyager/paxos)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)

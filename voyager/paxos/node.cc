@@ -1,18 +1,18 @@
 #include "voyager/paxos/node.h"
 #include "voyager/paxos/group.h"
-#include "voyager/paxos/log_storage.h"
-#include "voyager/paxos/messager.h"
-#include "voyager/paxos/network.h"
+#include "voyager/paxos/storage/multi_db.h"
+#include "voyager/paxos/network/messager.h"
+#include "voyager/paxos/network/network.h"
 
 namespace voyager {
 namespace paxos {
 
 Node::Node(const Options& options)
-    : storage_(new LogStorage(options)),
-      network_(new Network(options.node_info)),
-      messager_(new Messager(network_)) {
+    : network_(new Network(options.node_info)),
+      messager_(new Messager(network_)),
+      multi_db_(new MultiDB()) {
   for (size_t i = 0; i < options.group_size; ++i) {
-    Group* group = new Group(i, options, storage_, messager_);
+    Group* group = new Group(i, options, multi_db_->GetDB(i), messager_);
     groups_.push_back(group);
   }
 }
@@ -21,9 +21,9 @@ Node::~Node() {
   for (size_t i = 0; i < groups_.size(); ++i) {
     delete groups_[i];
   }
+  delete multi_db_;
   delete messager_;
   delete network_;
-  delete storage_;
 }
 
 void Node::Start() {

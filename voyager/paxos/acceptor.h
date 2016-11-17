@@ -4,8 +4,8 @@
 #include <string>
 
 #include "voyager/paxos/ballot_number.h"
-#include "voyager/paxos/messager.h"
 #include "voyager/paxos/paxos_message.h"
+#include "voyager/paxos/network/messager.h"
 #include "voyager/util/status.h"
 
 namespace voyager {

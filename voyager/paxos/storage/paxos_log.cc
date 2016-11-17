@@ -1,9 +1,9 @@
-#include "voyager/paxos/log_storage.h"
+#include "voyager/paxos/storage/paxos_log.h"
 
 namespace voyager {
 namespace paxos {
 
-LogStorage::LogStorage(const Options& options) {
+PaxosLog::PaxosLog() {
 }
 
 }  // namespace paxos
