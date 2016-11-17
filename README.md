@@ -19,8 +19,15 @@ Voyager的编译流程是基于leveldb1.19版本，如果你自行下载了其�
 
 进入third_party/leveldb目录。
 make，编译完成后会在当前目录生成out-static/libleveldb.a文件。
-mkdir lib建立一个lib目录，然后cd lib;ln -s ../out-static/libleveldb.a libleveldb.a建立一个软链，Voyager通过lib这个目录来寻址静态库。
+mkdir lib建立一个lib目录，然后cd lib;ln -s ../out-static/libleveldb.a, libleveldb.a建立一个软链，Voyager通过lib这个目录来寻址静态库。
 
-(2) Voyager编译
+(2) Protobuf编译
+进入third_party/protobuf目录。
+./autogen.sh
+./configure CXXFLAGS=-fPIC --prefix=[当前目录绝对路径], 这一步CXXFLAGS和--prefix都必须设置对。
+make && make install
+编译完成后检查是否在当前目录成功生成bin,include,lib三个子目录。
+
+(3) Voyager编译
 在voyager的根目录下，执行 sh build.sh
 即可完成安装，安装后的目录为../build, 相关的测试及使用demo的执行文件在../build/release或../build/debug目录下，生产的lib库和所需的头文件在../build/release-install或../build/debug-install目录下。

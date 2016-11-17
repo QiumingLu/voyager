@@ -45,6 +45,7 @@ class PaxosMessage {
 
   void set_preaccept_node_id(uint64_t id) { preaccept_node_id_ = id; }
   uint64_t preaccept_node_id() const { return preaccept_node_id_;}
+
  private:
   PaxosMessageType message_type_;
   uint64_t instance_id_;
