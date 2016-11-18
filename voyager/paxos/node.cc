@@ -7,14 +7,10 @@
 namespace voyager {
 namespace paxos {
 
-Node::Node(const Options& options)
-    : network_(new Network(options.node_info)),
-      messager_(new Messager(network_)),
-      multi_db_(new MultiDB()) {
-  for (size_t i = 0; i < options.group_size; ++i) {
-    Group* group = new Group(i, options, multi_db_->GetDB(i), messager_);
-    groups_.push_back(group);
-  }
+Node::Node()
+    : network_(nullptr),
+      messager_(nullptr),
+      multi_db_(nullptr) {
 }
 
 Node::~Node() {
@@ -26,7 +22,16 @@ Node::~Node() {
   delete network_;
 }
 
-void Node::Start() {
+void Node::Start(const Options& options) {
+  network_ = new Network(options.node_info);
+  messager_ = new Messager(network_);
+  multi_db_ = new MultiDB();
+  multi_db_->OpenAll(options.log_storage_path, options.group_size);
+  for (size_t i = 0; i < options.group_size; ++i) {
+    Group* group = new Group(i, options, multi_db_->GetDB(i), messager_);
+    group->Start();
+    groups_.push_back(group);
+  }
   network_->StartServer(
       std::bind(&Node::OnReceiveMessage, this, std::placeholders::_1));
 }

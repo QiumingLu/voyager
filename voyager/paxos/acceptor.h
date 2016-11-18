@@ -4,7 +4,7 @@
 #include <string>
 
 #include "voyager/paxos/ballot_number.h"
-#include "voyager/paxos/paxos_message.h"
+#include "voyager/paxos/paxos.pb.h"
 #include "voyager/paxos/network/messager.h"
 #include "voyager/util/status.h"
 
@@ -17,7 +17,7 @@ class Acceptor {
  public:
   Acceptor(Config* config);
 
-  Status Init();
+  void Init();
 
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
   uint64_t GetInstanceId() const { return instance_id_; }
@@ -28,10 +28,10 @@ class Acceptor {
   void OnAccpet(const PaxosMessage& msg);
 
  private:
-  Status Load(uint64_t* instance_id);
-  Status Persist(uint64_t instance_id, uint32_t last_checksum);
+  int ReadFromDB(uint64_t* instance_id);
+  void WriteToDB(uint64_t instance_id, uint32_t last_checksum);
 
-  const Config* config_;
+  Config* config_;
   Messager* messager_;
 
   BallotNumber promise_ballot_;

@@ -18,7 +18,7 @@ class Config {
   Config(size_t group_idx, const Options& options,
          DB* db, Messager* messager);
 
-  DB* db() const { return db_; }
+  DB* GetDB() const { return db_; }
   Messager* GetMessager() const { return messager_; }
 
   bool LogSync() const { return log_sync_; }

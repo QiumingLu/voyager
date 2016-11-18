@@ -18,6 +18,8 @@ class Group {
   Group(size_t group_idx, const Options& options,
         DB* db, Messager* messager);
 
+  void Start();
+
   Instance* GetInstance() { return &instance_; }
 
   Status NewValue(const Slice& value, uint64_t* new_instance_id);

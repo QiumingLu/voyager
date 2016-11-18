@@ -45,7 +45,7 @@ void Proposer::Prepare(bool need_new_ballot) {
   }
 
   PaxosMessage msg;
-  msg.set_message_type(kMsgTypePrepare);
+  msg.set_type(PREPARE);
   msg.set_instance_id(instance_id_);
   msg.set_node_id(config_->GetNodeId());
   msg.set_proposal_id(proposal_id_);
@@ -60,9 +60,9 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
     if (msg.proposal_id() == proposal_id_) {
       counter_.AddReceivedNode(msg.node_id());
 
-      if (msg.reject_for_promised_id() == 0) {
+      if (msg.reject_for_promise_id() == 0) {
         counter_.AddPromisorOrAcceptor(msg.node_id());
-        BallotNumber b(msg.preaccept_proposal_id(), msg.preaccept_node_id());
+        BallotNumber b(msg.pre_accept_id(), msg.pre_accept_node_id());
         if (b > hightest_ballot_) {
           hightest_ballot_ = b;
           value_ = msg.value();
@@ -70,8 +70,8 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
       } else {
         counter_.AddRejector(msg.node_id());
         was_rejected_by_someone_ = true;
-        if (hightest_proprosal_id_ < msg.reject_for_promised_id()) {
-          hightest_proprosal_id_ = msg.reject_for_promised_id();
+        if (hightest_proprosal_id_ < msg.reject_for_promise_id()) {
+          hightest_proprosal_id_ = msg.reject_for_promise_id();
         }
       }
 
@@ -90,7 +90,7 @@ void Proposer::Accept() {
   accepting_ = true;
 
   PaxosMessage msg;
-  msg.set_message_type(kMsgTypeAccept);
+  msg.set_type(ACCEPT);
   msg.set_instance_id(instance_id_);
   msg.set_node_id(config_->GetNodeId());
   msg.set_proposal_id(proposal_id_);
@@ -105,13 +105,13 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
     if (msg.proposal_id() == proposal_id_) {
       counter_.AddReceivedNode(msg.node_id());
 
-      if (msg.reject_for_promised_id() == 0) {
+      if (msg.reject_for_promise_id() == 0) {
         counter_.AddPromisorOrAcceptor(msg.node_id());
       } else {
         counter_.AddRejector(msg.node_id());
         was_rejected_by_someone_ = true;
-        if (hightest_proprosal_id_ < msg.reject_for_promised_id()) {
-          hightest_proprosal_id_ = msg.reject_for_promised_id();
+        if (hightest_proprosal_id_ < msg.reject_for_promise_id()) {
+          hightest_proprosal_id_ = msg.reject_for_promise_id();
         }
       }
 

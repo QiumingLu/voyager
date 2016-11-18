@@ -17,11 +17,7 @@ Instance::~Instance() {
 }
 
 Status Instance::Init() {
-  Status st = acceptor_.Init();
-  if (!st.ok()) {
-    return st;
-  }
-
+  acceptor_.Init();
   uint64_t now_instance_id = acceptor_.GetInstanceId();
   learner_.SetInstanceId(now_instance_id);
   proposer_.SetInstanceId(now_instance_id);
@@ -46,27 +42,32 @@ void Instance::HandleNewValue(const Slice& value) {
 }
 
 void Instance::HandleMessage(const std::string& s) {
+  PaxosMessage msg;
+  msg.ParseFromArray(s.data(), static_cast<int>(s.size()));
+  HandlePaxosMessage(msg);
 }
 
 void Instance::HandlePaxosMessage(const PaxosMessage& msg) {
-  switch(msg.message_type()) {
-    case kMsgTypeProposerSendNewValue:
-    case kMsgTypePrepareReply:
-    case kMsgTypeAcceptReply:
+  switch(msg.type()) {
+    case PROPOSER_SEND_NEW_VALUE:
+    case PREPARE_REPLY:
+    case ACCEPT_REPLY:
       ProposerHandleMessage(msg);
       break;
-    case kMsgTypePrepare:
-    case kMsgTypeAccept:
+    case PREPARE:
+    case ACCEPT:
       AcceptorHandleMessage(msg);
+      break;
+    default:
       break;
   }
 }
 
 void Instance::AcceptorHandleMessage(const PaxosMessage& msg) {
   if (msg.instance_id() == acceptor_.GetInstanceId() + 1) {
-    if (msg.message_type() == kMsgTypePrepare) {
+    if (msg.type() == PREPARE) {
       acceptor_.OnPrepare(msg);
-    } else if (msg.message_type() == kMsgTypeAccept) {
+    } else if (msg.type() == ACCEPT) {
       acceptor_.OnAccpet(msg);
     }
   }
@@ -76,9 +77,9 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
 }
 
 void Instance::ProposerHandleMessage(const PaxosMessage& msg) {
-  if (msg.message_type() == kMsgTypePrepareReply) {
+  if (msg.type() == PREPARE_REPLY) {
     proposer_.OnPrepareReply(msg);
-  } else if (msg.message_type() == kMsgTypeAcceptReply) {
+  } else if (msg.type() == ACCEPT_REPLY) {
     proposer_.OnAccpetReply(msg);
   }
 }

@@ -20,10 +20,10 @@ class MultiDB;
 
 class Node {
  public:
-  Node(const Options& options);
+  Node();
   ~Node();
 
-  void Start();
+  void Start(const Options& options);
 
   Status Propose(size_t group_idx, const Slice& value,
                  uint64_t* new_instance_id);

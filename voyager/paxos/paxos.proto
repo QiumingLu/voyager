@@ -1,0 +1,33 @@
+syntax = "proto3";
+package voyager.paxos;
+
+enum MessageType {
+  PROPOSER_SEND_NEW_VALUE = 0;
+  PREPARE = 1;
+  PREPARE_REPLY = 2;
+  ACCEPT = 3;
+  ACCEPT_REPLY = 4;
+}
+
+message PaxosMessage {
+  MessageType type = 1;
+  uint64 node_id = 2;
+  uint64 instance_id = 3;
+  uint64 proposal_id = 4;
+  uint64 proposal_node_id = 5;
+  string value = 6;
+  uint64 pre_accept_id = 7;
+  uint64 pre_accept_node_id = 8;
+  uint64 reject_for_promise_id = 9;
+  uint64 now_instance_id = 10;
+}
+
+message AcceptorStateMessage {
+  uint64 instance_id = 1;
+  uint64 promise_id = 2;
+  uint64 promise_node_id = 3;
+  uint64 accept_id = 4;
+  uint64 accept_node_id = 5;
+  string accept_value = 6;
+}
+

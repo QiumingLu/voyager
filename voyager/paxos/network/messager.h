@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "voyager/paxos/paxos_message.h"
+#include "voyager/paxos/paxos.pb.h"
 #include "voyager/paxos/network/network.h"
 #include "voyager/util/status.h"
 
