@@ -1,6 +1,5 @@
 #include "voyager/paxos/acceptor.h"
 #include "voyager/paxos/config.h"
-#include "voyager/paxos/paxos.pb.h"
 
 namespace voyager {
 namespace paxos {
