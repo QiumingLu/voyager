@@ -22,7 +22,7 @@ message PaxosMessage {
   uint64 now_instance_id = 10;
 }
 
-message AcceptorStateMessage {
+message AcceptorState {
   uint64 instance_id = 1;
   uint64 promise_id = 2;
   uint64 promise_node_id = 3;
@@ -31,3 +31,8 @@ message AcceptorStateMessage {
   string accept_value = 6;
 }
 
+message SystemVariables {
+  uint64 gid = 1;
+  repeated uint64 node_id = 2;
+  uint64 version = 3;
+}

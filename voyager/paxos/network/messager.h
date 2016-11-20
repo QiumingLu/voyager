@@ -5,23 +5,25 @@
 
 #include "voyager/paxos/paxos.pb.h"
 #include "voyager/paxos/network/network.h"
-#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
 
+class Config;
+
 class Messager {
  public:
-  Messager(Network* network);
+  Messager(Config* config, Network* network);
 
-  Status PackMessage(const PaxosMessage& msg, std::string* s);
-  Status UnPackMessage(const std::string& s, PaxosMessage* msg);
+  bool PackMessage(const PaxosMessage& msg, std::string* s);
+  bool UnPackMessage(const std::string& s, PaxosMessage* msg);
 
-  Status SendMessage(uint64_t node_id, const PaxosMessage& msg);
-  Status BroadcastMessage(const PaxosMessage& msg);
-  Status BroadcastMessageToFollower(const PaxosMessage& msg);
+  bool SendMessage(uint64_t node_id, const PaxosMessage& msg);
+  bool BroadcastMessage(const PaxosMessage& msg);
+  bool BroadcastMessageToFollower(const PaxosMessage& msg);
 
  private:
+  Config* config_;
   Network* network_;
 
   // No copying allowed

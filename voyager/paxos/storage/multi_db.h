@@ -13,7 +13,7 @@ class MultiDB {
   MultiDB();
   ~MultiDB();
 
-  void OpenAll(const std::string& path, size_t group_size);
+  bool OpenAll(const std::string& path, size_t group_size);
 
   DB* GetDB(size_t group_idx) const;
 

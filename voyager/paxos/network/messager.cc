@@ -1,30 +1,52 @@
 #include "voyager/paxos/network/messager.h"
+#include "voyager/paxos/config.h"
 
 namespace voyager {
 namespace paxos {
 
-Messager::Messager(Network* network)
-    : network_(network) {
+Messager::Messager(Config* config, Network* network)
+    : config_(config),
+      network_(network) {
 }
 
-Status Messager::PackMessage(const PaxosMessage& msg, std::string* s) {
-  return Status::OK();
+bool Messager::PackMessage(const PaxosMessage& msg, std::string* s) {
+  std::string body;
+  msg.SerializeToString(&body);
+  s->append(body);
+  return true;
 }
 
-Status Messager::UnPackMessage(const std::string& s, PaxosMessage* msg) {
-  return Status::OK();
+bool Messager::UnPackMessage(const std::string& s, PaxosMessage* msg) {
+  bool ret = msg->ParseFromArray(&*(s.data()), static_cast<int>(s.size()));
+  return ret;
 }
 
-Status Messager::SendMessage(uint64_t node_id, const PaxosMessage& msg) {
-  return Status::OK();
+bool Messager::SendMessage(uint64_t node_id, const PaxosMessage& msg) {
+  std::string s;
+  bool ret = PackMessage(msg, &s);
+  if (!ret) {
+    return ret;
+  }
+  network_->SendMessage(NodeInfo(node_id), s);
+  return true;
 }
 
-Status Messager::BroadcastMessage(const PaxosMessage& msg) {
-  return Status::OK();
+bool Messager::BroadcastMessage(const PaxosMessage& msg) {
+  std::string s;
+  bool ret = PackMessage(msg, &s);
+  if (!ret) {
+    return ret;
+  }
+  std::set<uint64_t>& nodes = config_->NodeIdSet();
+  for (std::set<uint64_t>::iterator it = nodes.begin();
+       it != nodes.end(); ++it) {
+    network_->SendMessage(NodeInfo(*it), s);
+  }
+  return true;
 }
 
-Status Messager::BroadcastMessageToFollower(const PaxosMessage& msg) {
-  return Status::OK();
+bool Messager::BroadcastMessageToFollower(const PaxosMessage& msg) {
+  return true;
 }
 
 }  // namespace paxos

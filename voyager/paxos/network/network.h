@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <map>
-#include <memory>
 
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/core/bg_eventloop.h"
@@ -19,6 +18,7 @@ namespace paxos {
 class Network {
  public:
   Network(const NodeInfo& my);
+  ~Network();
 
   void StartServer(const std::function<void (const Slice& s)>& cb);
   void StopServer();
@@ -31,7 +31,7 @@ class Network {
   SockAddr addr_;
   BGEventLoop bg_loop_;
   EventLoop* loop_;
-  std::unique_ptr<TcpServer> server_;
+  TcpServer* server_;
   std::map<std::string, TcpConnectionPtr> connection_map_;
 
   // No copying allowed

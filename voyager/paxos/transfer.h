@@ -6,7 +6,6 @@
 #include "voyager/paxos/transfer_station.h"
 #include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
-#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
@@ -15,7 +14,7 @@ class Transfer {
  public:
   Transfer(Config* config, RunLoop* loop);
 
-  Status NewValue(const Slice& value, uint64_t* new_instance_id);
+  bool NewValue(const Slice& value, uint64_t* new_instance_id);
 
  private:
   Config* config_;

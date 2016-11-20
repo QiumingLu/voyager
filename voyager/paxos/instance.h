@@ -9,7 +9,6 @@
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/transfer.h"
 #include "voyager/util/slice.h"
-#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
@@ -21,9 +20,9 @@ class Instance {
   Instance(Config* config);
   ~Instance();
 
-  Status Init();
+  bool Init();
 
-  Status NewValue(const Slice& value, uint64_t* new_instance_id);
+  bool NewValue(const Slice& value, uint64_t* new_instance_id);
 
   void OnReceiveMessage(const Slice& s);
 

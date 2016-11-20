@@ -7,7 +7,6 @@
 #include "voyager/paxos/ballot_number.h"
 #include "voyager/paxos/counter.h"
 #include "voyager/paxos/paxos.pb.h"
-#include "voyager/paxos/network/messager.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -34,7 +33,6 @@ class Proposer {
 
  private:
   const Config* config_;
-  Messager* messager_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;

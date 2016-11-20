@@ -16,8 +16,11 @@ Instance::~Instance() {
   loop_.Exit();
 }
 
-Status Instance::Init() {
-  acceptor_.Init();
+bool Instance::Init() {
+  bool ret = acceptor_.Init();
+  if (!ret) {
+    return ret;
+  }
   uint64_t now_instance_id = acceptor_.GetInstanceId();
   learner_.SetInstanceId(now_instance_id);
   proposer_.SetInstanceId(now_instance_id);
@@ -26,10 +29,10 @@ Status Instance::Init() {
 
   loop_.Loop();
 
-  return Status::OK();
+  return ret;
 }
 
-Status Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
+bool Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
   return transfer_.NewValue(value, new_instance_id);
 }
 

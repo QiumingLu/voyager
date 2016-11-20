@@ -1,19 +1,23 @@
 #include "voyager/paxos/group.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 namespace paxos {
 
-Group::Group(size_t group_idx, const Options& options,
-             DB* db, Messager* messager)
-    : config_(group_idx, options, db, messager),
+Group::Group(size_t group_idx, const Options& options, Network* network)
+    : config_(group_idx, options, network),
       instance_(&config_) {
 }
 
-void Group::Start() {
-  instance_.Init();
+bool Group::Start() {
+  bool ret = config_.Init();
+  if (ret) {
+    ret = instance_.Init();
+  }
+  return ret;
 }
 
-Status Group::NewValue(const Slice& value, uint64_t* new_instance_id) {
+bool Group::NewValue(const Slice& value, uint64_t* new_instance_id) {
   return instance_.NewValue(value, new_instance_id);
 }
 

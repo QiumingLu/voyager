@@ -4,25 +4,22 @@
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
 #include "voyager/paxos/options.h"
-#include "voyager/paxos/network/messager.h"
-#include "voyager/paxos/storage/db.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
 
-class Messager;
+class Network;
 
 class Group {
  public:
-  Group(size_t group_idx, const Options& options,
-        DB* db, Messager* messager);
+  Group(size_t group_idx, const Options& options, Network* network);
 
-  void Start();
+  bool Start();
 
   Instance* GetInstance() { return &instance_; }
 
-  Status NewValue(const Slice& value, uint64_t* new_instance_id);
+  bool NewValue(const Slice& value, uint64_t* new_instance_id);
 
   void OnReceiveMessage(const Slice& s);
 

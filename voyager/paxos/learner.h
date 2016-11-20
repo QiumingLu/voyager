@@ -2,7 +2,6 @@
 #define VOYAGER_PAXOS_LEARNER_H_
 
 #include <stdint.h>
-#include "voyager/paxos/network/messager.h"
 
 namespace voyager {
 namespace paxos {
@@ -17,7 +16,6 @@ class Learner {
 
  private:
   const Config* config_;
-  Messager* messager_;
 
   uint64_t instance_id_;
 

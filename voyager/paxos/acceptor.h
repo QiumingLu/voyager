@@ -5,8 +5,6 @@
 
 #include "voyager/paxos/ballot_number.h"
 #include "voyager/paxos/paxos.pb.h"
-#include "voyager/paxos/network/messager.h"
-#include "voyager/util/status.h"
 
 namespace voyager {
 namespace paxos {
@@ -17,7 +15,7 @@ class Acceptor {
  public:
   Acceptor(Config* config);
 
-  void Init();
+  bool Init();
 
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
   uint64_t GetInstanceId() const { return instance_id_; }
@@ -29,10 +27,11 @@ class Acceptor {
 
  private:
   int ReadFromDB(uint64_t* instance_id);
-  void WriteToDB(uint64_t instance_id, uint32_t last_checksum);
+  int WriteToDB(uint64_t instance_id, uint32_t last_checksum);
+
+  int log_sync_count_;
 
   Config* config_;
-  Messager* messager_;
 
   BallotNumber promise_ballot_;
   BallotNumber acceptd_ballot_;

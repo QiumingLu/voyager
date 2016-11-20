@@ -6,7 +6,6 @@ namespace paxos {
 
 Proposer::Proposer(Config* config)
     : config_(config),
-      messager_(config->GetMessager()),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),
@@ -52,7 +51,8 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   counter_.StartNewRound();
 
-  messager_->BroadcastMessage(msg);
+  Messager* messager = config_->GetMessager();
+  messager->BroadcastMessage(msg);
 }
 
 void Proposer::OnPrepareReply(const PaxosMessage& msg) {
@@ -97,7 +97,8 @@ void Proposer::Accept() {
   msg.set_value(value_);
 
   counter_.StartNewRound();
-  messager_->BroadcastMessage(msg);
+  Messager* messager = config_->GetMessager();
+  messager->BroadcastMessage(msg);
 }
 
 void Proposer::OnAccpetReply(const PaxosMessage& msg) {

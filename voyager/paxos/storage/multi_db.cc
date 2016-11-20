@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <unistd.h>
 
+#include "voyager/util/logging.h"
+#include "voyager/util/stringprintf.h"
+
 namespace voyager {
 namespace paxos {
 
@@ -15,11 +18,16 @@ MultiDB::~MultiDB() {
   }
 }
 
-void MultiDB::OpenAll(const std::string& path, size_t group_size) {
+bool MultiDB::OpenAll(const std::string& path, size_t group_size) {
   if (::access(path.c_str(), F_OK) == -1) {
+    std::string str;
+    StringAppendF(&str, "access %s failed, reason: %s",
+                  path.c_str(), strerror(errno));
+    VOYAGER_LOG(ERROR) << "MultiDB::OpenAll - " << str;
+    return false;
   }
 
-  std::string temp = path;
+  std::string temp(path);
   if (path[path.size() - 1] != '/') {
     temp += '/';
   }
@@ -27,9 +35,16 @@ void MultiDB::OpenAll(const std::string& path, size_t group_size) {
   for (size_t i = 0; i < group_size; ++i) {
     char name[512];
     snprintf(name, sizeof(name), "%sg%zu", temp.c_str(), i);
-    DB* db = new DB(i, name);
+    DB* db = new DB();
+    int ret = db->Open(i, name);
+    if (ret != 0) {
+      return false;
+    }
+    VOYAGER_LOG(DEBUG) << "MultiDB::OpenAll - " << name << " open successfully!";
     multi_db_.push_back(db);
   }
+
+  return true;
 }
 
 DB* MultiDB::GetDB(size_t group_idx) const {

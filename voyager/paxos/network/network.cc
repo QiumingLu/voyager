@@ -5,12 +5,19 @@ namespace voyager {
 namespace paxos {
 
 Network::Network(const NodeInfo& my)
-    : addr_(my.GetIP(), my.GetPort()) {
+    : addr_(my.GetIP(), my.GetPort()),
+      bg_loop_(),
+      loop_(nullptr),
+      server_(nullptr) {
+}
+
+Network::~Network() {
+  delete server_;
 }
 
 void Network::StartServer(const std::function<void (const Slice&) >& cb) {
   loop_ = bg_loop_.Loop();
-  server_.reset(new TcpServer(loop_, addr_));
+  server_ = new TcpServer(loop_, addr_);
   server_->SetMessageCallback([&cb](const TcpConnectionPtr&, Buffer* buf) {
     Slice s(buf->Peek(), buf->ReadableSize());
     if (!s.empty()) {
@@ -18,7 +25,6 @@ void Network::StartServer(const std::function<void (const Slice&) >& cb) {
       buf->RetrieveAll();
     }
   });
-
   server_->Start();
 }
 

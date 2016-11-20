@@ -14,7 +14,10 @@ class BallotNumber {
       : proposal_id_(proposal_id), node_id_(node_id) {
   }
 
+  void SetProposalId(uint64_t id) { proposal_id_ = id; }
   uint64_t GetProposalId() const { return proposal_id_; }
+
+  void SetNodeId(uint64_t id) { node_id_ = id; }
   uint64_t GetNodeId() const { return node_id_; }
 
   bool operator>=(const BallotNumber& other) const {

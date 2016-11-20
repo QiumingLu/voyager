@@ -38,16 +38,16 @@ set (paxos_SRCS
   group.cc
   instance.cc
   learner.cc
-  node.cc
+  node_impl.cc
   nodeinfo.cc
   proposer.cc
   runloop.cc
   transfer.cc
   transfer_station.cc
+  state_machine_impl.cc
   network/messager.cc
   network/network.cc
   storage/db.cc
-  storage/multi_db.cc
   )
 
 add_library(voyager_paxos ${paxos_SRCS})
@@ -59,6 +59,7 @@ install(TARGETS voyager_paxos DESTINATION lib)
 set(HEADERS
   options.h
   nodeinfo.h
+  node.h
   )
 
 install(FILES ${HEADERS} DESTINATION include/voyager/paxos)

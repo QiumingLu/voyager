@@ -18,10 +18,10 @@ struct WriteOptions {
 
 class DB {
  public:
-  DB(size_t group_idx, const std::string& name);
+  DB();
   ~DB();
 
-  int Open(const std::string& name, size_t group_idx);
+  int Open(size_t group_idx, const std::string& name);
 
   int Put(const WriteOptions& options,
           uint64_t instance_id,
@@ -33,10 +33,17 @@ class DB {
 
   int GetMaxInstanceId(uint64_t* instance_id);
 
+  int SetMinChosenInstanceId(uint64_t id);
+  int GetMinChosenInstanceId(uint64_t* id);
+
+  int SetSystemVariables(const std::string& s);
+  int GetSystemVariables(std::string* s);
+
+  int SetMasterVariables(const std::string& s);
+  int GetMasterVariavles(std::string* s);
+
  private:
-  size_t group_idx_;
   leveldb::DB* db_;
-  std::string name_;
 
   // No copying allowed
   DB(const DB&);
