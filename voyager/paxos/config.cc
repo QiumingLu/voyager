@@ -3,8 +3,8 @@
 namespace voyager {
 namespace paxos {
 
-Config::Config(size_t group_idx, const Options& options, Network* network)
-    : group_idx_(group_idx),
+Config::Config(int group_id, const Options& options, Network* network)
+    : group_id_(group_id),
       log_sync_(options.log_sync),
       sync_interval_(options.sync_interval),
       node_id_(options.node_info.GetNodeId()),
@@ -19,7 +19,7 @@ Config::Config(size_t group_idx, const Options& options, Network* network)
     temp += '/';
   }
   char name[512];
-  snprintf(name, sizeof(name), "%sg%zu", temp.c_str(), group_idx);
+  snprintf(name, sizeof(name), "%sg%d", temp.c_str(), group_id);
   log_storage_path_ = std::string(name);
 
   for (auto node : options.all_nodes) {
@@ -34,7 +34,7 @@ Config::~Config() {
 }
 
 bool Config::Init() {
-  int ret = db_->Open(group_idx_, log_storage_path_);
+  int ret = db_->Open(group_id_, log_storage_path_);
   if (ret != 0) {
     return false;
   }

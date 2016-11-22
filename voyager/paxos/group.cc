@@ -4,8 +4,8 @@
 namespace voyager {
 namespace paxos {
 
-Group::Group(size_t group_idx, const Options& options, Network* network)
-    : config_(group_idx, options, network),
+Group::Group(int group_id, const Options& options, Network* network)
+    : config_(group_id, options, network),
       instance_(&config_) {
 }
 

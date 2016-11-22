@@ -16,7 +16,16 @@ class Config;
 
 class Proposer {
  public:
+  typedef std::function<void(uint64_t, uint64_t)> ChosenValueCallback;
+
   Proposer(Config* config);
+
+  void SetChosenValueCallback(const ChosenValueCallback& cb) {
+    chosen_value_cb_ = cb;
+  }
+  void SetChosenValueCallback(ChosenValueCallback&& cb) {
+    chosen_value_cb_ = std::move(cb);
+  }
 
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
   void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
@@ -32,7 +41,7 @@ class Proposer {
   void ExitAccept();
 
  private:
-  const Config* config_;
+  Config* config_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;
@@ -47,6 +56,8 @@ class Proposer {
   bool accepting_;
   bool skip_prepare_;
   bool was_rejected_by_someone_;
+
+  ChosenValueCallback chosen_value_cb_;
 
   // No copying allowed
   Proposer(const Proposer&);

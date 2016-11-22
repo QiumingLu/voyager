@@ -13,7 +13,7 @@ class Network;
 
 class Group {
  public:
-  Group(size_t group_idx, const Options& options, Network* network);
+  Group(int group_id, const Options& options, Network* network);
 
   bool Start();
 

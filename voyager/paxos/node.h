@@ -15,7 +15,7 @@ class Node {
   Node() { }
   virtual ~Node() { }
 
-  virtual bool Propose(size_t group_idx,
+  virtual bool Propose(int group_id,
                        const Slice& value,
                        uint64_t* new_instance_id) = 0;
 

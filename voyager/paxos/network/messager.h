@@ -15,14 +15,15 @@ class Messager {
  public:
   Messager(Config* config, Network* network);
 
-  bool PackMessage(const PaxosMessage& msg, std::string* s);
-  bool UnPackMessage(const std::string& s, PaxosMessage* msg);
-
-  bool SendMessage(uint64_t node_id, const PaxosMessage& msg);
-  bool BroadcastMessage(const PaxosMessage& msg);
-  bool BroadcastMessageToFollower(const PaxosMessage& msg);
+  bool SendMessage(uint64_t node_id, PaxosMessage* msg);
+  bool BroadcastMessage(PaxosMessage* msg);
+  bool BroadcastMessageToFollower(PaxosMessage* msg);
 
  private:
+  bool PackMessage(ContentType type,
+                   PaxosMessage* pmsg, CheckPointMessage* cmsg,
+                   std::string* s);
+
   Config* config_;
   Network* network_;
 

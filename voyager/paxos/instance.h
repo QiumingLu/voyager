@@ -8,6 +8,7 @@
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/transfer.h"
+#include "voyager/paxos/paxos.pb.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -28,14 +29,19 @@ class Instance {
 
   void HandleNewValue(const Slice& value);
 
-  void HandleMessage(const std::string& s);
+  void HandleMessage(const Content& content);
+
+ private:
   void HandlePaxosMessage(const PaxosMessage& msg);
+  void HandleCheckPointMessage(const CheckPointMessage& msg);
 
   void AcceptorHandleMessage(const PaxosMessage& msg);
   void LearnerHandleMessage(const PaxosMessage& msg);
   void ProposerHandleMessage(const PaxosMessage& msg);
 
- private:
+  void NewInstance();
+
+  bool new_instance_;
   Config* config_;
 
   Acceptor acceptor_;

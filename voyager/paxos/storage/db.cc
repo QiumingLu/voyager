@@ -23,10 +23,10 @@ DB::~DB() {
   delete db_;
 }
 
-int DB::Open(size_t group_idx, const std::string& name) {
+int DB::Open(int group_id, const std::string& name) {
   leveldb::Options options;
   options.create_if_missing = true;
-  options.write_buffer_size = 1024 * 1024 + group_idx * 10 * 1024;
+  options.write_buffer_size = 1024 * 1024 + group_id * 10 * 1024;
   leveldb::Status status = leveldb::DB::Open(options, name, &db_);
   if (!status.ok()) {
     VOYAGER_LOG(ERROR) << "DB::Open - " << status.ToString();

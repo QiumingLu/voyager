@@ -41,28 +41,33 @@ void RunLoop::NewValue(const Slice& value) {
 
 void RunLoop::NewMessage(const Slice& s) {
   port::MutexLock lock(&mutex_);
-  messages_.push_back(new std::string(s.data(), s.size()));
-  cond_.Signal();
+  Content* content = new Content();
+  bool ret = content->ParseFromArray(s.data(), static_cast<int>(s.size()));
+  if (ret) {
+    contents_.push_back(content);
+    cond_.Signal();
+  } else {
+  }
 }
 
 void RunLoop::ThreadFunc() {
   exit_ = false;
   while(!exit_) {
-    std::string* s = nullptr;
+    Content* content = nullptr;
     {
       port::MutexLock lock(&mutex_);
-      while (messages_.empty() && value_.empty() ) {
+      while (contents_.empty() && value_.empty() ) {
         cond_.Wait();
       }
-      if (!messages_.empty()) {
-        s = messages_.front();
-        messages_.pop_front();
+      if (!contents_.empty()) {
+        content = contents_.front();
+        contents_.pop_front();
       }
     }
 
-    if (s != nullptr) {
-      instance_->HandleMessage(*s);
-      delete s;
+    if (content != nullptr) {
+      instance_->HandleMessage(*content);
+      delete content;
     }
 
     if (!value_.empty()) {

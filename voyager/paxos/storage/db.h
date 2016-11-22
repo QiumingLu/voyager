@@ -21,7 +21,7 @@ class DB {
   DB();
   ~DB();
 
-  int Open(size_t group_idx, const std::string& name);
+  int Open(int group_id, const std::string& name);
 
   int Put(const WriteOptions& options,
           uint64_t instance_id,

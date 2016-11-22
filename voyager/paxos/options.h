@@ -13,7 +13,7 @@ struct Options {
   std::string log_storage_path;
   bool log_sync;
   int sync_interval;
-  size_t group_size;
+  int group_size;
   NodeInfo node_info;
   std::vector<NodeInfo> all_nodes;
   std::vector<NodeInfo> follow_nodes;

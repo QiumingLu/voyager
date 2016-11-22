@@ -18,33 +18,33 @@ bool Acceptor::Init() {
   }
 
   SetInstanceId(instance_id);
-  VOYAGER_LOG(DEBUG) << "Acceptor::Init - now instance_id_ = " << instance_id_;
+  VOYAGER_LOG(DEBUG) << "Acceptor::Init - now instance_id = " << instance_id_;
   return true;
 }
 
 void Acceptor::OnPrepare(const PaxosMessage& msg) {
-  PaxosMessage reply_msg;
-  reply_msg.set_type(PREPARE_REPLY);
-  reply_msg.set_instance_id(instance_id_);
-  reply_msg.set_node_id(config_->GetNodeId());
-  reply_msg.set_proposal_id(msg.proposal_id());
+  PaxosMessage* reply_msg = new PaxosMessage();
+  reply_msg->set_type(PREPARE_REPLY);
+  reply_msg->set_instance_id(instance_id_);
+  reply_msg->set_node_id(config_->GetNodeId());
+  reply_msg->set_proposal_id(msg.proposal_id());
 
   BallotNumber b(msg.proposal_id(), msg.node_id());
 
-  if (b >= promise_ballot_) {
-    reply_msg.set_pre_accept_id(acceptd_ballot_.GetProposalId());
-    reply_msg.set_pre_accept_node_id(acceptd_ballot_.GetNodeId());
-    if (acceptd_ballot_.GetProposalId() > 0) {
-      reply_msg.set_value(value_);
+  if (b >= promised_ballot_) {
+    reply_msg->set_pre_accepted_id(accepted_ballot_.GetProposalId());
+    reply_msg->set_pre_accepted_node_id(accepted_ballot_.GetNodeId());
+    if (accepted_ballot_.GetProposalId() > 0) {
+      reply_msg->set_value(value_);
     }
-    promise_ballot_ =  b;
+    promised_ballot_ =  b;
     int ret = WriteToDB(instance_id_, 0);
     if (ret != 0) {
       VOYAGER_LOG(ERROR) << "Acceptor::OnPrepare - write instance_id_ = "
                          << instance_id_ << " to db failed.";
     }
   } else {
-    reply_msg.set_reject_for_promise_id(acceptd_ballot_.GetProposalId());
+    reply_msg->set_reject_for_promised_id(accepted_ballot_.GetProposalId());
   }
 
   Messager* messager = config_->GetMessager();
@@ -52,16 +52,16 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
 }
 
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
-  PaxosMessage reply_msg;
-  reply_msg.set_type(ACCEPT_REPLY);
-  reply_msg.set_instance_id(instance_id_);
-  reply_msg.set_node_id(config_->GetNodeId());
-  reply_msg.set_proposal_id(msg.proposal_id());
+  PaxosMessage* reply_msg = new PaxosMessage();
+  reply_msg->set_type(ACCEPT_REPLY);
+  reply_msg->set_instance_id(instance_id_);
+  reply_msg->set_node_id(config_->GetNodeId());
+  reply_msg->set_proposal_id(msg.proposal_id());
 
   BallotNumber b(msg.proposal_id(), msg.node_id());
-  if (b >= promise_ballot_) {
-    promise_ballot_ = b;
-    acceptd_ballot_ = b;
+  if (b >= promised_ballot_) {
+    promised_ballot_ = b;
+    accepted_ballot_ = b;
     value_ = msg.value();
     int ret = WriteToDB(instance_id_, 0);
     if (ret != 0) {
@@ -70,7 +70,7 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     }
 
   } else {
-    reply_msg.set_reject_for_promise_id(promise_ballot_.GetProposalId());
+    reply_msg->set_reject_for_promised_id(promised_ballot_.GetProposalId());
   }
 
   Messager* messager = config_->GetMessager();
@@ -91,22 +91,22 @@ int Acceptor::ReadFromDB(uint64_t* instance_id) {
   }
 
   AcceptorState state;
-  state.ParseFromArray(value.data(), static_cast<int>(value.size()));
-  promise_ballot_.SetProposalId(state.promise_id());
-  promise_ballot_.SetNodeId(state.promise_node_id());
-  acceptd_ballot_.SetProposalId(state.accept_id());
-  acceptd_ballot_.SetNodeId(state.accept_node_id());
+  state.ParseFromString(value);
+  promised_ballot_.SetProposalId(state.promised_id());
+  promised_ballot_.SetNodeId(state.promised_node_id());
+  accepted_ballot_.SetProposalId(state.accepted_id());
+  accepted_ballot_.SetNodeId(state.accepted_node_id());
   return 0;
 }
 
 int Acceptor::WriteToDB(uint64_t instance_id, uint32_t last_checksum) {
   AcceptorState state;
   state.set_instance_id(instance_id);
-  state.set_promise_id(promise_ballot_.GetProposalId());
-  state.set_promise_node_id(promise_ballot_.GetNodeId());
-  state.set_accept_id(acceptd_ballot_.GetProposalId());
-  state.set_accept_node_id(acceptd_ballot_.GetNodeId());
-  state.set_accept_value(value_);
+  state.set_promised_id(promised_ballot_.GetProposalId());
+  state.set_promised_node_id(promised_ballot_.GetNodeId());
+  state.set_accepted_id(accepted_ballot_.GetProposalId());
+  state.set_accepted_node_id(accepted_ballot_.GetNodeId());
+  state.set_accepted_value(value_);
   WriteOptions options;
   options.sync = config_->LogSync();
   if (options.sync) {

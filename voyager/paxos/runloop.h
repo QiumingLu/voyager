@@ -3,6 +3,7 @@
 
 #include <deque>
 
+#include "voyager/paxos/paxos.pb.h"
 #include "voyager/port/thread.h"
 #include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
@@ -33,7 +34,7 @@ class RunLoop {
   port::Mutex mutex_;
   port::Condition cond_;
   Slice value_;
-  std::deque<std::string*> messages_;
+  std::deque<Content*> contents_;
 
   // No copying allowed
   RunLoop(const RunLoop&);

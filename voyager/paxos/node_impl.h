@@ -2,7 +2,7 @@
 #define VOYAGER_PAXOS_NODE_IMPL_H_
 
 #include <stdint.h>
-#include <vector>
+#include <map>
 
 #include "voyager/paxos/node.h"
 #include "voyager/paxos/options.h"
@@ -21,7 +21,7 @@ class NodeImpl : public Node {
 
   bool StartWorking();
 
-  virtual bool Propose(size_t group_idx,
+  virtual bool Propose(int group_id,
                        const Slice& value,
                        uint64_t* new_instance_id);
 
@@ -32,7 +32,7 @@ class NodeImpl : public Node {
 
   Network network_;
 
-  std::vector<Group*> groups_;
+  std::map<int, Group*> groups_;
 
   // No copying allowed
   NodeImpl(const NodeImpl&);

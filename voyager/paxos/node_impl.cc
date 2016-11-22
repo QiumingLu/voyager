@@ -2,6 +2,7 @@
 #include "voyager/paxos/group.h"
 #include "voyager/paxos/nodeinfo.h"
 #include "voyager/util/logging.h"
+#include "voyager/util/stl_util.h"
 
 namespace voyager {
 namespace paxos {
@@ -12,18 +13,16 @@ NodeImpl::NodeImpl(const Options& options)
 }
 
 NodeImpl::~NodeImpl() {
-  for (size_t i = 0; i < groups_.size(); ++i) {
-    delete groups_[i];
-  }
+  STLDeleteValues(&groups_);
 }
 
 bool NodeImpl::StartWorking() {
   bool ret = true;
-  for (size_t i = 0; i < options_.group_size; ++i) {
+  for (int i = 0; i < options_.group_size; ++i) {
     Group* group = new Group(i, options_, &network_);
     ret = group->Start();
     if (ret) {
-      groups_.push_back(group);
+      groups_[i] = group;
     } else {
       return ret;
     }
@@ -37,15 +36,24 @@ bool NodeImpl::StartWorking() {
   return ret;
 }
 
-bool NodeImpl::Propose(size_t group_idx, const Slice& value,
+bool NodeImpl::Propose(int group_id, const Slice& value,
                        uint64_t *new_instance_id) {
-  return groups_[group_idx]->NewValue(value, new_instance_id);
+  assert(groups_.find(group_id) != groups_.end());
+  return groups_[group_id]->NewValue(value, new_instance_id);
 }
 
 void NodeImpl::OnReceiveMessage(const Slice& s) {
-  size_t group_idx;
-  memcpy(&group_idx, s.data(), sizeof(size_t));
-  return groups_[group_idx]->OnReceiveMessage(s);
+  int group_id;
+  memcpy(&group_id, s.data(), sizeof(int));
+  if (groups_.find(group_id) != groups_.end()) {
+    Slice new_s(s.data() + sizeof(int), s.size() - sizeof(int));
+    if (!new_s.empty()) {
+      groups_[group_id]->OnReceiveMessage(new_s);
+    }
+  } else {
+    VOYAGER_LOG(ERROR) << "NodeImpl::OnReceiveMessage - group_id="
+                       << group_id << "is not right!";
+  }
 }
 
 bool Node::Start(const Options& options, Node** nodeptr) {

@@ -17,7 +17,7 @@ namespace paxos {
 
 class Config {
  public:
-  Config(size_t group_idx, const Options& options, Network* network);
+  Config(int group_id, const Options& options, Network* network);
   ~Config();
 
   bool Init();
@@ -25,6 +25,9 @@ class Config {
   DB* GetDB() const { return db_; }
   Messager* GetMessager() const { return messager_; }
   StateMachineImpl* GetStateMachine() const { return state_machine_; }
+
+  int GetGroupId() const { return group_id_; }
+  uint64_t GetGid() const { return gid_; }
 
   bool LogSync() const { return log_sync_; }
   int SyncInterval() const { return sync_interval_; }
@@ -41,7 +44,8 @@ class Config {
   bool IsValidNodeId(uint64_t node_id) const;
 
  private:
-  size_t group_idx_;
+  int group_id_;
+  uint64_t gid_;
 
   std::string log_storage_path_;
   bool log_sync_;

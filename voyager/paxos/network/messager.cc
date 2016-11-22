@@ -9,21 +9,26 @@ Messager::Messager(Config* config, Network* network)
       network_(network) {
 }
 
-bool Messager::PackMessage(const PaxosMessage& msg, std::string* s) {
-  std::string body;
-  msg.SerializeToString(&body);
-  s->append(body);
-  return true;
+bool Messager::PackMessage(ContentType type,
+                           PaxosMessage* pmsg,
+                           CheckPointMessage* cmsg,
+                           std::string* s) {
+  char g[4];
+  int group_id = config_->GetGroupId();
+  memcpy(g, &group_id, sizeof(int));
+  s->append(g);
+  Content content;
+  content.set_type(type);
+  content.set_gid(config_->GetGid());
+  content.set_version(1);
+  content.set_allocated_paxos_msg(pmsg);
+  content.set_allocated_checkpoint_msg(cmsg);
+  return content.AppendToString(s);
 }
 
-bool Messager::UnPackMessage(const std::string& s, PaxosMessage* msg) {
-  bool ret = msg->ParseFromArray(&*(s.data()), static_cast<int>(s.size()));
-  return ret;
-}
-
-bool Messager::SendMessage(uint64_t node_id, const PaxosMessage& msg) {
+bool Messager::SendMessage(uint64_t node_id, PaxosMessage* msg) {
   std::string s;
-  bool ret = PackMessage(msg, &s);
+  bool ret = PackMessage(PAXOS_MESSAGE, msg, nullptr, &s);
   if (!ret) {
     return ret;
   }
@@ -31,9 +36,9 @@ bool Messager::SendMessage(uint64_t node_id, const PaxosMessage& msg) {
   return true;
 }
 
-bool Messager::BroadcastMessage(const PaxosMessage& msg) {
+bool Messager::BroadcastMessage(PaxosMessage* msg) {
   std::string s;
-  bool ret = PackMessage(msg, &s);
+  bool ret = PackMessage(PAXOS_MESSAGE, msg, nullptr, &s);
   if (!ret) {
     return ret;
   }
@@ -45,7 +50,7 @@ bool Messager::BroadcastMessage(const PaxosMessage& msg) {
   return true;
 }
 
-bool Messager::BroadcastMessageToFollower(const PaxosMessage& msg) {
+bool Messager::BroadcastMessageToFollower(PaxosMessage* msg) {
   return true;
 }
 

@@ -13,9 +13,9 @@ bool StateMachineImpl::Execute(size_t group_idx, uint64_t instance_id,
                                 const std::string& value,
                                 MachineContext* context) {
   SystemVariables variables;
-  bool ret = variables.ParseFromArray(&*(value.data()),
-                                       static_cast<int>(value.size()));
+  bool ret = variables.ParseFromString(value);
   if (!ret) {
+    return ret;
   }
   if (context != nullptr && context->context != nullptr) {
   }
