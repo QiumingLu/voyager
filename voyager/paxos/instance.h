@@ -30,18 +30,16 @@ class Instance {
   void HandleNewValue(const Slice& value);
 
   void HandleMessage(const Content& content);
-
- private:
   void HandlePaxosMessage(const PaxosMessage& msg);
   void HandleCheckPointMessage(const CheckPointMessage& msg);
 
+ private:
   void AcceptorHandleMessage(const PaxosMessage& msg);
   void LearnerHandleMessage(const PaxosMessage& msg);
   void ProposerHandleMessage(const PaxosMessage& msg);
 
   void NewInstance();
 
-  bool new_instance_;
   Config* config_;
 
   Acceptor acceptor_;

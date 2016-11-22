@@ -6,16 +6,13 @@ namespace paxos {
 
 Instance::Instance(Config* config)
     : config_(config),
-      acceptor_(config),
-      learner_(config, &acceptor_),
-      proposer_(config),
+      acceptor_(config, this),
+      learner_(config, this, &acceptor_),
+      proposer_(config, this),
       loop_(this),
       transfer_(config, &loop_) {
   proposer_.SetChosenValueCallback([this](uint64_t i_id, uint64_t p_id) {
     learner_.NewChosenValue(i_id, p_id);
-  });
-  learner_.SetNewChosenValueCallback([this](const PaxosMessage& msg) {
-    LearnerHandleMessage(msg);
   });
 }
 
@@ -116,7 +113,7 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
     default:
       break;
   }
-  if (new_instance_) {
+  if (learner_.HasLearned()) {
     NewInstance();
   }
 }

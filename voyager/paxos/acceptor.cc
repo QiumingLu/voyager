@@ -1,13 +1,15 @@
 #include "voyager/paxos/acceptor.h"
 #include "voyager/paxos/config.h"
+#include "voyager/paxos/instance.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
 namespace paxos {
 
-Acceptor::Acceptor(Config* config)
+Acceptor::Acceptor(Config* config, Instance* instance)
     : log_sync_count_(0),
-      config_(config) {
+      config_(config),
+      instance_(instance) {
 }
 
 bool Acceptor::Init() {
@@ -47,8 +49,13 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     reply_msg->set_reject_for_promised_id(accepted_ballot_.GetProposalId());
   }
 
-  Messager* messager = config_->GetMessager();
-  messager->SendMessage(msg.node_id(), reply_msg);
+  if (msg.node_id() == config_->GetNodeId()) {
+    instance_->HandlePaxosMessage(*reply_msg);
+    delete reply_msg;
+  } else {
+    Messager* messager = config_->GetMessager();
+    messager->SendMessage(msg.node_id(), reply_msg);
+  }
 }
 
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
@@ -73,8 +80,13 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     reply_msg->set_reject_for_promised_id(promised_ballot_.GetProposalId());
   }
 
-  Messager* messager = config_->GetMessager();
-  messager->SendMessage(msg.node_id(), reply_msg);
+  if (msg.node_id() == config_->GetNodeId()) {
+    instance_->HandlePaxosMessage(*reply_msg);
+    delete reply_msg;
+  } else {
+    Messager* messager = config_->GetMessager();
+    messager->SendMessage(msg.node_id(), reply_msg);
+  }
 }
 
 int Acceptor::ReadFromDB(uint64_t* instance_id) {

@@ -1,11 +1,16 @@
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/config.h"
+#include "voyager/paxos/instance.h"
 
 namespace voyager {
 namespace paxos {
 
-Learner::Learner(Config* config, Acceptor* acceptor)
-    : config_(config), acceptor_(acceptor) {
+Learner::Learner(Config* config, Instance* instance, Acceptor* acceptor)
+    : config_(config),
+      instance_(instance),
+      acceptor_(acceptor),
+      instance_id_(0),
+      has_learned_(false) {
 }
 
 void Learner::NewChosenValue(uint64_t instance_id,
@@ -15,7 +20,8 @@ void Learner::NewChosenValue(uint64_t instance_id,
   msg->set_node_id(config_->GetNodeId());
   msg->set_instance_id(instance_id);
   msg->set_proposal_id(proposal_id);
-  new_chosen_cb_(*msg);
+
+  instance_->HandlePaxosMessage(*msg);
   Messager* messager = config_->GetMessager();
   messager->BroadcastMessage(msg);
 }

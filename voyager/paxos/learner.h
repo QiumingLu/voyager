@@ -2,8 +2,6 @@
 #define VOYAGER_PAXOS_LEARNER_H_
 
 #include <stdint.h>
-#include <functional>
-#include <memory>
 #include "voyager/paxos/acceptor.h"
 #include "voyager/paxos/paxos.pb.h"
 
@@ -15,16 +13,7 @@ class Instance;
 
 class Learner {
  public:
-  typedef std::function<void(const PaxosMessage& )> NewChosenValueCallback;
-
-  Learner(Config* config, Acceptor* acceptor);
-
-  void SetNewChosenValueCallback(const NewChosenValueCallback& cb) {
-    new_chosen_cb_ = cb;
-  }
-  void SetNewChosenValueCallback(NewChosenValueCallback&& cb) {
-    new_chosen_cb_ = std::move(cb);
-  }
+  Learner(Config* config, Instance* instance, Acceptor* acceptor);
 
   void SetInstanceId(uint64_t instance_id) { instance_id_ = instance_id; }
 
@@ -35,17 +24,20 @@ class Learner {
   void OnSendNowInstanceId(const PaxosMessage& msg);
   void OnComfirmForLearn(const PaxosMessage& msg);
 
+  bool HasLearned() const { return has_learned_; }
+
  private:
   void AskForLearn();
   void SendNowInstanceId(const PaxosMessage& msg);
   void ComfirmForLearn(const PaxosMessage& msg);
 
   Config* config_;
+  Instance* instance_;
   Acceptor* acceptor_;
 
   uint64_t instance_id_;
 
-  NewChosenValueCallback new_chosen_cb_;
+  bool has_learned_;
 
   // No copying allowed
   Learner(const Learner&);

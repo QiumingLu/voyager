@@ -60,7 +60,6 @@ set(HEADERS
   options.h
   nodeinfo.h
   node.h
-  ${PROTO_GEN}
   )
 
 install(FILES ${HEADERS} DESTINATION include/voyager/paxos)

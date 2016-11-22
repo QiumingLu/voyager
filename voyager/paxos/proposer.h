@@ -13,12 +13,13 @@ namespace voyager {
 namespace paxos {
 
 class Config;
+class Instance;
 
 class Proposer {
  public:
   typedef std::function<void(uint64_t, uint64_t)> ChosenValueCallback;
 
-  Proposer(Config* config);
+  Proposer(Config* config, Instance* instance);
 
   void SetChosenValueCallback(const ChosenValueCallback& cb) {
     chosen_value_cb_ = cb;
@@ -42,6 +43,7 @@ class Proposer {
 
  private:
   Config* config_;
+  Instance* instance_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;

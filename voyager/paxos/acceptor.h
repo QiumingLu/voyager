@@ -10,10 +10,11 @@ namespace voyager {
 namespace paxos {
 
 class Config;
+class Instance;
 
 class Acceptor {
  public:
-  Acceptor(Config* config);
+  Acceptor(Config* config, Instance* instance);
 
   bool Init();
 
@@ -33,6 +34,7 @@ class Acceptor {
   int log_sync_count_;
 
   Config* config_;
+  Instance* instance_;
 
   BallotNumber promised_ballot_;
   BallotNumber accepted_ballot_;

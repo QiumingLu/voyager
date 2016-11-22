@@ -1,11 +1,13 @@
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/config.h"
+#include "voyager/paxos/instance.h"
 
 namespace voyager {
 namespace paxos {
 
-Proposer::Proposer(Config* config)
+Proposer::Proposer(Config* config, Instance* instance)
     : config_(config),
+      instance_(instance),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),
@@ -51,6 +53,7 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   counter_.StartNewRound();
 
+  instance_->HandlePaxosMessage(*msg);
   Messager* messager = config_->GetMessager();
   messager->BroadcastMessage(msg);
 }
@@ -97,6 +100,7 @@ void Proposer::Accept() {
   msg->set_value(value_);
 
   counter_.StartNewRound();
+  instance_->HandlePaxosMessage(*msg);
   Messager* messager = config_->GetMessager();
   messager->BroadcastMessage(msg);
 }
