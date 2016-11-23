@@ -31,8 +31,8 @@ void Proposer::NewValue(const Slice& value) {
 }
 
 void Proposer::Prepare(bool need_new_ballot) {
-  ExitAccept();
   preparing_ = true;
+  accepting_ = false;
   skip_prepare_ = false;
   was_rejected_by_someone_ = false;
 
@@ -89,7 +89,7 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
 }
 
 void Proposer::Accept() {
-  ExitPrepare();
+  preparing_ = false;
   accepting_ = true;
 
   PaxosMessage* msg = new PaxosMessage();
@@ -121,24 +121,12 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
       }
 
       if (counter_.IsPassedOnThisRound()) {
-        ExitAccept();
+        accepting_ = false;
         chosen_value_cb_(instance_id_, proposal_id_);
       } else if (counter_.IsRejectedOnThisRound() ||
                  counter_.IsReceiveAllOnThisRound()) {
       }
     }
-  }
-}
-
-void Proposer::ExitPrepare() {
-  if (preparing_) {
-    preparing_ = false;
-  }
-}
-
-void Proposer::ExitAccept() {
-  if (accepting_) {
-    accepting_ = false;
   }
 }
 

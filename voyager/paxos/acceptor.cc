@@ -37,7 +37,7 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     reply_msg->set_pre_accepted_id(accepted_ballot_.GetProposalId());
     reply_msg->set_pre_accepted_node_id(accepted_ballot_.GetNodeId());
     if (accepted_ballot_.GetProposalId() > 0) {
-      reply_msg->set_value(value_);
+      reply_msg->set_value(accepted_value_);
     }
     promised_ballot_ =  b;
     int ret = WriteToDB(instance_id_, 0);
@@ -69,7 +69,7 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
   if (b >= promised_ballot_) {
     promised_ballot_ = b;
     accepted_ballot_ = b;
-    value_ = msg.value();
+    accepted_value_ = msg.value();
     int ret = WriteToDB(instance_id_, 0);
     if (ret != 0) {
       VOYAGER_LOG(ERROR) << "Acceptor::OnAccpet - write instance_id_ = "
@@ -93,7 +93,7 @@ void Acceptor::NextInstance() {
   promised_ballot_.Reset();
   accepted_ballot_.Reset();
   ++instance_;
-  value_.clear();
+  accepted_value_.clear();
 }
 
 int Acceptor::ReadFromDB(uint64_t* instance_id) {
@@ -126,7 +126,7 @@ int Acceptor::WriteToDB(uint64_t instance_id, uint32_t last_checksum) {
   state.set_promised_node_id(promised_ballot_.GetNodeId());
   state.set_accepted_id(accepted_ballot_.GetProposalId());
   state.set_accepted_node_id(accepted_ballot_.GetNodeId());
-  state.set_accepted_value(value_);
+  state.set_accepted_value(accepted_value_);
   WriteOptions options;
   options.sync = config_->LogSync();
   if (options.sync) {

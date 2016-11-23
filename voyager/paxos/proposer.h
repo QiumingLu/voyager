@@ -33,17 +33,15 @@ class Proposer {
 
   void NewValue(const Slice& value);
 
-  void Prepare(bool need_new_ballot = true);
   void OnPrepareReply(const PaxosMessage& msg);
-  void Accept();
   void OnAccpetReply(const PaxosMessage& msg);
-
-  void ExitPrepare();
-  void ExitAccept();
 
   void NextInstance();
 
  private:
+  void Prepare(bool need_new_ballot = true);
+  void Accept();
+
   Config* config_;
   Instance* instance_;
 
