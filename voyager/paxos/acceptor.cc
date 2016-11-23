@@ -19,16 +19,16 @@ bool Acceptor::Init() {
     return false;
   }
 
-  SetInstanceId(instance_id);
-  VOYAGER_LOG(DEBUG) << "Acceptor::Init - now instance_id = " << instance_id_;
+  instance_id_ = instance_id;
+  VOYAGER_LOG(DEBUG) << "Acceptor::Init - now instance_id=" << instance_id_;
   return true;
 }
 
 void Acceptor::OnPrepare(const PaxosMessage& msg) {
   PaxosMessage* reply_msg = new PaxosMessage();
   reply_msg->set_type(PREPARE_REPLY);
-  reply_msg->set_instance_id(instance_id_);
   reply_msg->set_node_id(config_->GetNodeId());
+  reply_msg->set_instance_id(instance_id_);
   reply_msg->set_proposal_id(msg.proposal_id());
 
   BallotNumber b(msg.proposal_id(), msg.node_id());
@@ -46,7 +46,7 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
                          << instance_id_ << " to db failed.";
     }
   } else {
-    reply_msg->set_reject_for_promised_id(accepted_ballot_.GetProposalId());
+    reply_msg->set_reject_for_promised_id(promised_ballot_.GetProposalId());
   }
 
   if (msg.node_id() == config_->GetNodeId()) {
@@ -61,8 +61,8 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
   PaxosMessage* reply_msg = new PaxosMessage();
   reply_msg->set_type(ACCEPT_REPLY);
-  reply_msg->set_instance_id(instance_id_);
   reply_msg->set_node_id(config_->GetNodeId());
+  reply_msg->set_instance_id(instance_id_);
   reply_msg->set_proposal_id(msg.proposal_id());
 
   BallotNumber b(msg.proposal_id(), msg.node_id());
@@ -89,6 +89,13 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
   }
 }
 
+void Acceptor::NextInstance() {
+  promised_ballot_.Reset();
+  accepted_ballot_.Reset();
+  ++instance_;
+  value_.clear();
+}
+
 int Acceptor::ReadFromDB(uint64_t* instance_id) {
   int res = config_->GetDB()->GetMaxInstanceId(instance_id);
   if (res == 1) {
@@ -108,6 +115,7 @@ int Acceptor::ReadFromDB(uint64_t* instance_id) {
   promised_ballot_.SetNodeId(state.promised_node_id());
   accepted_ballot_.SetProposalId(state.accepted_id());
   accepted_ballot_.SetNodeId(state.accepted_node_id());
+  accepted_value_ = std::move(state.accepted_value());
   return 0;
 }
 

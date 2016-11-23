@@ -38,7 +38,7 @@ class Instance {
   void LearnerHandleMessage(const PaxosMessage& msg);
   void ProposerHandleMessage(const PaxosMessage& msg);
 
-  void NewInstance();
+  void NextInstance();
 
   Config* config_;
 

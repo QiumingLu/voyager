@@ -26,10 +26,13 @@ class Learner {
 
   bool HasLearned() const { return has_learned_; }
 
+  void NextInstance();
+
  private:
   void AskForLearn();
   void SendNowInstanceId(const PaxosMessage& msg);
   void ComfirmForLearn(const PaxosMessage& msg);
+  void BroadcastMessageToFollower();
 
   Config* config_;
   Instance* instance_;
@@ -38,6 +41,7 @@ class Learner {
   uint64_t instance_id_;
 
   bool has_learned_;
+  std::string learned_value_;
 
   // No copying allowed
   Learner(const Learner&);

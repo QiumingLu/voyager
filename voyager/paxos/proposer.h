@@ -41,6 +41,8 @@ class Proposer {
   void ExitPrepare();
   void ExitAccept();
 
+  void NextInstance();
+
  private:
   Config* config_;
   Instance* instance_;

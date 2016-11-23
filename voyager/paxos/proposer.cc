@@ -47,8 +47,8 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   PaxosMessage* msg = new PaxosMessage();
   msg->set_type(PREPARE);
-  msg->set_instance_id(instance_id_);
   msg->set_node_id(config_->GetNodeId());
+  msg->set_instance_id(instance_id_);
   msg->set_proposal_id(proposal_id_);
 
   counter_.StartNewRound();
@@ -94,8 +94,8 @@ void Proposer::Accept() {
 
   PaxosMessage* msg = new PaxosMessage();
   msg->set_type(ACCEPT);
-  msg->set_instance_id(instance_id_);
   msg->set_node_id(config_->GetNodeId());
+  msg->set_instance_id(instance_id_);
   msg->set_proposal_id(proposal_id_);
   msg->set_value(value_);
 
@@ -140,6 +140,15 @@ void Proposer::ExitAccept() {
   if (accepting_) {
     accepting_ = false;
   }
+}
+
+void Proposer::NextInstance() {
+  hightest_proprosal_id_ = 0;
+  value_.clear();
+  preparing_ = false;
+  accepting_ = false;
+  ++instance_id_;
+  counter_.StartNewRound();
 }
 
 }  // namespace paxos

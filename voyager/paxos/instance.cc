@@ -102,7 +102,7 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
     case LEARNER_ASK_FOR_LEARN:
       learner_.OnAskForLearn(msg);
       break;
-    case LEARNER_SEND_LEARN_VALUE:
+    case LEARNER_SEND_LEARNED_VALUE:
       break;
     case LEARNER_SEND_NOW_INSTANCE_ID:
       learner_.OnSendNowInstanceId(msg);
@@ -114,11 +114,14 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
       break;
   }
   if (learner_.HasLearned()) {
-    NewInstance();
+    NextInstance();
   }
 }
 
-void Instance::NewInstance() {
+void Instance::NextInstance() {
+  acceptor_.NextInstance();
+  proposer_.NextInstance();
+  learner_.NextInstance();
 }
 
 }  // namespace paxos

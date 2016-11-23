@@ -32,6 +32,12 @@ void Learner::OnNewChosenValue(const PaxosMessage& msg) {
   }
   const BallotNumber& b = acceptor_->GetAcceptedBallot();
   if (b.GetProposalId() != 0 && b.GetNodeId() != 0) {
+    BallotNumber ballot(msg.proposal_id(), msg.node_id());
+    if (ballot == acceptor_->GetAcceptedBallot()) {
+      instance_id_ = acceptor_->GetInstanceId();
+      learned_value_ = acceptor_->GetAcceptedValue();
+      BroadcastMessageToFollower();
+    }
   }
 }
 
@@ -82,6 +88,24 @@ void Learner::ComfirmForLearn(const PaxosMessage& msg) {
 }
 
 void Learner::OnComfirmForLearn(const PaxosMessage& msg) {
+}
+
+void Learner::BroadcastMessageToFollower() {
+  PaxosMessage* msg = new PaxosMessage();
+  msg->set_type(LEARNER_SEND_LEARNED_VALUE);
+  msg->set_node_id(config_->GetNodeId());
+  msg->set_instance_id(instance_id_);
+  msg->set_proposal_node_id(acceptor_->GetAcceptedBallot().GetNodeId());
+  msg->set_proposal_id(acceptor_->GetAcceptedBallot().GetProposalId());
+  msg->set_value(acceptor_->GetAcceptedValue());
+  Messager* messager = config_->GetMessager();
+  messager->BroadcastMessageToFollower(msg);
+}
+
+void Learner::NextInstance() {
+  ++instance_;
+  has_learned_ = false;
+  learned_value_.clear();
 }
 
 }  // namespace paxos
