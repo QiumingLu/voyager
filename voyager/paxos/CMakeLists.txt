@@ -43,7 +43,6 @@ set (paxos_SRCS
   proposer.cc
   runloop.cc
   transfer.cc
-  transfer_station.cc
   state_machine_impl.cc
   network/messager.cc
   network/network.cc
