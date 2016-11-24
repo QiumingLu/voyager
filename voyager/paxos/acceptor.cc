@@ -9,7 +9,8 @@ namespace paxos {
 Acceptor::Acceptor(Config* config, Instance* instance)
     : log_sync_count_(0),
       config_(config),
-      instance_(instance) {
+      instance_(instance),
+      instance_id_(0) {
 }
 
 bool Acceptor::Init() {
@@ -99,7 +100,7 @@ void Acceptor::NextInstance() {
 int Acceptor::ReadFromDB(uint64_t* instance_id) {
   int res = config_->GetDB()->GetMaxInstanceId(instance_id);
   if (res == 1) {
-    instance_id = 0;
+    *instance_id = 1;
     return 0;
   }
 

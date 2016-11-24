@@ -2,7 +2,6 @@
 #define VOYAGER_PAXOS_PROPOSER_H_
 
 #include <string>
-#include <utility>
 
 #include "voyager/paxos/ballot_number.h"
 #include "voyager/paxos/counter.h"
@@ -17,18 +16,11 @@ class Instance;
 
 class Proposer {
  public:
-  typedef std::function<void(uint64_t, uint64_t)> ChosenValueCallback;
-
   Proposer(Config* config, Instance* instance);
 
-  void SetChosenValueCallback(const ChosenValueCallback& cb) {
-    chosen_value_cb_ = cb;
-  }
-  void SetChosenValueCallback(ChosenValueCallback&& cb) {
-    chosen_value_cb_ = std::move(cb);
-  }
-
   void SetInstanceId(uint64_t id) { instance_id_ = id; }
+  uint64_t GetInstanceId() const { return instance_id_; }
+
   void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
 
   void NewValue(const Slice& value);
@@ -41,6 +33,7 @@ class Proposer {
  private:
   void Prepare(bool need_new_ballot = true);
   void Accept();
+  void NewChosenValue();
 
   Config* config_;
   Instance* instance_;
@@ -58,8 +51,6 @@ class Proposer {
   bool accepting_;
   bool skip_prepare_;
   bool was_rejected_by_someone_;
-
-  ChosenValueCallback chosen_value_cb_;
 
   // No copying allowed
   Proposer(const Proposer&);

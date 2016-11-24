@@ -1,4 +1,5 @@
 #include "voyager/paxos/instance.h"
+#include "voyager/port/mutexlock.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
@@ -10,10 +11,8 @@ Instance::Instance(Config* config)
       learner_(config, this, &acceptor_),
       proposer_(config, this),
       loop_(this),
+      mutex_(),
       transfer_(config, &loop_) {
-  proposer_.SetChosenValueCallback([this](uint64_t i_id, uint64_t p_id) {
-    learner_.NewChosenValue(i_id, p_id);
-  });
 }
 
 Instance::~Instance() {
@@ -23,6 +22,7 @@ Instance::~Instance() {
 bool Instance::Init() {
   bool ret = acceptor_.Init();
   if (!ret) {
+    VOYAGER_LOG(ERROR) << "Instance::Init - Acceptor init fail.";
     return ret;
   }
   uint64_t now_instance_id = acceptor_.GetInstanceId();
@@ -36,8 +36,10 @@ bool Instance::Init() {
   return ret;
 }
 
-bool Instance::NewValue(const Slice& value, uint64_t* new_instance_id) {
-  return transfer_.NewValue(value, new_instance_id);
+bool Instance::NewValue(const Slice& value, MachineContext* context,
+                        uint64_t* new_instance_id) {
+  port::MutexLock lock(&mutex_);
+  return transfer_.NewValue(value, context, new_instance_id);
 }
 
 void Instance::OnReceiveMessage(const Slice& s) {
@@ -45,6 +47,7 @@ void Instance::OnReceiveMessage(const Slice& s) {
 }
 
 void Instance::HandleNewValue(const Slice& value) {
+  transfer_.SetNowInstanceId(proposer_.GetInstanceId());
   proposer_.NewValue(value);
 }
 
@@ -111,10 +114,25 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
       learner_.OnComfirmForLearn(msg);
       break;
     default:
+      VOYAGER_LOG(ERROR) << "Instance::LearnerHandleMessage - "
+                         << "Invalid message type.";
       break;
   }
   if (learner_.HasLearned()) {
-    NextInstance();
+    MachineContext* context = nullptr;
+    bool my_proposal = transfer_.IsMyProposal(learner_.GetInstanceId(),
+                                              learner_.GetLearnedValue(),
+                                              &context);
+    bool success = MachineExecute(learner_.GetInstanceId(),
+                                  learner_.GetLearnedValue(),
+                                  my_proposal,
+                                  context);
+    transfer_.SetResult(success, learner_.GetInstanceId(),
+                        learner_.GetLearnedValue());
+
+    if (success) {
+      NextInstance();
+    }
   }
 }
 
@@ -122,6 +140,11 @@ void Instance::NextInstance() {
   acceptor_.NextInstance();
   proposer_.NextInstance();
   learner_.NextInstance();
+}
+
+bool Instance::MachineExecute(uint64_t instance_id, const Slice& value,
+                              bool my_proposal, MachineContext* context) {
+  return true;
 }
 
 }  // namespace paxos

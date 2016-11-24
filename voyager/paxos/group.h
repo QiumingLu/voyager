@@ -2,6 +2,7 @@
 #define VOYAGER_PAXOS_GROUP_H_
 
 #include "voyager/paxos/config.h"
+#include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/instance.h"
 #include "voyager/paxos/options.h"
 #include "voyager/util/slice.h"
@@ -19,7 +20,9 @@ class Group {
 
   Instance* GetInstance() { return &instance_; }
 
-  bool NewValue(const Slice& value, uint64_t* new_instance_id);
+  bool NewValue(const Slice& value,
+                MachineContext* context,
+                uint64_t* new_instance_id);
 
   void OnReceiveMessage(const Slice& s);
 

@@ -7,9 +7,9 @@
 #include "voyager/util/stringprintf.h"
 
 namespace {
-const uint64_t kMinChosenKey = 1;
-const uint64_t kMasterVariables = 2;
-const uint64_t kSystemVariables = 3;
+const uint64_t kMinChosenKey = UINTMAX_MAX;
+const uint64_t kMasterVariables = (UINTMAX_MAX - 1);
+const uint64_t kSystemVariables = (UINTMAX_MAX - 2);
 }
 
 namespace voyager {

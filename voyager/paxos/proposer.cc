@@ -122,12 +122,23 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
 
       if (counter_.IsPassedOnThisRound()) {
         accepting_ = false;
-        chosen_value_cb_(instance_id_, proposal_id_);
+        NewChosenValue();
       } else if (counter_.IsRejectedOnThisRound() ||
                  counter_.IsReceiveAllOnThisRound()) {
       }
     }
   }
+}
+
+void Proposer::NewChosenValue() {
+  PaxosMessage* msg = new PaxosMessage();
+  msg->set_type(NEW_CHOSEN_VALUE);
+  msg->set_node_id(config_->GetNodeId());
+  msg->set_instance_id(instance_id_);
+  msg->set_proposal_id(proposal_id_);
+  instance_->HandlePaxosMessage(*msg);
+  Messager* messager = config_->GetMessager();
+  messager->BroadcastMessage(msg);
 }
 
 void Proposer::NextInstance() {

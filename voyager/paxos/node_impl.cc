@@ -39,7 +39,7 @@ bool NodeImpl::StartWorking() {
 bool NodeImpl::Propose(int group_id, const Slice& value,
                        uint64_t *new_instance_id) {
   assert(groups_.find(group_id) != groups_.end());
-  return groups_[group_id]->NewValue(value, new_instance_id);
+  return groups_[group_id]->NewValue(value, nullptr, new_instance_id);
 }
 
 void NodeImpl::OnReceiveMessage(const Slice& s) {

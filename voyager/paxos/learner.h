@@ -16,15 +16,15 @@ class Learner {
   Learner(Config* config, Instance* instance, Acceptor* acceptor);
 
   void SetInstanceId(uint64_t instance_id) { instance_id_ = instance_id; }
+  uint64_t GetInstanceId() const { return instance_id_; }
 
-  void NewChosenValue(uint64_t instance_id, uint64_t proposer_id);
   void OnNewChosenValue(const PaxosMessage& msg);
-
   void OnAskForLearn(const PaxosMessage& msg);
   void OnSendNowInstanceId(const PaxosMessage& msg);
   void OnComfirmForLearn(const PaxosMessage& msg);
 
   bool HasLearned() const { return has_learned_; }
+  const std::string& GetLearnedValue() const { return learned_value_; }
 
   void NextInstance();
 

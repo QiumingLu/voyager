@@ -7,8 +7,10 @@
 #include "voyager/paxos/runloop.h"
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
+#include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/transfer.h"
 #include "voyager/paxos/paxos.pb.h"
+#include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -23,7 +25,9 @@ class Instance {
 
   bool Init();
 
-  bool NewValue(const Slice& value, uint64_t* new_instance_id);
+  bool NewValue(const Slice& value,
+                MachineContext* context,
+                uint64_t* new_instance_id);
 
   void OnReceiveMessage(const Slice& s);
 
@@ -38,6 +42,9 @@ class Instance {
   void LearnerHandleMessage(const PaxosMessage& msg);
   void ProposerHandleMessage(const PaxosMessage& msg);
 
+  bool MachineExecute(uint64_t instance_id, const Slice& value,
+                      bool my_proposal, MachineContext* context);
+
   void NextInstance();
 
   Config* config_;
@@ -46,6 +53,7 @@ class Instance {
   Learner learner_;
   Proposer proposer_;
   RunLoop loop_;
+  port::Mutex mutex_;
   Transfer transfer_;
 
   // No copying allowed

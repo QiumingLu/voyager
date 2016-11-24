@@ -17,8 +17,10 @@ bool Group::Start() {
   return ret;
 }
 
-bool Group::NewValue(const Slice& value, uint64_t* new_instance_id) {
-  return instance_.NewValue(value, new_instance_id);
+bool Group::NewValue(const Slice& value,
+                     MachineContext* context,
+                     uint64_t* new_instance_id) {
+  return instance_.NewValue(value, context, new_instance_id);
 }
 
 void Group::OnReceiveMessage(const Slice& s) {
