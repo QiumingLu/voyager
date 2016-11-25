@@ -1,6 +1,7 @@
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 namespace paxos {
