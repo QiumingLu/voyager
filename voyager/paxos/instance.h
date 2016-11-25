@@ -29,11 +29,11 @@ class Instance {
                 MachineContext* context,
                 uint64_t* new_instance_id);
 
-  void OnReceiveMessage(const Slice& s);
+  void OnReceiveContent(Content* content);
 
   void HandleNewValue(const Slice& value);
 
-  void HandleMessage(const Content& content);
+  void HandleContent(const Content& content);
   void HandlePaxosMessage(const PaxosMessage& msg);
   void HandleCheckPointMessage(const CheckPointMessage& msg);
 

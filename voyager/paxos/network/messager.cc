@@ -13,17 +13,13 @@ bool Messager::PackMessage(ContentType type,
                            PaxosMessage* pmsg,
                            CheckPointMessage* cmsg,
                            std::string* s) {
-  char g[4];
-  int group_id = config_->GetGroupId();
-  memcpy(g, &group_id, sizeof(int));
-  s->append(g);
   Content content;
   content.set_type(type);
-  content.set_gid(config_->GetGid());
+  content.set_group_id(config_->GetGroupId());
   content.set_version(1);
   content.set_allocated_paxos_msg(pmsg);
   content.set_allocated_checkpoint_msg(cmsg);
-  return content.AppendToString(s);
+  return content.SerializeToString(s);
 }
 
 bool Messager::SendMessage(uint64_t node_id, PaxosMessage* msg) {

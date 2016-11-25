@@ -43,16 +43,13 @@ bool NodeImpl::Propose(int group_id, const Slice& value,
 }
 
 void NodeImpl::OnReceiveMessage(const Slice& s) {
-  int group_id;
-  memcpy(&group_id, s.data(), sizeof(int));
-  if (groups_.find(group_id) != groups_.end()) {
-    Slice new_s(s.data() + sizeof(int), s.size() - sizeof(int));
-    if (!new_s.empty()) {
-      groups_[group_id]->OnReceiveMessage(new_s);
-    }
+  Content* content = new Content();
+  content->ParseFromArray(s.data(), static_cast<int>(s.size()));
+  if (groups_.find(content->group_id()) != groups_.end()) {
+    groups_[content->group_id()]->OnReceiveContent(content);
   } else {
     VOYAGER_LOG(ERROR) << "NodeImpl::OnReceiveMessage - group_id="
-                       << group_id << "is not right!";
+                       << content->group_id() << " is not right!";
   }
 }
 

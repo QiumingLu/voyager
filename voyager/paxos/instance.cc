@@ -42,8 +42,8 @@ bool Instance::NewValue(const Slice& value, MachineContext* context,
   return transfer_.NewValue(value, context, new_instance_id);
 }
 
-void Instance::OnReceiveMessage(const Slice& s) {
-  loop_.NewMessage(s);
+void Instance::OnReceiveContent(Content* content) {
+  loop_.NewContent(content);
 }
 
 void Instance::HandleNewValue(const Slice& value) {
@@ -51,15 +51,18 @@ void Instance::HandleNewValue(const Slice& value) {
   proposer_.NewValue(value);
 }
 
-void Instance::HandleMessage(const Content& content) {
+void Instance::HandleContent(const Content& content) {
   if (content.type() == PAXOS_MESSAGE) {
-    HandlePaxosMessage(content.paxos_msg());
+   HandlePaxosMessage(content.paxos_msg());
   } else if (content.type() == CHECKPOINT_MESSAGE) {
     HandleCheckPointMessage(content.checkpoint_msg());
   }
 }
 
 void Instance::HandlePaxosMessage(const PaxosMessage& msg) {
+  std::string s;
+  msg.SerializeToString(&s);
+  printf("type:%d, %s\n", msg.type(), s.c_str());
   switch(msg.type()) {
     case PROPOSER_SEND_NEW_VALUE:
     case PREPARE_REPLY:
@@ -88,7 +91,7 @@ void Instance::ProposerHandleMessage(const PaxosMessage& msg) {
 }
 
 void Instance::AcceptorHandleMessage(const PaxosMessage& msg) {
-  if (msg.instance_id() == acceptor_.GetInstanceId() + 1) {
+  if (msg.instance_id() == acceptor_.GetInstanceId()) {
     if (msg.type() == PREPARE) {
       acceptor_.OnPrepare(msg);
     } else if (msg.type() == ACCEPT) {
@@ -111,7 +114,7 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
       learner_.OnSendNowInstanceId(msg);
       break;
     case LEARNER_COMFIRM_ASK_FOR_LEARN:
-      learner_.OnComfirmForLearn(msg);
+      learner_.OnComfirmAskForLearn(msg);
       break;
     default:
       VOYAGER_LOG(ERROR) << "Instance::LearnerHandleMessage - "
@@ -132,6 +135,8 @@ void Instance::LearnerHandleMessage(const PaxosMessage& msg) {
 
     if (success) {
       NextInstance();
+    } else {
+      proposer_.SetNoSkipPrepare();
     }
   }
 }
@@ -140,6 +145,10 @@ void Instance::NextInstance() {
   acceptor_.NextInstance();
   proposer_.NextInstance();
   learner_.NextInstance();
+  VOYAGER_LOG(INFO) << "Instance::NextInstance - New instance is starting,"
+                    << " Now proposer.instance_id=" << proposer_.GetInstanceId()
+                    << ", acceptor.instance_id=" << acceptor_.GetInstanceId()
+                    << ", learner.instance_id=" << learner_.GetInstanceId();
 }
 
 bool Instance::MachineExecute(uint64_t instance_id, const Slice& value,

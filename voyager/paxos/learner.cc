@@ -31,8 +31,8 @@ void Learner::AskForLearn() {
   msg->set_node_id(config_->GetNodeId());
   msg->set_instance_id(instance_id_);
   msg->set_type(LEARNER_ASK_FOR_LEARN);
-  Messager* messager = config_->GetMessager();
-  messager->BroadcastMessage(msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->BroadcastMessage(msg);
 }
 
 void Learner::OnAskForLearn(const PaxosMessage& msg) {
@@ -48,8 +48,8 @@ void Learner::SendNowInstanceId(const PaxosMessage& msg) {
   reply_msg->set_node_id(config_->GetNodeId());
   reply_msg->set_type(LEARNER_SEND_NOW_INSTANCE_ID);
   reply_msg->set_now_instance_id(instance_id_);
-  Messager* messager = config_->GetMessager();
-  messager->SendMessage(msg.node_id(), reply_msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
 }
 
 void Learner::OnSendNowInstanceId(const PaxosMessage& msg) {
@@ -60,19 +60,19 @@ void Learner::OnSendNowInstanceId(const PaxosMessage& msg) {
     return;
   }
 
-  ComfirmForLearn(msg);
+  ComfirmAskForLearn(msg);
 }
 
-void Learner::ComfirmForLearn(const PaxosMessage& msg) {
+void Learner::ComfirmAskForLearn(const PaxosMessage& msg) {
   PaxosMessage* reply_msg = new PaxosMessage();
   reply_msg->set_node_id(config_->GetNodeId());
   reply_msg->set_instance_id(instance_id_);
   reply_msg->set_type(LEARNER_COMFIRM_ASK_FOR_LEARN);
-  Messager* messager = config_->GetMessager();
-  messager->SendMessage(msg.node_id(), reply_msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
 }
 
-void Learner::OnComfirmForLearn(const PaxosMessage& msg) {
+void Learner::OnComfirmAskForLearn(const PaxosMessage& msg) {
 }
 
 void Learner::BroadcastMessageToFollower() {
@@ -83,8 +83,8 @@ void Learner::BroadcastMessageToFollower() {
   msg->set_proposal_node_id(acceptor_->GetAcceptedBallot().GetNodeId());
   msg->set_proposal_id(acceptor_->GetAcceptedBallot().GetProposalId());
   msg->set_value(acceptor_->GetAcceptedValue());
-  Messager* messager = config_->GetMessager();
-  messager->BroadcastMessageToFollower(msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->BroadcastMessageToFollower(msg);
 }
 
 void Learner::NextInstance() {

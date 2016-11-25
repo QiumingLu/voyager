@@ -30,13 +30,13 @@ TcpServer::~TcpServer() {
 }
 
 void TcpServer::Start() {
-  if (seq_.GetNext() == 0) {
-    schedule_->Start();
-    assert(!acceptor_->IsListenning());
-    eventloop_->RunInLoop([this]() {
-      this->acceptor_->EnableListen();
-    });
-  }
+  eventloop_->RunInLoop([this]() {
+    if (seq_.GetNext() == 0) {
+      schedule_->Start();
+      assert(!acceptor_->IsListenning());
+      acceptor_->EnableListen();
+    }
+  });
 }
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {

@@ -23,8 +23,8 @@ bool Group::NewValue(const Slice& value,
   return instance_.NewValue(value, context, new_instance_id);
 }
 
-void Group::OnReceiveMessage(const Slice& s) {
-  instance_.OnReceiveMessage(s);
+void Group::OnReceiveContent(Content* content) {
+  instance_.OnReceiveContent(content);
 }
 
 }  // namespace paxos

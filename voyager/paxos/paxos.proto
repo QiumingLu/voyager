@@ -38,7 +38,7 @@ enum ContentType {
 
 message Content {
   ContentType type = 1;
-  uint64 gid = 2;
+  int32 group_id = 2;
   uint32 version = 3;
   PaxosMessage paxos_msg = 4;
   CheckPointMessage checkpoint_msg = 5;

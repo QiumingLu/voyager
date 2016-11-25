@@ -22,7 +22,7 @@ class RunLoop {
   void Exit();
 
   void NewValue(const Slice& value);
-  void NewMessage(const Slice& s);
+  void NewContent(Content* content);
 
  private:
   void ThreadFunc();

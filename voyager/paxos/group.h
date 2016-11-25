@@ -5,6 +5,7 @@
 #include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/instance.h"
 #include "voyager/paxos/options.h"
+#include "voyager/paxos/paxos.pb.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
@@ -24,7 +25,7 @@ class Group {
                 MachineContext* context,
                 uint64_t* new_instance_id);
 
-  void OnReceiveMessage(const Slice& s);
+  void OnReceiveContent(Content* content);
 
  private:
   Config config_;

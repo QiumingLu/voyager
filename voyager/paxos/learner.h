@@ -21,7 +21,7 @@ class Learner {
   void OnNewChosenValue(const PaxosMessage& msg);
   void OnAskForLearn(const PaxosMessage& msg);
   void OnSendNowInstanceId(const PaxosMessage& msg);
-  void OnComfirmForLearn(const PaxosMessage& msg);
+  void OnComfirmAskForLearn(const PaxosMessage& msg);
 
   bool HasLearned() const { return has_learned_; }
   const std::string& GetLearnedValue() const { return learned_value_; }
@@ -31,7 +31,7 @@ class Learner {
  private:
   void AskForLearn();
   void SendNowInstanceId(const PaxosMessage& msg);
-  void ComfirmForLearn(const PaxosMessage& msg);
+  void ComfirmAskForLearn(const PaxosMessage& msg);
   void BroadcastMessageToFollower();
 
   Config* config_;

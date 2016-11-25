@@ -1,6 +1,7 @@
 #include "voyager/paxos/proposer.h"
 #include "voyager/paxos/config.h"
 #include "voyager/paxos/instance.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 namespace paxos {
@@ -53,9 +54,14 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   counter_.StartNewRound();
 
+  VOYAGER_LOG(DEBUG) << "Proposer::Prepare - start a new prepare, now "
+                     << "node_id=" << config_->GetNodeId()
+                     << ", instance_id=" << instance_id_
+                     << ", proposal_id_=" << proposal_id_
+                     << ", value=" << value_;
   instance_->HandlePaxosMessage(*msg);
-  Messager* messager = config_->GetMessager();
-  messager->BroadcastMessage(msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->BroadcastMessage(msg);
 }
 
 void Proposer::OnPrepareReply(const PaxosMessage& msg) {
@@ -83,6 +89,8 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
         Accept();
       } else if (counter_.IsRejectedOnThisRound() ||
                  counter_.IsReceiveAllOnThisRound()) {
+        VOYAGER_LOG(DEBUG) << "Proposer::OnPrepareReply - Prepare not pass,"
+                           << "reprepare 300ms later.";
       }
     }
   }
@@ -101,8 +109,8 @@ void Proposer::Accept() {
 
   counter_.StartNewRound();
   instance_->HandlePaxosMessage(*msg);
-  Messager* messager = config_->GetMessager();
-  messager->BroadcastMessage(msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->BroadcastMessage(msg);
 }
 
 void Proposer::OnAccpetReply(const PaxosMessage& msg) {
@@ -125,6 +133,8 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
         NewChosenValue();
       } else if (counter_.IsRejectedOnThisRound() ||
                  counter_.IsReceiveAllOnThisRound()) {
+        VOYAGER_LOG(DEBUG) << "Proposer::OnAccpetReply - Accept not pass,"
+                           << "reprepare 300ms later.";
       }
     }
   }
@@ -137,8 +147,8 @@ void Proposer::NewChosenValue() {
   msg->set_instance_id(instance_id_);
   msg->set_proposal_id(proposal_id_);
   instance_->HandlePaxosMessage(*msg);
-  Messager* messager = config_->GetMessager();
-  messager->BroadcastMessage(msg);
+  assert(config_->GetMessager() != nullptr);
+  config_->GetMessager()->BroadcastMessage(msg);
 }
 
 void Proposer::NextInstance() {

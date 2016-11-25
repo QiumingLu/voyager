@@ -29,6 +29,9 @@ endforeach()
 include_directories(${PROJECT_BINARY_DIR})
 set_source_files_properties(${PROTO_GEN} COMPILE_FLAGS "-Wno-conversion")
 
+file(GLOB PROTO_GEN_CC ${PROTO_GEN}/*.cc)
+file(GLOB PROTO_GEN_H ${PROTO_GEN}/*.h)
+
 add_library(voyager_proto ${PROTO_GEN})
 
 set (paxos_SRCS
@@ -43,6 +46,7 @@ set (paxos_SRCS
   proposer.cc
   runloop.cc
   transfer.cc
+  state_machine.cc
   state_machine_impl.cc
   network/messager.cc
   network/network.cc
@@ -51,7 +55,7 @@ set (paxos_SRCS
 
 add_library(voyager_paxos ${paxos_SRCS})
 
-target_link_libraries(voyager_paxos voyager_http voyager_proto)
+target_link_libraries(voyager_paxos voyager_http voyager_proto protobuf leveldb)
 
 install(TARGETS voyager_paxos DESTINATION lib)
 
@@ -59,10 +63,11 @@ set(HEADERS
   options.h
   nodeinfo.h
   node.h
+  ${PROTO_GEN}
   )
 
 install(FILES ${HEADERS} DESTINATION include/voyager/paxos)
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
-  add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()

@@ -26,6 +26,10 @@ bool Acceptor::Init() {
 }
 
 void Acceptor::OnPrepare(const PaxosMessage& msg) {
+  VOYAGER_LOG(DEBUG) << "Acceptor::OnPrepare - receive a new message, "
+                     << "which node_id=" << msg.node_id()
+                     << ", instance_id=" << msg.instance_id()
+                     << ", proposal_id=" << msg.proposal_id();
   PaxosMessage* reply_msg = new PaxosMessage();
   reply_msg->set_type(PREPARE_REPLY);
   reply_msg->set_node_id(config_->GetNodeId());
@@ -54,8 +58,8 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    Messager* messager = config_->GetMessager();
-    messager->SendMessage(msg.node_id(), reply_msg);
+    assert(config_->GetMessager() != nullptr);
+    config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
   }
 }
 
@@ -85,8 +89,8 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    Messager* messager = config_->GetMessager();
-    messager->SendMessage(msg.node_id(), reply_msg);
+    assert(config_->GetMessager() != nullptr);
+    config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
   }
 }
 

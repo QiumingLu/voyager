@@ -23,10 +23,10 @@ class Network {
   void StartServer(const std::function<void (const Slice& s)>& cb);
   void StopServer();
 
-  void SendMessage(const NodeInfo& other, const Slice& message);
+  void SendMessage(const NodeInfo& other, const std::string& message);
 
  private:
-  void SendMessageInLoop(const SockAddr& addr, const Slice& message);
+  void SendMessageInLoop(const SockAddr& addr, const std::string& message);
 
   SockAddr addr_;
   BGEventLoop bg_loop_;

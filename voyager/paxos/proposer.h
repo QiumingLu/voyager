@@ -23,6 +23,8 @@ class Proposer {
 
   void SetStartProposalId(uint64_t id) { proposal_id_ = id; }
 
+  void SetNoSkipPrepare() { skip_prepare_ = false; }
+
   void NewValue(const Slice& value);
 
   void OnPrepareReply(const PaxosMessage& msg);

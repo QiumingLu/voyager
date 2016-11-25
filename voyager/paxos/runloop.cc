@@ -1,7 +1,7 @@
 #include "voyager/paxos/runloop.h"
 
 #include <functional>
-
+#include <stdio.h>
 #include "voyager/paxos/instance.h"
 #include "voyager/port/mutexlock.h"
 
@@ -39,15 +39,10 @@ void RunLoop::NewValue(const Slice& value) {
   cond_.Signal();
 }
 
-void RunLoop::NewMessage(const Slice& s) {
+void RunLoop::NewContent(Content* content) {
   port::MutexLock lock(&mutex_);
-  Content* content = new Content();
-  bool ret = content->ParseFromArray(s.data(), static_cast<int>(s.size()));
-  if (ret) {
-    contents_.push_back(content);
-    cond_.Signal();
-  } else {
-  }
+  contents_.push_back(content);
+  cond_.Signal();
 }
 
 void RunLoop::ThreadFunc() {
@@ -66,7 +61,7 @@ void RunLoop::ThreadFunc() {
     }
 
     if (content != nullptr) {
-      instance_->HandleMessage(*content);
+      instance_->HandleContent(*content);
       delete content;
     }
 
