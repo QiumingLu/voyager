@@ -60,9 +60,6 @@ void Instance::HandleContent(const Content& content) {
 }
 
 void Instance::HandlePaxosMessage(const PaxosMessage& msg) {
-  std::string s;
-  msg.SerializeToString(&s);
-  printf("type:%d, %s\n", msg.type(), s.c_str());
   switch(msg.type()) {
     case PROPOSER_SEND_NEW_VALUE:
     case PREPARE_REPLY:

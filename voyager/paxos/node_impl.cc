@@ -45,6 +45,12 @@ bool NodeImpl::Propose(int group_id, const Slice& value,
 void NodeImpl::OnReceiveMessage(const Slice& s) {
   Content* content = new Content();
   content->ParseFromArray(s.data(), static_cast<int>(s.size()));
+
+  VOYAGER_LOG(DEBUG) << "NodeImpl::OnReceiveMessage - New Content, which "
+                     << "content_type=" << content->type()
+                     << ", group_id=" << content->group_id()
+                     << ", version=" << content->version();
+
   if (groups_.find(content->group_id()) != groups_.end()) {
     groups_[content->group_id()]->OnReceiveContent(content);
   } else {

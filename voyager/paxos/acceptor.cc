@@ -64,6 +64,11 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
 }
 
 void Acceptor::OnAccpet(const PaxosMessage& msg) {
+  VOYAGER_LOG(DEBUG) << "Acceptor::OnAccpet - receive a new message, "
+                     << "which node_id=" << msg.node_id()
+                     << ", instance_id=" << msg.instance_id()
+                     << ", proposal_id=" << msg.proposal_id();
+
   PaxosMessage* reply_msg = new PaxosMessage();
   reply_msg->set_type(ACCEPT_REPLY);
   reply_msg->set_node_id(config_->GetNodeId());
@@ -95,9 +100,9 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
 }
 
 void Acceptor::NextInstance() {
+  ++instance_id_;
   promised_ballot_.Reset();
   accepted_ballot_.Reset();
-  ++instance_;
   accepted_value_.clear();
 }
 

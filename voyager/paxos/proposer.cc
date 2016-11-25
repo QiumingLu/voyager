@@ -97,6 +97,12 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
 }
 
 void Proposer::Accept() {
+  VOYAGER_LOG(DEBUG) << "Proposer::Accept - start to accept, now "
+                     << "node_id=" << config_->GetNodeId()
+                     << ", instance_id=" << instance_id_
+                     << ", proposal_id_=" << proposal_id_
+                     << ", value=" << value_;
+
   preparing_ = false;
   accepting_ = true;
 
@@ -134,7 +140,7 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
       } else if (counter_.IsRejectedOnThisRound() ||
                  counter_.IsReceiveAllOnThisRound()) {
         VOYAGER_LOG(DEBUG) << "Proposer::OnAccpetReply - Accept not pass,"
-                           << "reprepare 300ms later.";
+                           << " reprepare 300ms later.";
       }
     }
   }

@@ -20,9 +20,19 @@ void Learner::OnNewChosenValue(const PaxosMessage& msg) {
   const BallotNumber& b = acceptor_->GetAcceptedBallot();
   BallotNumber ballot(msg.proposal_id(), msg.node_id());
   if (ballot == b) {
+    VOYAGER_LOG(DEBUG) << "Learner::OnNewChosenValue - learn a new chosen value"
+                       << ", now instance_id_=" << instance_id_
+                       << ", learned_value_=" << learned_value_;
     instance_id_ = acceptor_->GetInstanceId();
     learned_value_ = acceptor_->GetAcceptedValue();
+    has_learned_ = true;
     BroadcastMessageToFollower();
+    VOYAGER_LOG(DEBUG) << "Learner::OnNewChosenValue - learn a new chosen value,"
+                       << " which node_id=" << msg.node_id()
+                       << ", proposal_id=" << msg.proposal_id()
+                       << ", and now learn's instance_id_=" << instance_id_
+                       << ", learned_value_=" << learned_value_;
+
   }
 }
 
@@ -88,7 +98,7 @@ void Learner::BroadcastMessageToFollower() {
 }
 
 void Learner::NextInstance() {
-  ++instance_;
+  ++instance_id_;
   has_learned_ = false;
   learned_value_.clear();
 }
