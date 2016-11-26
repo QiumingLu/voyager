@@ -10,6 +10,7 @@ namespace paxos {
 
 class Config;
 class Instance;
+class Messager;
 
 class Learner {
  public:
@@ -36,6 +37,7 @@ class Learner {
 
   Config* config_;
   Instance* instance_;
+  Messager* messager_;
   Acceptor* acceptor_;
 
   uint64_t instance_id_;

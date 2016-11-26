@@ -39,7 +39,7 @@ int DB::Put(const WriteOptions& options,
             uint64_t instance_id,
             const std::string& value) {
   char key[8];
-  memcpy(key, &instance_id, sizeof(instance_id));
+  memcpy(key, &instance_id, sizeof(uint64_t));
   leveldb::WriteOptions op;
   op.sync = options.sync;
   leveldb::Status status = db_->Put(op, key, value);
@@ -52,7 +52,7 @@ int DB::Put(const WriteOptions& options,
 
 int DB::Delete(const WriteOptions& options, uint64_t instance_id) {
   char key[8];
-  memcpy(key, &instance_id, sizeof(instance_id));
+  memcpy(key, &instance_id, sizeof(uint64_t));
   leveldb::WriteOptions op;
   op.sync = options.sync;
   leveldb::Status status = db_->Delete(op, key);
@@ -64,9 +64,9 @@ int DB::Delete(const WriteOptions& options, uint64_t instance_id) {
 }
 
 int DB::Get(uint64_t instance_id, std::string* value) {
-  char key[8];
+  char key[8] = {0};
   int ret = 0;
-  memcpy(key, &instance_id, sizeof(instance_id));
+  memcpy(key, &instance_id, sizeof(uint64_t));
   leveldb::Status status = db_->Get(leveldb::ReadOptions(), key, value);
   if (!status.ok()) {
     if (status.IsNotFound()) {
@@ -85,12 +85,13 @@ int DB::GetMaxInstanceId(uint64_t* instance_id) {
   leveldb::Iterator* it = db_->NewIterator(leveldb::ReadOptions());
   it->SeekToLast();
   while (it->Valid()) {
-    memcpy(instance_id, it->key().data(), sizeof(uint64_t));
+    memcpy(instance_id, it->key().data(), it->key().size());
     if (*instance_id == kMinChosenKey ||
         *instance_id == kMasterVariables ||
         *instance_id == kSystemVariables) {
       it->Prev();
     } else {
+      ret = 0;
       break;
     }
   }

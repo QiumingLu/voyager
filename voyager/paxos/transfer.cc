@@ -1,5 +1,6 @@
 #include "voyager/paxos/transfer.h"
 #include "voyager/port/mutexlock.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 namespace paxos {
@@ -26,16 +27,23 @@ bool Transfer::NewValue(const Slice& value,
   success_ = false;
   loop_->NewValue(value);
   port::MutexLock lock(&mutex_);
+  bool res = true;
   while (!transfer_end_) {
-    cond_.Wait();
+    res = cond_.Wait(26000);
   }
-  if (success_) {
-    *new_instance_id = instance_id_;
+  if (res) {
+    if (success_) {
+      *new_instance_id = instance_id_;
+    }
+  } else {
+    VOYAGER_LOG(INFO) << "Transfer::NewValue - handle new value("
+                      << value <<") timeout.";
   }
   return success_;
 }
 
 void Transfer::SetNowInstanceId(uint64_t instance_id) {
+  port::MutexLock lock(&mutex_);
   instance_id_ = instance_id;
 }
 
@@ -54,11 +62,11 @@ bool Transfer::IsMyProposal(uint64_t instance_id,
 void Transfer::SetResult(bool success, uint64_t instance_id,
                          const Slice& value) {
   if(instance_id_ == instance_id) {
+    port::MutexLock lock(&mutex_);
     success_ = success;
     if (value_ != value) {
       success_ = false;
     }
-    port::MutexLock lock(&mutex_);
     transfer_end_ = true;
     cond_.Signal();
   }

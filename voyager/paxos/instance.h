@@ -25,9 +25,9 @@ class Instance {
 
   bool Init();
 
-  bool NewValue(const Slice& value,
-                MachineContext* context,
-                uint64_t* new_instance_id);
+  bool OnReceiveValue(const Slice& value,
+                      MachineContext* context,
+                      uint64_t* new_instance_id);
 
   void OnReceiveContent(Content* content);
 

@@ -9,6 +9,7 @@ namespace paxos {
 Proposer::Proposer(Config* config, Instance* instance)
     : config_(config),
       instance_(instance),
+      messager_(config->GetMessager()),
       hightest_proprosal_id_(0),
       instance_id_(0),
       proposal_id_(1),
@@ -59,9 +60,11 @@ void Proposer::Prepare(bool need_new_ballot) {
                      << ", instance_id=" << instance_id_
                      << ", proposal_id_=" << proposal_id_
                      << ", value=" << value_;
+
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
+  messager_->BroadcastMessage(content);
   instance_->HandlePaxosMessage(*msg);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->BroadcastMessage(msg);
+  delete content;
 }
 
 void Proposer::OnPrepareReply(const PaxosMessage& msg) {
@@ -114,9 +117,11 @@ void Proposer::Accept() {
   msg->set_value(value_);
 
   counter_.StartNewRound();
+
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
+  messager_->BroadcastMessage(content);
   instance_->HandlePaxosMessage(*msg);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->BroadcastMessage(msg);
+  delete content;
 }
 
 void Proposer::OnAccpetReply(const PaxosMessage& msg) {
@@ -152,9 +157,10 @@ void Proposer::NewChosenValue() {
   msg->set_node_id(config_->GetNodeId());
   msg->set_instance_id(instance_id_);
   msg->set_proposal_id(proposal_id_);
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
+  messager_->BroadcastMessage(content);
   instance_->HandlePaxosMessage(*msg);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->BroadcastMessage(msg);
+  delete content;
 }
 
 void Proposer::NextInstance() {

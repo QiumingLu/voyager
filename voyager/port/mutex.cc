@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include "voyager/util/logging.h"
 
 namespace voyager {
@@ -40,6 +41,23 @@ Condition::~Condition() {
 void Condition::Wait() {
   PthreadCall("pthread_cond_wait: ",
               pthread_cond_wait(&cond_, &mutex_->mutex_));
+}
+
+bool Condition::Wait(uint64_t millisecond) {
+  struct timeval now;
+  struct timespec outtime;
+  gettimeofday(&now, nullptr);
+  outtime.tv_sec = now.tv_sec + millisecond / 1000;
+  outtime.tv_nsec = now.tv_usec * 1000 + millisecond % 1000 * 1000000000;
+  int ret = pthread_cond_timedwait(&cond_, &mutex_->mutex_, &outtime);
+  if (ret == 0) {
+    return true;
+  } else if (ret == ETIMEDOUT) {
+    return false;
+  } else {
+    PthreadCall("pthread_cond_timedwait: ", ret);
+    return false;
+  }
 }
 
 void Condition::Signal() {

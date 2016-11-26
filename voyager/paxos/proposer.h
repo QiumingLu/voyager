@@ -13,6 +13,7 @@ namespace paxos {
 
 class Config;
 class Instance;
+class Messager;
 
 class Proposer {
  public:
@@ -39,6 +40,7 @@ class Proposer {
 
   Config* config_;
   Instance* instance_;
+  Messager* messager_;
 
   BallotNumber hightest_ballot_;
   uint64_t hightest_proprosal_id_;

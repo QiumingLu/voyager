@@ -10,6 +10,7 @@ Acceptor::Acceptor(Config* config, Instance* instance)
     : log_sync_count_(0),
       config_(config),
       instance_(instance),
+      messager_(config->GetMessager()),
       instance_id_(0) {
 }
 
@@ -58,8 +59,9 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    assert(config_->GetMessager() != nullptr);
-    config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
+    Content* content = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+    config_->GetMessager()->SendMessage(msg.node_id(), content);
+    delete content;
   }
 }
 
@@ -94,8 +96,9 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    assert(config_->GetMessager() != nullptr);
-    config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
+    Content* content = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+    messager_->SendMessage(msg.node_id(), content);
+    delete content;
   }
 }
 
@@ -116,6 +119,7 @@ int Acceptor::ReadFromDB(uint64_t* instance_id) {
   std::string value;
   res = config_->GetDB()->Get(*instance_id, &value);
   if (res !=  0) {
+    *instance_id = 1;
     return res;
   }
 

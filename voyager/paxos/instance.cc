@@ -36,8 +36,9 @@ bool Instance::Init() {
   return ret;
 }
 
-bool Instance::NewValue(const Slice& value, MachineContext* context,
-                        uint64_t* new_instance_id) {
+bool Instance::OnReceiveValue(const Slice& value,
+                              MachineContext* context,
+                              uint64_t* new_instance_id) {
   port::MutexLock lock(&mutex_);
   return transfer_.NewValue(value, context, new_instance_id);
 }

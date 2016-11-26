@@ -9,6 +9,7 @@ namespace paxos {
 Learner::Learner(Config* config, Instance* instance, Acceptor* acceptor)
     : config_(config),
       instance_(instance),
+      messager_(config->GetMessager()),
       acceptor_(acceptor),
       instance_id_(0),
       has_learned_(false) {
@@ -21,9 +22,6 @@ void Learner::OnNewChosenValue(const PaxosMessage& msg) {
   const BallotNumber& b = acceptor_->GetAcceptedBallot();
   BallotNumber ballot(msg.proposal_id(), msg.node_id());
   if (ballot == b) {
-    VOYAGER_LOG(DEBUG) << "Learner::OnNewChosenValue - learn a new chosen value"
-                       << ", now instance_id_=" << instance_id_
-                       << ", learned_value_=" << learned_value_;
     instance_id_ = acceptor_->GetInstanceId();
     learned_value_ = acceptor_->GetAcceptedValue();
     has_learned_ = true;
@@ -42,8 +40,9 @@ void Learner::AskForLearn() {
   msg->set_node_id(config_->GetNodeId());
   msg->set_instance_id(instance_id_);
   msg->set_type(LEARNER_ASK_FOR_LEARN);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->BroadcastMessage(msg);
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
+  messager_->BroadcastMessage(content);
+  delete content;
 }
 
 void Learner::OnAskForLearn(const PaxosMessage& msg) {
@@ -59,8 +58,10 @@ void Learner::SendNowInstanceId(const PaxosMessage& msg) {
   reply_msg->set_node_id(config_->GetNodeId());
   reply_msg->set_type(LEARNER_SEND_NOW_INSTANCE_ID);
   reply_msg->set_now_instance_id(instance_id_);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
+  Content* content =
+      messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+  messager_->SendMessage(msg.node_id(), content);
+  delete content;
 }
 
 void Learner::OnSendNowInstanceId(const PaxosMessage& msg) {
@@ -79,8 +80,9 @@ void Learner::ComfirmAskForLearn(const PaxosMessage& msg) {
   reply_msg->set_node_id(config_->GetNodeId());
   reply_msg->set_instance_id(instance_id_);
   reply_msg->set_type(LEARNER_COMFIRM_ASK_FOR_LEARN);
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->SendMessage(msg.node_id(), reply_msg);
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+  messager_->SendMessage(msg.node_id(), content);
+  delete content;
 }
 
 void Learner::OnComfirmAskForLearn(const PaxosMessage& msg) {
@@ -94,8 +96,9 @@ void Learner::BroadcastMessageToFollower() {
   msg->set_proposal_node_id(acceptor_->GetAcceptedBallot().GetNodeId());
   msg->set_proposal_id(acceptor_->GetAcceptedBallot().GetProposalId());
   msg->set_value(acceptor_->GetAcceptedValue());
-  assert(config_->GetMessager() != nullptr);
-  config_->GetMessager()->BroadcastMessageToFollower(msg);
+  Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
+  messager_->BroadcastMessageToFollower(content);
+  delete content;
 }
 
 void Learner::NextInstance() {

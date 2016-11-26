@@ -2,6 +2,7 @@
 #define VOYAGER_PORT_MUTEX_H_
 
 #include <pthread.h>
+#include <stdint.h>
 
 namespace voyager {
 namespace port {
@@ -31,6 +32,7 @@ class Condition {
   ~Condition();
 
   void Wait();
+  bool Wait(uint64_t millisecond);
   void Signal();
   void SignalAll();
 

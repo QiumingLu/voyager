@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     getline(std::cin, value);
     uint64_t instance_id(0);
     bool success = node->Propose(0, value, &instance_id);
-    printf("bool success:%d, it's instance is %" PRIu64"\n", success, instance_id);
+    printf("bool success:%d, it's instance_id is %" PRIu64"\n", success, instance_id);
   }
 
   printf("paxos test end\n");

@@ -11,6 +11,7 @@ namespace paxos {
 
 class Config;
 class Instance;
+class Messager;
 
 class Acceptor {
  public:
@@ -39,6 +40,7 @@ class Acceptor {
 
   Config* config_;
   Instance* instance_;
+  Messager* messager_;
 
   BallotNumber promised_ballot_;
   BallotNumber accepted_ballot_;
