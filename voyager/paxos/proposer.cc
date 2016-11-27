@@ -12,7 +12,7 @@ Proposer::Proposer(Config* config, Instance* instance)
       messager_(config->GetMessager()),
       hightest_proprosal_id_(0),
       instance_id_(0),
-      proposal_id_(1),
+      proposal_id_(0),
       counter_(config),
       preparing_(false),
       accepting_(false),
@@ -165,10 +165,10 @@ void Proposer::NewChosenValue() {
 
 void Proposer::NextInstance() {
   hightest_proprosal_id_ = 0;
+  ++instance_id_;
   value_.clear();
   preparing_ = false;
   accepting_ = false;
-  ++instance_id_;
   counter_.StartNewRound();
 }
 

@@ -29,7 +29,7 @@ bool Transfer::NewValue(const Slice& value,
   port::MutexLock lock(&mutex_);
   bool res = true;
   while (!transfer_end_) {
-    res = cond_.Wait(26000);
+    res = cond_.Wait(5000);
   }
   if (res) {
     if (success_) {

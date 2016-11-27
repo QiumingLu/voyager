@@ -84,12 +84,7 @@ class EventLoop {
   std::unique_ptr<EventPoller> poller_;
   std::unique_ptr<TimerList> timers_;
 
-  #ifdef __linux__
-  int wakeup_fd_;
-  #else
   int wakeup_fd_[2];
-  #endif
-
   std::unique_ptr<Dispatch> wakeup_dispatch_;
 
   port::Mutex mu_;

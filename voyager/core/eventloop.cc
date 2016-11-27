@@ -15,7 +15,6 @@
 #include "voyager/util/timeops.h"
 
 #ifdef __linux__
-#include <sys/eventfd.h>
 #include "voyager/core/event_epoll.h"
 #else
 #include "voyager/core/event_kqueue.h"
@@ -41,39 +40,16 @@ EventLoop* EventLoop::RunLoop() {
   return runloop;
 }
 
+EventLoop::EventLoop()
+    : exit_(false),
+      run_(false),
+      tid_(port::CurrentThread::Tid()),
+      connection_size_(0),
 #ifdef __linux__
-EventLoop::EventLoop()
-    : exit_(false),
-      run_(false),
-      tid_(port::CurrentThread::Tid()),
-      connection_size_(0),
       poller_(new EventEpoll(this)),
-      timers_(new TimerList(this)),
-      wakeup_fd_(::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC)),
-      wakeup_dispatch_(new Dispatch(this, wakeup_fd_)) {
-  if (wakeup_fd_ == -1) {
-    VOYAGER_LOG(FATAL) << "eventfd: " << strerror(errno);
-  }
-
-  VOYAGER_LOG(INFO) << "EventLoop "<< this << " created in thread " << tid_;
-  if (runloop) {
-    VOYAGER_LOG(FATAL) << "Another EventLoop " << runloop
-                       << " exists in this thread " << tid_;
-  } else {
-    runloop = this;
-  }
-
-  wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
-  wakeup_dispatch_->EnableRead();
-}
-
 #else
-EventLoop::EventLoop()
-    : exit_(false),
-      run_(false),
-      tid_(port::CurrentThread::Tid()),
-      connection_size_(0),
       poller_(new EventKqueue(this)),
+#endif
       timers_(new TimerList(this)) {
 
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, wakeup_fd_) == -1) {
@@ -92,7 +68,6 @@ EventLoop::EventLoop()
   wakeup_dispatch_->SetReadCallback(std::bind(&EventLoop::HandleRead, this));
   wakeup_dispatch_->EnableRead();
 }
-#endif
 
 EventLoop::~EventLoop() {
   runloop = NULL;
@@ -101,12 +76,8 @@ EventLoop::~EventLoop() {
 
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
-#ifdef __linux__
-  ::close(wakeup_fd_);
-#else
   ::close(wakeup_fd_[0]);
   ::close(wakeup_fd_[1]);
-#endif
 }
 
 void EventLoop::Loop() {
@@ -114,7 +85,7 @@ void EventLoop::Loop() {
   exit_ = false;
 
   while (!exit_) {
-    static const uint64_t kPollTimeMs = 10000;
+    static const uint64_t kPollTimeMs = 5000;
     std::vector<Dispatch*> dispatches;
     uint64_t t = timers_->TimeoutMicros();
     int timeout = static_cast<int>(std::min(t, kPollTimeMs));
@@ -266,11 +237,7 @@ void EventLoop::RunFuncs() {
 
 void EventLoop::WakeUp() {
   uint64_t one = 0;
-#ifdef __linux__
-  ssize_t n  = ::write(wakeup_fd_, &one, sizeof(one));
-#else
   ssize_t n  = ::write(wakeup_fd_[1], &one, sizeof(one));
-#endif
   if (n != sizeof(one)) {
     VOYAGER_LOG(ERROR) << "EventLoop::WakeUp - " << wakeup_fd_ << " writes "
                        << n << " bytes instead of 8";
@@ -279,11 +246,7 @@ void EventLoop::WakeUp() {
 
 void EventLoop::HandleRead() {
   uint64_t one = 0;
-#ifdef __linux__
-  ssize_t n = ::read(wakeup_fd_, &one, sizeof(one));
-#else
   ssize_t n = ::read(wakeup_fd_[0], &one, sizeof(one));
-#endif
   if (n != sizeof(one)) {
     VOYAGER_LOG(ERROR) << "EventLoop::HandleRead - " << wakeup_fd_ << " reads "
                        << n << " bytes instead of 8";
