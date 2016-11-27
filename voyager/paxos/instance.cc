@@ -54,7 +54,7 @@ void Instance::HandleNewValue(const Slice& value) {
 
 void Instance::HandleContent(const Content& content) {
   if (content.type() == PAXOS_MESSAGE) {
-   HandlePaxosMessage(content.paxos_msg());
+    HandlePaxosMessage(content.paxos_msg());
   } else if (content.type() == CHECKPOINT_MESSAGE) {
     HandleCheckPointMessage(content.checkpoint_msg());
   }
