@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     voyager::SplitStringUsing(*it, ":", &other);
     voyager::paxos::NodeInfo other_node_info(other[0],
                                              atoi(&*(other[1].begin())));
-    options.all_nodes.push_back(other_node_info);
+    options.all_other_nodes.push_back(other_node_info);
   }
 
   voyager::paxos::Node* node = nullptr;
@@ -53,7 +53,8 @@ int main(int argc, char** argv) {
     getline(std::cin, value);
     uint64_t instance_id(0);
     bool success = node->Propose(0, value, &instance_id);
-    printf("bool success:%d, it's instance_id is %" PRIu64"\n", success, instance_id);
+    printf("bool success:%d, it's instance_id is %" PRIu64"\n",
+           success, instance_id);
   }
 
   printf("paxos test end\n");

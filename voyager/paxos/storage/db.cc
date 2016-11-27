@@ -23,7 +23,7 @@ DB::~DB() {
   delete db_;
 }
 
-int DB::Open(int group_id, const std::string& name) {
+int DB::Open(uint32_t group_id, const std::string& name) {
   leveldb::Options options;
   options.create_if_missing = true;
   options.write_buffer_size = 1024 * 1024 + group_id * 10 * 1024;
@@ -71,7 +71,7 @@ int DB::Get(uint64_t instance_id, std::string* value) {
   if (!status.ok()) {
     if (status.IsNotFound()) {
       ret = 1;
-      VOYAGER_LOG(INFO) << "DB::Get - " << status.ToString();
+      VOYAGER_LOG(DEBUG) << "DB::Get - " << status.ToString();
     } else {
       ret = -1;
       VOYAGER_LOG(ERROR) << "DB::Get - " << status.ToString();

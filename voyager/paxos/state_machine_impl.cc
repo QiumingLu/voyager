@@ -9,7 +9,7 @@ StateMachineImpl::StateMachineImpl(Config* config)
     : config_(config) {
 }
 
-bool StateMachineImpl::Execute(size_t group_idx, uint64_t instance_id,
+bool StateMachineImpl::Execute(uint32_t group_id, uint64_t instance_id,
                                 const std::string& value,
                                 MachineContext* context) {
   SystemVariables variables;
@@ -30,26 +30,22 @@ bool StateMachineImpl::Init() {
   int success = config_->GetDB()->GetSystemVariables(&s);
   if (success != 0 && success != 1) { return false; }
 
-  std::set<uint64_t>& node_id_set = config_->NodeIdSet();
+  std::set<uint64_t>& membership = config_->MemberShip();
 
   if (success == 0) {
-    res = variables_.ParseFromArray(&*(s.data()), static_cast<int>(s.size()));
+    res = variables_.ParseFromString(s);
     if (!res) {
-      VOYAGER_LOG(ERROR) << "SystemVariablesSM::Init - "
+      VOYAGER_LOG(ERROR) << "StateMachineImpl::Init - "
                          << "variables_.ParseFromArray failed, s = " << s;
       return res;
     }
-    node_id_set.clear();
-    for (int i = 0; i < variables_.node_id_size(); ++i) {
-      node_id_set.insert(variables_.node_id(i));
+    membership.clear();
+    for (int i = 0; i < variables_.membership_size(); ++i) {
+      membership.insert(variables_.membership(i));
     }
   } else {
-    variables_.set_gid(0);
-    variables_.set_version(-1);
-
-    for (std::set<uint64_t>::iterator it = node_id_set.begin();
-         it != node_id_set.end(); ++it) {
-      variables_.add_node_id(*it);
+    for (auto m : membership) {
+      variables_.add_membership(m);
     }
   }
   return res;

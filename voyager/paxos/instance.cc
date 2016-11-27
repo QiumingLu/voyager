@@ -81,14 +81,28 @@ void Instance::HandleCheckPointMessage(const CheckPointMessage& msg) {
 }
 
 void Instance::ProposerHandleMessage(const PaxosMessage& msg) {
-  if (msg.type() == PREPARE_REPLY) {
-    proposer_.OnPrepareReply(msg);
-  } else if (msg.type() == ACCEPT_REPLY) {
-    proposer_.OnAccpetReply(msg);
+  if (msg.instance_id() == proposer_.GetInstanceId()) {
+    if (msg.type() == PREPARE_REPLY) {
+      proposer_.OnPrepareReply(msg);
+    } else if (msg.type() == ACCEPT_REPLY) {
+      proposer_.OnAccpetReply(msg);
+    }
+  } else {
+    VOYAGER_LOG(DEBUG) << "Instance::ProposerHandleMessage - "
+                       << "now proposer.instance_id=" << proposer_.GetInstanceId()
+                       << ", but msg.instance_id="  << msg.instance_id()
+                       << " they are not same, so skip this msg";
   }
 }
 
 void Instance::AcceptorHandleMessage(const PaxosMessage& msg) {
+  if (msg.instance_id() == acceptor_.GetInstanceId() + 1) {
+    PaxosMessage new_msg(msg);
+    new_msg.set_instance_id(acceptor_.GetInstanceId());
+    new_msg.set_type(NEW_CHOSEN_VALUE);
+    LearnerHandleMessage(new_msg);
+  }
+
   if (msg.instance_id() == acceptor_.GetInstanceId()) {
     if (msg.type() == PREPARE) {
       acceptor_.OnPrepare(msg);

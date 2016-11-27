@@ -17,7 +17,7 @@ namespace paxos {
 
 class Config {
  public:
-  Config(int group_id, const Options& options, Network* network);
+  Config(uint32_t group_id, const Options& options, Network* network);
   ~Config();
 
   bool Init();
@@ -26,35 +26,32 @@ class Config {
   Messager* GetMessager() const { return messager_; }
   StateMachineImpl* GetStateMachine() const { return state_machine_; }
 
-  int GetGroupId() const { return group_id_; }
-  uint64_t GetGid() const { return gid_; }
+  uint32_t GetGroupId() const { return group_id_; }
 
   bool LogSync() const { return log_sync_; }
-  int SyncInterval() const { return sync_interval_; }
+  uint32_t SyncInterval() const { return sync_interval_; }
 
   uint64_t GetNodeId() const { return node_id_; }
-  size_t GetNodeSize() const { return node_id_set_.size(); }
+  size_t GetNodeSize() const { return membership_.size(); }
 
   size_t GetMajoritySize() const {
-    return (node_id_set_.size() / 2 + 1);
+    return (membership_.size() / 2 + 1);
   }
 
-  std::set<uint64_t>& NodeIdSet() { return node_id_set_; }
+  std::set<uint64_t>& MemberShip() { return membership_; }
+  std::vector<NodeInfo>& FollowNodes() { return follow_nodes_; }
 
   bool IsValidNodeId(uint64_t node_id) const;
 
  private:
-  int group_id_;
-  uint64_t gid_;
+  uint32_t group_id_;
+  uint64_t node_id_;
 
   std::string log_storage_path_;
   bool log_sync_;
-  int sync_interval_;
+  uint32_t sync_interval_;
 
-  uint64_t node_id_;
-  size_t node_size_;
-
-  std::set<uint64_t> node_id_set_;
+  std::set<uint64_t> membership_;
   std::vector<NodeInfo> follow_nodes_;
 
   DB* db_;

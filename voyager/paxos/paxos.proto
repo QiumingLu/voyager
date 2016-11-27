@@ -38,7 +38,7 @@ enum ContentType {
 
 message Content {
   ContentType type = 1;
-  int32 group_id = 2;
+  uint32 group_id = 2;
   uint32 version = 3;
   PaxosMessage paxos_msg = 4;
   CheckPointMessage checkpoint_msg = 5;
@@ -54,7 +54,5 @@ message AcceptorState {
 }
 
 message SystemVariables {
-  uint64 gid = 1;
-  repeated uint64 node_id = 2;
-  uint64 version = 3;
+  repeated uint64 membership = 1;
 }

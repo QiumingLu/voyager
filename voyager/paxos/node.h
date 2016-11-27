@@ -1,6 +1,8 @@
 #ifndef VOYAGER_PAXOS_NODE_H_
 #define VOYAGER_PAXOS_NODE_H_
 
+#include <stdint.h>
+
 #include "voyager/paxos/options.h"
 #include "voyager/util/slice.h"
 
@@ -15,7 +17,7 @@ class Node {
   Node() { }
   virtual ~Node() { }
 
-  virtual bool Propose(int group_id,
+  virtual bool Propose(uint32_t group_id,
                        const Slice& value,
                        uint64_t* new_instance_id) = 0;
 

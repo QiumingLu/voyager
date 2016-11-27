@@ -1,14 +1,12 @@
 #ifndef VOYAGER_PAXOS_INSTANCE_H_
 #define VOYAGER_PAXOS_INSTANCE_H_
 
-#include <string>
-
 #include "voyager/paxos/acceptor.h"
-#include "voyager/paxos/runloop.h"
 #include "voyager/paxos/learner.h"
 #include "voyager/paxos/proposer.h"
-#include "voyager/paxos/state_machine.h"
+#include "voyager/paxos/runloop.h"
 #include "voyager/paxos/transfer.h"
+#include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/paxos.pb.h"
 #include "voyager/port/mutex.h"
 #include "voyager/util/slice.h"
@@ -34,6 +32,7 @@ class Instance {
   void HandleNewValue(const Slice& value);
 
   void HandleContent(const Content& content);
+
   void HandlePaxosMessage(const PaxosMessage& msg);
   void HandleCheckPointMessage(const CheckPointMessage& msg);
 

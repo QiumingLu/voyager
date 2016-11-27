@@ -68,6 +68,13 @@ void Proposer::Prepare(bool need_new_ballot) {
 }
 
 void Proposer::OnPrepareReply(const PaxosMessage& msg) {
+  VOYAGER_LOG(DEBUG) << "Proposer::OnPrepareReply - receive the prepare reply,"
+                     << " which node_id=" << msg.node_id()
+                     << ", proposal_id=" << msg.proposal_id()
+                     << ", reject_for_promised_id=" << msg.reject_for_promised_id()
+                     << ", pre_accepted_id=" << msg.pre_accepted_id()
+                     << ", pre_accepted_node_id=" << msg.pre_accepted_node_id()
+                     << ", value=" << msg.value();
   if (preparing_) {
     if (msg.proposal_id() == proposal_id_) {
       counter_.AddReceivedNode(msg.node_id());
@@ -88,6 +95,7 @@ void Proposer::OnPrepareReply(const PaxosMessage& msg) {
       }
 
       if (counter_.IsPassedOnThisRound()) {
+        VOYAGER_LOG(DEBUG) << "Proposer::OnPrepareReply - Prepare pass.";
         skip_prepare_ = true;
         Accept();
       } else if (counter_.IsRejectedOnThisRound() ||
@@ -125,6 +133,12 @@ void Proposer::Accept() {
 }
 
 void Proposer::OnAccpetReply(const PaxosMessage& msg) {
+  VOYAGER_LOG(DEBUG) << "Proposer::OnAccpetReply - receive the accept reply,"
+                     << " which node_id=" << msg.node_id()
+                     << ", proposal_id=" << msg.proposal_id()
+                     << ", reject_for_promised_id="
+                     << msg.reject_for_promised_id();
+
   if (accepting_) {
     if (msg.proposal_id() == proposal_id_) {
       counter_.AddReceivedNode(msg.node_id());
@@ -140,6 +154,7 @@ void Proposer::OnAccpetReply(const PaxosMessage& msg) {
       }
 
       if (counter_.IsPassedOnThisRound()) {
+        VOYAGER_LOG(DEBUG) << "Proposer::OnAccpetReply - Accept pass.";
         accepting_ = false;
         NewChosenValue();
       } else if (counter_.IsRejectedOnThisRound() ||

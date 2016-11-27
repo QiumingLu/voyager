@@ -36,7 +36,7 @@ class Acceptor {
   int ReadFromDB(uint64_t* instance_id);
   int WriteToDB(uint64_t instance_id, uint32_t last_checksum);
 
-  int log_sync_count_;
+  uint32_t log_sync_count_;
 
   Config* config_;
   Instance* instance_;

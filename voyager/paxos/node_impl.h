@@ -5,14 +5,13 @@
 #include <map>
 
 #include "voyager/paxos/node.h"
+#include "voyager/paxos/group.h"
 #include "voyager/paxos/options.h"
 #include "voyager/paxos/network/network.h"
 #include "voyager/util/slice.h"
 
 namespace voyager {
 namespace paxos {
-
-class Group;
 
 class NodeImpl : public Node {
  public:
@@ -21,7 +20,7 @@ class NodeImpl : public Node {
 
   bool StartWorking();
 
-  virtual bool Propose(int group_id,
+  virtual bool Propose(uint32_t group_id,
                        const Slice& value,
                        uint64_t* new_instance_id);
 
@@ -32,7 +31,7 @@ class NodeImpl : public Node {
 
   Network network_;
 
-  std::map<int, Group*> groups_;
+  std::map<uint32_t, Group*> groups_;
 
   // No copying allowed
   NodeImpl(const NodeImpl&);

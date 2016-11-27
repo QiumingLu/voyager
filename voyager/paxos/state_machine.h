@@ -1,7 +1,6 @@
 #ifndef VOYAGER_PAXOS_STATE_MACHINE_H_
 #define VOYAGER_PAXOS_STATE_MACHINE_H_
 
-#include <stddef.h>
 #include <stdint.h>
 #include <string>
 
@@ -9,7 +8,7 @@ namespace voyager {
 namespace paxos {
 
 struct MachineContext {
-  int machine_id;
+  uint32_t machine_id;
   void* context;
 };
 
@@ -18,10 +17,10 @@ class StateMachine {
   StateMachine();
   virtual ~StateMachine();
 
-  virtual bool Execute(size_t group_idx, uint64_t instance_id,
+  virtual bool Execute(uint32_t group_idx, uint64_t instance_id,
                        const std::string& value, MachineContext* context) = 0;
 
-  virtual int GetMachineId() const = 0;
+  virtual uint32_t GetMachineId() const = 0;
 
  private:
   // No copying allowed

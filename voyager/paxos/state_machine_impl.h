@@ -15,14 +15,14 @@ class StateMachineImpl : public StateMachine {
 
   bool Init();
 
-  virtual bool Execute(size_t group_idx, uint64_t instance_id,
+  virtual bool Execute(uint32_t group_id, uint64_t instance_id,
                        const std::string& value, MachineContext* context);
 
-  virtual int GetMachineId() const { return machine_id_; }
+  virtual uint32_t GetMachineId() const { return machine_id_; }
 
  private:
   Config* config_;
-  int machine_id_;
+  uint32_t machine_id_;
   SystemVariables variables_;
 
   // No cpying allowed

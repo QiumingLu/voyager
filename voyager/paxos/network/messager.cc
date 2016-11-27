@@ -37,10 +37,11 @@ void Messager::BroadcastMessage(Content* content) {
   std::string s;
   bool res = content->SerializeToString(&s);
   if (res) {
-    std::set<uint64_t>& nodes = config_->NodeIdSet();
-    for (std::set<uint64_t>::iterator it = nodes.begin();
-         it != nodes.end(); ++it) {
-      network_->SendMessage(NodeInfo(*it), s);
+    std::set<uint64_t>& membership = config_->MemberShip();
+    for (auto m : membership) {
+      if (m != config_->GetNodeId()) {
+        network_->SendMessage(NodeInfo(m), s);
+      }
     }
   } else {
     VOYAGER_LOG(ERROR) << "Messager::BroadcastMessage - "
@@ -50,6 +51,17 @@ void Messager::BroadcastMessage(Content* content) {
 
 
 void Messager::BroadcastMessageToFollower(Content* content) {
+  std::string s;
+  bool res = content->SerializeToString(&s);
+  if (res) {
+    std::vector<NodeInfo>& follow_nodes(config_->FollowNodes());
+    for (auto f : follow_nodes) {
+      network_->SendMessage(f, s);
+    }
+  } else {
+    VOYAGER_LOG(ERROR) << "Messager::BroadcastMessageToFollower - "
+                       << "content SerializeToString error.";
+  }
 }
 
 }  // namespace paxos

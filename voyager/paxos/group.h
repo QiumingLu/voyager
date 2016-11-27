@@ -2,8 +2,8 @@
 #define VOYAGER_PAXOS_GROUP_H_
 
 #include "voyager/paxos/config.h"
-#include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/instance.h"
+#include "voyager/paxos/state_machine.h"
 #include "voyager/paxos/options.h"
 #include "voyager/paxos/paxos.pb.h"
 #include "voyager/util/slice.h"
@@ -15,7 +15,7 @@ class Network;
 
 class Group {
  public:
-  Group(int group_id, const Options& options, Network* network);
+  Group(uint32_t group_id, const Options& options, Network* network);
 
   bool Start();
 
