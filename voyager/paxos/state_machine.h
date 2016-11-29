@@ -17,8 +17,10 @@ class StateMachine {
   StateMachine();
   virtual ~StateMachine();
 
-  virtual bool Execute(uint32_t group_idx, uint64_t instance_id,
-                       const std::string& value, MachineContext* context) = 0;
+  virtual bool Execute(uint32_t group_idx,
+                       uint64_t instance_id,
+                       const std::string& value,
+                       MachineContext* context) = 0;
 
   virtual uint32_t GetMachineId() const = 0;
 

@@ -36,6 +36,7 @@ add_library(voyager_proto ${PROTO_GEN})
 
 set (paxos_SRCS
   acceptor.cc
+  checkpoint_manager.cc
   config.cc
   counter.cc
   group.cc
