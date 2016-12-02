@@ -3,7 +3,7 @@ VOYAGER_DIRECTORY = $(BUILD_DIR)/build/release-install
 VOYAGER_INCLUDE = $(VOYAGER_DIRECTORY)/include
 VOYAGER_LIBRARY = $(VOYAGER_DIRECTORY)/lib
 
-GPERFTOOLS = /usr/local
+#GPERFTOOLS = /usr/local
 
 CXXFLAGS = -std=c++11 -g -O2 -Wall -Wextra -Werror \
 	   -Wconversion -Wno-unused-parameter \
@@ -14,14 +14,15 @@ CXXFLAGS = -std=c++11 -g -O2 -Wall -Wextra -Werror \
 
 LDFLAGS = -L$(VOYAGER_LIBRARY) -lvoyager_core -lvoyager_port  \
 		  -lvoyager_util -lpthread \
-		  -L$(GPERFTOOLS)/lib -lprofiler
+#		  -L$(GPERFTOOLS)/lib -lprofiler
 
 TESTS = echo
 
 all: $(TESTS)
 
 $(TESTS):
-	g++ $(CXXFLAGS) -I./ -I$(GPERFTOOLS)/include -o $@ $(filter %.cc, $^) $(LDFLAGS)
+	g++ $(CXXFLAGS) -I./ -o $@ $(filter %.cc, $^) $(LDFLAGS)
+#	g++ $(CXXFLAGS) -I./ -I$(GPERFTOOLS)/include -o $@ $(filter %.cc, $^) $(LDFLAGS)
 
 echo: echo.cc
 

@@ -7,7 +7,7 @@
 #include <voyager/core/callback.h>
 #include <voyager/util/logging.h>
 #include <voyager/util/timeops.h>
-#include <gperftools/profiler.h>
+//#include <gperftools/profiler.h>
 #ifdef __linux__
 #include <voyager/core/newtimer.h>
 #endif
@@ -51,7 +51,7 @@ class EchoServer {
 
 // 加入了Google PerfTools来测试,如果不需要可以去掉
 int main(int argc, char** argv) {
-  ProfilerStart("MyProfile");
+//  ProfilerStart("MyProfile");
   voyager::SetLogHandler(nullptr);
   printf("pid=%d, tid=%" PRIu64"\n",
          getpid(), voyager::port::CurrentThread::Tid());
@@ -66,6 +66,6 @@ int main(int argc, char** argv) {
 #endif
   server.Start();
   ev.Loop();
-  ProfilerStop();
+//  ProfilerStop();
   return 0;
 }
