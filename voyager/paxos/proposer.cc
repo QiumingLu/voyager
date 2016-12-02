@@ -63,7 +63,7 @@ void Proposer::Prepare(bool need_new_ballot) {
 
   Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
   messager_->BroadcastMessage(content);
-  instance_->HandlePaxosMessage(*msg);
+  instance_->HandlePaxosMessage(content->paxos_msg());
   delete content;
 }
 
@@ -128,7 +128,7 @@ void Proposer::Accept() {
 
   Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
   messager_->BroadcastMessage(content);
-  instance_->HandlePaxosMessage(*msg);
+  instance_->HandlePaxosMessage(content->paxos_msg());
   delete content;
 }
 
@@ -174,7 +174,7 @@ void Proposer::NewChosenValue() {
   msg->set_proposal_id(proposal_id_);
   Content* content = messager_->PackMessage(PAXOS_MESSAGE, msg, nullptr);
   messager_->BroadcastMessage(content);
-  instance_->HandlePaxosMessage(*msg);
+  instance_->HandlePaxosMessage(content->paxos_msg());
   delete content;
 }
 

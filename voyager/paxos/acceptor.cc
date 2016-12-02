@@ -59,7 +59,8 @@ void Acceptor::OnPrepare(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    Content* content = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+    Content* content
+        = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
     config_->GetMessager()->SendMessage(msg.node_id(), content);
     delete content;
   }
@@ -96,7 +97,8 @@ void Acceptor::OnAccpet(const PaxosMessage& msg) {
     instance_->HandlePaxosMessage(*reply_msg);
     delete reply_msg;
   } else {
-    Content* content = messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
+    Content* content =
+        messager_->PackMessage(PAXOS_MESSAGE, reply_msg, nullptr);
     messager_->SendMessage(msg.node_id(), content);
     delete content;
   }
