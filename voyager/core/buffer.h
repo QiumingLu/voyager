@@ -13,8 +13,6 @@
 
 namespace voyager {
 
-#define SafeCast(x) static_cast<std::vector<char>::difference_type>(x)
-
 class Buffer {
  public:
   explicit Buffer(size_t init_size = kInitBufferSize);
@@ -32,19 +30,24 @@ class Buffer {
     if (WritableSize() < size) {
       MakeSpace(size);
     }
-    std::copy(data, data+size, buf_.begin() + SafeCast(write_index_));
+    std::copy(
+        data,
+        data+size,
+        buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_));
     write_index_ += size;
   }
 
   const char* Peek() const {
-    return &*(buf_.begin() + SafeCast(read_index_));
+    return &*(buf_.begin() +
+              static_cast<std::vector<char>::difference_type>(read_index_));
   }
 
   const char* FindCRLF() {
-    const char* crlf = std::search(&*(buf_.begin() + SafeCast(read_index_)),
-                                   &*(buf_.begin() + SafeCast(write_index_)),
-                                   kCRLF, kCRLF + 2);
-    return crlf == &*(buf_.begin() + SafeCast(write_index_)) ? nullptr : crlf;
+    const char* crlf =
+        std::search(&*(buf_.begin() + static_cast<std::vector<char>::difference_type>(read_index_)),
+                    &*(buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_)),
+                    kCRLF, kCRLF + 2);
+    return crlf == &*(buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_)) ? nullptr : crlf;
   }
 
   void Retrieve(size_t size) {
@@ -58,7 +61,8 @@ class Buffer {
 
   void RetrieveUntil(const char* end) {
     assert(Peek() <= end);
-    assert(end <= &*(buf_.begin() + SafeCast(write_index_)));
+    assert(end <= &*(buf_.begin() +
+           static_cast<std::vector<char>::difference_type>(write_index_)));
     Retrieve(static_cast<size_t>(end - Peek()));
   }
 
@@ -83,8 +87,8 @@ class Buffer {
       buf_.resize(write_index_ + size);
     } else {
       size_t readable_size = ReadableSize();
-      std::copy(buf_.begin() + SafeCast(read_index_),
-                buf_.begin() + SafeCast(write_index_),
+      std::copy(buf_.begin() + static_cast<std::vector<char>::difference_type>(read_index_),
+                buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_),
                 buf_.begin());
       read_index_ = 0;
       write_index_ = read_index_ + readable_size;
