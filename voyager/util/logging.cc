@@ -34,7 +34,7 @@ void DefaultLogHandler(LogLevel level, const char* filename, int line,
            t.tm_sec,
            static_cast<int>(now_tv.tv_usec));
 
-  if (level >= LOGLEVEL_DEBUG) {
+  if (level >= LOGLEVEL_ERROR) {
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
             log_time, loglevel_names[level], filename, line,
             message.c_str());
@@ -99,6 +99,7 @@ DECLARE_STREAM_OPERATOR(long long         , "%lld")
 DECLARE_STREAM_OPERATOR(unsigned long long, "%llu")
 DECLARE_STREAM_OPERATOR(double            , "%g"  )
 DECLARE_STREAM_OPERATOR(void*             , "%p"  )
+DECLARE_STREAM_OPERATOR(const void*       , "%p"  )
 #undef DECLARE_STREAM_OPERATOR
 
 void Logger::Finish() {

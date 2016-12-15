@@ -48,7 +48,7 @@ class TimerServer {
 
   void OnMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
     std::string s(buf->RetrieveAllAsString());
-    std::string message = 
+    std::string message =
         StringPrintf("Recieve your message: %s successfully!", s.c_str());
     ptr->SendMessage(std::move(message));
   }
@@ -69,8 +69,6 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(5666);
   voyager::TimerServer server(&ev, addr);
   server.Start();
-  voyager::TimerList::Timer* t2 = 
-      ev.RunAfter(10000000, [&server]() {server.TimerTest(); });
-  (void)t2;
+  ev.RunAfter(10000000, [&server]() {server.TimerTest(); });
   ev.Loop();
 }

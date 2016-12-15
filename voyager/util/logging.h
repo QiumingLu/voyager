@@ -33,6 +33,7 @@ class Logger {
   Logger& operator<<(unsigned long long value);
   Logger& operator<<(double value);
   Logger& operator<<(void* value);
+  Logger& operator<<(const void* value);
   Logger& operator<<(const char* value);
   Logger& operator<<(const Slice& value);
   Logger& operator<<(const std::string& value);

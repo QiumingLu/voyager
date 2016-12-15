@@ -87,7 +87,7 @@ void EventLoop::Loop() {
   while (!exit_) {
     static const uint64_t kPollTimeMs = 5000;
     std::vector<Dispatch*> dispatches;
-    uint64_t t = timers_->TimeoutMicros();
+    uint64_t t = (timers_->TimeoutMicros() / 1000);
     int timeout = static_cast<int>(std::min(t, kPollTimeMs));
     poller_->Poll(timeout, &dispatches);
     timers_->RunTimerProcs();
@@ -149,41 +149,41 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-TimerList::Timer* EventLoop::RunAt(uint64_t micros_value,
-                                   const TimerProcCallback& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value,
+                         const TimerProcCallback& cb) {
   return timers_->Insert(micros_value, 0, cb);
 }
 
-TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay,
-                                      const TimerProcCallback& cb) {
+TimerId EventLoop::RunAfter(uint64_t micros_delay,
+                            const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, cb);
 }
 
-TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval,
-                                      const TimerProcCallback& cb) {
+TimerId EventLoop::RunEvery(uint64_t micros_interval,
+                            const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, cb);
 }
 
-TimerList::Timer* EventLoop::RunAt(uint64_t micros_value,
-                                   TimerProcCallback&& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value,
+                         TimerProcCallback&& cb) {
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunAfter(uint64_t micros_delay,
-                                      TimerProcCallback&& cb) {
+TimerId EventLoop::RunAfter(uint64_t micros_delay,
+                            TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerList::Timer* EventLoop::RunEvery(uint64_t micros_interval,
-                                      TimerProcCallback&& cb) {
+TimerId EventLoop::RunEvery(uint64_t micros_interval,
+                            TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, std::move(cb));
 }
 
-void EventLoop::RemoveTimer(TimerList::Timer* t) {
+void EventLoop::RemoveTimer(TimerId t) {
   timers_->Erase(t);
 }
 

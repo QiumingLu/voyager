@@ -7,7 +7,7 @@
 
 namespace voyager {
 
-struct TimerList::Timer {
+class Timer {
   Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
       : micros_value(value),
         micros_interval(interval),
@@ -46,41 +46,41 @@ TimerList::~TimerList() {
   STLDeleteValues(&timers_);
 }
 
-TimerList::Timer* TimerList::Insert(uint64_t micros_value,
-                                    uint64_t micros_interval,
-                                    const TimerProcCallback& cb) {
-  Timer* timer = new Timer(micros_value, micros_interval, cb);
-  eventloop_->RunInLoop([this, timer]() {
-    this->InsertInLoop(timer);
+TimerId TimerList::Insert(uint64_t micros_value,
+                          uint64_t micros_interval,
+                          const TimerProcCallback& cb) {
+  TimerId id(micros_value, new Timer(micros_value, micros_interval, cb));
+  eventloop_->RunInLoop([this, id]() {
+    this->InsertInLoop(id);
   });
-  return timer;
+  return id;
 }
 
-TimerList::Timer* TimerList::Insert(uint64_t micros_value,
-                                    uint64_t micros_interval,
-                                    TimerProcCallback&& cb) {
-  Timer* timer = new Timer(micros_value, micros_interval, std::move(cb));
-  eventloop_->RunInLoop([this, timer]() {
-    this->InsertInLoop(timer);
+TimerId TimerList::Insert(uint64_t micros_value,
+                          uint64_t micros_interval,
+                          TimerProcCallback&& cb) {
+  TimerId id(micros_value,
+             new Timer(micros_value, micros_interval, std::move(cb)));
+  eventloop_->RunInLoop([this, id]() {
+    this->InsertInLoop(id);
   });
-  return timer;
+  return id;
 }
 
-void TimerList::Erase(Timer* timer) {
-  eventloop_->RunInLoop([this, timer]() {
-    this->EraseInLoop(timer);
+void TimerList::Erase(TimerId id) {
+  eventloop_->RunInLoop([this, id]() {
+    this->EraseInLoop(id);
   });
 }
 
-void TimerList::InsertInLoop(Timer* timer) {
+void TimerList::InsertInLoop(TimerId id) {
   eventloop_->AssertInMyLoop();
-  timers_.insert(Entry(timer->micros_value, timer));
+  timers_.insert(id);
 }
 
-void TimerList::EraseInLoop(Timer* timer) {
+void TimerList::EraseInLoop(TimerId id) {
   eventloop_->AssertInMyLoop();
-  Entry entry(timer->micros_value, timer);
-  std::set<Entry>::iterator it = timers_.find(entry);
+  std::set<TimerId>::iterator it = timers_.find(id);
   if (it != timers_.end()) {
     delete it->second;
     timers_.erase(it);
@@ -90,9 +90,13 @@ void TimerList::EraseInLoop(Timer* timer) {
 uint64_t TimerList::TimeoutMicros() const {
   eventloop_->AssertInMyLoop();
   if (timers_.empty()) {
-    return 10000;
+    return 5000000;
   }
-  return (timers_.begin()->first - timeops::NowMicros());
+  if (timers_.begin()->first < timeops::NowMicros()) {
+    return 0;
+  } else {
+    return (timers_.begin()->first - timeops::NowMicros());
+  }
 }
 
 void TimerList::RunTimerProcs() {
@@ -102,29 +106,24 @@ void TimerList::RunTimerProcs() {
   }
 
   uint64_t micros_now = timeops::NowMicros();
-  std::vector<Timer*> res(ExpiredTimers(micros_now));
-
-  for (size_t i = 0; i < res.size(); ++i) {
-    res[i]->timerproc_cb();
-
-    if (res[i]->repeat) {
-      res[i]->micros_value = micros_now + res[i]->micros_interval;
-      timers_.insert(Entry(res[i]->micros_value, res[i]));
+  std::set<TimerId>::iterator it;
+  while (true) {
+    it = timers_.begin();
+    if (it != timers_.end() && it->first <= micros_now) {
+      uint64_t micros_value = it->first;
+      Timer* timer = it->second;
+      timers_.erase(it);
+      timer->timerproc_cb();
+      if (timer->repeat) {
+        micros_value += timer->micros_interval;
+        timers_.insert(TimerId(micros_value, timer));
+      } else {
+        delete timer;
+      }
     } else {
-      delete res[i];
+      break;
     }
   }
-}
-
-std::vector<TimerList::Timer*> TimerList::ExpiredTimers(uint64_t micros) {
-  std::vector<Timer*> res;
-  Entry entry(micros, reinterpret_cast<Timer*>(UINTPTR_MAX));
-  std::set<Entry>::iterator end = timers_.lower_bound(entry);
-  for (std::set<Entry>::iterator it = timers_.begin(); it != end; ++it) {
-    res.push_back(it->second);
-  }
-  timers_.erase(timers_.begin(), end);
-  return res;
 }
 
 }  // namespace voyager

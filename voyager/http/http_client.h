@@ -32,7 +32,7 @@ class HttpClient {
 
   EventLoop* eventloop_;
   uint64_t timeout_;
-  TimerList::Timer* timer_;
+  TimerId timer_;
   std::weak_ptr<TcpConnection> gaurd_;
   std::unique_ptr<TcpClient> client_;
   typedef std::deque<RequestCallback> CallbackQueue;

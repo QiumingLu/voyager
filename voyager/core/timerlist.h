@@ -10,33 +10,30 @@
 namespace voyager {
 
 class EventLoop;
+class Timer;
+
+typedef std::pair<uint64_t, Timer*> TimerId;
 
 class TimerList {
  public:
-  struct Timer;
-
   explicit TimerList(EventLoop* ev);
   ~TimerList();
 
-  Timer* Insert(uint64_t micros_value, uint64_t micros_interval,
+  TimerId Insert(uint64_t micros_value, uint64_t micros_interval,
                 const TimerProcCallback& cb);
-  Timer* Insert(uint64_t micros_value, uint64_t micros_interval,
+  TimerId Insert(uint64_t micros_value, uint64_t micros_interval,
                 TimerProcCallback&& cb);
-  void Erase(Timer* timer);
+  void Erase(TimerId id);
 
   uint64_t TimeoutMicros() const;
   void RunTimerProcs();
 
  private:
-  typedef std::pair<uint64_t, Timer*> Entry;
-
-  void InsertInLoop(Timer* timer);
-  void EraseInLoop(Timer* timer);
-
-  std::vector<Timer*> ExpiredTimers(uint64_t micros);
+  void InsertInLoop(TimerId id);
+  void EraseInLoop(TimerId id);
 
   EventLoop* eventloop_;
-  std::set<Entry> timers_;
+  std::set<TimerId> timers_;
 
   // No copying allowed
   TimerList(const TimerList&);
