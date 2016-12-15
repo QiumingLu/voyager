@@ -23,14 +23,14 @@ class TimerList {
                 const TimerProcCallback& cb);
   TimerId Insert(uint64_t micros_value, uint64_t micros_interval,
                 TimerProcCallback&& cb);
-  void Erase(TimerId id);
+  void Erase(const TimerId& id);
 
   uint64_t TimeoutMicros() const;
   void RunTimerProcs();
 
  private:
-  void InsertInLoop(TimerId id);
-  void EraseInLoop(TimerId id);
+  void InsertInLoop(const TimerId& id);
+  void EraseInLoop(const TimerId& id);
 
   EventLoop* eventloop_;
   std::set<TimerId> timers_;

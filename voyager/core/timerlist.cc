@@ -67,18 +67,18 @@ TimerId TimerList::Insert(uint64_t micros_value,
   return id;
 }
 
-void TimerList::Erase(TimerId id) {
+void TimerList::Erase(const TimerId& id) {
   eventloop_->RunInLoop([this, id]() {
     this->EraseInLoop(id);
   });
 }
 
-void TimerList::InsertInLoop(TimerId id) {
+void TimerList::InsertInLoop(const TimerId& id) {
   eventloop_->AssertInMyLoop();
   timers_.insert(id);
 }
 
-void TimerList::EraseInLoop(TimerId id) {
+void TimerList::EraseInLoop(const TimerId& id) {
   eventloop_->AssertInMyLoop();
   std::set<TimerId>::iterator it = timers_.find(id);
   if (it != timers_.end()) {
