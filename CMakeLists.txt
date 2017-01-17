@@ -64,11 +64,8 @@ add_subdirectory(voyager/port)
 add_subdirectory(voyager/core)
 add_subdirectory(voyager/http)
 
-if (CMAKE_BUILD_RPC)
-  set(PROTOBUF_INCLUDE_DIR ${CMAKE_PROTOBUF_PATH}/include)    
-  set(PROTOBUF_LIBRARY_DIR ${CMAKE_PROTOBUF_PATH}/lib)    
-  include_directories(${PROTOBUF_INCLUDE_DIR})    
-  link_directories(${PROTOBUF_LIBRARY_DIR})
+find_package(Protobuf)
+if (Protobuf_FOUND)
   add_subdirectory(voyager/rpc)
 endif()
 
