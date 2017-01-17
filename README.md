@@ -15,4 +15,4 @@ Voyager的核心代码位于voyager目录中，其结构分为五部分，分别
 编译安装方法：
 
 在voyager的根目录下，执行 sh build.sh
-即可完成安装，安装后的目录为../build, 相关的测试及使用demo的执行文件在../build/release或../build/debug目录下，生产的lib库和所需的头文件在../build/release-install或../build/debug-install目录下。
+即可完成安装，安装后的目录为./build, 相关的测试及使用demo的执行文件在./build/release或./build/debug目录下，生产的lib库和所需的头文件在./build/release-install或./build/debug-install目录下。
