@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project (voyager C CXX)
+project (Voyager C CXX)
 
 enable_testing()
 
@@ -14,7 +14,7 @@ set(CXX_FLAGS
   -D_FILE_OFFSET_BITS=64
   -Wall
   -Wextra
-  -Werror
+  #  -Werror
   -Wconversion
   -Wno-unused-parameter
   -Woverloaded-virtual

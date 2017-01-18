@@ -1,4 +1,4 @@
-VOYAGER_DIRECTORY = ./build/release-install
+VOYAGER_DIRECTORY = ../build/release-install
 VOYAGER_INCLUDE = $(VOYAGER_DIRECTORY)/include
 VOYAGER_LIBRARY = $(VOYAGER_DIRECTORY)/lib
 

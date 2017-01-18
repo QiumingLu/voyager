@@ -10,11 +10,18 @@ set(rpc_SRCS
   ${PROTO_SRCS}
   )
 
-add_library(voyager_rpc ${rpc_SRCS})
-set_target_properties(voyager_rpc PROPERTIES COMPILE_FLAGS "-Wno-error")
-target_link_libraries(voyager_rpc voyager_core protobuf)
+add_library(voyager_rpc SHARED ${rpc_SRCS})
+add_library(voyager_rpc_static STATIC ${rpc_SRCS})
+set_target_properties(voyager_rpc_static PROPERTIES OUTPUT_NAME "voyager_rpc")
+set_target_properties(voyager_rpc PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(voyager_rpc_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(voyager_rpc PROPERTIES VERSION 1.0 SOVERSION 1)
 
-install(TARGETS voyager_rpc DESTINATION lib)
+target_link_libraries(voyager_rpc voyager_core ${PROTOBUF_LIBRARIES})
+
+set_target_properties(voyager_rpc PROPERTIES COMPILE_FLAGS "-Wno-error -Wno-shorten-64-to-32")
+
+install(TARGETS voyager_rpc_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 
 set(HEADERS
   rpc_codec.h
