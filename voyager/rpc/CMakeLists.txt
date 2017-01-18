@@ -10,7 +10,7 @@ set(rpc_SRCS
   ${PROTO_SRCS}
   )
 
-add_library(voyager_rpc)
+add_library(voyager_rpc ${rpc_SRCS})
 
 target_link_libraries(voyager_rpc voyager_core ${PROTOBUF_LIBRARIES})
 
