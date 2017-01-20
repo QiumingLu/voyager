@@ -66,7 +66,7 @@ add_subdirectory(voyager/http)
 
 find_package(Protobuf)
 if (Protobuf_FOUND)
-  add_subdirectory(voyager/rpc)
+    add_subdirectory(voyager/rpc)
 endif()
 
 if (NOT CMAKE_BUILD_NO_EXAMPLES)
