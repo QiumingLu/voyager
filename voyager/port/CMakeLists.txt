@@ -9,7 +9,7 @@ if(CMAKE_BUILD_SHARED_LIB)
   set_target_properties(voyager_port_static PROPERTIES OUTPUT_NAME "voyager_port")		
   set_target_properties(voyager_port PROPERTIES CLEAN_DIRECT_OUTPUT 1)		
   set_target_properties(voyager_port_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)		
-  set_target_properties(voyager_port PROPERTIES VERSION 1.0 SOVERSION 1)
+  set_target_properties(voyager_port PROPERTIES VERSION 1.5 SOVERSION 1)
 
   target_link_libraries(voyager_port voyager_util pthread)
 
