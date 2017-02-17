@@ -35,12 +35,12 @@ if (CMAKE_BUILD_SHARED_LIB)
 
   target_link_libraries(voyager_core voyager_port)
 
-  install(TARGETS voyager_core DESTINATION lib)
-  install(TARGETS voyager_core_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+  install(TARGETS voyager_core DESTINATION out-shared)
+  install(TARGETS voyager_core_static LIBRARY DESTINATION out-static ARCHIVE DESTINATION out-static)
 else()
   add_library(voyager_core ${core_SRCS})
   target_link_libraries(voyager_core voyager_port)
-  install(TARGETS voyager_core DESTINATION lib)
+  install(TARGETS voyager_core DESTINATION out-static)
 endif()
 
 set(HEADERS 

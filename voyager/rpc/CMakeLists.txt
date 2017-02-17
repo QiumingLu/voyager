@@ -22,12 +22,12 @@ if(CMAKE_BUILD_SHARED_LIB)
 
   #  set_target_properties(voyager_rpc PROPERTIES COMPILE_FLAGS "-Wno-error -Wno-shorten-64-to-32")
 
-  install(TARGETS voyager_rpc DESTINATION lib)
-  install(TARGETS voyager_rpc_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
+  install(TARGETS voyager_rpc DESTINATION out-shared)
+  install(TARGETS voyager_rpc_static LIBRARY DESTINATION out-static ARCHIVE DESTINATION out-static)
 else()
   add_library(voyager_rpc ${rpc_SRCS})
   target_link_libraries(voyager_rpc voyager_core)
-  install(TARGETS voyager_rpc DESTINATION lib)
+  install(TARGETS voyager_rpc DESTINATION out-static)
 endif()
 
 set(HEADERS
