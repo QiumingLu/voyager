@@ -3,7 +3,7 @@ set(port_SRCS
   thread.cc
   )
 
-if(CMAKE_BUILD_SHARED_LIB)
+if(CMAKE_BUILD_SHARED_LIBS)
   add_library(voyager_port SHARED ${port_SRCS})
   add_library(voyager_port_static STATIC ${port_SRCS})		
   set_target_properties(voyager_port_static PROPERTIES OUTPUT_NAME "voyager_port")		
@@ -13,12 +13,12 @@ if(CMAKE_BUILD_SHARED_LIB)
 
   target_link_libraries(voyager_port voyager_util pthread)
 
-  install(TARGETS voyager_port DESTINATION out-shared)
-  install(TARGETS voyager_port_static LIBRARY DESTINATION out-static ARCHIVE DESTINATION out-static)
+  install(TARGETS voyager_port DESTINATION lib)
+  install(TARGETS voyager_port_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 else()
   add_library(voyager_port ${port_SRCS})
   target_link_libraries(voyager_port voyager_util pthread)
-  install(TARGETS voyager_port DESTINATION out-static)
+  install(TARGETS voyager_port DESTINATION lib)
 endif()
 
 

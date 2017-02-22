@@ -10,7 +10,7 @@ set(util_SRCS
   base64/modp_base64/modp_b64.cc
   )
 
-if(CMAKE_BUILD_SHARED_LIB)
+if(CMAKE_BUILD_SHARED_LIBS)
   add_library(voyager_util SHARED ${util_SRCS})
   add_library(voyager_util_static STATIC ${util_SRCS})    
   set_target_properties(voyager_util_static PROPERTIES OUTPUT_NAME "voyager_util")    
@@ -18,11 +18,11 @@ if(CMAKE_BUILD_SHARED_LIB)
   set_target_properties(voyager_util_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)   
   set_target_properties(voyager_util PROPERTIES VERSION 1.5 SOVERSION 1)    
         
-  install(TARGETS voyager_util DESTINATION out-shared)
-  install(TARGETS voyager_util_static LIBRARY DESTINATION out-static ARCHIVE DESTINATION out-static)
+  install(TARGETS voyager_util DESTINATION lib)
+  install(TARGETS voyager_util_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 else()
   add_library(voyager_util ${util_SRCS})
-  install(TARGETS voyager_util DESTINATION out-static)
+  install(TARGETS voyager_util DESTINATION lib)
 endif()
 
 file(GLOB HEADERS "*.h")

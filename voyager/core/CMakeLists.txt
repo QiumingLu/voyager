@@ -25,7 +25,7 @@ else()
   list(APPEND core_SRCS "event_kqueue.cc")
 endif()
 
-if (CMAKE_BUILD_SHARED_LIB)
+if (CMAKE_BUILD_SHARED_LIBS)
   add_library(voyager_core SHARED ${core_SRCS})
   add_library(voyager_core_static STATIC ${core_SRCS})    
   set_target_properties(voyager_core_static PROPERTIES OUTPUT_NAME "voyager_core")    
@@ -35,12 +35,12 @@ if (CMAKE_BUILD_SHARED_LIB)
 
   target_link_libraries(voyager_core voyager_port)
 
-  install(TARGETS voyager_core DESTINATION out-shared)
-  install(TARGETS voyager_core_static LIBRARY DESTINATION out-static ARCHIVE DESTINATION out-static)
+  install(TARGETS voyager_core DESTINATION lib)
+  install(TARGETS voyager_core_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 else()
   add_library(voyager_core ${core_SRCS})
   target_link_libraries(voyager_core voyager_port)
-  install(TARGETS voyager_core DESTINATION out-static)
+  install(TARGETS voyager_core DESTINATION lib)
 endif()
 
 set(HEADERS 
