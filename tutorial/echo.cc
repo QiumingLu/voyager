@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
   printf("pid=%d, tid=%" PRIu64"\n",
          getpid(), voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
-  voyager::SockAddr addr(5666);
+  voyager::SockAddr addr("127.0.0.1", 5666);
   voyager::EchoServer server(&ev, addr);
 #ifdef __linux__
   voyager::NewTimer timer(&ev, [&ev]() { ev.Exit(); });

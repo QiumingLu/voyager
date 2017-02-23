@@ -16,4 +16,4 @@ Voyager的核心代码位于voyager目录中，其结构分为六部分，分别
 
 在voyager的根目录下，执行 ./build.sh
 即可完成编译，编译后生成的目录为./build/release, 相关的测试及使用demo的执行文件在./build/release目录下。
-到./build/release目录下，执行make install,即可完成安装，默认安装目录为/usr/local
+到./build/release目录下，执行sudo make install,即可完成安装，默认安装目录为/usr/local(可通过修改build.sh文件来修改安装选项)。

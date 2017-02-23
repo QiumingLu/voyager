@@ -18,7 +18,7 @@ if(CMAKE_BUILD_SHARED_LIBS)
 
   target_link_libraries(voyager_http voyager_core)
 
-  install(TARGETS voyager_http DESTINATION out-shared)
+  install(TARGETS voyager_http DESTINATION lib)
   install(TARGETS voyager_http_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 else()
   add_library(voyager_http ${http_SRCS})
