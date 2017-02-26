@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/core/sockaddr.h"
 
 #include <sys/types.h>
@@ -10,7 +14,7 @@
 namespace voyager {
 
 SockAddr::SockAddr(uint16_t port) {
-  Status st = GetAddrInfo(nullptr, port);
+  Status st = GetAddrInfo("127.0.0.1", port);
   if (!st.ok()) {
     VOYAGER_LOG(ERROR) << st;
   }

@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef VOYAGER_HTTP_HTTP_CLIENT_H_
 #define VOYAGER_HTTP_HTTP_CLIENT_H_
 
@@ -12,6 +16,7 @@
 
 namespace voyager {
 
+// Noly write for test, which cann't use in produce environment!
 class HttpClient {
  public:
   typedef std::function<void (HttpResponsePtr,

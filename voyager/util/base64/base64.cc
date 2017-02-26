@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/util/base64/base64.h"
 #include "voyager/util/base64/modp_base64/modp_b64.h"
 #include "voyager/util/stl_util.h"

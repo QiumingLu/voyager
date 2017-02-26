@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef VOYAGER_RPC_CHANNEL_H_
 #define VOYAGER_RPC_CHANNEL_H_
 
@@ -19,7 +23,7 @@ class RpcChannel : public google::protobuf::RpcChannel {
  public:
   typedef std::function<void (ErrorCode code)> ErrorCallback;
 
-  RpcChannel(EventLoop* loop);
+  explicit RpcChannel(EventLoop* loop);
   virtual ~RpcChannel();
 
   void SetTcpConnectionPtr(const TcpConnectionPtr& p) {

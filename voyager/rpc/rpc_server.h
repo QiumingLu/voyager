@@ -1,10 +1,13 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef VOYAGER_RPC_SERVER_H_
 #define VOYAGER_RPC_SERVER_H_
 
 #include <map>
 #include <string>
 #include <google/protobuf/service.h>
-//#include <google/protobuf/stubs/callback.h>
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"

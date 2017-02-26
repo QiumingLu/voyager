@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/core/eventloop.h"
 
 #include <signal.h>
@@ -51,7 +55,6 @@ EventLoop::EventLoop()
       poller_(new EventKqueue(this)),
 #endif
       timers_(new TimerList(this)) {
-
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, wakeup_fd_) == -1) {
     VOYAGER_LOG(FATAL) << "socketpair failed";
   }

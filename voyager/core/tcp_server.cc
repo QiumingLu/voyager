@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/core/tcp_server.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/schedule.h"

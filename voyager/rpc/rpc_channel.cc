@@ -1,4 +1,10 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/rpc/rpc_channel.h"
+
+#include <string>
 
 namespace voyager {
 
@@ -8,7 +14,7 @@ RpcChannel::RpcChannel(EventLoop* loop)
 }
 
 RpcChannel::~RpcChannel() {
-  for(auto it : call_map_) {
+  for (auto it : call_map_) {
     delete it.second.response;
     delete it.second.done;
     loop_->RemoveTimer(it.second.timer);

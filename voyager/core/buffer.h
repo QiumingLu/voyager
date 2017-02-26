@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef VOYAGER_CORE_BUFFER_H_
 #define VOYAGER_CORE_BUFFER_H_
 
@@ -33,21 +37,26 @@ class Buffer {
     std::copy(
         data,
         data+size,
-        buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_));
+        buf_.begin() + static_cast<std::ptrdiff_t>(write_index_));
     write_index_ += size;
   }
 
   const char* Peek() const {
-    return &*(buf_.begin() +
-              static_cast<std::vector<char>::difference_type>(read_index_));
+    return &*(buf_.begin() + static_cast<std::ptrdiff_t>(read_index_));
   }
 
   const char* FindCRLF() {
     const char* crlf =
-        std::search(&*(buf_.begin() + static_cast<std::vector<char>::difference_type>(read_index_)),
-                    &*(buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_)),
-                    kCRLF, kCRLF + 2);
-    return crlf == &*(buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_)) ? nullptr : crlf;
+        std::search(
+            &*(buf_.begin() + static_cast<std::ptrdiff_t>(read_index_)),
+            &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_)),
+            kCRLF,
+            kCRLF + 2);
+    if (crlf == &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_))) {
+      return nullptr;
+    } else {
+      return crlf;
+    }
   }
 
   void Retrieve(size_t size) {
@@ -61,8 +70,8 @@ class Buffer {
 
   void RetrieveUntil(const char* end) {
     assert(Peek() <= end);
-    assert(end <= &*(buf_.begin() +
-           static_cast<std::vector<char>::difference_type>(write_index_)));
+    assert(
+        end <= &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_)));
     Retrieve(static_cast<size_t>(end - Peek()));
   }
 
@@ -87,8 +96,8 @@ class Buffer {
       buf_.resize(write_index_ + size);
     } else {
       size_t readable_size = ReadableSize();
-      std::copy(buf_.begin() + static_cast<std::vector<char>::difference_type>(read_index_),
-                buf_.begin() + static_cast<std::vector<char>::difference_type>(write_index_),
+      std::copy(buf_.begin() + static_cast<std::ptrdiff_t>(read_index_),
+                buf_.begin() + static_cast<std::ptrdiff_t>(write_index_),
                 buf_.begin());
       read_index_ = 0;
       write_index_ = read_index_ + readable_size;

@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef VOYAGER_UTIL_LOGGING_H_
 #define VOYAGER_UTIL_LOGGING_H_
 
@@ -56,7 +60,7 @@ class LogFinisher {
 };
 
 #define VOYAGER_LOG(LEVEL)                                \
-  ::voyager::LogFinisher() =                             \
+  ::voyager::LogFinisher() =                              \
     ::voyager::Logger(                                    \
       ::voyager::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
 

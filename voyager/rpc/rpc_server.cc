@@ -1,3 +1,7 @@
+// Copyright (c) 2016 Mirants Lu. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "voyager/rpc/rpc_server.h"
 #include "voyager/rpc/rpc_codec.h"
 
@@ -27,7 +31,7 @@ void RpcServer::OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
   RpcCodec codec;
   RpcMessage msg;
   bool res = codec.ParseFromBuffer(buf, &msg);
-  while(res) {
+  while (res) {
     OnRequest(p, msg);
     res = codec.ParseFromBuffer(buf, &msg);
   }
