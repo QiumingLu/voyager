@@ -23,13 +23,13 @@ void ThreadFunc2(int x) {
 class Foo {
  public:
   explicit Foo(double x) : x_(x) { }
-  
+
   void MemberFunc() {
     printf("tid=%" PRIu64", Foo::x_=%f\n",  port::CurrentThread::Tid(), x_);
   }
 
   void MemberFunc2(const std::string& text) {
-    printf("tid=%" PRIu64", Foo::x_=%f, test=%s\n", 
+    printf("tid=%" PRIu64", Foo::x_=%f, test=%s\n",
            port::CurrentThread::Tid(), x_, text.c_str());
   }
 
