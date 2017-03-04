@@ -16,7 +16,7 @@ if(CMAKE_BUILD_SHARED_LIBS)
   set_target_properties(voyager_util_static PROPERTIES OUTPUT_NAME "voyager_util")    
   set_target_properties(voyager_util PROPERTIES CLEAN_DIRECT_OUTPUT 1)    
   set_target_properties(voyager_util_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)   
-  set_target_properties(voyager_util PROPERTIES VERSION 1.5 SOVERSION 1)    
+  set_target_properties(voyager_util PROPERTIES VERSION 1.6 SOVERSION 1)    
         
   install(TARGETS voyager_util DESTINATION lib)
   install(TARGETS voyager_util_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)

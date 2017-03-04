@@ -31,7 +31,7 @@ if (CMAKE_BUILD_SHARED_LIBS)
   set_target_properties(voyager_core_static PROPERTIES OUTPUT_NAME "voyager_core")    
   set_target_properties(voyager_core PROPERTIES CLEAN_DIRECT_OUTPUT 1)    
   set_target_properties(voyager_core_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)   
-  set_target_properties(voyager_core PROPERTIES VERSION 1.5 SOVERSION 1)
+  set_target_properties(voyager_core PROPERTIES VERSION 1.6 SOVERSION 1)
 
   target_link_libraries(voyager_core voyager_port)
 

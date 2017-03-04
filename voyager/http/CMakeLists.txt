@@ -14,7 +14,7 @@ if(CMAKE_BUILD_SHARED_LIBS)
   set_target_properties(voyager_http_static PROPERTIES OUTPUT_NAME "voyager_http")    
   set_target_properties(voyager_http PROPERTIES CLEAN_DIRECT_OUTPUT 1)    
   set_target_properties(voyager_http_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)   
-  set_target_properties(voyager_http PROPERTIES VERSION 1.5 SOVERSION 1)
+  set_target_properties(voyager_http PROPERTIES VERSION 1.6 SOVERSION 1)
 
   target_link_libraries(voyager_http voyager_core)
 
