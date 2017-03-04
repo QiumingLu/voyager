@@ -69,7 +69,7 @@ add_subdirectory(voyager/core)
 add_subdirectory(voyager/http)
 
 find_package(Protobuf)
-if (Protobuf_FOUND)
+if (PROTOBUF_FOUND)
     add_subdirectory(voyager/rpc)
 endif()
 
