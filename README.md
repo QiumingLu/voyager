@@ -4,7 +4,7 @@ Voyager（旅行者）是一个C++多线程非阻塞网络库，可以运行在L
 <br/>
 <br/>[![Build Status](https://travis-ci.org/QiumingLu/voyager.svg?branch=master)](https://travis-ci.org/QiumingLu/voyager)
 <br/>
-<br/>Authors: Mirants Lu (mirantslu@gmail.com) 
+<br/>Author: Mirants Lu (mirantslu@gmail.com) 
 <br/>
 <br/>**Voyager主要包含以下几个部分**：
 <br/>
