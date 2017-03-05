@@ -45,7 +45,7 @@ Voyager（旅行者）是一个C++多线程非阻塞网络库，可以运行在L
 * 吞吐量的测试采用了asio的测试方法,对应代码为benchmarks/client.cc和benchmarks/server.cc，可使用已经写好的shell脚本来启动，链接为http://think-async.com/Asio/LinuxPerformanceImprovements 。
 * 事件处理效率的测试采用了libevent的测试方法，对应代码为benchmarks/bench.cc, 链接为http://libev.schmorp.de/bench.html 。
 <br/>
-<br/>**测试结果表明，Voyager在吞吐量和并发量方面表现优异，和asio和libevent相当。使用者可以根据测试代码在不同的环境下自行测试。**
+<br/>**测试结果表明，Voyager在吞吐量和并发量方面表现优异，和asio吞吐量、libevent事件处理效率相当。使用者可以根据测试代码在不同的环境下自行测试。**
 
 ## 兼容性
 Voyager支持Linux，macOS 等类Unix平台，不支持Windows平台，以下是一些曾测试的平台/编译器组合：
