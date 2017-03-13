@@ -50,14 +50,14 @@ class RpcChannel : public google::protobuf::RpcChannel {
   struct CallData {
     google::protobuf::Message* response;
     google::protobuf::Closure* done;
-    TimerId timer;
+    Timer* timer;
 
     CallData()
         : response(nullptr), done(nullptr), timer() {
     }
     CallData(google::protobuf::Message* r,
              google::protobuf::Closure* d,
-             TimerId t)
+             Timer* t)
         : response(r), done(d), timer(t) {
     }
   };

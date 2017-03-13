@@ -39,15 +39,15 @@ class EventLoop {
   void RunInLoop(Func&& func);
   void QueueInLoop(Func&& func);
 
-  TimerId RunAt(uint64_t micros_value, const TimerProcCallback& cb);
-  TimerId RunAfter(uint64_t micros_delay, const TimerProcCallback& cb);
-  TimerId RunEvery(uint64_t micros_interval, const TimerProcCallback& cb);
+  Timer* RunAt(uint64_t micros_value, const TimerProcCallback& cb);
+  Timer* RunAfter(uint64_t micros_delay, const TimerProcCallback& cb);
+  Timer* RunEvery(uint64_t micros_interval, const TimerProcCallback& cb);
 
-  TimerId RunAt(uint64_t micros_value, TimerProcCallback&& cb);
-  TimerId RunAfter(uint64_t micros_delay, TimerProcCallback&& cb);
-  TimerId RunEvery(uint64_t micros_interval, TimerProcCallback&& cb);
+  Timer* RunAt(uint64_t micros_value, TimerProcCallback&& cb);
+  Timer* RunAfter(uint64_t micros_delay, TimerProcCallback&& cb);
+  Timer* RunEvery(uint64_t micros_interval, TimerProcCallback&& cb);
 
-  void RemoveTimer(TimerId t);
+  void RemoveTimer(Timer* t);
 
   void AssertInMyLoop() {
     if (!IsInMyLoop()) {

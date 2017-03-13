@@ -11,82 +11,52 @@
 
 namespace voyager {
 
-class Timer {
-  Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
-      : micros_value(value),
-        micros_interval(interval),
-        timerproc_cb(cb),
-        repeat(false) {
-    if (micros_interval > 0) {
-      repeat = true;
-    }
-  }
-
-  Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
-      : micros_value(value),
-        micros_interval(interval),
-        timerproc_cb(std::move(cb)),
-        repeat(false) {
-    if (micros_interval > 0) {
-      repeat = true;
-    }
-  }
-
- private:
-  friend class TimerList;
-
-  uint64_t micros_value;
-  uint64_t micros_interval;
-  TimerProcCallback timerproc_cb;
-  bool repeat;
-};
-
-
 TimerList::TimerList(EventLoop* ev)
     : eventloop_(CHECK_NOTNULL(ev)) {
 }
 
 TimerList::~TimerList() {
-  STLDeleteValues(&timers_);
+  for (auto& t : timers_) {
+    delete t;
+  }
 }
 
-TimerId TimerList::Insert(uint64_t micros_value,
-                          uint64_t micros_interval,
-                          const TimerProcCallback& cb) {
-  TimerId id(micros_value, new Timer(micros_value, micros_interval, cb));
-  eventloop_->RunInLoop([this, id]() {
-    this->InsertInLoop(id);
+Timer* TimerList::Insert(uint64_t micros_value,
+                         uint64_t micros_interval,
+                         const TimerProcCallback& cb) {
+  Timer* timer(new Timer(micros_value, micros_interval, cb));
+  eventloop_->RunInLoop([this, timer]() {
+    InsertInLoop(timer);
   });
-  return id;
+  return timer;
 }
 
-TimerId TimerList::Insert(uint64_t micros_value,
-                          uint64_t micros_interval,
-                          TimerProcCallback&& cb) {
-  TimerId id(micros_value,
-             new Timer(micros_value, micros_interval, std::move(cb)));
-  eventloop_->RunInLoop([this, id]() {
-    this->InsertInLoop(id);
+Timer* TimerList::Insert(uint64_t micros_value,
+                         uint64_t micros_interval,
+                         TimerProcCallback&& cb) {
+  Timer* timer(new Timer(micros_value, micros_interval, std::move(cb)));
+  eventloop_->RunInLoop([this, timer]() {
+    InsertInLoop(timer);
   });
-  return id;
+  return timer;
 }
 
-void TimerList::Erase(const TimerId& id) {
-  eventloop_->RunInLoop([this, id]() {
-    this->EraseInLoop(id);
+void TimerList::Erase(Timer* timer) {
+  eventloop_->RunInLoop([this, timer]() {
+    EraseInLoop(timer);
   });
 }
 
-void TimerList::InsertInLoop(const TimerId& id) {
+void TimerList::InsertInLoop(Timer* timer) {
   eventloop_->AssertInMyLoop();
-  timers_.insert(id);
+  timers_.insert(timer);
 }
 
-void TimerList::EraseInLoop(const TimerId& id) {
+void TimerList::EraseInLoop(Timer* timer) {
   eventloop_->AssertInMyLoop();
-  std::set<TimerId>::iterator it = timers_.find(id);
+  std::set<Timer*>::iterator it = timers_.find(timer);
   if (it != timers_.end()) {
-    delete it->second;
+    delete *it;
     timers_.erase(it);
   }
 }
@@ -94,12 +64,13 @@ void TimerList::EraseInLoop(const TimerId& id) {
 uint64_t TimerList::TimeoutMicros() const {
   eventloop_->AssertInMyLoop();
   if (timers_.empty()) {
-    return 5000000;
+    return -1;
   }
-  if (timers_.begin()->first < timeops::NowMicros()) {
+  std::set<Timer*>::iterator it = timers_.begin();
+  if ((*it)->micros_value < timeops::NowMicros()) {
     return 0;
   } else {
-    return (timers_.begin()->first - timeops::NowMicros());
+    return ((*it)->micros_value - timeops::NowMicros());
   }
 }
 
@@ -110,17 +81,16 @@ void TimerList::RunTimerProcs() {
   }
 
   uint64_t micros_now = timeops::NowMicros();
-  std::set<TimerId>::iterator it;
+  std::set<Timer*>::iterator it;
   while (true) {
     it = timers_.begin();
-    if (it != timers_.end() && it->first <= micros_now) {
-      uint64_t micros_value = it->first;
-      Timer* timer = it->second;
+    if (it != timers_.end() && (*it)->micros_value <= micros_now) {
+      Timer* timer = *it;
       timers_.erase(it);
       timer->timerproc_cb();
       if (timer->repeat) {
-        micros_value += timer->micros_interval;
-        timers_.insert(TimerId(micros_value, timer));
+        timer->micros_value += timer->micros_interval;
+        timers_.insert(timer);
       } else {
         delete timer;
       }

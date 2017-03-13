@@ -36,7 +36,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
   std::string s;
   if (codec_.SerializeToString(msg, &s)) {
     conn_->SendMessage(s);
-    TimerId t = loop_->RunAfter(
+    Timer* t = loop_->RunAfter(
         micros_, std::bind(&RpcChannel::TimeoutHandler, this, id));
     port::MutexLock lock(&mutex_);
     call_map_[id] = CallData(response, done, t);
