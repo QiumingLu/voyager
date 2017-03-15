@@ -1,5 +1,5 @@
-#Voyager -- C++多线程网络库
-##简介
+# Voyager -- C++多线程网络库
+## 简介
 Voyager（旅行者）是一个C++多线程非阻塞网络库，可以运行在Linux，Mac OS X, FreeBSD等类Unix操作系统上。该网络库采用Reactor模式，IO模型为IO multiplexing + non-blocking IO, 线程模型为one loop per thread + threadpool，每个线程最多有一个事件轮询，每个TCP连接都必须归某一个线程来管理，它所有的IO都在该线程上完成。
 <br/>
 <br/>[![Build Status](https://travis-ci.org/QiumingLu/voyager.svg?branch=master)](https://travis-ci.org/QiumingLu/voyager)
@@ -8,16 +8,16 @@ Voyager（旅行者）是一个C++多线程非阻塞网络库，可以运行在L
 <br/>
 <br/>**Voyager主要包含以下几个部分**：
 <br/>
-<br/>**util**: 基础库模块，主要包含日志处理，字符串处理，一个简单的JSON程序和一些工具类。
-<br/>**port**: 线程库模块，主要是互斥量，条件变量，线程类的封装等。
-<br/>**core**: 核心网络库，实现基本的网络传输功能和定时事件等。
-<br/>**http**: HTTP服务器，在网络库core的基础上搭建的一个不完善的http服务器。
-<br/>**rpc**:  RPC远程调用库，基于core和Google Protobuf搭建的一个RPC库。
-<br/>**docs**: 一些文档说明。
-<br/>**examples**: Voyager的使用示例，如suduku服务器和客户端的实现。
-<br/>**benchmarks**: 对比测试，借鉴于Boost的asio和libevent等的测试方法，来进行吞吐量和并发量的测试。
+<br/>1. **util**: 基础库模块，主要包含日志处理，字符串处理，一个简单的JSON程序和一些工具类。
+<br/>2. **port**: 线程库模块，主要是互斥量，条件变量，线程类的封装等。
+<br/>3. **core**: 核心网络库，实现基本的网络传输功能和定时事件等。
+<br/>4. **http**: HTTP服务器，在网络库core的基础上搭建的一个不完善的http服务器。
+<br/>5. **rpc**:  RPC远程调用库，基于core和Google Protobuf搭建的一个RPC库。
+<br/>6. **docs**: 一些文档说明。
+<br/>7. **examples**: Voyager的使用示例，如suduku服务器和客户端的实现。
+<br/>8. **benchmarks**: 对比测试，借鉴于Boost的asio和libevent等的测试方法，来进行吞吐量和并发量的测试。
 
-##特性
+## 特性
 * 采用**Reactor**模式来实现，IO模型为**IO multiplexing + non-blocking IO**。
 * 基于事件的驱动和回调，支持多种IO多路复用技术，包括select，poll(2)，epoll(4)， kqueue。
 * 线程模型为**one loop per thread + threadpool**，每个线程最多有一个事件轮询，每个TCP连接都必须归某一个线程来管理，它所有的IO都在该线程上完成。
@@ -29,23 +29,23 @@ Voyager（旅行者）是一个C++多线程非阻塞网络库，可以运行在L
 * 提供完整的网络传输，定时器，RPC远程调用等功能。
 * 接口简单易用，示例丰富。
 
-##局限
+## 局限
 * 没有做特别的过载保护，在高压的情况下可能会导致服务不可用。
 * 没有做特别的安全保护，需要经过二次开发才能应用于外网环境。
 * 不支持Windows，只支持Linux，macOS等类Unix系统。
 
-##使用场景
+## 使用场景
 * 可用于公司内部的大规模分布式系统中，如在Skywalker中用来处理Paxos集群的网络通信。
 * 可用做游戏服务器，但如果还需要UDP传输的话，需要自行开发。
 * 可用于高频交易系统，类似于sudu库这种高频计算场景。
 
-##性能
+## 性能
 对Voyager做了不少的对比测试，测试代码位于benchmarks目录中。
 <br/>
 * 吞吐量的测试采用了asio的测试方法,对应代码为benchmarks/client.cc和benchmarks/server.cc，可使用已经写好的shell脚本来启动，链接为http://think-async.com/Asio/LinuxPerformanceImprovements 。
 * 事件处理效率的测试采用了libevent的测试方法，对应代码为benchmarks/bench.cc, 链接为http://libev.schmorp.de/bench.html 。
-<br/>
-<br/>**测试结果表明，Voyager在吞吐量和并发量方面表现优异，和asio吞吐量、libevent事件处理效率相当。使用者可以根据测试代码在不同的环境下自行测试。**
+
+测试结果表明，Voyager在吞吐量和并发量方面表现优异，和asio吞吐量、libevent事件处理效率相当。使用者可以根据测试代码在不同的环境下自行测试。
 
 ## 兼容性
 Voyager支持Linux，macOS 等类Unix平台，不支持Windows平台，以下是一些曾测试的平台/编译器组合：
@@ -64,4 +64,3 @@ Voyager支持Linux，macOS 等类Unix平台，不支持Windows平台，以下是
 * 执行./build.sh
 * 进入./build/release目录
 * 执行sudo make install（默认安装目录为/usr/local，可通过修改build.sh文件来修改安装选项)
-
