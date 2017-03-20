@@ -31,18 +31,18 @@ void HttpServer::Start() {
 }
 
 void HttpServer::NewConnection(const TcpConnectionPtr& ptr) {
-  ptr->SetUserData(new HttpRequestParser());
+  ptr->SetContext(new HttpRequestParser());
 }
 
 void HttpServer::HandleClose(const TcpConnectionPtr& ptr) {
   HttpRequestParser* parser
-      = reinterpret_cast<HttpRequestParser*>(ptr->UserData());
+      = reinterpret_cast<HttpRequestParser*>(ptr->Context());
   delete parser;
 }
 
 void HttpServer::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
   HttpRequestParser* parser
-      = reinterpret_cast<HttpRequestParser*>(ptr->UserData());
+      = reinterpret_cast<HttpRequestParser*>(ptr->Context());
   bool ok = parser->ParseBuffer(buf);
   if (!ok) {
     ptr->SendMessage(std::string("HTTP/1.1 400 Bad Request\r\n\r\n"));

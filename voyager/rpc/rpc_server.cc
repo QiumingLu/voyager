@@ -53,7 +53,7 @@ void RpcServer::OnRequest(const TcpConnectionPtr& p,
       if (request->ParseFromString(msg.data())) {
         google::protobuf::Message* response =
             service->GetResponsePrototype(method).New();
-        p->SetUserData(new int(msg.id()));
+        p->SetContext(new int(msg.id()));
         service->CallMethod(
             method, nullptr, request, response,
             google::protobuf::NewCallback(
@@ -83,7 +83,7 @@ void RpcServer::OnRequest(const TcpConnectionPtr& p,
 
 void RpcServer::Done(google::protobuf::Message* response,
                      TcpConnectionPtr p) {
-  int* id = reinterpret_cast<int*>(p->UserData());
+  int* id = reinterpret_cast<int*>(p->Context());
   RpcMessage msg;
   msg.set_id(*id);
   msg.set_data(response->SerializeAsString());

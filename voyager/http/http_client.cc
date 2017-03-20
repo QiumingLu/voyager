@@ -53,7 +53,7 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
   client_->SetConnectionCallback([this, request](const TcpConnectionPtr& ptr) {
     eventloop_->RemoveTimer(timer_);
     gaurd_ = ptr;
-    ptr->SetUserData(new HttpResponseParser());
+    ptr->SetContext(new HttpResponseParser());
     ptr->SendMessage(&request->RequestMessage());
   });
 
@@ -70,7 +70,7 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
 void HttpClient::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buffer) {
   assert(!queue_cb_.empty());
   HttpResponseParser* parser
-      = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
+      = reinterpret_cast<HttpResponseParser*>(ptr->Context());
   bool ok = parser->ParseBuffer(buffer);
   if (!ok) {
     ptr->ShutDown();
@@ -86,7 +86,7 @@ void HttpClient::HandleMessage(const TcpConnectionPtr& ptr, Buffer* buffer) {
 
 void HttpClient::HandleClose(const TcpConnectionPtr& ptr) {
     HttpResponseParser* parser
-        = reinterpret_cast<HttpResponseParser*>(ptr->UserData());
+        = reinterpret_cast<HttpResponseParser*>(ptr->Context());
     for (CallbackQueue::iterator it = queue_cb_.begin();
          it != queue_cb_.end(); ++it) {
       (*it)(nullptr, Status::NetworkError("Unknow error"));
