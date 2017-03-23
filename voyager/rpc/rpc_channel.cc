@@ -17,9 +17,7 @@ RpcChannel::~RpcChannel() {
   for (auto it : call_map_) {
     delete it.second.response;
     delete it.second.done;
-    if (it.second.timer) {
-      loop_->RemoveTimer(it.second.timer);
-    }
+    loop_->RemoveTimer(it.second.timer);
   }
 }
 
@@ -38,9 +36,9 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
   std::string s;
   if (codec_.SerializeToString(msg, &s)) {
     conn_->SendMessage(s);
-    Timer* t = nullptr;
+    TimerId t;
     if (micros_ > 0) {
-      loop_->RunAfter(
+      t = loop_->RunAfter(
           micros_, std::bind(&RpcChannel::TimeoutHandler, this, id));
     }
     port::MutexLock lock(&mutex_);
@@ -89,9 +87,8 @@ void RpcChannel::OnResponse(const RpcMessage& msg) {
       call_map_.erase(it);
     }
   }
-  if (data.timer) {
-    loop_->RemoveTimer(data.timer);
-  }
+  loop_->RemoveTimer(data.timer);
+  
   if (msg.error() == ERROR_CODE_OK) {
     if (data.response) {
       data.response->ParseFromString(msg.data());

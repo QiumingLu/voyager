@@ -152,41 +152,41 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-Timer* EventLoop::RunAt(uint64_t micros_value,
-                        const TimerProcCallback& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value,
+                         const TimerProcCallback& cb) {
   return timers_->Insert(micros_value, 0, cb);
 }
 
-Timer* EventLoop::RunAfter(uint64_t micros_delay,
-                           const TimerProcCallback& cb) {
+TimerId EventLoop::RunAfter(uint64_t micros_delay,
+                            const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, cb);
 }
 
-Timer* EventLoop::RunEvery(uint64_t micros_interval,
-                           const TimerProcCallback& cb) {
+TimerId EventLoop::RunEvery(uint64_t micros_interval,
+                            const TimerProcCallback& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, cb);
 }
 
-Timer* EventLoop::RunAt(uint64_t micros_value,
-                        TimerProcCallback&& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value,
+                         TimerProcCallback&& cb) {
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-Timer* EventLoop::RunAfter(uint64_t micros_delay,
-                           TimerProcCallback&& cb) {
+TimerId EventLoop::RunAfter(uint64_t micros_delay,
+                            TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-Timer* EventLoop::RunEvery(uint64_t micros_interval,
-                           TimerProcCallback&& cb) {
+TimerId EventLoop::RunEvery(uint64_t micros_interval,
+                            TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, std::move(cb));
 }
 
-void EventLoop::RemoveTimer(Timer* t) {
+void EventLoop::RemoveTimer(TimerId t) {
   timers_->Erase(t);
 }
 
