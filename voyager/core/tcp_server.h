@@ -67,8 +67,6 @@ class TcpServer {
   EventLoop* eventloop_;
   std::string ipbuf_;
   const std::string name_;
-  std::unique_ptr<TcpAcceptor> acceptor_;
-  std::unique_ptr<Schedule> schedule_;
   port::SequenceNumber seq_;
   uint64_t conn_id_;
 
@@ -76,6 +74,9 @@ class TcpServer {
   CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
+
+  std::unique_ptr<Schedule> schedule_;
+  std::unique_ptr<TcpAcceptor> acceptor_;
 
   // No copying allowed
   TcpServer(const TcpServer&);

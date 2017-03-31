@@ -20,9 +20,9 @@ TcpServer::TcpServer(EventLoop* ev,
     : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
-      acceptor_(new TcpAcceptor(eventloop_, addr, backlog)),
+      conn_id_(0),
       schedule_(new Schedule(eventloop_, thread_size-1)),
-      conn_id_(0) {
+      acceptor_(new TcpAcceptor(eventloop_, addr, backlog)) {
   acceptor_->SetNewConnectionCallback(
       std::bind(&TcpServer::NewConnection, this,
                 std::placeholders::_1, std::placeholders::_2));

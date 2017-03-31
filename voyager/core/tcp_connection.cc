@@ -174,13 +174,17 @@ void TcpConnection::HandleError() {
 void TcpConnection::SendMessage(std::string&& message) {
   if (state_ == kConnected) {
     if (eventloop_->IsInMyLoop()) {
-      SendInLoop(&*message.begin(), message.size());
+      SendInLoop(message.data(), message.size());
     } else {
-      std::string *s = new std::string(std::move(message));
+      // FIXME
+      // (1) Use std::unique_ptr to replace std::shared_ptr in C++14?
+      // (2) Use native pointer and delete it in lamada function,
+      //     but memory leaks will occur when the function nerver run
+      //     because the eventloop has exited.
+      std::shared_ptr<std::string> s(new std::string(std::move(message)));
       TcpConnectionPtr ptr(shared_from_this());
       eventloop_->RunInLoop([ptr, s]() {
-        ptr->SendInLoop(&*s->begin(), s->size());
-        delete s;
+        ptr->SendInLoop(s->data(), s->size());
       });
     }
   }
@@ -191,11 +195,11 @@ void TcpConnection::SendMessage(const Slice& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      std::string *s = new std::string(message.data(), message.size());
+      std::shared_ptr<std::string>s(
+          new std::string(message.data(), message.size()));
       TcpConnectionPtr ptr(shared_from_this());
       eventloop_->RunInLoop([ptr, s]() {
-        ptr->SendInLoop(&*s->begin(), s->size());
-        delete s;
+        ptr->SendInLoop(s->data(), s->size());
       });
     }
   }
@@ -208,13 +212,12 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      std::string *s = new std::string(message->Peek(),
-                                       message->ReadableSize());
+      std::shared_ptr<std::string> s(
+          new std::string(message->Peek(), message->ReadableSize()));
       message->RetrieveAll();
       TcpConnectionPtr ptr(shared_from_this());
       eventloop_->RunInLoop([ptr, s]() {
-        ptr->SendInLoop(&*s->begin(), s->size());
-        delete s;
+        ptr->SendInLoop(s->data(), s->size());
       });
     }
   }

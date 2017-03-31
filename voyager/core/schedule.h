@@ -26,8 +26,8 @@ class Schedule {
   EventLoop* baseloop_;
   size_t size_;
   bool started_;
-  std::vector<std::unique_ptr<BGEventLoop>> bg_loops_;
   std::vector<EventLoop*> loops_;
+  std::vector<std::unique_ptr<BGEventLoop>> bg_loops_;
 
   // No copying alloweded
   Schedule(const Schedule&);
