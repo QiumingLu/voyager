@@ -23,6 +23,8 @@ class SockAddr {
   }
   sa_family_t Family() const { return sa_.ss_family; }
   std::string Ipbuf() const { return ipbuf_; }
+  std::string Ip() const { return ip_; }
+  uint16_t Port() const { return port_; }
 
   static int FormatAddress(const char* ip, uint16_t port,
                            char* buf, size_t buf_size);
@@ -44,6 +46,8 @@ class SockAddr {
   Status GetAddrInfo(const char* host, uint16_t port);
 
   struct sockaddr_storage sa_;
+  std::string ip_;
+  uint16_t port_;
   std::string ipbuf_;
 };
 

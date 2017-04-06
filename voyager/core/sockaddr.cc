@@ -46,9 +46,14 @@ Status SockAddr::GetAddrInfo(const char* host, uint16_t port) {
   memcpy(&this->sa_, result->ai_addr, result->ai_addrlen);
   ::freeaddrinfo(result);
 
-  char ipbuf[64];
-  SockAddr::SockAddrToIPPort(reinterpret_cast<sockaddr*>(&sa_),
-                             ipbuf, sizeof(ipbuf));
+  char ip[64];
+  SockAddr::SockAddrToIP(reinterpret_cast<sockaddr*>(&sa_),
+                         ip, sizeof(ip));
+  char ipbuf[128];
+  FormatAddress(ip, port, ipbuf, sizeof(ipbuf));
+
+  ip_ = std::string(ip);
+  port_ = port;
   ipbuf_ = std::string(ipbuf, sizeof(ipbuf));
 
   return Status::OK();
