@@ -6,15 +6,23 @@ endif()
 
 project (Voyager C CXX)
 
+set(VOYAGER_VERSION_MAJOR 1)
+set(VOYAGER_VERSION_MINOR 6)
+set(VOYAGER_VERSION_STRING ${VOYAGER_VERSION_MAJOR}.${VOYAGER_VERSION_MINOR})
+
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "release")
 endif()
 
-if(NOT CMAKE_BUILD_SHARED_LIBS)
-  set(CMAKE_BUILD_SHARED_LIBS on)
+if(NOT CMAKE_INSTALL_DIR)
+  set(CMAKE_INSTALL_DIR "/usr/local")
 endif()
+
+option(BUILD_TESTS "Build voyager perftests and unittests" on)
+option(BUILD_EXAMPLES "Build voyager examples" on)
+option(BUILD_SHARED_LIBS "Build voyager shared libraries" on)
 
 set(CXX_FLAGS
   -g
@@ -77,7 +85,7 @@ if (PROTOBUF_FOUND)
     add_subdirectory(voyager/rpc)
 endif()
 
-if (NOT CMAKE_BUILD_NO_EXAMPLES)
+if (BUILD_EXAMPLES)
   add_subdirectory(examples/sudoku)
   add_subdirectory(examples/pingpong)
   add_subdirectory(benchmarks)

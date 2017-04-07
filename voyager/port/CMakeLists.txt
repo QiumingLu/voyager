@@ -3,13 +3,13 @@ set(port_SRCS
   thread.cc
   )
 
-if(CMAKE_BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
   add_library(voyager_port SHARED ${port_SRCS})
   add_library(voyager_port_static STATIC ${port_SRCS})		
   set_target_properties(voyager_port_static PROPERTIES OUTPUT_NAME "voyager_port")		
-  set_target_properties(voyager_port PROPERTIES CLEAN_DIRECT_OUTPUT 1)		
-  set_target_properties(voyager_port_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)		
-  set_target_properties(voyager_port PROPERTIES VERSION 1.6 SOVERSION 1)
+  set_target_properties(voyager_port PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})		
+  set_target_properties(voyager_port_static PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})		
+  set_target_properties(voyager_port PROPERTIES VERSION ${VOYAGER_VERSION_STRING} SOVERSION ${VOYAGER_VERSION_MAJOR})
 
   target_link_libraries(voyager_port voyager_util pthread)
 
@@ -25,6 +25,6 @@ endif()
 file(GLOB HEADERS "*.h")
 install(FILES ${HEADERS} DESTINATION include/voyager/port)
 
-if (NOT CMAKE_BUILD_NO_EXAMPLES) 
+if (BUILD_TESTS) 
   add_subdirectory(tests)
 endif()

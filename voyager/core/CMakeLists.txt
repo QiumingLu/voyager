@@ -25,13 +25,13 @@ else()
   list(APPEND core_SRCS "event_kqueue.cc")
 endif()
 
-if (CMAKE_BUILD_SHARED_LIBS)
+if (BUILD_SHARED_LIBS)
   add_library(voyager_core SHARED ${core_SRCS})
   add_library(voyager_core_static STATIC ${core_SRCS})    
   set_target_properties(voyager_core_static PROPERTIES OUTPUT_NAME "voyager_core")    
-  set_target_properties(voyager_core PROPERTIES CLEAN_DIRECT_OUTPUT 1)    
-  set_target_properties(voyager_core_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)   
-  set_target_properties(voyager_core PROPERTIES VERSION 1.6 SOVERSION 1)
+  set_target_properties(voyager_core PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})    
+  set_target_properties(voyager_core_static PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})   
+  set_target_properties(voyager_core PROPERTIES VERSION ${VOYAGER_VERSION_STRING} SOVERSION ${VOYAGER_VERSION_MAJOR})
 
   target_link_libraries(voyager_core voyager_port)
 
@@ -70,6 +70,6 @@ endif()
 
 install(FILES ${HEADERS} DESTINATION include/voyager/core)
 
-if (NOT CMAKE_BUILD_NO_EXAMPLES)
+if (BUILD_TESTS)
   add_subdirectory(tests)
 endif()
