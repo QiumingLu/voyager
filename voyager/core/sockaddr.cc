@@ -34,7 +34,7 @@ Status SockAddr::GetAddrInfo(const char* host, uint16_t port) {
   snprintf(portbuf, sizeof(portbuf), "%u", port);
   memset(&hints, 0, sizeof(hints));
   hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE;  // No effect if bindaddr != nullptr */
+  hints.ai_flags = AI_PASSIVE;  // No effect if bindaddr != nullptr
 
   int ret = ::getaddrinfo(host, portbuf, &hints, &result);
   if (ret != 0) {

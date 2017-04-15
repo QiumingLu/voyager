@@ -41,8 +41,12 @@ class Condition {
   void SignalAll();
 
  private:
-  pthread_cond_t cond_;
   Mutex* mutex_;
+  pthread_cond_t cond_;
+
+  // No copying allowed
+  Condition(const Condition&);
+  void operator=(const Condition&);
 };
 
 }  // namespace port

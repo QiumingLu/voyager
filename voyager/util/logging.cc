@@ -19,26 +19,26 @@ namespace voyager {
 
 void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
-  static const char* loglevel_names[] = {
-     "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
-
-  char log_time[64];
-  struct timeval now_tv;
-  gettimeofday(&now_tv, nullptr);
-  const time_t seconds = now_tv.tv_sec;
-  struct tm t;
-  localtime_r(&seconds, &t);
-  snprintf(log_time, sizeof(log_time),
-           "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
-           t.tm_year + 1900,
-           t.tm_mon + 1,
-           t.tm_mday,
-           t.tm_hour,
-           t.tm_min,
-           t.tm_sec,
-           static_cast<int>(now_tv.tv_usec));
-
   if (level >= LOGLEVEL_ERROR) {
+    static const char* loglevel_names[] = {
+        "DEBUG", "INFO ", "WARN ", "ERROR", "FATAL" };
+
+    char log_time[64];
+    struct timeval now_tv;
+    gettimeofday(&now_tv, nullptr);
+    const time_t seconds = now_tv.tv_sec;
+    struct tm t;
+    localtime_r(&seconds, &t);
+    snprintf(log_time, sizeof(log_time),
+             "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
+             t.tm_year + 1900,
+             t.tm_mon + 1,
+             t.tm_mday,
+             t.tm_hour,
+             t.tm_min,
+             t.tm_sec,
+             static_cast<int>(now_tv.tv_usec));
+
     fprintf(stderr, "[%s][%s %s:%d] %s\n",
             log_time, loglevel_names[level], filename, line,
             message.c_str());
@@ -63,7 +63,7 @@ Logger& Logger::operator<<(const char* value) {
 }
 
 Logger& Logger::operator<<(const Slice& value) {
-  message_ += value.ToString();
+  message_.append(value.data(), value.size());
   return *this;
 }
 

@@ -41,7 +41,6 @@ class EchoServer {
 
   void Message(const TcpConnectionPtr& conn_ptr, Buffer* buf) {
     conn_ptr->SendMessage(buf);
-    conn_ptr->ShutDown();
   }
 
   TcpServer server_;
