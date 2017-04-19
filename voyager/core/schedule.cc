@@ -23,9 +23,9 @@ void Schedule::Start() {
   baseloop_->AssertInMyLoop();
   started_ = true;
   for (size_t i = 0; i < size_; ++i) {
-    std::unique_ptr<BGEventLoop> loop(new BGEventLoop());
+    BGEventLoop* loop = new BGEventLoop();
     loops_.push_back(loop->Loop());
-    bg_loops_.push_back(std::move(loop));
+    bg_loops_.push_back(std::unique_ptr<BGEventLoop>(loop));
   }
   if (size_ == 0) {
     loops_.push_back(baseloop_);
@@ -38,12 +38,13 @@ EventLoop* Schedule::AssignLoop() {
   assert(!loops_.empty());
   EventLoop* loop = loops_[0];
   int min = loop->UserNumber();
-  size_t i = 1;
-  while (i < loops_.size()) {
-    if (loops_[i]->UserNumber() < min) {
+
+  for (size_t i = 1; i < loops_.size(); ++i) {
+    int temp = loops_[i]->UserNumber();
+    if (temp < min) {
+      min = temp;
       loop = loops_[i];
     }
-    ++i;
   }
 
   assert(loop != nullptr);
