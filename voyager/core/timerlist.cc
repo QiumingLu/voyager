@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include "voyager/core/timerlist.h"
-#include "voyager/core/eventloop.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/timeops.h"

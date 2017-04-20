@@ -15,6 +15,7 @@
 #include "voyager/core/event_poll.h"
 #include "voyager/core/event_select.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/core/timerlist.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
@@ -40,20 +41,41 @@ IgnoreSIGPIPE ignore;
 
 }  // anonymous namespace
 
+static EventPoller* CreatePoller(PollType type, EventLoop* loop) {
+  EventPoller* poller = nullptr;
+  switch (type) {
+    case kSelect:
+      poller = new EventSelect(loop);
+      break;
+    case kPoll:
+      poller = new EventPoll(loop);
+      break;
+    case kEpoll:
+#ifdef __linux__
+      poller = new EventEpoll(loop);
+#else
+      poller = new EventKqueue(loop);
+#endif
+     break;
+    default:
+      VOYAGER_LOG(FATAL) << "error poll type.";
+      assert(false);
+      break;
+  }
+  return poller;
+}
+
 EventLoop* EventLoop::RunLoop() {
   return runloop;
 }
 
-EventLoop::EventLoop()
-    : exit_(false),
+EventLoop::EventLoop(PollType type)
+    : type_(type),
+      exit_(false),
       run_(false),
       tid_(port::CurrentThread::Tid()),
       connection_size_(0),
-#ifdef __linux__
-      poller_(new EventEpoll(this)),
-#else
-      poller_(new EventKqueue(this)),
-#endif
+      poller_(CreatePoller(type, this)),
       timers_(new TimerList(this)) {
   if (::socketpair(AF_UNIX, SOCK_STREAM, 0, wakeup_fd_) == -1) {
     VOYAGER_LOG(FATAL) << "socketpair failed";

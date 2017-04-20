@@ -10,14 +10,9 @@
 #include <utility>
 
 #include "voyager/core/callback.h"
+#include "voyager/core/eventloop.h"
 
 namespace voyager {
-
-class EventLoop;
-
-class Timer;
-
-typedef std::pair<uint64_t, Timer*> TimerId;
 
 class TimerList {
  public:

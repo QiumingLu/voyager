@@ -21,21 +21,15 @@ set(Voygaer_CORE_HEADERS
   client_socket.h
   dispatch.h
   eventloop.h
-  event_poll.h
-  event_select.h
-  schedule.h
   server_socket.h
   sockaddr.h
   tcp_client.h
   tcp_connection.h
   tcp_server.h
-  timerlist.h
   )
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") 
-  list(APPEND Voygaer_CORE_HEADERS "event_epoll.h" "newtimer.h")
-else()
-  list(APPEND Voygaer_CORE_HEADERS "event_kqueue.h")
+  list(APPEND Voygaer_CORE_HEADERS "newtimer.h")
 endif()
 
 install(FILES ${Voygaer_CORE_HEADERS} DESTINATION include/voyager/core)

@@ -9,14 +9,14 @@
 
 #include "voyager/port/mutex.h"
 #include "voyager/port/thread.h"
+#include "voyager/core/eventloop.h"
 
 namespace voyager {
 
-class EventLoop;
-
 class BGEventLoop {
  public:
-  explicit BGEventLoop(const std::string& name = std::string());
+  explicit BGEventLoop(PollType type = kEpoll,
+                       const std::string& name = std::string());
   ~BGEventLoop();
 
   EventLoop* Loop();
@@ -24,6 +24,7 @@ class BGEventLoop {
  private:
   void ThreadFunc();
 
+  PollType type_;
   EventLoop *eventloop_;
   port::Mutex mu_;
   port::Condition cond_;

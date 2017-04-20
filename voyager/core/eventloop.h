@@ -15,7 +15,6 @@
 #include <unordered_map>
 
 #include "voyager/core/callback.h"
-#include "voyager/core/timerlist.h"
 #include "voyager/port/currentthread.h"
 #include "voyager/port/mutexlock.h"
 
@@ -23,12 +22,22 @@ namespace voyager {
 
 class Dispatch;
 class EventPoller;
+class Timer;
+class TimerList;
+
+typedef std::pair<uint64_t, Timer*> TimerId;
+
+enum PollType {
+  kSelect,
+  kPoll,
+  kEpoll
+};
 
 class EventLoop {
  public:
   typedef std::function<void()> Func;
 
-  EventLoop();
+  EventLoop(PollType type = kEpoll);
   ~EventLoop();
 
   void Loop();
@@ -56,6 +65,7 @@ class EventLoop {
   }
 
   bool IsInMyLoop() const { return tid_ == port::CurrentThread::Tid(); }
+  PollType GetPollType() const { return type_; }
 
   void Exit();
 
@@ -69,13 +79,15 @@ class EventLoop {
 
   void AddConnection(const TcpConnectionPtr& ptr);
   void RemoveCnnection(const TcpConnectionPtr& ptr);
-  int UserNumber() const { return connection_size_; }
+  int ConnectionSize() const { return connection_size_; }
 
  private:
   void RunFuncs();
   void HandleRead();
   void Abort();
   void WakeUp();
+
+  PollType type_;
 
   bool exit_;
   bool run_;

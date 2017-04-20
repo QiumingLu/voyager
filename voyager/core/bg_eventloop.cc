@@ -6,14 +6,14 @@
 
 #include <assert.h>
 
-#include "voyager/core/eventloop.h"
 #include "voyager/port/mutexlock.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
 
-BGEventLoop::BGEventLoop(const std::string& name)
-    : eventloop_(nullptr),
+BGEventLoop::BGEventLoop(PollType type, const std::string& name)
+    : type_(type),
+      eventloop_(nullptr),
       mu_(),
       cond_(&mu_),
       thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {
@@ -39,7 +39,7 @@ EventLoop* BGEventLoop::Loop() {
 }
 
 void BGEventLoop::ThreadFunc() {
-  EventLoop ev;
+  EventLoop ev(type_);
   {
     port::MutexLock l(&mu_);
     eventloop_ = &ev;
