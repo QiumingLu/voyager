@@ -10,6 +10,14 @@ set(VOYAGER_VERSION_MAJOR 1)
 set(VOYAGER_VERSION_MINOR 6)
 set(VOYAGER_VERSION_STRING ${VOYAGER_VERSION_MAJOR}.${VOYAGER_VERSION_MINOR})
 
+function(exclude OUTPUT INPUT)
+  set(EXCLUDES ${ARGN})
+  foreach(EXCLUDE ${EXCLUDES})
+    list(REMOVE_ITEM INPUT "${EXCLUDE}")
+  endforeach()
+  set(${OUTPUT} ${INPUT} PARENT_SCOPE)
+endfunction(exclude)
+
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,6 +28,7 @@ if(NOT CMAKE_INSTALL_DIR)
   set(CMAKE_INSTALL_DIR "/usr/local")
 endif()
 
+option(BUILD_HTTP "Build voyager http" on)
 option(BUILD_TESTS "Build voyager perftests and unittests" on)
 option(BUILD_EXAMPLES "Build voyager examples" on)
 option(BUILD_SHARED_LIBS "Build voyager shared libraries" on)
@@ -69,21 +78,13 @@ endif()
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBARARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-include_directories(${PROJECT_SOURCE_DIR})
-
 string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
 
-add_subdirectory(voyager/util)
-add_subdirectory(voyager/port)
-add_subdirectory(voyager/core)
-add_subdirectory(voyager/http)
+include_directories(${PROJECT_SOURCE_DIR})
 
-find_package(Protobuf)
-if (PROTOBUF_FOUND)
-    add_subdirectory(voyager/rpc)
-endif()
+add_subdirectory(voyager)
 
 if (BUILD_EXAMPLES)
   add_subdirectory(examples/sudoku)

@@ -1,40 +1,37 @@
-set(util_SRCS
-  logging.cc
-  status.cc
-  string_util.cc
-  stringprintf.cc
-  testharness.cc
-  timeops.cc
-  json/json.cc
-  base64/base64.cc
-  base64/modp_base64/modp_b64.cc
+file(GLOB tmp *.cc)
+set(base64 
+  ${CMAKE_CURRENT_SOURCE_DIR}/base64/base64.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/base64/modp_base64/modp_b64.cc
+  )
+set(json 
+  ${CMAKE_CURRENT_SOURCE_DIR}/json/json.cc
   )
 
-if(BUILD_SHARED_LIBS)
-  add_library(voyager_util SHARED ${util_SRCS})
-  add_library(voyager_util_static STATIC ${util_SRCS})    
-  set_target_properties(voyager_util_static PROPERTIES OUTPUT_NAME "voyager_util")    
-  set_target_properties(voyager_util PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})    
-  set_target_properties(voyager_util_static PROPERTIES CLEAN_DIRECT_OUTPUT ${VOYAGER_VERSION_MAJOR})   
-  set_target_properties(voyager_util PROPERTIES VERSION ${VOYAGER_VERSION_STRING} SOVERSION ${VOYAGER_VERSION_MAJOR})    
-        
-  install(TARGETS voyager_util DESTINATION lib)
-  install(TARGETS voyager_util_static LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
-else()
-  add_library(voyager_util ${util_SRCS})
-  install(TARGETS voyager_util DESTINATION lib)
-endif()
+set(Voyager_SRCS 
+  ${Voyager_SRCS} 
+  ${tmp}
+  ${base64}
+  ${modp_base64}
+  )
 
-file(GLOB HEADERS "*.h")
-install(FILES ${HEADERS} DESTINATION include/voyager/util)
+set(Voyager_SRCS ${Voyager_SRCS} PARENT_SCOPE)
+
+file(GLOB Voyager_UTIL_HEADERS *.h)
+install(FILES ${Voyager_UTIL_HEADERS} DESTINATION include/voyager/util)
 
 set(
-  json_Headers
+  Voyager_BASE64_HEADERS
+  base64/base64.h
+  )
+install(FILES ${Voyager_BASE64_HEADERS} DESTINATION include/voyager/util/base64)
+
+set(
+  Voyager_JSON_HEADERS
   json/json.h
   json/json_value.h
   )
-install(FILES ${json_Headers} DESTINATION include/voyager/util/json)
-install(FILES base64/base64.h DESTINATION include/voyager/util/base64)
+install(FILES ${Voyager_JSON_HEADERS} DESTINATION include/voyager/util/json)
+
 
 if (BUILD_TESTS)
   add_subdirectory(tests)

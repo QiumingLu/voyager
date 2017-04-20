@@ -88,7 +88,7 @@ void RpcChannel::OnResponse(const RpcMessage& msg) {
     }
   }
   loop_->RemoveTimer(data.timer);
-  
+
   if (msg.error() == ERROR_CODE_OK) {
     if (data.response) {
       data.response->ParseFromString(msg.data());

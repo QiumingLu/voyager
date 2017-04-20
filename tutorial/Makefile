@@ -5,8 +5,8 @@ CXXFLAGS = -std=c++11 -g -O2 -Wall -Wextra -Werror \
 	   -march=native -rdynamic \
 	   -I/usr/local/include    \
 
-LDFLAGS = -L/usr/local/lib -lvoyager_core -lvoyager_port  \
-	  -lvoyager_util -lpthread \
+LDFLAGS = -L/usr/local/lib \
+		  -lvoyager -lpthread \
 #         -lprofiler
 
 TESTS = echo
