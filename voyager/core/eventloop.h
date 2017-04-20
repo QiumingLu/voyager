@@ -37,7 +37,7 @@ class EventLoop {
  public:
   typedef std::function<void()> Func;
 
-  EventLoop(PollType type = kEpoll);
+  explicit EventLoop(PollType type = kEpoll);
   ~EventLoop();
 
   void Loop();

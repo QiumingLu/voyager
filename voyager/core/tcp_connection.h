@@ -25,6 +25,9 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   TcpConnection(const std::string& name, EventLoop* ev, int fd);
   ~TcpConnection();
 
+  // default high_water_mark_ = 64 * 1024 * 1024
+  void SetHighWaterMark(size_t size) { high_water_mark_ = size; }
+
   void SetConnectionCallback(const ConnectionCallback& cb) {
     connection_cb_ = cb;
   }
@@ -36,6 +39,9 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
   void SetMessageCallback(const MessageCallback& cb) {
     message_cb_ = cb;
+  }
+  void SetHighWaterMarkCallback(const HighWaterMarkCallback& cb) {
+    high_water_mark_cb_ = cb;
   }
 
   void SetConnectionCallback(ConnectionCallback&& cb) {
@@ -49,6 +55,9 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   }
   void SetMessageCallback(MessageCallback&& cb) {
     message_cb_ = std::move(cb);
+  }
+  void SetHighWaterMarkCallback(HighWaterMarkCallback&& cb) {
+    high_water_mark_cb_ = std::move(cb);
   }
 
   EventLoop* OwnerEventLoop() const { return eventloop_; }
@@ -87,6 +96,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
     kConnecting
   };
 
+  void Send(const std::string& s);
   void SendInLoop(const void* data, size_t size);
 
   void HandleRead();
@@ -105,10 +115,13 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   void* context_;
 
+  size_t high_water_mark_;
+
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;
   WriteCompleteCallback writecomplete_cb_;
   MessageCallback message_cb_;
+  HighWaterMarkCallback high_water_mark_cb_;
 
   // No copying allowed
   TcpConnection(const TcpConnection&);

@@ -21,6 +21,7 @@ set(Voygaer_CORE_HEADERS
   client_socket.h
   dispatch.h
   eventloop.h
+  schedule.h
   server_socket.h
   sockaddr.h
   tcp_client.h

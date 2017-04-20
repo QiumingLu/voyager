@@ -177,10 +177,17 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    std::move(message)));
+      // FIXME
+      // (1) Use std::unique_ptr to replace std::shared_ptr in C++14?
+      // (2) Use native pointer and delete it in lamada function,
+      //     but memory leaks will occur when the function nerver run
+      //     because the eventloop has exited.
+      std::shared_ptr<std::string> s(new std::string(std::move(message)));
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop(std::bind(TcpConnection::SendInLoop, ptr, std::move(message));
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(s->data(), s->size());
+      });
     }
   }
 }
@@ -190,10 +197,12 @@ void TcpConnection::SendMessage(const Slice& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    message.ToString()));
+      std::shared_ptr<std::string>s(
+          new std::string(message.data(), message.size()));
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(s->data(), s->size());
+      });
     }
   }
 }
@@ -208,15 +217,15 @@ void TcpConnection::SendMessage(Buffer* message) {
       std::shared_ptr<std::string> s(
           new std::string(message->Peek(), message->ReadableSize()));
       message->RetrieveAll();
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    message->RetrieveAllAsString()));
+      TcpConnectionPtr ptr(shared_from_this());
+      eventloop_->RunInLoop([ptr, s]() {
+        ptr->SendInLoop(s->data(), s->size());
+      });
     }
   }
 }
 
-void TcpConnection::Send(const std::string& s) {
+void TcpConnection::SendInLoop(const Slice& s) {
   SendInLoop(s.data(), s.size());
 }
 
