@@ -205,9 +205,6 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      std::shared_ptr<std::string> s(
-          new std::string(message->Peek(), message->ReadableSize()));
-      message->RetrieveAll();
       eventloop_->RunInLoop(
           std::bind(&TcpConnection::Send,
                     shared_from_this(),
