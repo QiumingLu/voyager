@@ -36,11 +36,6 @@ uint64_t GetTid() {
   return static_cast<uint64_t>(::syscall(SYS_gettid));
 }
 
-#elif __APPLE__
-uint64_t GetTid() {
-  return static_cast<uint64_t>(pthread_mach_thread_np(pthread_self()));
-}
-
 #else
 uint64_t GetTid() {
   pthread_t tid = pthread_self();
@@ -100,10 +95,13 @@ void CurrentThread::CacheTid() {
   }
 }
 
-// bool CurrentThread::IsMainThread() {
-//   return Tid() == static_cast<uint64_t>(::getpid());
-// }
-
+bool CurrentThread::IsMainThread() {
+#if __linux__
+  return Tid() == static_cast<uint64_t>(::getpid());
+#else
+  return pthread_main_np() == 1;
+#endif
+}
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
      : started_(false),

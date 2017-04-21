@@ -24,7 +24,7 @@ inline const char* ThreadName() {
   return thread_name;
 }
 
-// extern bool IsMainThread();
+extern bool IsMainThread();
 
 }  // namespace CurrentThread
 }  // namespace port

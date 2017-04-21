@@ -64,7 +64,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   std::string name() const { return name_; }
 
   void SetContext(void* ctx) { context_ = ctx; }
-  void* Context() { return context_; }
+  void* Context() const { return context_; }
 
   void StartRead();
   void StopRead();
