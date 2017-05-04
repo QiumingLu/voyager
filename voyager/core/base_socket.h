@@ -5,9 +5,10 @@
 #ifndef VOYAGER_CORE_BASE_SOCKET_H_
 #define VOYAGER_CORE_BASE_SOCKET_H_
 
+#include <errno.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <errno.h>
 
 namespace voyager {
 
