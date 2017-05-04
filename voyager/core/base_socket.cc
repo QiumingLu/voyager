@@ -123,7 +123,6 @@ int BaseSocket::CheckSocketError() const {
 struct sockaddr_storage BaseSocket::PeerSockAddr() const {
   struct sockaddr_storage sa;
   socklen_t len = sizeof(sa);
-
   if (::getpeername(fd_,
                     reinterpret_cast<struct sockaddr*>(&sa), &len) == -1) {
     VOYAGER_LOG(ERROR) << "getpeername: " << strerror(errno);

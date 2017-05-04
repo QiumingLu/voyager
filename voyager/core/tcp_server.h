@@ -28,7 +28,8 @@ class TcpServer {
             const SockAddr& addr,
             const std::string& name = std::string("VoyagerServer"),
             int thread_size = 1,
-            int backlog = SOMAXCONN);
+            int backlog = SOMAXCONN,
+            bool reuseport = false);
   ~TcpServer();
 
   const std::string& name() const { return name_; }

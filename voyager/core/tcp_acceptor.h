@@ -25,7 +25,7 @@ class TcpAcceptor {
 
   TcpAcceptor(EventLoop* eventloop,
               const SockAddr& addr,
-              int backlog, bool reuseport = false);
+              int backlog, bool reuseport);
   ~TcpAcceptor();
 
   void EnableListen();

@@ -17,12 +17,13 @@ TcpServer::TcpServer(EventLoop* ev,
                      const SockAddr& addr,
                      const std::string& name,
                      int thread_size,
-                     int backlog)
+                     int backlog,
+                     bool reuseport)
     : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
       schedule_(new Schedule(eventloop_, thread_size-1)),
-      acceptor_(new TcpAcceptor(eventloop_, addr, backlog)) {
+      acceptor_(new TcpAcceptor(eventloop_, addr, backlog, reuseport)) {
   acceptor_->SetNewConnectionCallback(
       std::bind(&TcpServer::NewConnection, this,
                 std::placeholders::_1, std::placeholders::_2));
