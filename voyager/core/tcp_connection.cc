@@ -165,10 +165,10 @@ void TcpConnection::HandleClose() {
 }
 
 void TcpConnection::HandleError() {
-  Status st = socket_.CheckSocketError();
-  if (!st.ok()) {
+  int result = socket_.CheckSocketError();
+  if (result != 0) {
     VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_
-                       << "] - " << st;
+                       << "] - " << strerror(result);
   }
 }
 

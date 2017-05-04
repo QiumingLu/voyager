@@ -24,7 +24,6 @@
 namespace voyager {
 
 class EventLoop;
-class Status;
 
 class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
  public:

@@ -9,7 +9,6 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
-#include "voyager/util/stringprintf.h"
 #include "voyager/util/slice.h"
 
 voyager::TcpClient* g_client = nullptr;

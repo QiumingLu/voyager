@@ -63,7 +63,7 @@ void EventKqueue::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch_map_[fd] == dispatch);
   assert(dispatch->IsNoneEvent());
   dispatch_map_.erase(fd);
-  dispatch->set_index(-1);
+  dispatch->SetIndex(-1);
 }
 
 void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
@@ -121,7 +121,7 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   if (dispatch->index() == -1) {
     assert(dispatch_map_.find(fd) == dispatch_map_.end());
     dispatch_map_[fd] = dispatch;
-    dispatch->set_index(0);
+    dispatch->SetIndex(0);
   } else {
     assert(dispatch_map_.find(fd) != dispatch_map_.end());
   }

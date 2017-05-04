@@ -62,7 +62,7 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
     if (id < 0) {
       id = -id-1;
     }
-    dispatch_map_[id]->set_index(idx);
+    dispatch_map_[id]->SetIndex(idx);
     pollfds_.pop_back();
   }
 }
@@ -76,7 +76,7 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     p.events = static_cast<short>(dispatch->Events());
     p.revents = 0;
     pollfds_.push_back(p);
-    dispatch->set_index(static_cast<int>(pollfds_.size()) - 1);
+    dispatch->SetIndex(static_cast<int>(pollfds_.size()) - 1);
     dispatch_map_[p.fd] = dispatch;
   } else {
     assert(dispatch_map_.find(dispatch->Fd()) != dispatch_map_.end());

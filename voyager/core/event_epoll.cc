@@ -64,7 +64,7 @@ void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
   if (idx == kAdded) {
     EpollCTL(EPOLL_CTL_DEL, dispatch);
   }
-  dispatch->set_index(kNew);
+  dispatch->SetIndex(kNew);
 }
 
 void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
@@ -79,7 +79,7 @@ void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
       assert(dispatch_map_.find(fd) != dispatch_map_.end());
       assert(dispatch_map_[fd] == dispatch);
     }
-    dispatch->set_index(kAdded);
+    dispatch->SetIndex(kAdded);
     EpollCTL(EPOLL_CTL_ADD, dispatch);
   } else {
     assert(dispatch_map_.find(fd) != dispatch_map_.end());
@@ -87,7 +87,7 @@ void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
     assert(idx == kAdded);
     if (dispatch->IsNoneEvent()) {
       EpollCTL(EPOLL_CTL_DEL, dispatch);
-      dispatch->set_index(kDeleted);
+      dispatch->SetIndex(kDeleted);
     } else {
       EpollCTL(EPOLL_CTL_MOD, dispatch);
     }

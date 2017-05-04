@@ -7,7 +7,6 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/core/callback.h"
-#include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
 
 #include <unistd.h>
@@ -31,9 +30,7 @@ class EchoServer {
 
  private:
   void Connect(const TcpConnectionPtr& conn_ptr) {
-    std::string  message = StringPrintf("Connection %s has been built\n",
-                                        conn_ptr->name().c_str());
-    conn_ptr->SendMessage(message);
+    conn_ptr->SendMessage(std::string("Connection has been built!"));
     std::string s1 = "";
     Slice s2("");
     conn_ptr->SendMessage(s1);

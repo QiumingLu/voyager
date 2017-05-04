@@ -4,7 +4,6 @@
 
 #include "voyager/core/timerlist.h"
 #include "voyager/util/logging.h"
-#include "voyager/util/stl_util.h"
 #include "voyager/util/timeops.h"
 
 
@@ -66,7 +65,8 @@ TimerId TimerList::Insert(uint64_t micros_value,
 TimerId TimerList::Insert(uint64_t micros_value,
                           uint64_t micros_interval,
                           TimerProcCallback&& cb) {
-  TimerId timer(micros_value, new Timer(micros_value, micros_interval, std::move(cb)));
+  TimerId timer(micros_value,
+                new Timer(micros_value, micros_interval, std::move(cb)));
   eventloop_->RunInLoop([this, timer]() {
     InsertInLoop(timer);
   });

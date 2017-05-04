@@ -9,7 +9,6 @@
 #include "voyager/core/tcp_server.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/port/currentthread.h"
-#include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
@@ -47,14 +46,11 @@ class TimerServer {
 
  private:
   void OnConnect(const TcpConnectionPtr& ptr) {
-    ptr->SendMessage(Slice("connect successfully!"));
+    ptr->SendMessage(std::string("connect successfully!"));
   }
 
   void OnMessage(const TcpConnectionPtr& ptr, Buffer* buf) {
-    std::string s(buf->RetrieveAllAsString());
-    std::string message =
-        StringPrintf("Recieve your message: %s successfully!", s.c_str());
-    ptr->SendMessage(std::move(message));
+    ptr->SendMessage(std::string("Recieve your message successfully!"));
   }
 
   void OnWriteComplete(const TcpConnectionPtr& ptr) {

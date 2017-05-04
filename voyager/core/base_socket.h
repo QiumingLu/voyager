@@ -9,8 +9,6 @@
 #include <sys/socket.h>
 #include <errno.h>
 
-#include "voyager/util/status.h"
-
 namespace voyager {
 
 class BaseSocket {
@@ -23,18 +21,18 @@ class BaseSocket {
 
   int SocketFd() const { return fd_; }
 
-  void ShutDownWrite() const;
-  void SetNonBlockAndCloseOnExec(bool on) const;
-  void SetReuseAddr(bool on) const;
-  void SetReusePort(bool on) const;
-  void SetKeepAlive(bool on) const;
-  void SetTcpNoDelay(bool on) const;
+  int ShutDownWrite() const;
+  int SetNonBlockAndCloseOnExec(bool on) const;
+  int SetReuseAddr(bool on) const;
+  int SetReusePort(bool on) const;
+  int SetKeepAlive(bool on) const;
+  int SetTcpNoDelay(bool on) const;
 
-  Status CheckSocketError() const;
+  int CheckSocketError() const;
 
   struct sockaddr_storage PeerSockAddr() const;
   struct sockaddr_storage LocalSockAddr() const;
-  int IsSelfConnect() const;
+  bool IsSelfConnect() const;
 
   void SetNoAutoCloseFd() { need_close_ = false; }
 

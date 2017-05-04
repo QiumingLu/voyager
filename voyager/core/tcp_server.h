@@ -68,7 +68,7 @@ class TcpServer {
   std::string ipbuf_;
   const std::string name_;
   port::SequenceNumber seq_;
-  uint64_t conn_id_;
+  static port::SequenceNumber conn_id_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

@@ -7,7 +7,6 @@
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/logging.h"
-#include "voyager/util/stringprintf.h"
 
 namespace voyager {
 
@@ -61,12 +60,12 @@ void TcpClient::Close() {
 
 void TcpClient::NewConnection(int socketfd) {
   ev_->AssertInMyLoop();
+
   char ipbuf[64];
+  char conn_name[256];
   SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
-  std::string conn_name = StringPrintf("%s-%s#%d",
-                                       server_ipbuf_.c_str(),
-                                       ipbuf,
-                                       conn_id_.GetNext());
+  snprintf(conn_name, sizeof(conn_name),
+           "%s-%s#%d", server_ipbuf_.c_str(), ipbuf, conn_id_.GetNext());
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
 
   TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));

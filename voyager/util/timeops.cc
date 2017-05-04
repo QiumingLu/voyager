@@ -7,8 +7,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "voyager/util/stringprintf.h"
-
 namespace voyager {
 namespace timeops {
 
@@ -27,14 +25,18 @@ std::string FormatTimestamp(uint64_t micros) {
   struct tm t;
   localtime_r(&seconds, &t);
 
-  return StringPrintf("%04d/%02d/%02d-%02d:%02d:%02d.%06d",
-                      t.tm_year + 1900,
-                      t.tm_mon + 1,
-                      t.tm_mday,
-                      t.tm_hour,
-                      t.tm_min,
-                      t.tm_sec,
-                      micros);
+  char buf[128];
+  snprintf(buf, sizeof(buf),
+           "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
+           t.tm_year + 1900,
+           t.tm_mon + 1,
+           t.tm_mday,
+           t.tm_hour,
+           t.tm_min,
+           t.tm_sec,
+           static_cast<int>(micros));
+
+  return std::string(buf);
 }
 
 }  // namespace timeops

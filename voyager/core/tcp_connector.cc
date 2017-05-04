@@ -10,7 +10,6 @@
 
 #include "voyager/core/eventloop.h"
 #include "voyager/core/tcp_client.h"
-#include "voyager/util/stringprintf.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
@@ -134,11 +133,11 @@ void TcpConnector::Retry() {
 void TcpConnector::HandleWrite() {
   if (state_ == kConnecting) {
     ResetDispatch();
-    Status st = socket_->CheckSocketError();
-    if (!st.ok()) {
-      VOYAGER_LOG(WARN) << "TcpConnector::HandleWrite - " << st;
+    int result = socket_->CheckSocketError();
+    if (result != 0) {
+      VOYAGER_LOG(WARN) << "TcpConnector::HandleWrite - " << strerror(result);
       Retry();
-    } else if (socket_->IsSelfConnect() == 0) {
+    } else if (socket_->IsSelfConnect()) {
       VOYAGER_LOG(WARN) << "TcpConnector::ConnectCallback - Self connect";
       Retry();
     } else {

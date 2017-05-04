@@ -73,7 +73,11 @@ Logger& Logger::operator<<(const std::string& value) {
 }
 
 Logger& Logger::operator<<(std::string&& value) {
-  message_ += std::move(value);
+  if (message_.empty()) {
+    message_ = std::move(value);
+  } else {
+    message_ += value;
+  }
   return *this;
 }
 

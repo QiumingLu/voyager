@@ -8,9 +8,10 @@
 #include "voyager/core/tcp_acceptor.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/util/logging.h"
-#include "voyager/util/stringprintf.h"
 
 namespace voyager {
+
+port::SequenceNumber TcpServer::conn_id_;
 
 TcpServer::TcpServer(EventLoop* ev,
                      const SockAddr& addr,
@@ -20,7 +21,6 @@ TcpServer::TcpServer(EventLoop* ev,
     : eventloop_(CHECK_NOTNULL(ev)),
       ipbuf_(addr.Ipbuf()),
       name_(name),
-      conn_id_(0),
       schedule_(new Schedule(eventloop_, thread_size-1)),
       acceptor_(new TcpAcceptor(eventloop_, addr, backlog)) {
   acceptor_->SetNewConnectionCallback(
@@ -45,11 +45,13 @@ void TcpServer::Start() {
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertInMyLoop();
+
   char peer[64];
-  SockAddr::SockAddrToIPPort(reinterpret_cast<const sockaddr*>(&sa),
-                             peer, sizeof(peer));
-  std::string conn_name = StringPrintf("%s-%s#%d",
-                                       ipbuf_.c_str(), peer, ++conn_id_);
+  char conn_name[256];
+  SockAddr::FormatAddress(reinterpret_cast<const sockaddr*>(&sa),
+                          peer, sizeof(peer));
+  snprintf(conn_name, sizeof(conn_name),
+           "%s-%s#%d", ipbuf_.c_str(), peer, conn_id_.GetNext());
 
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_
                     << "] - new connection [" << conn_name

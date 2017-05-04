@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <utility>
 #include <unordered_map>
 
 #include "voyager/core/callback.h"

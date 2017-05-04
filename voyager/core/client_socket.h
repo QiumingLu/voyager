@@ -20,6 +20,12 @@ class ClientSocket : public BaseSocket {
   }
 
   int Connect(const struct sockaddr* sa, socklen_t salen) const;
+
+
+ private:
+  // No copying allowed
+  ClientSocket(const ClientSocket&);
+  void operator=(const ClientSocket&);
 };
 
 }  // namespace voyager

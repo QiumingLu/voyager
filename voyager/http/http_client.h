@@ -13,6 +13,7 @@
 #include "voyager/http/http_response.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/timerlist.h"
+#include "voyager/util/status.h"
 
 namespace voyager {
 
