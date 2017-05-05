@@ -42,17 +42,13 @@ class Buffer {
   }
 
   const char* Peek() const {
-    return &*(buf_.begin() + static_cast<std::ptrdiff_t>(read_index_));
+    return PeekAt(read_index_);
   }
 
   const char* FindCRLF() {
-    const char* crlf =
-        std::search(
-            &*(buf_.begin() + static_cast<std::ptrdiff_t>(read_index_)),
-            &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_)),
-            kCRLF,
-            kCRLF + 2);
-    if (crlf == &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_))) {
+    const char* crlf = std::search(PeekAt(read_index_), PeekAt(write_index_),
+                                   kCRLF, kCRLF + 2);
+    if (crlf == PeekAt(write_index_)) {
       return nullptr;
     } else {
       return crlf;
@@ -70,8 +66,7 @@ class Buffer {
 
   void RetrieveUntil(const char* end) {
     assert(Peek() <= end);
-    assert(
-        end <= &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_)));
+    assert(end <= PeekAt(write_index_));
     Retrieve(static_cast<size_t>(end - Peek()));
   }
 
@@ -91,6 +86,20 @@ class Buffer {
   }
 
  private:
+  inline char* PeekAt(size_t index) {
+    if (buf_.empty()) {
+      return nullptr;
+    }
+    return &*(buf_.begin() + static_cast<std::ptrdiff_t>(index));
+  }
+
+  inline const char* PeekAt(size_t index) const {
+    if (buf_.empty()) {
+      return nullptr;
+    }
+    return &*(buf_.begin() + static_cast<std::ptrdiff_t>(index));
+  }
+
   void MakeSpace(size_t size) {
     if (WritableSize() < size) {
       buf_.resize(write_index_ + size);
@@ -108,6 +117,7 @@ class Buffer {
   static const size_t kInitBufferSize = 1024;
   static const size_t kBackupBufferSize = 65536;
   static const char kCRLF[];
+
   std::vector<char> buf_;
   size_t read_index_;
   size_t write_index_;

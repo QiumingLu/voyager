@@ -22,8 +22,7 @@ ssize_t Buffer::ReadV(int socketfd) {
   char backup_buf[kBackupBufferSize];
   struct iovec iov[2];
   const size_t writable_size = WritableSize();
-  iov[0].iov_base =
-      &*(buf_.begin() + static_cast<std::ptrdiff_t>(write_index_));
+  iov[0].iov_base = PeekAt(write_index_);
   iov[0].iov_len = writable_size;
   iov[1].iov_base = backup_buf;
   iov[1].iov_len = sizeof(backup_buf);
