@@ -79,7 +79,7 @@ class EventLoop {
   bool HasDispatch(Dispatch* dispatch);
 
   void AddConnection(const TcpConnectionPtr& ptr);
-  void RemoveCnnection(const TcpConnectionPtr& ptr);
+  void RemoveConnection(const TcpConnectionPtr& ptr);
   int ConnectionSize() const { return connection_size_; }
 
  private:

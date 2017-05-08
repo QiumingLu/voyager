@@ -238,7 +238,7 @@ void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
   ++connection_size_;
 }
 
-void EventLoop::RemoveCnnection(const TcpConnectionPtr& ptr) {
+void EventLoop::RemoveConnection(const TcpConnectionPtr& ptr) {
   assert(ptr->OwnerEventLoop() == this);
   this->AssertInMyLoop();
   assert(connections_.find(ptr->name()) != connections_.end());

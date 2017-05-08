@@ -158,7 +158,7 @@ void TcpConnection::HandleClose() {
   state_ = kDisconnected;
   dispatch_->DisableAll();
   dispatch_->RemoveEvents();
-  eventloop_->RemoveCnnection(shared_from_this());
+  eventloop_->RemoveConnection(shared_from_this());
   if (close_cb_) {
     close_cb_(shared_from_this());
   }
