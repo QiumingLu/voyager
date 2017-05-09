@@ -33,7 +33,8 @@ bool SockAddr::GetAddrInfo(const char* host, uint16_t port) {
 
   int ret = ::getaddrinfo(host, portbuf, &hints, &result);
   if (ret != 0) {
-    VOYAGER_LOG(ERROR) << "getaddrinfo: " << gai_strerror(ret);
+    VOYAGER_LOG(ERROR) << "host:" << host << " port:" << port
+                       << " getaddrinfo: " << gai_strerror(ret);
     return false;
   }
 

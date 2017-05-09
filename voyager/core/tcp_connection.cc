@@ -21,6 +21,7 @@ TcpConnection::TcpConnection(const std::string& name,
       socket_(fd),
       state_(kConnecting),
       dispatch_(new Dispatch(ev, fd)),
+      context_(nullptr),
       high_water_mark_(64 * 1024 * 1024) {
   dispatch_->SetReadCallback(
       std::bind(&TcpConnection::HandleRead, this));
