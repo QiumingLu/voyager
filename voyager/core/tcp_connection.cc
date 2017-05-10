@@ -14,11 +14,13 @@
 
 namespace voyager {
 
-TcpConnection::TcpConnection(const std::string& name,
-                             EventLoop* ev, int fd)
+TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd,
+                             const SockAddr& local, const SockAddr& peer)
     : name_(name),
       eventloop_(CHECK_NOTNULL(ev)),
       socket_(fd),
+      local_addr_(local),
+      peer_addr_(peer),
       state_(kConnecting),
       dispatch_(new Dispatch(ev, fd)),
       context_(nullptr),

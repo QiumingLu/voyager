@@ -20,7 +20,7 @@ TcpServer::TcpServer(EventLoop* ev,
                      int backlog,
                      bool reuseport)
     : eventloop_(CHECK_NOTNULL(ev)),
-      ipbuf_(addr.Ipbuf()),
+      addr_(addr),
       name_(name),
       schedule_(new Schedule(eventloop_, thread_size-1)),
       acceptor_(new TcpAcceptor(eventloop_, addr, backlog, reuseport)) {
@@ -44,30 +44,32 @@ void TcpServer::Start() {
   });
 }
 
+const std::vector<EventLoop*>* TcpServer::AllLoops() const {
+  return schedule_->AllLoops();
+}
+
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   eventloop_->AssertInMyLoop();
 
-  char peer[64];
+  SockAddr peer(sa);
   char conn_name[256];
-  SockAddr::FormatAddress(reinterpret_cast<const sockaddr*>(&sa),
-                          peer, sizeof(peer));
-  snprintf(conn_name, sizeof(conn_name),
-           "%s-%s#%d", ipbuf_.c_str(), peer, conn_id_.GetNext());
+  snprintf(conn_name, sizeof(conn_name), "%s-%s#%d",
+           addr_.Ipbuf().c_str(), peer.Ipbuf().c_str(), conn_id_.GetNext());
 
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_
                     << "] - new connection [" << conn_name
-                    << "] from " << peer;
+                    << "] from " << peer.Ipbuf();
 
   EventLoop* ev = schedule_->AssignLoop();
-  TcpConnectionPtr conn_ptr(new TcpConnection(conn_name, ev, fd));
+  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev, fd, addr_, peer));
 
-  conn_ptr->SetConnectionCallback(connection_cb_);
-  conn_ptr->SetCloseCallback(close_cb_);
-  conn_ptr->SetWriteCompleteCallback(writecomplete_cb_);
-  conn_ptr->SetMessageCallback(message_cb_);
+  ptr->SetConnectionCallback(connection_cb_);
+  ptr->SetCloseCallback(close_cb_);
+  ptr->SetWriteCompleteCallback(writecomplete_cb_);
+  ptr->SetMessageCallback(message_cb_);
 
-  ev->RunInLoop([conn_ptr]() {
-    conn_ptr->StartWorking();
+  ev->RunInLoop([ptr]() {
+    ptr->StartWorking();
   });
 }
 

@@ -13,6 +13,7 @@
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/base_socket.h"
+#include "voyager/core/sockaddr.h"
 
 namespace voyager {
 
@@ -22,7 +23,8 @@ class Slice;
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
  public:
-  TcpConnection(const std::string& name, EventLoop* ev, int fd);
+  TcpConnection(const std::string& name, EventLoop* ev, int fd,
+                const SockAddr& local, const SockAddr& peer);
   ~TcpConnection();
 
   // default high_water_mark_ = 64 * 1024 * 1024
@@ -62,6 +64,8 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   EventLoop* OwnerEventLoop() const { return eventloop_; }
   std::string name() const { return name_; }
+  const SockAddr& LocalSockAddr() const { return local_addr_; }
+  const SockAddr& PeerSockAddr() const { return peer_addr_; }
 
   void SetContext(void* ctx) { context_ = ctx; }
   void* Context() const { return context_; }
@@ -107,6 +111,9 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   const std::string name_;
   EventLoop* eventloop_;
   BaseSocket socket_;
+  SockAddr local_addr_;
+  SockAddr peer_addr_;
+
   std::atomic<ConnectState> state_;
   std::unique_ptr<Dispatch> dispatch_;
 

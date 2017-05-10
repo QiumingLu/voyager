@@ -15,9 +15,9 @@ port::SequenceNumber TcpClient::conn_id_;
 TcpClient::TcpClient(EventLoop* ev,
                      const SockAddr& addr,
                      const std::string& name)
-    : name_(name),
-      server_ipbuf_(addr.Ipbuf()),
-      ev_(CHECK_NOTNULL(ev)),
+    : ev_(CHECK_NOTNULL(ev)),
+      addr_(addr),
+      name_(name),
       connector_ptr_(new TcpConnector(ev, addr)),
       connect_(false) {
   connector_ptr_->SetNewConnectionCallback(
@@ -38,8 +38,8 @@ void TcpClient::Connect(bool retry) {
   }
 
   if (!connect_) {
-    VOYAGER_LOG(INFO) << "TcpClient::Connect - connecting to "
-                      << server_ipbuf_;
+    VOYAGER_LOG(INFO) << "TcpClient::Connect [" << name_
+                     << "] - connecting to " << addr_.Ipbuf();
     connector_ptr_->Start(retry);
     connect_ = true;
   }
@@ -58,17 +58,19 @@ void TcpClient::Close() {
   }
 }
 
-void TcpClient::NewConnection(int socketfd) {
+void TcpClient::NewConnection(int fd) {
   ev_->AssertInMyLoop();
 
-  char ipbuf[64];
+  SockAddr local(SockAddr::LocalSockAddr(fd));
   char conn_name[256];
-  SockAddr::FormatLocal(socketfd, ipbuf, sizeof(ipbuf));
-  snprintf(conn_name, sizeof(conn_name),
-           "%s-%s#%d", server_ipbuf_.c_str(), ipbuf, conn_id_.GetNext());
-  VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << conn_name << "]";
+  snprintf(conn_name, sizeof(conn_name), "%s-%s#%d",
+           addr_.Ipbuf().c_str(), local.Ipbuf().c_str(), conn_id_.GetNext());
 
-  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, socketfd));
+  VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << name_
+                    << "] - new connection[" << conn_name
+                    << "] to " << addr_.Ipbuf();
+
+  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev_, fd, local, addr_));
   ptr->SetConnectionCallback(connection_cb_);
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);

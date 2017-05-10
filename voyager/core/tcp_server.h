@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "voyager/core/callback.h"
 #include "voyager/core/sockaddr.h"
@@ -62,11 +63,14 @@ class TcpServer {
 
   void Start();
 
+  // All loops created by voyager.
+  const std::vector<EventLoop*>* AllLoops() const;
+
  private:
   void NewConnection(int fd, const struct sockaddr_storage& sa);
 
   EventLoop* eventloop_;
-  std::string ipbuf_;
+  SockAddr addr_;
   const std::string name_;
   port::SequenceNumber seq_;
   static port::SequenceNumber conn_id_;

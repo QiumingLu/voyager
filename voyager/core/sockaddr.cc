@@ -22,6 +22,11 @@ SockAddr::SockAddr(const std::string& host, uint16_t port) {
   GetAddrInfo(host.c_str(), port);
 }
 
+SockAddr::SockAddr(const struct sockaddr_storage& sa)
+    : sa_(sa) {
+  GetIpPort(sa_);
+}
+
 bool SockAddr::GetAddrInfo(const char* host, uint16_t port) {
   char portbuf[6];
   struct addrinfo hints, *result;
@@ -40,10 +45,18 @@ bool SockAddr::GetAddrInfo(const char* host, uint16_t port) {
 
   memcpy(&this->sa_, result->ai_addr, result->ai_addrlen);
   ::freeaddrinfo(result);
+  GetIpPort(sa_);
+  return true;
+}
 
+void SockAddr::GetIpPort(const struct sockaddr_storage& sa) {
   char ip[64];
-  SockAddr::SockAddrToIP(reinterpret_cast<sockaddr*>(&sa_),
-                         ip, sizeof(ip));
+  SockAddr::SockAddrToIP(
+      reinterpret_cast<const struct sockaddr*>(&sa),ip, sizeof(ip));
+
+  const struct sockaddr_in* sa4 =
+      reinterpret_cast<const struct sockaddr_in*>(&sa);
+  uint16_t port = ntohs(sa4->sin_port);
 
   char ipbuf[128];
   FormatAddress(ip, port, ipbuf, sizeof(ipbuf));
@@ -51,8 +64,6 @@ bool SockAddr::GetAddrInfo(const char* host, uint16_t port) {
   ip_ = std::string(ip);
   port_ = port;
   ipbuf_ = std::string(ipbuf, sizeof(ipbuf));
-
-  return true;
 }
 
 bool SockAddr::SockAddrToIP(const struct sockaddr* sa,

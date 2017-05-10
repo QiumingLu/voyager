@@ -15,12 +15,14 @@ class SockAddr {
   explicit SockAddr(uint16_t port);
   SockAddr(const std::string& host, uint16_t port);
 
+  explicit SockAddr(const struct sockaddr_storage& sa);
+
   const struct sockaddr* GetSockAddr() const {
     return reinterpret_cast<const struct sockaddr*>(&sa_);
   }
   sa_family_t Family() const { return sa_.ss_family; }
-  std::string Ipbuf() const { return ipbuf_; }
-  std::string Ip() const { return ip_; }
+  const std::string& Ipbuf() const { return ipbuf_; }
+  const std::string& Ip() const { return ip_; }
   uint16_t Port() const { return port_; }
 
   static bool SockAddrToIP(const struct sockaddr* sa,
@@ -42,6 +44,7 @@ class SockAddr {
 
  private:
   bool GetAddrInfo(const char* host, uint16_t port);
+  void GetIpPort(const struct sockaddr_storage& sa);
 
   struct sockaddr_storage sa_;
   std::string ip_;

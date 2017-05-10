@@ -62,12 +62,12 @@ class TcpClient {
   }
 
  private:
-  void NewConnection(int socketfd);
+  void NewConnection(int fd);
   void ConnectFailure();
 
-  std::string name_;
-  std::string server_ipbuf_;
   EventLoop* ev_;
+  SockAddr addr_;
+  std::string name_;
   TcpConnectorPtr connector_ptr_;
   std::atomic<bool> connect_;
   static port::SequenceNumber conn_id_;
