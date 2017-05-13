@@ -63,7 +63,9 @@ class TcpServer {
 
   void Start();
 
-  // All loops created by voyager.
+  // All loops for schedule tcp connection
+  // Only include base loop if it's size = 1
+  // Not include base loop but include all child loops if it 's size > 1
   const std::vector<EventLoop*>* AllLoops() const;
 
  private:
