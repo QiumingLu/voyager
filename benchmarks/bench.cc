@@ -17,7 +17,6 @@
 
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
-#include "voyager/core/timerlist.h"
 #include "voyager/util/timeops.h"
 
 using namespace voyager;
