@@ -102,10 +102,11 @@ uint64_t TimerList::TimeoutMicros() const {
     return -1;
   }
   std::set<TimerId>::iterator it = timers_.begin();
-  if (it->first < timeops::NowMicros()) {
+  uint64_t now = timeops::NowMicros();
+  if (it->first <= now) {
     return 0;
   } else {
-    return (it->first - timeops::NowMicros());
+    return (it->first - now);
   }
 }
 
@@ -122,7 +123,7 @@ void TimerList::RunTimerProcs() {
     if (it != timers_.end() && it->first <= micros_now) {
       Timer* t = it->second;
       timers_.erase(it);
-      t->timerproc_cb();
+      TimerProcCallback cb = t->timerproc_cb;
       if (t->repeat) {
         t->micros_value += t->micros_interval;
         TimerId timer(t->micros_value, t);
@@ -131,6 +132,8 @@ void TimerList::RunTimerProcs() {
         delete t;
         timer_ptrs_.erase(t);
       }
+      // 为了避免周期定时无法移除定时器的问题。
+      cb();
     } else {
       break;
     }
