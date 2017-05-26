@@ -68,7 +68,7 @@ void NewTimer::SetTimeInLoop(uint64_t nanos_value, uint64_t nanos_interval) {
   memset(&old_value, 0, sizeof(old_value));
 
   new_value.it_interval.tv_sec =
-      static_cast<time_t>(nanos_interval /timeops::kNonasSecondsPerSecond);
+      static_cast<time_t>(nanos_interval / timeops::kNonasSecondsPerSecond);
   new_value.it_interval.tv_nsec =
       static_cast<long>(nanos_interval % timeops::kNonasSecondsPerSecond);
   new_value.it_value.tv_sec =

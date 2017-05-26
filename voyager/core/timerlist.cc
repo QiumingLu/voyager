@@ -16,21 +16,13 @@ class Timer {
   Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
       : micros_value(value),
         micros_interval(interval),
-        timerproc_cb(cb),
-        repeat(false) {
-    if (micros_interval > 0) {
-      repeat = true;
-    }
+        timerproc_cb(cb) {
   }
 
   Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
       : micros_value(value),
         micros_interval(interval),
-        timerproc_cb(std::move(cb)),
-        repeat(false) {
-    if (micros_interval > 0) {
-      repeat = true;
-    }
+        timerproc_cb(std::move(cb)) {
   }
 
   ~Timer() {
@@ -39,7 +31,6 @@ class Timer {
   uint64_t micros_value;
   uint64_t micros_interval;
   TimerProcCallback timerproc_cb;
-  bool repeat;
 };
 
 TimerList::TimerList(EventLoop* ev)
@@ -122,9 +113,8 @@ void TimerList::RunTimerProcs() {
     it = timers_.begin();
     if (it != timers_.end() && it->first <= micros_now) {
       Timer* t = it->second;
-      timers_.erase(it);
       TimerProcCallback cb = t->timerproc_cb;
-      if (t->repeat) {
+      if (t->micros_interval > 0) {
         t->micros_value += t->micros_interval;
         TimerId timer(t->micros_value, t);
         timers_.insert(timer);
@@ -132,6 +122,7 @@ void TimerList::RunTimerProcs() {
         delete t;
         timer_ptrs_.erase(t);
       }
+      timers_.erase(it);
       // 为了避免周期定时无法移除定时器的问题。
       cb();
     } else {

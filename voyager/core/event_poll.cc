@@ -33,9 +33,8 @@ void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
        it != pollfds_.end() && ret > 0; ++it) {
     if (it->revents > 0) {
       --ret;
-      DispatchMap::iterator iter = dispatch_map_.find(it->fd);
-      assert(iter != dispatch_map_.end());
-      Dispatch* dispatch = iter->second;
+      assert(dispatch_map_.find(it->fd) != dispatch_map_.end());
+      Dispatch* dispatch = dispatch_map_[it->fd];
       assert(dispatch->Fd() == it->fd);
       dispatch->SetRevents(it->revents);
       dispatches->push_back(dispatch);
@@ -49,7 +48,7 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch_map_[dispatch->Fd()] == dispatch);
   assert(dispatch->IsNoneEvent());
 
-  int idx = dispatch->index();
+  int idx = dispatch->Index();
   assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
   assert(pollfds_[idx].fd == -dispatch->Fd()-1 &&
          pollfds_[idx].events == dispatch->Events());
@@ -58,7 +57,7 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
     pollfds_.pop_back();
   } else {
     int id = pollfds_.back().fd;
-    std::swap(pollfds_[static_cast<size_t>(idx)], pollfds_.back());
+    std::swap(pollfds_[idx], pollfds_.back());
     if (id < 0) {
       id = -id-1;
     }
@@ -69,7 +68,7 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
 
 void EventPoll::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
-  if (dispatch->index() == -1) {
+  if (dispatch->Index() == -1) {
     assert(dispatch_map_.find(dispatch->Fd()) == dispatch_map_.end());
     struct pollfd p;
     p.fd = dispatch->Fd();
@@ -81,16 +80,16 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
   } else {
     assert(dispatch_map_.find(dispatch->Fd()) != dispatch_map_.end());
     assert(dispatch_map_[dispatch->Fd()] == dispatch);
-    int idx = dispatch->index();
+    int idx = dispatch->Index();
     assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
     assert(pollfds_[idx].fd == dispatch->Fd() ||
            pollfds_[idx].fd == -dispatch->Fd()-1);
-    pollfds_[static_cast<size_t>(idx)].events
-        = static_cast<short>(dispatch->Events());
-    pollfds_[static_cast<size_t>(idx)].revents = 0;
+    pollfds_[idx].fd = dispatch->Fd();
+    pollfds_[idx].events = static_cast<short>(dispatch->Events());
+    pollfds_[idx].revents = 0;
     if (dispatch->IsNoneEvent()) {
       // ignore this pollfd
-      pollfds_[static_cast<size_t>(idx)].fd = -dispatch->Fd() - 1;
+      pollfds_[idx].fd = -dispatch->Fd() - 1;
     }
   }
 }

@@ -110,10 +110,10 @@ EventLoop::~EventLoop() {
 void EventLoop::Loop() {
   AssertInMyLoop();
   exit_ = false;
+  std::vector<Dispatch*> dispatches;
 
   while (!exit_) {
     static const uint64_t kPollTimeMs = 5000;
-    std::vector<Dispatch*> dispatches;
     uint64_t t = (timers_->TimeoutMicros() / 1000);
     int timeout = static_cast<int>(std::min(t, kPollTimeMs));
     poller_->Poll(timeout, &dispatches);
@@ -123,6 +123,7 @@ void EventLoop::Loop() {
         it != dispatches.end(); ++it) {
       (*it)->HandleEvent();
     }
+    dispatches.clear();
     RunFuncs();
   }
 }

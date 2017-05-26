@@ -13,8 +13,8 @@ EventPoller::~EventPoller() { }
 
 bool EventPoller::HasDispatch(Dispatch* dispatch) const {
   eventloop_->AssertInMyLoop();
-  DispatchMap::const_iterator it;
-  for (it = dispatch_map_.begin(); it != dispatch_map_.end(); ++it) {
+  for (DispatchMap::const_iterator it = dispatch_map_.begin();
+       it != dispatch_map_.end(); ++it) {
     if (it->second == dispatch) {
       return true;
     }

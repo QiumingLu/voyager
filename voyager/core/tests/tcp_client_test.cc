@@ -25,7 +25,7 @@ void OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
     VOYAGER_LOG(INFO) << p->StateToString();
     p->ShutDown();
     VOYAGER_LOG(INFO) << p->StateToString();
-  } else {   
+  } else {
     Slice message = "Yes, I know!";
     p->SendMessage(message);
   }
@@ -35,7 +35,7 @@ void DeleteClient() {
   delete g_client;
 }
 
-}  // namespace voyager 
+}  // namespace voyager
 
 using namespace std::placeholders;
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   g_client->SetMessageCallback(
       std::bind(voyager::OnMessage, _1, _2));
   g_client->Connect();
-  ev.RunAfter(5000000, []() { voyager::DeleteClient(); });
+  ev.RunAfter(15000000, []() { voyager::DeleteClient(); });
   ev.RunAfter(20000000, [&ev]() { ev.Exit(); });
   ev.Loop();
   return 0;

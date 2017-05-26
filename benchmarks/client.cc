@@ -129,7 +129,7 @@ class Client {
   const std::string& Message() const { return message_; }
 
   void Print(const TcpConnectionPtr& ptr) {
-    if ( seq_.GetNext() < static_cast<int>(session_count_-1)) return;
+    if (seq_.GetNext() < static_cast<int>(session_count_-1)) return;
 
     for (std::vector<Session*>::iterator it = sessions_.begin();
          it != sessions_.end(); ++it) {

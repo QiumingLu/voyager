@@ -19,7 +19,8 @@ class SudukuServer {
   SudukuServer(voyager::EventLoop* ev, const voyager::SockAddr& addr)
       : server_(ev, addr, "SudukuServer", 5) {
     server_.SetConnectionCallback(
-        std::bind(&SudukuServer::ConnectCallback, this, std::placeholders::_1));
+        std::bind(&SudukuServer::ConnectCallback, this,
+                  std::placeholders::_1));
     server_.SetMessageCallback(
         std::bind(&SudukuServer::MessageCallback, this,
                   std::placeholders::_1, std::placeholders::_2));

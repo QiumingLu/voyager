@@ -56,14 +56,10 @@ bool Condition::Wait(uint64_t millisecond) {
   outtime.tv_sec += outtime.tv_nsec / (1000 * 1000 * 1000);
   outtime.tv_nsec %= (1000 * 1000 * 1000);
   int ret = pthread_cond_timedwait(&cond_, &mutex_->mutex_, &outtime);
-  if (ret == 0) {
-    return true;
-  } else if (ret == ETIMEDOUT) {
-    return false;
-  } else {
+  if (ret != 0 && ret != ETIMEDOUT) {
     PthreadCall("pthread_cond_timedwait: ", ret);
-    return false;
   }
+  return ret == 0;
 }
 
 void Condition::Signal() {

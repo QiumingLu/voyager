@@ -38,7 +38,7 @@ class Dispatch {
   int Events() const { return events_; }
   void SetRevents(int rv) { revents_ = rv; }
   void SetIndex(int index) { index_ = index; }
-  int index() const { return index_; }
+  int Index() const { return index_; }
 
   void HandleEvent();
 

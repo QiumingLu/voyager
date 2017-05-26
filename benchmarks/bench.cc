@@ -31,8 +31,7 @@ static int num_pipes, num_active, num_writes;
 void ReadCallback(int fd, int index) {
   char ch;
   count += static_cast<int>(::recv(fd, &ch, sizeof(ch), 0));
-  if (writes > 0)
-  {
+  if (writes > 0) {
     int w_index = index + 1;
     if (w_index >= num_pipes) {
       w_index -= num_pipes;
@@ -50,8 +49,7 @@ std::pair<uint64_t, uint64_t> RunOnce() {
 
   uint64_t ta = timeops::NowMicros();
 
-  for (int i = 0; i < num_pipes; ++i)
-  {
+  for (int i = 0; i < num_pipes; ++i) {
     (*g_dispatches)[i]->SetReadCallback(
         std::bind(ReadCallback, (*g_dispatches)[i]->Fd(), i));
     (*g_dispatches)[i]->EnableRead();
@@ -59,8 +57,7 @@ std::pair<uint64_t, uint64_t> RunOnce() {
 
   int space = num_pipes / num_active;
   space *= 2;
-  for (int i = 0; i < num_active; ++i)
-  {
+  for (int i = 0; i < num_active; ++i) {
     ::send(pipes[i * space + 1], "a", 1, 0);
   }
   fired = num_active;
@@ -119,8 +116,7 @@ int main(int argc, char* argv[]) {
 #endif
 
   pipes = static_cast<int*>(calloc(num_pipes * 2, sizeof(int)));
-  if (pipes == nullptr)
-  {
+  if (pipes == nullptr) {
     perror("malloc");
     exit(1);
   }
@@ -155,7 +151,8 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  fprintf(stdout, "TotolTime: %8" PRId64 ", SubTime: %8" PRId64 "\n", total_times/24, sub_times/24);
+  fprintf(stdout, "TotolTime: %8" PRId64 ", SubTime: %8" PRId64 "\n",
+          total_times/24, sub_times/24);
 
   for (i = 0; i < dispatch_size; ++i) {
     dispatches[i]->DisableAll();

@@ -117,7 +117,7 @@ void EventSelect::UpdateDispatch(Dispatch* dispatch) {
       break;
   }
 
-  if (dispatch->index() == -1) {
+  if (dispatch->Index() == -1) {
     assert(dispatch_map_.find(fd) == dispatch_map_.end());
     dispatch_map_[fd] = dispatch;
     dispatch->SetIndex(0);

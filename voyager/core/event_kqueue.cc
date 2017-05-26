@@ -118,7 +118,7 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
   if (::kevent(kq_, ev, n, nullptr, 0, nullptr) == -1) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
   }
-  if (dispatch->index() == -1) {
+  if (dispatch->Index() == -1) {
     assert(dispatch_map_.find(fd) == dispatch_map_.end());
     dispatch_map_[fd] = dispatch;
     dispatch->SetIndex(0);

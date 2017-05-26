@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CXX=g++
 CXXFLAGS="-std=c++11 -pthread -I/usr/local/include -I/usr/include"
 CXXOUTPUT="/tmp/skywalker_build_detect_platform-cxx.$$"

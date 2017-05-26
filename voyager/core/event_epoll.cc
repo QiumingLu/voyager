@@ -48,7 +48,7 @@ void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
     dispatches->push_back(dis);
   }
   if (nfds == static_cast<int>(epollfds_.size())) {
-    epollfds_.resize(epollfds_.size()*2);
+    epollfds_.resize(epollfds_.size() * 2);
   }
 }
 
@@ -58,7 +58,7 @@ void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch_map_.find(fd) != dispatch_map_.end());
   assert(dispatch_map_[fd] == dispatch);
   assert(dispatch->IsNoneEvent());
-  int idx = dispatch->index();
+  int idx = dispatch->Index();
   assert(idx == kAdded || idx == kDeleted);
   dispatch_map_.erase(fd);
   if (idx == kAdded) {
@@ -69,7 +69,7 @@ void EventEpoll::RemoveDispatch(Dispatch* dispatch) {
 
 void EventEpoll::UpdateDispatch(Dispatch* dispatch) {
   eventloop_->AssertInMyLoop();
-  const int idx = dispatch->index();
+  const int idx = dispatch->Index();
   const int fd = dispatch->Fd();
   if (idx == kNew || idx == kDeleted) {
     if (idx == kNew) {

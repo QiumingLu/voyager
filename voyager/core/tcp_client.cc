@@ -75,9 +75,7 @@ void TcpClient::NewConnection(int fd) {
   ptr->SetMessageCallback(message_cb_);
   ptr->SetWriteCompleteCallback(writecomplete_cb_);
   ptr->SetCloseCallback(close_cb_);
-  ev_->RunInLoop([ptr]() {
-    ptr->StartWorking();
-  });
+  ptr->StartWorking();
   weak_ptr_ = ptr;
 }
 
