@@ -143,7 +143,7 @@ void Thread::SetDefaultName() {
 
 void Thread::PthreadCall(const char* label, int result) {
   if (result != 0) {
-    VOYAGER_LOG(FATAL) << label << strerror(result);
+    VOYAGER_LOG(FATAL) << label << ": " << strerror(result);
   }
 }
 
@@ -151,7 +151,7 @@ void Thread::Start() {
   assert(!started_);
   started_ = true;
   StartThreadState* state = new StartThreadState(func_, name_, &tid_);
-  PthreadCall("start thread: ", pthread_create(&pthread_id_,
+  PthreadCall("start thread", pthread_create(&pthread_id_,
                                                nullptr,
                                                &StartThreadWrapper,
                                                state));
@@ -161,7 +161,7 @@ void Thread::Join() {
   assert(started_);
   assert(!joined_);
   joined_ = true;
-  PthreadCall("join thread: ", pthread_join(pthread_id_, nullptr));
+  PthreadCall("join thread", pthread_join(pthread_id_, nullptr));
 }
 
 }  // namespace port

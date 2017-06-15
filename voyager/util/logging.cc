@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/time.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include <functional>
 #include <utility>
@@ -54,8 +54,8 @@ static LogHandler* log_handler_ = &DefaultLogHandler;
 Logger::Logger(LogLevel level, const char* filename, int line)
     : level_(level),
       filename_(filename),
-      line_(line)
-{ }
+      line_(line) {
+}
 
 Logger& Logger::operator<<(const char* value) {
   message_ += value;

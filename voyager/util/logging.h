@@ -77,20 +77,16 @@ T* CheckNotNull(const char* /* filename */, int /* line */,
   ::voyager::CheckNotNull(__FILE__, __LINE__, \
       "'" #value "' Must not be nullptr", (value))
 
-
 typedef void LogHandler(LogLevel level, const char* filename,
-                        int line, const std::string& message_);
-
+                        int line, const std::string& message);
 
 extern void DefaultLogHandler(LogLevel level, const char* filename,
                               int line, const std::string& message);
 
-
 extern void NullLogHandler(LogLevel /* level */, const char* /* filename */,
-                    int /* line */, const std::string& /* message */);
+                           int /* line */, const std::string& /* message */);
 
 LogHandler* SetLogHandler(LogHandler* new_func);
-
 
 }  // namespace voyager
 

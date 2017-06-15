@@ -83,9 +83,10 @@ inline std::string StripSuffixString(const std::string& str,
   }
 }
 
-void StripString(std::string* s, const char* remove, char replacewith);
+extern void StripString(std::string* s, const char* remove,
+                        char replacewith);
 
-void StripWhitespace(std::string* s);
+extern void StripWhitespace(std::string* s);
 
 #pragma GCC diagnostic ignored "-Wconversion"
 inline void LowerString(std::string* s) {
@@ -119,35 +120,37 @@ inline std::string ToUpper(const std::string& s) {
   return result;
 }
 
-std::string StringReplace(const std::string& s, const std::string& oldsub,
-                          const std::string& newsub, bool replace_all);
+extern std::string StringReplace(const std::string& s,
+                                 const std::string& oldsub,
+                                 const std::string& newsub,
+                                 bool replace_all);
 
-void SplitStringUsing(const std::string& full,
-                      const char* delim,
-                      std::vector<std::string>* res);
+extern void SplitStringUsing(const std::string& full,
+                             const char* delim,
+                             std::vector<std::string>* res);
 
-void SplitStringAllowEmpty(const std::string& full,
-                           const char* delim,
-                           std::vector<std::string>* result);
+extern void SplitStringAllowEmpty(const std::string& full,
+                                  const char* delim,
+                                  std::vector<std::string>* result);
 
 // Split a string using a character delimiter.
 inline std::vector<std::string> Split(const std::string& full,
                                       const char* delim,
-                                      const bool skip_empty = true) {
+                                      bool skip_empty = true) {
   std::vector<std::string> result;
   if (skip_empty) {
     SplitStringUsing(full, delim, &result);
   } else {
-    SplitStringAllowEmpty(full, delim, & result);
+    SplitStringAllowEmpty(full, delim, &result);
   }
   return result;
 }
 
 // These methods concatenate a vector of strings into a C++ string, using
 // the C-string "delim" as a separator between components.
-void JoinStrings(const std::vector<std::string>& components,
-                 const char* delim,
-                 std::string* result);
+extern void JoinStrings(const std::vector<std::string>& components,
+                        const char* delim,
+                        std::string* result);
 
 inline std::string JoinStrings(const std::vector<std::string>& components,
                                const char* delim) {

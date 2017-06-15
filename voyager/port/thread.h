@@ -13,7 +13,6 @@
 #include <string>
 #include <utility>
 
-
 namespace voyager {
 namespace port {
 

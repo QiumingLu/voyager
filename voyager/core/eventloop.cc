@@ -97,7 +97,7 @@ EventLoop::EventLoop(PollType type)
 }
 
 EventLoop::~EventLoop() {
-  runloop = NULL;
+  runloop = nullptr;
   VOYAGER_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
                      << " destructs in thread " << port::CurrentThread::Tid();
 
