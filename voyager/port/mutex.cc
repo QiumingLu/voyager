@@ -50,8 +50,8 @@ void Condition::Wait() {
               pthread_cond_wait(&cond_, &mutex_->mutex_));
 }
 
-bool Condition::Wait(uint64_t milliseconds) {
-  uint64_t timeout = (timeops::NowMicros() + milliseconds * 1000) * 1000;
+bool Condition::Wait(uint64_t micros) {
+  uint64_t timeout = (timeops::NowMicros() + micros) * 1000;
   struct timespec outtime;
   outtime.tv_sec  = timeout / 1000000000;
   outtime.tv_nsec = timeout % 1000000000;
