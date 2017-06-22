@@ -8,10 +8,7 @@
 
 namespace voyager {
 
-RpcChannel::RpcChannel(EventLoop* loop)
-    : loop_(loop),
-      micros_(0) {
-}
+RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0) {}
 
 RpcChannel::~RpcChannel() {
   for (auto it : call_map_) {
@@ -38,8 +35,8 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
     conn_->SendMessage(s);
     TimerId t;
     if (micros_ > 0) {
-      t = loop_->RunAfter(
-          micros_, std::bind(&RpcChannel::TimeoutHandler, this, id));
+      t = loop_->RunAfter(micros_,
+                          std::bind(&RpcChannel::TimeoutHandler, this, id));
     }
     port::MutexLock lock(&mutex_);
     call_map_[id] = CallData(response, done, t);

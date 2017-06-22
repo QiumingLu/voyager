@@ -4,20 +4,19 @@
 
 #include "voyager/core/tcp_acceptor.h"
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#include "voyager/core/sockaddr.h"
 #include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 
-TcpAcceptor::TcpAcceptor(EventLoop* eventloop,
-                         const SockAddr& addr,
-                         int backlog,
-                         bool reuseport)
+TcpAcceptor::TcpAcceptor(EventLoop* eventloop, const SockAddr& addr,
+                         int backlog, bool reuseport)
     : eventloop_(eventloop),
       socket_(addr.Family(), true),
       dispatch_(eventloop_, socket_.SocketFd()),
@@ -48,8 +47,8 @@ void TcpAcceptor::Accept() {
   eventloop_->AssertInMyLoop();
   struct sockaddr_storage sa;
   socklen_t salen = static_cast<socklen_t>(sizeof(sa));
-  int connectfd = socket_.Accept(reinterpret_cast<struct sockaddr*>(&sa),
-                                 &salen);
+  int connectfd =
+      socket_.Accept(reinterpret_cast<struct sockaddr*>(&sa), &salen);
   if (connectfd >= 0) {
     if (conn_cb_) {
       conn_cb_(connectfd, sa);

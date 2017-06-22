@@ -23,12 +23,7 @@ class HttpRequestParser {
   void Reset();
 
  private:
-  enum ParserState {
-    kLine,
-    kHeaders,
-    kBody,
-    kEnd
-  };
+  enum ParserState { kLine, kHeaders, kBody, kEnd };
 
   bool ParseRequestLine(const char* begin, const char* end);
   bool ParseRequestBody(Buffer* buf);

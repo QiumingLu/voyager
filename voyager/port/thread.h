@@ -21,8 +21,7 @@ class Thread {
   typedef std::function<void()> ThreadFunc;
   explicit Thread(const ThreadFunc& func,
                   const std::string& name = std::string());
-  explicit Thread(ThreadFunc&& func,
-                  const std::string& name = std::string());
+  explicit Thread(ThreadFunc&& func, const std::string& name = std::string());
   ~Thread();
 
   void Start();
@@ -32,9 +31,7 @@ class Thread {
   bool Joined() const { return joined_; }
   uint64_t Tid() const { return tid_; }
   const std::string& Name() const { return name_; }
-  static int ThreadCreatedNum() {
-    return num_.load(std::memory_order_relaxed);
-  }
+  static int ThreadCreatedNum() { return num_.load(std::memory_order_relaxed); }
 
  private:
   void SetDefaultName();

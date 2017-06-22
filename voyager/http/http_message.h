@@ -23,7 +23,7 @@ class HttpMessage {
     kHttp20,
   };
 
-  HttpMessage() : version_(kHttp10) { }
+  HttpMessage() : version_(kHttp10) {}
 
   void SetVersion(HttpVersion v) { version_ = v; }
   bool SetVersion(const char* begin, const char* end);

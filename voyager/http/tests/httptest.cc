@@ -2,18 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/http/http_server.h"
-
 #include <stdio.h>
 
 #include <functional>
+#include <iostream>
 #include <string>
 #include <utility>
-#include <iostream>
 
+#include "voyager/core/eventloop.h"
 #include "voyager/http/http_request.h"
 #include "voyager/http/http_response.h"
-#include "voyager/core/eventloop.h"
+#include "voyager/http/http_server.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
@@ -37,7 +36,7 @@ void HandleHttpRequest(HttpRequestPtr request, HttpResponse* response) {
   response->SetCloseState(true);
 }
 
-}
+}  // namespace voyager
 
 int main() {
   voyager::EventLoop ev;

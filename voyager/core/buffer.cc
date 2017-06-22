@@ -4,19 +4,15 @@
 
 #include "voyager/core/buffer.h"
 
-#include <sys/uio.h>
 #include <errno.h>
-
+#include <sys/uio.h>
 
 namespace voyager {
 
 const char Buffer::kCRLF[] = "\r\n";
 
 Buffer::Buffer(size_t init_size)
-    : buf_(init_size),
-      read_index_(0),
-      write_index_(0) {
-}
+    : buf_(init_size), read_index_(0), write_index_(0) {}
 
 ssize_t Buffer::ReadV(int socketfd) {
   char backup_buf[kBackupBufferSize];

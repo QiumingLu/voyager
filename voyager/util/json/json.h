@@ -19,11 +19,10 @@ namespace json {
 // 读字符串类
 class JsonReader {
  public:
-  JsonReader() : data_(""), size_(0), cur_(0) { }
-  JsonReader(const char* d, size_t n) : data_(d), size_(n), cur_(0) { }
+  JsonReader() : data_(""), size_(0), cur_(0) {}
+  JsonReader(const char* d, size_t n) : data_(d), size_(n), cur_(0) {}
   explicit JsonReader(const std::vector<char>& v)
-      : data_(&v[0]), size_(v.size()), cur_(0) {
-  }
+      : data_(&v[0]), size_(v.size()), cur_(0) {}
 
   void Reset() { cur_ = 0; }
 
@@ -55,9 +54,7 @@ class JsonReader {
     --cur_;
   }
 
-  bool HasEnd() const {
-    return cur_ >= size_;
-  }
+  bool HasEnd() const { return cur_ >= size_; }
 
  private:
   const char* data_;

@@ -5,8 +5,8 @@
 #ifndef VOYAGER_UTIL_STRINGPRINTF_H_
 #define VOYAGER_UTIL_STRINGPRINTF_H_
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include <string>
 
@@ -21,8 +21,8 @@ extern std::string StringPrintf(const char* format, ...);
 
 // Store result into a supplied string and return it.
 // The previous dst will be clear.
-extern const std::string& SStringPrintf(std::string* dst,
-                                        const char* format, ...);
+extern const std::string& SStringPrintf(std::string* dst, const char* format,
+                                        ...);
 
 // Append result into a supplied string.
 extern void StringAppendF(std::string* dst, const char* format, ...);

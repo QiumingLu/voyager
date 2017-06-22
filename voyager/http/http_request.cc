@@ -9,8 +9,7 @@
 
 namespace voyager {
 
-HttpRequest::HttpRequest() {
-}
+HttpRequest::HttpRequest() {}
 
 bool HttpRequest::SetMethod(const char* begin, const char* end) {
   size_t size = end - begin;

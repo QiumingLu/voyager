@@ -5,13 +5,11 @@
 #include "voyager/util/base64/base64.h"
 #include "voyager/util/base64/modp_base64/modp_b64.h"
 
-
 namespace voyager {
 
 bool Base64Encode(const std::string& input, std::string* output) {
   std::string x(modp_b64_encode_len(input.size()), '\0');
-  int d = modp_b64_encode(&*x.begin(),
-                          input.data(),
+  int d = modp_b64_encode(&*x.begin(), input.data(),
                           static_cast<int>(input.size()));
   if (d < 0) {
     return false;
@@ -23,8 +21,7 @@ bool Base64Encode(const std::string& input, std::string* output) {
 
 bool Base64Decode(const std::string& input, std::string* output) {
   std::string x(modp_b64_decode_len(input.size()), '\0');
-  int d = modp_b64_decode(&*x.begin(),
-                          input.data(),
+  int d = modp_b64_decode(&*x.begin(), input.data(),
                           static_cast<int>(input.size()));
   if (d < 0) {
     return false;

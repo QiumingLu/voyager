@@ -13,7 +13,7 @@ namespace voyager {
 
 class Status {
  public:
-  Status() : state_(nullptr) { }
+  Status() : state_(nullptr) {}
   ~Status() { delete[] state_; }
 
   // Copy the specified status.

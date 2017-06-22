@@ -5,9 +5,9 @@
 #ifndef VOYAGER_CORE_EVENT_KQUEUE_H_
 #define VOYAGER_CORE_EVENT_KQUEUE_H_
 
-#include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
+#include <sys/types.h>
 
 #include <vector>
 

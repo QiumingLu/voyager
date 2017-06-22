@@ -7,9 +7,9 @@
 
 #include <string>
 
+#include "voyager/core/eventloop.h"
 #include "voyager/port/mutex.h"
 #include "voyager/port/thread.h"
-#include "voyager/core/eventloop.h"
 
 namespace voyager {
 
@@ -25,7 +25,7 @@ class BGEventLoop {
   void ThreadFunc();
 
   PollType type_;
-  EventLoop *eventloop_;
+  EventLoop* eventloop_;
   port::Mutex mu_;
   port::Condition cond_;
   port::Thread thread_;

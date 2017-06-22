@@ -25,11 +25,9 @@ class Schedule;
 
 class TcpServer {
  public:
-  TcpServer(EventLoop* ev,
-            const SockAddr& addr,
+  TcpServer(EventLoop* ev, const SockAddr& addr,
             const std::string& name = std::string("VoyagerServer"),
-            int thread_size = 1,
-            int backlog = SOMAXCONN,
+            int thread_size = 1, int backlog = SOMAXCONN,
             bool reuseport = false);
   ~TcpServer();
 
@@ -38,28 +36,20 @@ class TcpServer {
   void SetConnectionCallback(const ConnectionCallback& cb) {
     connection_cb_ = cb;
   }
-  void SetCloseCallback(const CloseCallback& cb) {
-    close_cb_ = cb;
-  }
+  void SetCloseCallback(const CloseCallback& cb) { close_cb_ = cb; }
   void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
     writecomplete_cb_ = cb;
   }
-  void SetMessageCallback(const MessageCallback& cb) {
-    message_cb_ = cb;
-  }
+  void SetMessageCallback(const MessageCallback& cb) { message_cb_ = cb; }
 
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
   }
-  void SetCloseCallback(CloseCallback&& cb) {
-    close_cb_ = std::move(cb);
-  }
+  void SetCloseCallback(CloseCallback&& cb) { close_cb_ = std::move(cb); }
   void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
     writecomplete_cb_ = std::move(cb);
   }
-  void SetMessageCallback(MessageCallback&& cb) {
-    message_cb_ = std::move(cb);
-  }
+  void SetMessageCallback(MessageCallback&& cb) { message_cb_ = std::move(cb); }
 
   void Start();
 

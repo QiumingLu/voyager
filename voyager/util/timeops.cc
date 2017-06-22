@@ -24,15 +24,9 @@ std::string FormatTimestamp(uint64_t micros) {
   localtime_r(&seconds, &t);
 
   char buf[128];
-  snprintf(buf, sizeof(buf),
-           "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
-           t.tm_year + 1900,
-           t.tm_mon + 1,
-           t.tm_mday,
-           t.tm_hour,
-           t.tm_min,
-           t.tm_sec,
-           static_cast<int>(micros));
+  snprintf(buf, sizeof(buf), "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
+           t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min,
+           t.tm_sec, static_cast<int>(micros));
 
   return std::string(buf);
 }

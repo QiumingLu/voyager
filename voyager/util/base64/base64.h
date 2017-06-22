@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace  voyager {
+namespace voyager {
 
 // Encodes the input string in base64. Returns true if successful and false
 // otherwise. The output string is only modified if successful.

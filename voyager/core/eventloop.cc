@@ -5,8 +5,8 @@
 #include "voyager/core/eventloop.h"
 
 #include <signal.h>
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 
 #include <algorithm>
 #include <utility>
@@ -32,9 +32,7 @@ __thread EventLoop* runloop = nullptr;
 
 class IgnoreSIGPIPE {
  public:
-  IgnoreSIGPIPE() {
-    ::signal(SIGPIPE, SIG_IGN);
-  }
+  IgnoreSIGPIPE() { ::signal(SIGPIPE, SIG_IGN); }
 };
 
 IgnoreSIGPIPE ignore;
@@ -56,7 +54,7 @@ static EventPoller* CreatePoller(PollType type, EventLoop* loop) {
 #else
       poller = new EventKqueue(loop);
 #endif
-     break;
+      break;
     default:
       VOYAGER_LOG(FATAL) << "error poll type.";
       assert(false);
@@ -67,9 +65,7 @@ static EventPoller* CreatePoller(PollType type, EventLoop* loop) {
 
 std::atomic<int> EventLoop::all_connection_size_;
 
-EventLoop* EventLoop::RunLoop() {
-  return runloop;
-}
+EventLoop* EventLoop::RunLoop() { return runloop; }
 
 EventLoop::EventLoop(PollType type)
     : type_(type),
@@ -84,7 +80,7 @@ EventLoop::EventLoop(PollType type)
   }
   wakeup_dispatch_.reset(new Dispatch(this, wakeup_fd_[0]));
 
-  VOYAGER_LOG(DEBUG) << "EventLoop "<< this << " created in thread " << tid_;
+  VOYAGER_LOG(DEBUG) << "EventLoop " << this << " created in thread " << tid_;
   if (runloop) {
     VOYAGER_LOG(FATAL) << "Another EventLoop " << runloop
                        << " exists in this thread " << tid_;
@@ -113,6 +109,7 @@ void EventLoop::Loop() {
   std::vector<Dispatch*> dispatches;
 
   while (!exit_) {
+    dispatches.clear();
     static const uint64_t kPollTimeMs = 5000;
     uint64_t t = (timers_->TimeoutMicros() / 1000);
     int timeout = static_cast<int>(std::min(t, kPollTimeMs));
@@ -120,18 +117,15 @@ void EventLoop::Loop() {
     timers_->RunTimerProcs();
 
     for (std::vector<Dispatch*>::iterator it = dispatches.begin();
-        it != dispatches.end(); ++it) {
+         it != dispatches.end(); ++it) {
       (*it)->HandleEvent();
     }
-    dispatches.clear();
     RunFuncs();
   }
 }
 
 void EventLoop::Exit() {
-  QueueInLoop([this]() {
-    this->exit_ = true;
-  });
+  QueueInLoop([this]() { this->exit_ = true; });
 }
 
 void EventLoop::RunInLoop(const Func& func) {
@@ -177,8 +171,7 @@ void EventLoop::QueueInLoop(Func&& func) {
   }
 }
 
-TimerId EventLoop::RunAt(uint64_t micros_value,
-                         const TimerProcCallback& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value, const TimerProcCallback& cb) {
   return timers_->Insert(micros_value, 0, cb);
 }
 
@@ -194,26 +187,21 @@ TimerId EventLoop::RunEvery(uint64_t micros_interval,
   return timers_->Insert(micros_value, micros_interval, cb);
 }
 
-TimerId EventLoop::RunAt(uint64_t micros_value,
-                         TimerProcCallback&& cb) {
+TimerId EventLoop::RunAt(uint64_t micros_value, TimerProcCallback&& cb) {
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerId EventLoop::RunAfter(uint64_t micros_delay,
-                            TimerProcCallback&& cb) {
+TimerId EventLoop::RunAfter(uint64_t micros_delay, TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_delay;
   return timers_->Insert(micros_value, 0, std::move(cb));
 }
 
-TimerId EventLoop::RunEvery(uint64_t micros_interval,
-                            TimerProcCallback&& cb) {
+TimerId EventLoop::RunEvery(uint64_t micros_interval, TimerProcCallback&& cb) {
   uint64_t micros_value = timeops::NowMicros() + micros_interval;
   return timers_->Insert(micros_value, micros_interval, std::move(cb));
 }
 
-void EventLoop::RemoveTimer(TimerId t) {
-  timers_->Erase(t);
-}
+void EventLoop::RemoveTimer(TimerId t) { timers_->Erase(t); }
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
@@ -258,8 +246,8 @@ void EventLoop::RunFuncs() {
     port::MutexLock lock(&mu_);
     funcs.swap(funcs_);
   }
-  for (std::vector<Func>::iterator it = funcs.begin();
-       it != funcs.end(); ++it) {
+  for (std::vector<Func>::iterator it = funcs.begin(); it != funcs.end();
+       ++it) {
     (*it)();
   }
   run_ = false;
@@ -267,7 +255,7 @@ void EventLoop::RunFuncs() {
 
 void EventLoop::WakeUp() {
   uint64_t one = 0;
-  ssize_t n  = ::write(wakeup_fd_[1], &one, sizeof(one));
+  ssize_t n = ::write(wakeup_fd_[1], &one, sizeof(one));
   if (n != sizeof(one)) {
     VOYAGER_LOG(ERROR) << "EventLoop::WakeUp - " << wakeup_fd_ << " writes "
                        << n << " bytes instead of 8";

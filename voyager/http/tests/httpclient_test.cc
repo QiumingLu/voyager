@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/http/http_client.h"
-#include "voyager/core/eventloop.h"
-#include "voyager/util/status.h"
-
-#include <iostream>
 #include <functional>
+#include <iostream>
+
+#include "voyager/core/eventloop.h"
+#include "voyager/http/http_client.h"
+#include "voyager/util/status.h"
 
 namespace voyager {
 
@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
   request->AddHeader("Host", host);
   request->AddHeader("Connection", "keep-alive");
 
-  client.DoHttpRequest(request, std::bind(voyager::HandleResponse,
-                                          std::placeholders::_1,
-                                          std::placeholders::_2));
+  client.DoHttpRequest(request,
+                       std::bind(voyager::HandleResponse, std::placeholders::_1,
+                                 std::placeholders::_2));
   ev.Loop();
 }

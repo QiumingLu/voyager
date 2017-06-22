@@ -45,8 +45,7 @@ const char* HttpMessage::VersionToString() const {
   return c;
 }
 
-void HttpMessage::AddHeader(const char* begin,
-                            const char* colon,
+void HttpMessage::AddHeader(const char* begin, const char* colon,
                             const char* end) {
   std::string field(begin, colon);
   ++colon;

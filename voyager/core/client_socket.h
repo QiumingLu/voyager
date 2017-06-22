@@ -12,15 +12,11 @@ namespace voyager {
 class ClientSocket : public BaseSocket {
  public:
   ClientSocket(int domain, bool nonblocking)
-      : BaseSocket(domain, nonblocking) {
-  }
+      : BaseSocket(domain, nonblocking) {}
 
-  explicit ClientSocket(int socketfd)
-      : BaseSocket(socketfd) {
-  }
+  explicit ClientSocket(int socketfd) : BaseSocket(socketfd) {}
 
   int Connect(const struct sockaddr* sa, socklen_t salen) const;
-
 
  private:
   // No copying allowed

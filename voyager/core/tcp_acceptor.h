@@ -10,8 +10,8 @@
 #include <functional>
 #include <utility>
 
-#include "voyager/core/server_socket.h"
 #include "voyager/core/dispatch.h"
+#include "voyager/core/server_socket.h"
 
 namespace voyager {
 
@@ -20,12 +20,11 @@ class EventLoop;
 
 class TcpAcceptor {
  public:
-  typedef std::function<void (int fd,
-      const struct sockaddr_storage& sa)> NewConnectionCallback;
+  typedef std::function<void(int fd, const struct sockaddr_storage& sa)>
+      NewConnectionCallback;
 
-  TcpAcceptor(EventLoop* eventloop,
-              const SockAddr& addr,
-              int backlog, bool reuseport);
+  TcpAcceptor(EventLoop* eventloop, const SockAddr& addr, int backlog,
+              bool reuseport);
   ~TcpAcceptor();
 
   void EnableListen();
@@ -43,10 +42,10 @@ class TcpAcceptor {
 
   EventLoop* eventloop_;
   ServerSocket socket_;
-  Dispatch   dispatch_;
-  int        backlog_;
-  int        idlefd_;
-  bool       listenning_;
+  Dispatch dispatch_;
+  int backlog_;
+  int idlefd_;
+  bool listenning_;
   NewConnectionCallback conn_cb_;
 
   // No copying alloweded

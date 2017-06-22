@@ -5,14 +5,14 @@
 #ifndef VOYAGER_HTTP_HTTP_CLIENT_H_
 #define VOYAGER_HTTP_HTTP_CLIENT_H_
 
+#include <deque>
 #include <functional>
 #include <memory>
-#include <deque>
 
-#include "voyager/http/http_request.h"
-#include "voyager/http/http_response.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/timerlist.h"
+#include "voyager/http/http_request.h"
+#include "voyager/http/http_response.h"
 #include "voyager/util/status.h"
 
 namespace voyager {
@@ -20,12 +20,10 @@ namespace voyager {
 // Noly write for test, which cann't use in produce environment!
 class HttpClient {
  public:
-  typedef std::function<void (HttpResponsePtr,
-                              const Status&)> RequestCallback;
+  typedef std::function<void(HttpResponsePtr, const Status&)> RequestCallback;
   explicit HttpClient(EventLoop* ev, uint64_t timeout = 15);
 
-  void DoHttpRequest(const HttpRequestPtr& request,
-                     const RequestCallback& cb);
+  void DoHttpRequest(const HttpRequestPtr& request, const RequestCallback& cb);
 
  private:
   void DoHttpRequestInLoop(const HttpRequestPtr& request,

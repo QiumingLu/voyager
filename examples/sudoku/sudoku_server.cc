@@ -7,8 +7,8 @@
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
-#include "voyager/core/tcp_server.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/core/tcp_server.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/string_util.h"
 
@@ -19,22 +19,18 @@ class SudukuServer {
   SudukuServer(voyager::EventLoop* ev, const voyager::SockAddr& addr)
       : server_(ev, addr, "SudukuServer", 5) {
     server_.SetConnectionCallback(
-        std::bind(&SudukuServer::ConnectCallback, this,
-                  std::placeholders::_1));
-    server_.SetMessageCallback(
-        std::bind(&SudukuServer::MessageCallback, this,
-                  std::placeholders::_1, std::placeholders::_2));
+        std::bind(&SudukuServer::ConnectCallback, this, std::placeholders::_1));
+    server_.SetMessageCallback(std::bind(&SudukuServer::MessageCallback, this,
+                                         std::placeholders::_1,
+                                         std::placeholders::_2));
   }
 
-  void Start() {
-    server_.Start();
-  }
+  void Start() { server_.Start(); }
 
  private:
   static const int kCells = 81;
 
-  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  }
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {}
 
   void MessageCallback(const voyager::TcpConnectionPtr& ptr,
                        voyager::Buffer* buf) {

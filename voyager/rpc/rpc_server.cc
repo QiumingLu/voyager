@@ -7,22 +7,17 @@
 
 namespace voyager {
 
-RpcServer::RpcServer(EventLoop* loop,
-                     const SockAddr& addr,
-                     int thread_size)
+RpcServer::RpcServer(EventLoop* loop, const SockAddr& addr, int thread_size)
     : server_(loop, addr, "RpcServer", thread_size) {
-  server_.SetMessageCallback(
-      std::bind(&RpcServer::OnMessage, this,
-                std::placeholders::_1, std::placeholders::_2));
+  server_.SetMessageCallback(std::bind(&RpcServer::OnMessage, this,
+                                       std::placeholders::_1,
+                                       std::placeholders::_2));
 }
 
-void RpcServer::Start() {
-  server_.Start();
-}
+void RpcServer::Start() { server_.Start(); }
 
 void RpcServer::RegisterService(google::protobuf::Service* service) {
-  const google::protobuf::ServiceDescriptor* desc =
-      service->GetDescriptor();
+  const google::protobuf::ServiceDescriptor* desc = service->GetDescriptor();
   assert(desc != nullptr);
   services_[desc->full_name()] = service;
 }
@@ -37,14 +32,12 @@ void RpcServer::OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
   }
 }
 
-void RpcServer::OnRequest(const TcpConnectionPtr& p,
-                          const RpcMessage& msg) {
+void RpcServer::OnRequest(const TcpConnectionPtr& p, const RpcMessage& msg) {
   ErrorCode error;
   auto it = services_.find(msg.service_name());
   if (it != services_.end()) {
     google::protobuf::Service* service = it->second;
-    const google::protobuf::ServiceDescriptor* desc =
-        service->GetDescriptor();
+    const google::protobuf::ServiceDescriptor* desc = service->GetDescriptor();
     const google::protobuf::MethodDescriptor* method =
         desc->FindMethodByName(msg.method_name());
     if (method) {
@@ -56,8 +49,7 @@ void RpcServer::OnRequest(const TcpConnectionPtr& p,
         p->SetContext(new int(msg.id()));
         service->CallMethod(
             method, nullptr, request, response,
-            google::protobuf::NewCallback(
-                this, &RpcServer::Done, response, p));
+            google::protobuf::NewCallback(this, &RpcServer::Done, response, p));
         error = ERROR_CODE_OK;
       } else {
         error = ERROR_CODE_INVALID_REQUEST;
@@ -81,8 +73,7 @@ void RpcServer::OnRequest(const TcpConnectionPtr& p,
   }
 }
 
-void RpcServer::Done(google::protobuf::Message* response,
-                     TcpConnectionPtr p) {
+void RpcServer::Done(google::protobuf::Message* response, TcpConnectionPtr p) {
   int* id = reinterpret_cast<int*>(p->Context());
   RpcMessage msg;
   msg.set_id(*id);

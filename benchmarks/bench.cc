@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <utility>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <utility>
 
 #include <memory>
 #include <vector>
@@ -46,7 +46,6 @@ void ReadCallback(int fd, int index) {
 }
 
 std::pair<uint64_t, uint64_t> RunOnce() {
-
   uint64_t ta = timeops::NowMicros();
 
   for (int i = 0; i < num_pipes; ++i) {
@@ -77,9 +76,9 @@ std::pair<uint64_t, uint64_t> RunOnce() {
   return t;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   int i, c;
-  int* cp;
+  int *cp;
   extern char *optarg;
 
   num_pipes = 100;
@@ -90,10 +89,10 @@ int main(int argc, char* argv[]) {
     switch (c) {
       case 'n':
         num_pipes = atoi(optarg);
-         break;
+        break;
       case 'a':
         num_active = atoi(optarg);
-          break;
+        break;
       case 'w':
         num_writes = atoi(optarg);
         break;
@@ -115,20 +114,19 @@ int main(int argc, char* argv[]) {
   }
 #endif
 
-  pipes = static_cast<int*>(calloc(num_pipes * 2, sizeof(int)));
+  pipes = static_cast<int *>(calloc(num_pipes * 2, sizeof(int)));
   if (pipes == nullptr) {
     perror("malloc");
     exit(1);
   }
 
   for (cp = pipes, i = 0; i < num_pipes; i++, cp += 2) {
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cp)  == -1) {
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, cp) == -1) {
       perror("pipe");
       free(pipes);
       exit(1);
     }
   }
-
 
   EventLoop ev;
   eventloop = &ev;
@@ -152,7 +150,7 @@ int main(int argc, char* argv[]) {
   }
 
   fprintf(stdout, "TotolTime: %8" PRId64 ", SubTime: %8" PRId64 "\n",
-          total_times/24, sub_times/24);
+          total_times / 24, sub_times / 24);
 
   for (i = 0; i < dispatch_size; ++i) {
     dispatches[i]->DisableAll();

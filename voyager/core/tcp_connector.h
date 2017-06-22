@@ -27,7 +27,7 @@ class EventLoop;
 
 class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
  public:
-  typedef std::function<void (int fd)> NewConnectionCallback;
+  typedef std::function<void(int fd)> NewConnectionCallback;
 
   TcpConnector(EventLoop* ev, const SockAddr& addr);
 
@@ -48,11 +48,7 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   void Stop();
 
  private:
-  enum ConnectState {
-    kDisConnected,
-    kConnected,
-    kConnecting
-  };
+  enum ConnectState { kDisConnected, kConnected, kConnecting };
 
   static const uint64_t kMaxRetryTime = 30000000;
   static const uint64_t kInitRetryTime = 2000000;

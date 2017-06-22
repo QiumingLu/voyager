@@ -4,12 +4,13 @@
 
 #include "voyager/core/newtimer.h"
 
+#include <string.h>
 #include <sys/timerfd.h>
 #include <unistd.h>
-#include <string.h>
+
 #include <map>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "voyager/core/eventloop.h"
 #include "voyager/util/logging.h"
@@ -52,7 +53,6 @@ NewTimer::~NewTimer() {
     VOYAGER_LOG(ERROR) << "close: " << strerror(errno);
   }
 }
-
 
 void NewTimer::SetTime(uint64_t nanos_value, uint64_t nanos_interval) {
   eventloop_->RunInLoop([this, nanos_value, nanos_interval]() {

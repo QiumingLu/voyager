@@ -14,8 +14,7 @@ namespace voyager {
 void StripString(std::string* s, const char* remove, char replacewith) {
   const char* str_start = s->c_str();
   const char* str = str_start;
-  for (str = strpbrk(str, remove);
-       str != nullptr;
+  for (str = strpbrk(str, remove); str != nullptr;
        str = strpbrk(str + 1, remove)) {
     (*s)[str - str_start] = replacewith;
   }
@@ -77,10 +76,9 @@ std::string StringReplace(const std::string& s, const std::string& oldsub,
   return result;
 }
 
-template<typename ITR>
+template <typename ITR>
 static inline void SplitStringToIteratorUsing(const std::string& full,
-                                              const char* delim,
-                                              ITR& result) {
+                                              const char* delim, ITR& result) {
   // Optimize the common case where delim is a single character.
   if (delim[0] != '\0' && delim[1] == '\0') {
     char c = delim[0];
@@ -91,7 +89,8 @@ static inline void SplitStringToIteratorUsing(const std::string& full,
         ++p;
       } else {
         const char* start = p;
-        while (++p != end && *p != c) { }
+        while (++p != end && *p != c) {
+        }
         *result++ = std::string(start, p - start);
       }
     }
@@ -111,18 +110,16 @@ static inline void SplitStringToIteratorUsing(const std::string& full,
   }
 }
 
-void SplitStringUsing(const std::string& full,
-                      const char* delim,
+void SplitStringUsing(const std::string& full, const char* delim,
                       std::vector<std::string>* result) {
-  std::back_insert_iterator< std::vector<std::string> > it(*result);
+  std::back_insert_iterator<std::vector<std::string> > it(*result);
   SplitStringToIteratorUsing(full, delim, it);
 }
 
-template<typename StringType, typename ITR>
+template <typename StringType, typename ITR>
 static inline void SplitStringToIteratorAllowEmpty(const StringType& full,
                                                    const char* delim,
-                                                   int pieces,
-                                                   ITR& result) {
+                                                   int pieces, ITR& result) {
   std::string::size_type begin_index, end_index;
   begin_index = 0;
   for (int i = 0; (i < pieces - 1) || (pieces == 0); ++i) {
@@ -137,18 +134,15 @@ static inline void SplitStringToIteratorAllowEmpty(const StringType& full,
   *result++ = full.substr(begin_index);
 }
 
-void SplitStringAllowEmpty(const std::string& full,
-                           const char* delim,
+void SplitStringAllowEmpty(const std::string& full, const char* delim,
                            std::vector<std::string>* result) {
-  std::back_insert_iterator< std::vector<std::string> > it(*result);
+  std::back_insert_iterator<std::vector<std::string> > it(*result);
   SplitStringToIteratorAllowEmpty(full, delim, 0, it);
 }
 
 template <class ITERATOR>
-static void JoinStringsIterator(const ITERATOR& start,
-                                const ITERATOR& end,
-                                const char* delim,
-                                std::string* result) {
+static void JoinStringsIterator(const ITERATOR& start, const ITERATOR& end,
+                                const char* delim, std::string* result) {
   assert(result != nullptr);
   result->clear();
   size_t delim_length = strlen(delim);
@@ -172,8 +166,7 @@ static void JoinStringsIterator(const ITERATOR& start,
   }
 }
 
-void JoinStrings(const std::vector<std::string>& components,
-                 const char* delim,
+void JoinStrings(const std::vector<std::string>& components, const char* delim,
                  std::string* result) {
   JoinStringsIterator(components.begin(), components.end(), delim, result);
 }

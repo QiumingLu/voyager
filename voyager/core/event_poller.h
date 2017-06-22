@@ -18,7 +18,7 @@ class EventPoller {
   explicit EventPoller(EventLoop* ev);
   virtual ~EventPoller();
 
-  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches) = 0;
+  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches) = 0;
   virtual void RemoveDispatch(Dispatch* dispatch) = 0;
   virtual void UpdateDispatch(Dispatch* dispatch) = 0;
   virtual bool HasDispatch(Dispatch* dispatch) const;

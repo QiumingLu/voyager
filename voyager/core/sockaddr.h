@@ -25,8 +25,7 @@ class SockAddr {
   const std::string& Ip() const { return ip_; }
   uint16_t Port() const { return port_; }
 
-  static bool SockAddrToIP(const struct sockaddr* sa,
-                           char* buf, size_t len);
+  static bool SockAddrToIP(const struct sockaddr* sa, char* buf, size_t len);
   static bool IPPortToSockAddr(const char* ip, uint16_t port,
                                struct sockaddr_in* sa4);
   static bool IPPortToSockAddr(const char* ip, uint16_t port,
@@ -37,10 +36,9 @@ class SockAddr {
 
   static int FormatLocal(int socketfd, char* buf, size_t len);
   static int FormatPeer(int socketfd, char* buf, size_t len);
-  static int FormatAddress(const struct sockaddr* sa,
-                           char* buf, size_t len);
-  static int FormatAddress(const char* ip, uint16_t port,
-                           char* buf, size_t len);
+  static int FormatAddress(const struct sockaddr* sa, char* buf, size_t len);
+  static int FormatAddress(const char* ip, uint16_t port, char* buf,
+                           size_t len);
 
  private:
   bool GetAddrInfo(const char* host, uint16_t port);

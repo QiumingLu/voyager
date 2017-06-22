@@ -2,19 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/core/tcp_server.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_server.h"
 #include "voyager/port/thread.h"
 
 using namespace voyager;
 using namespace voyager::port;
 
-TcpServer *g_server;
+TcpServer* g_server;
 
-void ThreadFunc() {
-  g_server->Start();
-}
+void ThreadFunc() { g_server->Start(); }
 
 int main(int argc, char** argv) {
   SockAddr addr("127.0.0.1", 5666);

@@ -6,8 +6,8 @@
 #define VOYAGER_CORE_TIMERLIST_H_
 
 #include <set>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"

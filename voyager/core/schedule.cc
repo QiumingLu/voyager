@@ -10,10 +10,7 @@
 namespace voyager {
 
 Schedule::Schedule(EventLoop* ev, int size)
-    : baseloop_(ev),
-      size_(size),
-      started_(false) {
-}
+    : baseloop_(ev), size_(size), started_(false) {}
 
 void Schedule::Start() {
   assert(!started_);

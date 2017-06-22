@@ -6,9 +6,8 @@
 #include "voyager/util/testharness.h"
 
 namespace voyager {
-  
-class LoggingTest {
-};
+
+class LoggingTest {};
 
 TEST(LoggingTest, Simple) {
   char v1[] = "test char logger";
@@ -27,8 +26,8 @@ TEST(LoggingTest, Simple) {
   Status st = Status::IOError("log: test IOError");
 
   VOYAGER_LOG(INFO) << v1;
-  VOYAGER_LOG(INFO) << v2 << " " << v3 << " " << v4 << " " << v5 << " " <<  
-    v6 << " " << v7 << " " <<  v8 << " " << v9 << " " << v10;
+  VOYAGER_LOG(INFO) << v2 << " " << v3 << " " << v4 << " " << v5 << " " << v6
+                    << " " << v7 << " " << v8 << " " << v9 << " " << v10;
   VOYAGER_LOG(INFO) << v11;
   VOYAGER_LOG(INFO) << slice;
   VOYAGER_LOG(INFO) << str;
@@ -45,6 +44,4 @@ TEST(LoggingTest, Simple) {
 
 }  // namespace voyager
 
-int main(int argc, char** argv) {
-  return voyager::test::RunAllTests();
-}
+int main(int argc, char** argv) { return voyager::test::RunAllTests(); }

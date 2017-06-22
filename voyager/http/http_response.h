@@ -8,18 +8,16 @@
 #include <memory>
 #include <string>
 
-#include "voyager/http/http_message.h"
 #include "voyager/core/buffer.h"
+#include "voyager/http/http_message.h"
 
 namespace voyager {
 
 class HttpResponse : public HttpMessage {
  public:
-  HttpResponse()
-      : close_(false), status_code_("200"), reason_parse_("OK") {
-  }
+  HttpResponse() : close_(false), status_code_("200"), reason_parse_("OK") {}
 
-  void SetCloseState(bool close) { close_ =  close; }
+  void SetCloseState(bool close) { close_ = close; }
   bool CloseState() const { return close_; }
 
   void SetStatusCode(const char* begin, const char* end) {

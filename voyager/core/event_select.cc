@@ -11,16 +11,13 @@
 
 namespace voyager {
 
-EventSelect::EventSelect(EventLoop* ev)
-    : EventPoller(ev),
-      nfds_(0) {
+EventSelect::EventSelect(EventLoop* ev) : EventPoller(ev), nfds_(0) {
   FD_ZERO(&readfds_);
   FD_ZERO(&writefds_);
   FD_ZERO(&exceptfds_);
 }
 
-EventSelect::~EventSelect() {
-}
+EventSelect::~EventSelect() {}
 
 void EventSelect::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timeval out;

@@ -6,10 +6,9 @@
 
 namespace voyager {
 
-EventPoller::EventPoller(EventLoop* ev) : eventloop_(ev) {
-}
+EventPoller::EventPoller(EventLoop* ev) : eventloop_(ev) {}
 
-EventPoller::~EventPoller() { }
+EventPoller::~EventPoller() {}
 
 bool EventPoller::HasDispatch(Dispatch* dispatch) const {
   eventloop_->AssertInMyLoop();

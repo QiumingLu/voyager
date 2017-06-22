@@ -60,8 +60,8 @@ std::string Status::ToString() const {
         type = "NetworkError: ";
         break;
       default:
-        snprintf(tmp, sizeof(tmp), "Unknown code(%d): ",
-                 static_cast<int>(code()));
+        snprintf(tmp, sizeof(tmp),
+                 "Unknown code(%d): ", static_cast<int>(code()));
         type = tmp;
     }
     std::string result(type);

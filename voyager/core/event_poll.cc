@@ -4,8 +4,8 @@
 
 #include "voyager/core/event_poll.h"
 
-#include <string.h>
 #include <errno.h>
+#include <string.h>
 
 #include <utility>
 
@@ -14,15 +14,13 @@
 
 namespace voyager {
 
-EventPoll::EventPoll(EventLoop* ev) : EventPoller(ev) {
-}
+EventPoll::EventPoll(EventLoop* ev) : EventPoller(ev) {}
 
-EventPoll::~EventPoll() {
-}
+EventPoll::~EventPoll() {}
 
-void EventPoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  int ret = ::poll(&(*pollfds_.begin()),
-                   static_cast<nfds_t>(pollfds_.size()), timeout);
+void EventPoll::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
+  int ret = ::poll(&(*pollfds_.begin()), static_cast<nfds_t>(pollfds_.size()),
+                   timeout);
   if (ret == -1) {
     if (errno != EINTR) {
       VOYAGER_LOG(ERROR) << "poll: " << strerror(errno);
@@ -50,16 +48,16 @@ void EventPoll::RemoveDispatch(Dispatch* dispatch) {
 
   int idx = dispatch->Index();
   assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
-  assert(pollfds_[idx].fd == -dispatch->Fd()-1 &&
+  assert(pollfds_[idx].fd == -dispatch->Fd() - 1 &&
          pollfds_[idx].events == dispatch->Events());
   dispatch_map_.erase(dispatch->Fd());
-  if (idx == static_cast<int>(pollfds_.size())-1) {
+  if (idx == static_cast<int>(pollfds_.size()) - 1) {
     pollfds_.pop_back();
   } else {
     int id = pollfds_.back().fd;
     std::swap(pollfds_[idx], pollfds_.back());
     if (id < 0) {
-      id = -id-1;
+      id = -id - 1;
     }
     dispatch_map_[id]->SetIndex(idx);
     pollfds_.pop_back();
@@ -83,7 +81,7 @@ void EventPoll::UpdateDispatch(Dispatch* dispatch) {
     int idx = dispatch->Index();
     assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
     assert(pollfds_[idx].fd == dispatch->Fd() ||
-           pollfds_[idx].fd == -dispatch->Fd()-1);
+           pollfds_[idx].fd == -dispatch->Fd() - 1);
     pollfds_[idx].fd = dispatch->Fd();
     pollfds_[idx].events = static_cast<short>(dispatch->Events());
     pollfds_[idx].revents = 0;

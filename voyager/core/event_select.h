@@ -15,7 +15,7 @@
 
 namespace voyager {
 
-class EventSelect : public EventPoller{
+class EventSelect : public EventPoller {
  public:
   explicit EventSelect(EventLoop* ev);
   virtual ~EventSelect();

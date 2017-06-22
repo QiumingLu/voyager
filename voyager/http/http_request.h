@@ -9,8 +9,8 @@
 #include <string>
 #include <utility>
 
-#include "voyager/http/http_message.h"
 #include "voyager/core/buffer.h"
+#include "voyager/http/http_message.h"
 
 namespace voyager {
 
@@ -36,9 +36,7 @@ class HttpRequest : public HttpMessage {
   const char* MethodToString() const;
 
   void SetPath(const std::string& s) { path_ = s; }
-  void SetPath(const char* begin, const char* end) {
-    path_.assign(begin, end);
-  }
+  void SetPath(const char* begin, const char* end) { path_.assign(begin, end); }
   const std::string& Path() const { return path_; }
 
   void SetQuery(const char* begin, const char* end) {

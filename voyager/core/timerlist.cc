@@ -6,7 +6,6 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
-
 namespace voyager {
 
 class Timer {
@@ -14,28 +13,21 @@ class Timer {
   friend class TimerList;
 
   Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
-      : micros_value(value),
-        micros_interval(interval),
-        timerproc_cb(cb) {
-  }
+      : micros_value(value), micros_interval(interval), timerproc_cb(cb) {}
 
   Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
       : micros_value(value),
         micros_interval(interval),
-        timerproc_cb(std::move(cb)) {
-  }
+        timerproc_cb(std::move(cb)) {}
 
-  ~Timer() {
-  }
+  ~Timer() {}
 
   uint64_t micros_value;
   uint64_t micros_interval;
   TimerProcCallback timerproc_cb;
 };
 
-TimerList::TimerList(EventLoop* ev)
-    : eventloop_(CHECK_NOTNULL(ev)) {
-}
+TimerList::TimerList(EventLoop* ev) : eventloop_(CHECK_NOTNULL(ev)) {}
 
 TimerList::~TimerList() {
   for (auto& t : timer_ptrs_) {
@@ -43,31 +35,23 @@ TimerList::~TimerList() {
   }
 }
 
-TimerId TimerList::Insert(uint64_t micros_value,
-                          uint64_t micros_interval,
+TimerId TimerList::Insert(uint64_t micros_value, uint64_t micros_interval,
                           const TimerProcCallback& cb) {
   TimerId timer(micros_value, new Timer(micros_value, micros_interval, cb));
-  eventloop_->RunInLoop([this, timer]() {
-    InsertInLoop(timer);
-  });
+  eventloop_->RunInLoop([this, timer]() { InsertInLoop(timer); });
   return timer;
 }
 
-TimerId TimerList::Insert(uint64_t micros_value,
-                          uint64_t micros_interval,
+TimerId TimerList::Insert(uint64_t micros_value, uint64_t micros_interval,
                           TimerProcCallback&& cb) {
   TimerId timer(micros_value,
                 new Timer(micros_value, micros_interval, std::move(cb)));
-  eventloop_->RunInLoop([this, timer]() {
-    InsertInLoop(timer);
-  });
+  eventloop_->RunInLoop([this, timer]() { InsertInLoop(timer); });
   return timer;
 }
 
 void TimerList::Erase(TimerId timer) {
-  eventloop_->RunInLoop([this, timer]() {
-    EraseInLoop(timer);
-  });
+  eventloop_->RunInLoop([this, timer]() { EraseInLoop(timer); });
 }
 
 void TimerList::InsertInLoop(TimerId timer) {

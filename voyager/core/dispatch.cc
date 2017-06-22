@@ -17,12 +17,9 @@ Dispatch::Dispatch(EventLoop* eventloop, int fd)
       modify_(kNoModify),
       add_write_(false),
       tied_(false),
-      event_handling_(false) {
-}
+      event_handling_(false) {}
 
-Dispatch::~Dispatch() {
-  assert(!event_handling_);
-}
+Dispatch::~Dispatch() { assert(!event_handling_); }
 
 void Dispatch::EnableRead() {
   events_ |= kReadEvent;
@@ -70,9 +67,7 @@ void Dispatch::DisableAll() {
   UpdateEvents();
 }
 
-void Dispatch::UpdateEvents() {
-  eventloop_->UpdateDispatch(this);
-}
+void Dispatch::UpdateEvents() { eventloop_->UpdateDispatch(this); }
 
 void Dispatch::RemoveEvents() {
   assert(IsNoneEvent());

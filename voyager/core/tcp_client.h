@@ -37,12 +37,8 @@ class TcpClient {
   }
   void SetConnectFailureCallback(const ConnectFailureCallback& cb);
 
-  void SetCloseCallback(const CloseCallback& cb) {
-    close_cb_ = cb;
-  }
-  void SetMessageCallback(const MessageCallback& cb) {
-    message_cb_ = cb;
-  }
+  void SetCloseCallback(const CloseCallback& cb) { close_cb_ = cb; }
+  void SetMessageCallback(const MessageCallback& cb) { message_cb_ = cb; }
   void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
     writecomplete_cb_ = cb;
   }
@@ -51,12 +47,8 @@ class TcpClient {
     connection_cb_ = std::move(cb);
   }
   void SetConnectFailureCallback(ConnectFailureCallback&& cb);
-  void SetCloseCallback(CloseCallback&& cb) {
-    close_cb_ = std::move(cb);
-  }
-  void SetMessageCallback(MessageCallback&& cb) {
-    message_cb_ = std::move(cb);
-  }
+  void SetCloseCallback(CloseCallback&& cb) { close_cb_ = std::move(cb); }
+  void SetMessageCallback(MessageCallback&& cb) { message_cb_ = std::move(cb); }
   void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
     writecomplete_cb_ = std::move(cb);
   }
@@ -68,7 +60,7 @@ class TcpClient {
   EventLoop* ev_;
   SockAddr addr_;
   std::string name_;
-  TcpConnectorPtr connector_ptr_;
+  TcpConnectorPtr connector_;
   std::atomic<bool> connect_;
   static port::SequenceNumber conn_id_;
 

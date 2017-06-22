@@ -9,7 +9,7 @@ namespace voyager {
 namespace port {
 namespace CurrentThread {
 
-extern __thread uint64_t  cached_tid;
+extern __thread uint64_t cached_tid;
 extern __thread const char* thread_name;
 extern void CacheTid();
 
@@ -20,9 +20,7 @@ inline uint64_t Tid() {
   return cached_tid;
 }
 
-inline const char* ThreadName() {
-  return thread_name;
-}
+inline const char* ThreadName() { return thread_name; }
 
 extern bool IsMainThread();
 

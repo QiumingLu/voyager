@@ -46,14 +46,13 @@ Condition::~Condition() {
 }
 
 void Condition::Wait() {
-  PthreadCall("pthread_cond_wait",
-              pthread_cond_wait(&cond_, &mutex_->mutex_));
+  PthreadCall("pthread_cond_wait", pthread_cond_wait(&cond_, &mutex_->mutex_));
 }
 
 bool Condition::Wait(uint64_t micros) {
   uint64_t timeout = (timeops::NowMicros() + micros) * 1000;
   struct timespec outtime;
-  outtime.tv_sec  = timeout / 1000000000;
+  outtime.tv_sec = timeout / 1000000000;
   outtime.tv_nsec = timeout % 1000000000;
   int ret = pthread_cond_timedwait(&cond_, &mutex_->mutex_, &outtime);
   if (ret != 0 && ret != ETIMEDOUT) {

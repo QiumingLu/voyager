@@ -4,8 +4,8 @@
 
 #include "voyager/core/tcp_connection.h"
 
-#include <unistd.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/core/eventloop.h"
@@ -25,24 +25,20 @@ TcpConnection::TcpConnection(const std::string& name, EventLoop* ev, int fd,
       dispatch_(new Dispatch(ev, fd)),
       context_(nullptr),
       high_water_mark_(64 * 1024 * 1024) {
-  dispatch_->SetReadCallback(
-      std::bind(&TcpConnection::HandleRead, this));
-  dispatch_->SetWriteCallback(
-      std::bind(&TcpConnection::HandleWrite, this));
-  dispatch_->SetCloseCallback(
-      std::bind(&TcpConnection::HandleClose, this));
-  dispatch_->SetErrorCallback(
-      std::bind(&TcpConnection::HandleError, this));
+  dispatch_->SetReadCallback(std::bind(&TcpConnection::HandleRead, this));
+  dispatch_->SetWriteCallback(std::bind(&TcpConnection::HandleWrite, this));
+  dispatch_->SetCloseCallback(std::bind(&TcpConnection::HandleClose, this));
+  dispatch_->SetErrorCallback(std::bind(&TcpConnection::HandleError, this));
   socket_.SetNonBlockAndCloseOnExec(true);
   socket_.SetKeepAlive(true);
   socket_.SetTcpNoDelay(true);
-  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_
-                     << "] at " << this << " fd=" << fd;
+  VOYAGER_LOG(DEBUG) << "TcpConnection::TcpConnection [" << name_ << "] at "
+                     << this << " fd=" << fd;
 }
 
 TcpConnection::~TcpConnection() {
-  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_
-                     << "] at " << this << " fd=" << dispatch_->Fd()
+  VOYAGER_LOG(DEBUG) << "TcpConnection::~TcpConnection [" << name_ << "] at "
+                     << this << " fd=" << dispatch_->Fd()
                      << " ConnectState=" << StateToString();
 }
 
@@ -117,7 +113,7 @@ void TcpConnection::HandleRead() {
     }
     if (errno != EWOULDBLOCK && errno != EAGAIN) {
       VOYAGER_LOG(ERROR) << "TcpConnection::HandleRead [" << name_
-                         <<"] - readv: " << strerror(errno);
+                         << "] - readv: " << strerror(errno);
     }
   }
 }
@@ -125,9 +121,8 @@ void TcpConnection::HandleRead() {
 void TcpConnection::HandleWrite() {
   eventloop_->AssertInMyLoop();
   if (dispatch_->IsWriting()) {
-    ssize_t n = ::write(dispatch_->Fd(),
-                        writebuf_.Peek(),
-                        writebuf_.ReadableSize());
+    ssize_t n =
+        ::write(dispatch_->Fd(), writebuf_.Peek(), writebuf_.ReadableSize());
     if (n >= 0) {
       writebuf_.Retrieve(static_cast<size_t>(n));
       if (writebuf_.ReadableSize() == 0) {
@@ -170,8 +165,8 @@ void TcpConnection::HandleClose() {
 void TcpConnection::HandleError() {
   int result = socket_.CheckSocketError();
   if (result != 0) {
-    VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_
-                       << "] - " << strerror(result);
+    VOYAGER_LOG(ERROR) << "TcpConnection::HandleError [" << name_ << "] - "
+                       << strerror(result);
   }
 }
 
@@ -180,10 +175,8 @@ void TcpConnection::SendMessage(std::string&& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    std::move(message)));
+      eventloop_->RunInLoop(std::bind(&TcpConnection::Send, shared_from_this(),
+                                      std::move(message)));
     }
   }
 }
@@ -193,10 +186,8 @@ void TcpConnection::SendMessage(const Slice& message) {
     if (eventloop_->IsInMyLoop()) {
       SendInLoop(message.data(), message.size());
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    message.ToString()));
+      eventloop_->RunInLoop(std::bind(&TcpConnection::Send, shared_from_this(),
+                                      message.ToString()));
     }
   }
 }
@@ -208,10 +199,8 @@ void TcpConnection::SendMessage(Buffer* message) {
       SendInLoop(message->Peek(), message->ReadableSize());
       message->RetrieveAll();
     } else {
-      eventloop_->RunInLoop(
-          std::bind(&TcpConnection::Send,
-                    shared_from_this(),
-                    message->RetrieveAllAsString()));
+      eventloop_->RunInLoop(std::bind(&TcpConnection::Send, shared_from_this(),
+                                      message->RetrieveAllAsString()));
     }
   }
 }
@@ -229,7 +218,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
   }
 
   ssize_t nwrote = 0;
-  size_t  remaining = size;
+  size_t remaining = size;
   bool fault = false;
 
   if (!dispatch_->IsWriting() && writebuf_.ReadableSize() == 0) {
@@ -255,13 +244,12 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
   assert(remaining <= size);
   if (!fault && remaining > 0) {
     size_t old = writebuf_.ReadableSize();
-    if (high_water_mark_cb_ &&
-        old < high_water_mark_ &&
+    if (high_water_mark_cb_ && old < high_water_mark_ &&
         (old + remaining) >= high_water_mark_) {
       eventloop_->QueueInLoop(
           std::bind(high_water_mark_cb_, shared_from_this(), old + remaining));
     }
-    writebuf_.Append(static_cast<const char*>(data)+nwrote, remaining);
+    writebuf_.Append(static_cast<const char*>(data) + nwrote, remaining);
     if (!dispatch_->IsWriting()) {
       dispatch_->EnableWrite();
     }
@@ -269,7 +257,7 @@ void TcpConnection::SendInLoop(const void* data, size_t size) {
 }
 
 std::string TcpConnection::StateToString() const {
-  const char *type;
+  const char* type;
   switch (state_.load(std::memory_order_relaxed)) {
     case kDisconnected:
       type = "Disconnected";

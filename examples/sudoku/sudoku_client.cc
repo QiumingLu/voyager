@@ -2,64 +2,49 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/core/tcp_client.h"
+#include "voyager/core/buffer.h"
+#include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
+#include "voyager/core/tcp_client.h"
 #include "voyager/core/tcp_connection.h"
-#include "voyager/core/callback.h"
-#include "voyager/core/buffer.h"
-#include "voyager/util/timeops.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stringprintf.h"
+#include "voyager/util/timeops.h"
 
 namespace sudoku {
 
 class SudokuClient {
  public:
-  SudokuClient(voyager::EventLoop* ev,
-               const voyager::SockAddr& addr,
-               const std::string& name,
-               const std::vector<std::string>& vec)
-      : num_(0),
-        start_(0),
-        stop_(0),
-        client_(ev, addr, name),
-        vec_(vec) {
+  SudokuClient(voyager::EventLoop* ev, const voyager::SockAddr& addr,
+               const std::string& name, const std::vector<std::string>& vec)
+      : num_(0), start_(0), stop_(0), client_(ev, addr, name), vec_(vec) {
     client_.SetConnectionCallback(
         std::bind(&SudokuClient::ConnectCallback, this, std::placeholders::_1));
-    client_.SetMessageCallback(
-        std::bind(&SudokuClient::MessageCallback, this,
-                  std::placeholders::_1,
-                  std::placeholders::_2));
+    client_.SetMessageCallback(std::bind(&SudokuClient::MessageCallback, this,
+                                         std::placeholders::_1,
+                                         std::placeholders::_2));
     client_.SetCloseCallback(
-        std::bind(&SudokuClient::CloseCallback, this,
-                  std::placeholders::_1));
+        std::bind(&SudokuClient::CloseCallback, this, std::placeholders::_1));
   }
 
-  SudokuClient(voyager::EventLoop* ev,
-               const std::string& name,
-               const voyager::SockAddr& addr,
-               std::vector<std::string>&& vec)
+  SudokuClient(voyager::EventLoop* ev, const std::string& name,
+               const voyager::SockAddr& addr, std::vector<std::string>&& vec)
       : num_(0),
         start_(0),
         stop_(0),
         client_(ev, addr, name),
         vec_(std::move(vec)) {
-    client_.SetConnectionCallback(std::bind(&SudokuClient::ConnectCallback,
-                                            this,
-                                            std::placeholders:: _1));
-    client_.SetMessageCallback(std::bind(&SudokuClient::MessageCallback,
-                                         this,
+    client_.SetConnectionCallback(
+        std::bind(&SudokuClient::ConnectCallback, this, std::placeholders::_1));
+    client_.SetMessageCallback(std::bind(&SudokuClient::MessageCallback, this,
                                          std::placeholders::_1,
                                          std::placeholders::_2));
-    client_.SetCloseCallback(std::bind(&SudokuClient::CloseCallback,
-                                       this,
-                                       std::placeholders::_1));
+    client_.SetCloseCallback(
+        std::bind(&SudokuClient::CloseCallback, this, std::placeholders::_1));
   }
 
-  void Connect() {
-    client_.Connect();
-  }
+  void Connect() { client_.Connect(); }
 
  private:
   void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
@@ -124,10 +109,12 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  std::string message = "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  5    8  79\r\n";
+  std::string message =
+      "53  7    6  195    98    6 8   6   34  8 3  17   2   6 6    28    419  "
+      "5    8  79\r\n";
   std::vector<std::string> vec;
   for (int i = 0; i < dotimes; ++i) {
-    std::string s = voyager::StringPrintf("%d:%s", i+1, message.c_str());
+    std::string s = voyager::StringPrintf("%d:%s", i + 1, message.c_str());
     vec.push_back(std::move(s));
   }
   voyager::EventLoop ev;

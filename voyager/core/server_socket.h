@@ -12,12 +12,9 @@ namespace voyager {
 class ServerSocket : public BaseSocket {
  public:
   ServerSocket(int domain, bool nonblocking)
-      : BaseSocket(domain, nonblocking) {
-  }
+      : BaseSocket(domain, nonblocking) {}
 
-  explicit ServerSocket(int socketfd)
-      : BaseSocket(socketfd) {
-  }
+  explicit ServerSocket(int socketfd) : BaseSocket(socketfd) {}
 
   void Bind(const struct sockaddr* sa, socklen_t salen);
   void Listen(int backlog);

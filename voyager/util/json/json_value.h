@@ -8,8 +8,8 @@
 #include <map>
 #include <memory>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace voyager {
 namespace json {
@@ -29,17 +29,17 @@ typedef std::shared_ptr<JsonValue> JsonValuePtr;
 // Json 类型的基类，没有任何意义
 class JsonValue {
  public:
-  JsonValue() { }
-  virtual ~JsonValue() { }
+  JsonValue() {}
+  virtual ~JsonValue() {}
 
   virtual JsonType GetType() const = 0;
 };
 
 class JsonValueString : public JsonValue {
  public:
-  JsonValueString() { }
-  explicit JsonValueString(const std::string& s) : value_(s) { }
-  virtual ~JsonValueString() { }
+  JsonValueString() {}
+  explicit JsonValueString(const std::string& s) : value_(s) {}
+  virtual ~JsonValueString() {}
 
   JsonType GetType() const { return kJsonTypeString; }
 
@@ -56,11 +56,11 @@ class JsonValueString : public JsonValue {
 
 class JsonValueNum : public JsonValue {
  public:
-  JsonValueNum() : value_(0.0), is_int_(false) { }
-  explicit JsonValueNum(double x, bool b = false) : value_(x), is_int_(b) { }
-  virtual ~JsonValueNum() { }
+  JsonValueNum() : value_(0.0), is_int_(false) {}
+  explicit JsonValueNum(double x, bool b = false) : value_(x), is_int_(b) {}
+  virtual ~JsonValueNum() {}
 
-  JsonType GetType () const { return kJsontypeNum; }
+  JsonType GetType() const { return kJsontypeNum; }
 
   void SetValue(double d, bool is_int = false) {
     value_ = d;
@@ -79,13 +79,11 @@ class JsonValueNum : public JsonValue {
 
 class JsonValueObj : public JsonValue {
  public:
-  virtual ~JsonValueObj() { }
+  virtual ~JsonValueObj() {}
 
   JsonType GetType() const { return kJsonTypeObj; }
 
-  void insert(const std::string& key, JsonValuePtr p) {
-    value_[key] = p;
-  }
+  void insert(const std::string& key, JsonValuePtr p) { value_[key] = p; }
 
   void SetValue(const std::map<std::string, JsonValuePtr>& m) { value_ = m; }
 
@@ -93,9 +91,7 @@ class JsonValueObj : public JsonValue {
     value_ = std::move(m);
   }
 
-  const std::map<std::string, JsonValuePtr>& Value() const {
-    return value_;
-  }
+  const std::map<std::string, JsonValuePtr>& Value() const { return value_; }
 
  private:
   friend class Json;
@@ -104,7 +100,7 @@ class JsonValueObj : public JsonValue {
 
 class JsonValueArray : public JsonValue {
  public:
-  virtual ~JsonValueArray() { }
+  virtual ~JsonValueArray() {}
 
   JsonType GetType() const { return kJsonTypeArray; }
 
@@ -114,9 +110,7 @@ class JsonValueArray : public JsonValue {
 
   void SetValue(std::vector<JsonValuePtr>&& v) { value_ = std::move(v); }
 
-  const std::vector<JsonValuePtr>& Value() const {
-    return value_;
-  }
+  const std::vector<JsonValuePtr>& Value() const { return value_; }
 
  private:
   friend class Json;
@@ -125,7 +119,7 @@ class JsonValueArray : public JsonValue {
 
 class JsonValueBoolean : public JsonValue {
  public:
-  virtual ~JsonValueBoolean() { }
+  virtual ~JsonValueBoolean() {}
 
   JsonType GetType() const { return kJsonTypeBoolean; }
 

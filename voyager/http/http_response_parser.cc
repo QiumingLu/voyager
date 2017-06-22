@@ -12,8 +12,7 @@
 namespace voyager {
 
 HttpResponseParser::HttpResponseParser()
-    : state_(kLine), response_(new HttpResponse()) {
-}
+    : state_(kLine), response_(new HttpResponse()) {}
 
 bool HttpResponseParser::ParseBuffer(Buffer* buf) {
   bool ok = true;
@@ -24,7 +23,7 @@ bool HttpResponseParser::ParseBuffer(Buffer* buf) {
       if (crlf) {
         ok = ParseResponseLine(buf->Peek(), crlf);
         if (ok) {
-          buf->RetrieveUntil(crlf+2);
+          buf->RetrieveUntil(crlf + 2);
           state_ = kHeaders;
         } else {
           flag = false;

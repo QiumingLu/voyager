@@ -24,7 +24,7 @@ class LogFinisher;
 class Logger {
  public:
   Logger(LogLevel level, const char* filename, int line);
-  ~Logger() { }
+  ~Logger() {}
 
   Logger& operator<<(char value);
   Logger& operator<<(short value);
@@ -59,12 +59,11 @@ class LogFinisher {
   void operator=(Logger& logger);
 };
 
-#define VOYAGER_LOG(LEVEL)                                \
-  ::voyager::LogFinisher() =                              \
-    ::voyager::Logger(                                    \
-      ::voyager::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
+#define VOYAGER_LOG(LEVEL)   \
+  ::voyager::LogFinisher() = \
+      ::voyager::Logger(::voyager::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
 
-template<typename T>
+template <typename T>
 T* CheckNotNull(const char* /* filename */, int /* line */,
                 const char* logmessage, T* ptr) {
   if (ptr == nullptr) {
@@ -73,15 +72,15 @@ T* CheckNotNull(const char* /* filename */, int /* line */,
   return ptr;
 }
 
-#define CHECK_NOTNULL(value)  \
+#define CHECK_NOTNULL(value)                  \
   ::voyager::CheckNotNull(__FILE__, __LINE__, \
-      "'" #value "' Must not be nullptr", (value))
+                          "'" #value "' Must not be nullptr", (value))
 
-typedef void LogHandler(LogLevel level, const char* filename,
-                        int line, const std::string& message);
+typedef void LogHandler(LogLevel level, const char* filename, int line,
+                        const std::string& message);
 
-extern void DefaultLogHandler(LogLevel level, const char* filename,
-                              int line, const std::string& message);
+extern void DefaultLogHandler(LogLevel level, const char* filename, int line,
+                              const std::string& message);
 
 extern void NullLogHandler(LogLevel /* level */, const char* /* filename */,
                            int /* line */, const std::string& /* message */);

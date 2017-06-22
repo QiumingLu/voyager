@@ -2,20 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/util/testharness.h"
-#include "voyager/util/slice.h"
 #include "voyager/util/logging.h"
+#include "voyager/util/slice.h"
 #include "voyager/util/string_util.h"
 #include "voyager/util/stringprintf.h"
+#include "voyager/util/testharness.h"
 #include "voyager/util/timeops.h"
 
 namespace voyager {
 
-class SliceTest  { };
-class StatusTest { };
-class StringUtilTest { };
-class StringPrintfTest { };
-class TimeopsTest { };
+class SliceTest {};
+class StatusTest {};
+class StringUtilTest {};
+class StringPrintfTest {};
+class TimeopsTest {};
 
 TEST(SliceTest, TestSlice) {
   Slice slice;
@@ -32,7 +32,7 @@ TEST(SliceTest, TestSlice) {
   slice3.clear();
   ASSERT_EQ(slice2 == slice3, false);
   ASSERT_LT(slice3.compare(slice2), 0);
-  ASSERT_EQ(slice2 != slice3, true); 
+  ASSERT_EQ(slice2 != slice3, true);
 
   std::string str = "string slice";
   Slice slice4(str);
@@ -115,6 +115,4 @@ TEST(TimeopsTest, TestTimeops) {
 
 }  // namespace voyager
 
-int main(int argc, char** argv) {
-  return voyager::test::RunAllTests();
-}
+int main(int argc, char** argv) { return voyager::test::RunAllTests(); }

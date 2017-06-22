@@ -6,8 +6,8 @@
 
 #include <string.h>
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
@@ -27,15 +27,11 @@ EventEpoll::EventEpoll(EventLoop* ev)
   }
 }
 
-EventEpoll::~EventEpoll() {
-  ::close(epollfd_);
-}
+EventEpoll::~EventEpoll() { ::close(epollfd_); }
 
-void EventEpoll::Poll(int timeout, std::vector<Dispatch*> *dispatches) {
-  int nfds = ::epoll_wait(epollfd_,
-                          &*epollfds_.begin(),
-                          static_cast<int>(epollfds_.size()),
-                          timeout);
+void EventEpoll::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
+  int nfds = ::epoll_wait(epollfd_, &*epollfds_.begin(),
+                          static_cast<int>(epollfds_.size()), timeout);
   if (nfds == -1) {
     if (errno != EINTR) {
       VOYAGER_LOG(ERROR) << "epoll_wait: " << strerror(errno);

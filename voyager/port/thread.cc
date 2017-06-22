@@ -16,8 +16,8 @@
 
 #include <algorithm>
 
-#include "voyager/util/logging.h"
 #include "voyager/port/currentthread.h"
+#include "voyager/util/logging.h"
 
 namespace voyager {
 namespace port {
@@ -32,9 +32,7 @@ __thread const char* thread_name = "unknow";
 namespace {
 
 #ifdef __linux__
-uint64_t GetTid() {
-  return static_cast<uint64_t>(::syscall(SYS_gettid));
-}
+uint64_t GetTid() { return static_cast<uint64_t>(::syscall(SYS_gettid)); }
 
 #else
 uint64_t GetTid() {
@@ -68,13 +66,9 @@ struct StartThreadState {
   ThreadFunc thread_func;
   std::string thread_name;
   uint64_t* thread_tid;
-  StartThreadState(const ThreadFunc& func,
-                   const std::string& name,
+  StartThreadState(const ThreadFunc& func, const std::string& name,
                    uint64_t* tid)
-      : thread_func(func),
-        thread_name(name),
-        thread_tid(tid)
-  { }
+      : thread_func(func), thread_name(name), thread_tid(tid) {}
 };
 
 void* StartThreadWrapper(void* arg) {
@@ -104,24 +98,24 @@ bool CurrentThread::IsMainThread() {
 }
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
-     : started_(false),
-       joined_(false),
-       pthread_id_(0),
-       tid_(0),
-       func_(func),
-       name_(name) {
+    : started_(false),
+      joined_(false),
+      pthread_id_(0),
+      tid_(0),
+      func_(func),
+      name_(name) {
   SetDefaultName();
 }
 
 std::atomic<int> Thread::num_;
 
 Thread::Thread(ThreadFunc&& func, const std::string& name)
-     : started_(false),
-       joined_(false),
-       pthread_id_(0),
-       tid_(0),
-       func_(std::move(func)),
-       name_(std::move(name)) {
+    : started_(false),
+      joined_(false),
+      pthread_id_(0),
+      tid_(0),
+      func_(std::move(func)),
+      name_(std::move(name)) {
   SetDefaultName();
 }
 
@@ -135,8 +129,8 @@ void Thread::SetDefaultName() {
   ++num_;
   if (name_.empty()) {
     char buffer[32];
-    snprintf(buffer, sizeof(buffer),
-             "Thread %d", num_.load(std::memory_order_relaxed));
+    snprintf(buffer, sizeof(buffer), "Thread %d",
+             num_.load(std::memory_order_relaxed));
     name_ = buffer;
   }
 }
@@ -151,10 +145,8 @@ void Thread::Start() {
   assert(!started_);
   started_ = true;
   StartThreadState* state = new StartThreadState(func_, name_, &tid_);
-  PthreadCall("start thread", pthread_create(&pthread_id_,
-                                               nullptr,
-                                               &StartThreadWrapper,
-                                               state));
+  PthreadCall("start thread", pthread_create(&pthread_id_, nullptr,
+                                             &StartThreadWrapper, state));
 }
 
 void Thread::Join() {

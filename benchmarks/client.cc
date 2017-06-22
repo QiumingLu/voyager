@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <vector>
+
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
@@ -13,10 +18,6 @@
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"
-#include <memory>
-#include <vector>
-#include <iostream>
-#include <fstream>
 
 #ifdef __linux__
 #include "voyager/core/newtimer.h"
@@ -30,10 +31,8 @@ class Client;
 
 class Session {
  public:
-  Session(voyager::EventLoop* ev,
-          const voyager::SockAddr& addr,
-          const std::string& name,
-          Client* owner)
+  Session(voyager::EventLoop* ev, const voyager::SockAddr& addr,
+          const std::string& name, Client* owner)
       : client_(ev, addr, name),
         owner_(owner),
         bytes_read_(0),
@@ -42,25 +41,16 @@ class Session {
         std::bind(&Session::ConnectCallback, this, _1));
     client_.SetMessageCallback(
         std::bind(&Session::MessageCallback, this, _1, _2));
-    client_.SetCloseCallback(
-        std::bind(&Session::CloseCallback, this, _1));
+    client_.SetCloseCallback(std::bind(&Session::CloseCallback, this, _1));
   }
 
-  void Connect() {
-    client_.Connect();
-  }
+  void Connect() { client_.Connect(); }
 
-  void Close() {
-    client_.Close();
-  }
+  void Close() { client_.Close(); }
 
-  size_t BytesRead() const {
-    return bytes_read_;
-  }
+  size_t BytesRead() const { return bytes_read_; }
 
-  size_t BytesWritten() const {
-    return bytes_written_;
-  }
+  size_t BytesWritten() const { return bytes_written_; }
 
  private:
   void ConnectCallback(const TcpConnectionPtr& ptr);
@@ -87,12 +77,8 @@ class Session {
 
 class Client {
  public:
-  Client(EventLoop* ev,
-         const SockAddr& addr,
-         size_t block_size,
-         size_t session_count,
-         uint64_t timeout,
-         int thread_count)
+  Client(EventLoop* ev, const SockAddr& addr, size_t block_size,
+         size_t session_count, uint64_t timeout, int thread_count)
       : base_ev_(ev),
         thread_count_(thread_count),
         session_count_(session_count),
@@ -106,7 +92,7 @@ class Client {
     timer_.reset(new NewTimer(ev, [this]() { this->HandleTimeout(); }));
     timer_->SetTime(timeout * 1000000000, 0);
 #else
-    ev->RunAfter(timeout*1000000, [this]() {this->HandleTimeout(); });
+    ev->RunAfter(timeout * 1000000, [this]() { this->HandleTimeout(); });
 #endif
     for (size_t i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
@@ -115,21 +101,19 @@ class Client {
     schedule_.Start();
     for (size_t i = 0; i < session_count; ++i) {
       std::string name = StringPrintf("session %d", i + 1);
-      Session* new_session = new Session(schedule_.AssignLoop(),
-                                         addr, name, this);
+      Session* new_session =
+          new Session(schedule_.AssignLoop(), addr, name, this);
       new_session->Connect();
       sessions_.push_back(new_session);
     }
   }
 
-  ~Client() {
-    STLDeleteElements(&sessions_);
-  }
+  ~Client() { STLDeleteElements(&sessions_); }
 
   const std::string& Message() const { return message_; }
 
   void Print(const TcpConnectionPtr& ptr) {
-    if (seq_.GetNext() < static_cast<int>(session_count_-1)) return;
+    if (seq_.GetNext() < static_cast<int>(session_count_ - 1)) return;
 
     for (std::vector<Session*>::iterator it = sessions_.begin();
          it != sessions_.end(); ++it) {
@@ -186,9 +170,7 @@ void Session::ConnectCallback(const TcpConnectionPtr& ptr) {
   ptr->SendMessage(owner_->Message());
 }
 
-void Session::CloseCallback(const TcpConnectionPtr& ptr) {
-  owner_->Print(ptr);
-}
+void Session::CloseCallback(const TcpConnectionPtr& ptr) { owner_->Print(ptr); }
 
 }  // namespace voyager
 
@@ -206,8 +188,8 @@ int main(int argc, char* argv[]) {
   int timeout = atoi(argv[6]);
   voyager::EventLoop base_ev;
   voyager::SockAddr sockaddr(host, port);
-  voyager::Client client(&base_ev, sockaddr, block_size,
-                session_count, timeout, thread_count);
+  voyager::Client client(&base_ev, sockaddr, block_size, session_count, timeout,
+                         thread_count);
   base_ev.Loop();
   return 0;
 }

@@ -10,9 +10,9 @@
 #include <string>
 #include <utility>
 
+#include "voyager/core/base_socket.h"
 #include "voyager/core/buffer.h"
 #include "voyager/core/callback.h"
-#include "voyager/core/base_socket.h"
 #include "voyager/core/sockaddr.h"
 
 namespace voyager {
@@ -33,15 +33,11 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetConnectionCallback(const ConnectionCallback& cb) {
     connection_cb_ = cb;
   }
-  void SetCloseCallback(const CloseCallback& cb) {
-    close_cb_ = cb;
-  }
+  void SetCloseCallback(const CloseCallback& cb) { close_cb_ = cb; }
   void SetWriteCompleteCallback(const WriteCompleteCallback& cb) {
     writecomplete_cb_ = cb;
   }
-  void SetMessageCallback(const MessageCallback& cb) {
-    message_cb_ = cb;
-  }
+  void SetMessageCallback(const MessageCallback& cb) { message_cb_ = cb; }
   void SetHighWaterMarkCallback(const HighWaterMarkCallback& cb) {
     high_water_mark_cb_ = cb;
   }
@@ -49,15 +45,11 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void SetConnectionCallback(ConnectionCallback&& cb) {
     connection_cb_ = std::move(cb);
   }
-  void SetCloseCallback(CloseCallback&& cb) {
-    close_cb_ = std::move(cb);
-  }
+  void SetCloseCallback(CloseCallback&& cb) { close_cb_ = std::move(cb); }
   void SetWriteCompleteCallback(WriteCompleteCallback&& cb) {
     writecomplete_cb_ = std::move(cb);
   }
-  void SetMessageCallback(MessageCallback&& cb) {
-    message_cb_ = std::move(cb);
-  }
+  void SetMessageCallback(MessageCallback&& cb) { message_cb_ = std::move(cb); }
   void SetHighWaterMarkCallback(HighWaterMarkCallback&& cb) {
     high_water_mark_cb_ = std::move(cb);
   }
@@ -93,12 +85,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
   void StartWorking();
 
  private:
-  enum ConnectState {
-    kDisconnected,
-    kDisconnecting,
-    kConnected,
-    kConnecting
-  };
+  enum ConnectState { kDisconnected, kDisconnecting, kConnected, kConnecting };
 
   void Send(const std::string& s);
   void SendInLoop(const void* data, size_t size);

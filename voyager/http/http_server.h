@@ -9,8 +9,8 @@
 #include <string>
 #include <utility>
 
-#include "voyager/http/http_request.h"
 #include "voyager/core/tcp_server.h"
+#include "voyager/http/http_request.h"
 
 namespace voyager {
 
@@ -21,10 +21,9 @@ class SockAddr;
 
 class HttpServer {
  public:
-  typedef std::function<void (HttpRequestPtr, HttpResponse*)> HttpCallback;
+  typedef std::function<void(HttpRequestPtr, HttpResponse*)> HttpCallback;
 
-  HttpServer(EventLoop* ev,
-             const SockAddr& addr,
+  HttpServer(EventLoop* ev, const SockAddr& addr,
              const std::string& name = std::string("HttpServer"),
              int thread_size = 4);
 

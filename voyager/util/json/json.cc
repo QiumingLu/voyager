@@ -7,10 +7,10 @@
 #include <math.h>
 
 #include <cctype>
+#include <iomanip>
 #include <map>
 #include <sstream>
 #include <string>
-#include <iomanip>
 
 namespace voyager {
 namespace json {
@@ -81,7 +81,6 @@ Status Json::WriteString(const std::string& s, std::string* result) {
   return Status::OK();
 }
 
-
 Status Json::WriteString(const JsonValuePtr& p, std::string* result) {
   JsonValueString* str_p = dynamic_cast<JsonValueString*>(p.get());
   const std::string& s = str_p->Value();
@@ -120,7 +119,7 @@ Status Json::WriteObj(const JsonValuePtr& p, std::string* result) {
   return Status::OK();
 }
 
-Status Json:: WriteArray(const JsonValuePtr& p, std::string* result) {
+Status Json::WriteArray(const JsonValuePtr& p, std::string* result) {
   result->append("[ ");
   JsonValueArray* array_p = dynamic_cast<JsonValueArray*>(p.get());
   for (size_t i = 0; i < array_p->Value().size(); ++i) {
@@ -188,8 +187,7 @@ Status Json::GetValue(JsonReader* reader, JsonValuePtr* p) {
       break;
   }
   char s[64];
-  snprintf(s, sizeof(s),
-           "buffer overflow when peekBuf, over %u.",
+  snprintf(s, sizeof(s), "buffer overflow when peekBuf, over %u.",
            (uint32_t)(uint32_t)reader->Current());
   Slice info(s);
   return Status::Corruption(info);
@@ -226,8 +224,7 @@ Status Json::GetString(JsonReader* reader, char head, JsonValuePtr* p) {
         uint16_t icode;
         if (!GetHex(reader, &icode).ok() || icode > 0xff) {
           char s[64];
-          snprintf(s, sizeof(s),
-                   "get string error(\\u)[pos:%u]",
+          snprintf(s, sizeof(s), "get string error(\\u)[pos:%u]",
                    (uint32_t)reader->Current());
           Slice info(s);
           return Status::Corruption(info);
@@ -245,8 +242,7 @@ Status Json::GetString(JsonReader* reader, char head, JsonValuePtr* p) {
 
   if (c != head) {
     char s[64];
-    snprintf(s, sizeof(s),
-             "get string error(\\u)[pos:%u]",
+    snprintf(s, sizeof(s), "get string error(\\u)[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
@@ -273,7 +269,7 @@ Status Json::GetNum(JsonReader* reader, char head, JsonValuePtr* p) {
     is_ok = false;
     is_negative = true;
   } else {
-    int_value = head-0x30;
+    int_value = head - 0x30;
   }
 
   char c;
@@ -324,8 +320,8 @@ Status Json::GetNum(JsonReader* reader, char head, JsonValuePtr* p) {
 
   if (!is_ok) {
     char s[64];
-    snprintf(s, sizeof(s),
-             "get num error[pos:%u]", (uint32_t)reader->Current());
+    snprintf(s, sizeof(s), "get num error[pos:%u]",
+             (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
   }
@@ -337,9 +333,9 @@ Status Json::GetNum(JsonReader* reader, char head, JsonValuePtr* p) {
     exponential_value = 0 - exponential_value;
   }
 
-  double result = (static_cast<double>(int_value)+ float_value) *
-                      pow(static_cast<double>(10),
-                           static_cast<double>(exponential_value));
+  double result =
+      (static_cast<double>(int_value) + float_value) *
+      pow(static_cast<double>(10), static_cast<double>(exponential_value));
   if (is_negative) {
     result = 0 - result;
   }
@@ -365,8 +361,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
     if (c != '"') {
       p->reset();
       char s[64];
-      snprintf(s, sizeof(s),
-               "get obj error(key is not string)[pos:%u]",
+      snprintf(s, sizeof(s), "get obj error(key is not string)[pos:%u]",
                (uint32_t)reader->Current());
       Slice info(s);
       return Status::Corruption(info);
@@ -383,8 +378,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
     if (c != ':') {
       p->reset();
       char s[64];
-      snprintf(s, sizeof(s),
-               "get obj error(: not find)[pos:%u]",
+      snprintf(s, sizeof(s), "get obj error(: not find)[pos:%u]",
                (uint32_t)reader->Current());
       Slice info(s);
       return Status::Corruption(info);
@@ -409,8 +403,7 @@ Status Json::GetObj(JsonReader* reader, JsonValuePtr* p) {
     }
 
     char s[64];
-    snprintf(s, sizeof(s),
-             "get obj error(, not find)[pos:%u]",
+    snprintf(s, sizeof(s), "get obj error(, not find)[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
@@ -451,16 +444,14 @@ Status Json::GetArray(JsonReader* reader, JsonValuePtr* p) {
     }
 
     char s[64];
-    snprintf(s, sizeof(s),
-             "get vector error(, not find )[pos:%u]",
+    snprintf(s, sizeof(s), "get vector error(, not find )[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
   }
 
   char s[64];
-  snprintf(s, sizeof(s),
-           "get vector error(] not find )[pos:%u]",
+  snprintf(s, sizeof(s), "get vector error(] not find )[pos:%u]",
            (uint32_t)reader->Current());
   Slice info(s);
   return Status::Corruption(info);
@@ -489,8 +480,7 @@ Status Json::GetBoolean(JsonReader* reader, char c, JsonValuePtr* p) {
 
   if (!is_ok) {
     char s[64];
-    snprintf(s, sizeof(s),
-             "get bool error[pos:%u]",
+    snprintf(s, sizeof(s), "get bool error[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
@@ -513,8 +503,7 @@ Status Json::GetNull(JsonReader* reader, char c, JsonValuePtr* /* p */) {
   }
   if (!is_ok) {
     char s[64];
-    snprintf(s, sizeof(s),
-             "get NULL error[pos:%u]",
+    snprintf(s, sizeof(s), "get NULL error[pos:%u]",
              (uint32_t)reader->Current());
     Slice info(s);
     return Status::Corruption(info);
@@ -548,7 +537,7 @@ Status Json::GetHex(JsonReader* reader, uint16_t* result) {
 char Json::SkipWhiteSpace(JsonReader* reader) {
   char c = ' ';
   while (!reader->HasEnd() &&
-         (c == ' ' || c == '\t' || c == '\r' || c == '\n'))  {
+         (c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
     c = reader->Read();
   }
   return c;

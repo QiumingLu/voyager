@@ -16,8 +16,7 @@ BGEventLoop::BGEventLoop(PollType type, const std::string& name)
       eventloop_(nullptr),
       mu_(),
       cond_(&mu_),
-      thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {
-}
+      thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {}
 
 BGEventLoop::~BGEventLoop() {
   if (eventloop_ != nullptr) {

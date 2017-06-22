@@ -4,26 +4,23 @@
 
 #include "voyager/core/sockaddr.h"
 
+#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
+#include <sys/types.h>
 #include "voyager/util/logging.h"
 
 namespace voyager {
 
-SockAddr::SockAddr(uint16_t port) {
-  GetAddrInfo("127.0.0.1", port);
-}
+SockAddr::SockAddr(uint16_t port) { GetAddrInfo("127.0.0.1", port); }
 
 SockAddr::SockAddr(const std::string& host, uint16_t port) {
   GetAddrInfo(host.c_str(), port);
 }
 
-SockAddr::SockAddr(const struct sockaddr_storage& sa)
-    : sa_(sa) {
+SockAddr::SockAddr(const struct sockaddr_storage& sa) : sa_(sa) {
   GetIpPort(sa_);
 }
 
@@ -51,8 +48,8 @@ bool SockAddr::GetAddrInfo(const char* host, uint16_t port) {
 
 void SockAddr::GetIpPort(const struct sockaddr_storage& sa) {
   char ip[64];
-  SockAddr::SockAddrToIP(
-      reinterpret_cast<const struct sockaddr*>(&sa),ip, sizeof(ip));
+  SockAddr::SockAddrToIP(reinterpret_cast<const struct sockaddr*>(&sa), ip,
+                         sizeof(ip));
 
   const struct sockaddr_in* sa4 =
       reinterpret_cast<const struct sockaddr_in*>(&sa);
@@ -66,22 +63,21 @@ void SockAddr::GetIpPort(const struct sockaddr_storage& sa) {
   ipbuf_ = std::string(ipbuf, sizeof(ipbuf));
 }
 
-bool SockAddr::SockAddrToIP(const struct sockaddr* sa,
-                            char* buf, size_t len) {
+bool SockAddr::SockAddrToIP(const struct sockaddr* sa, char* buf, size_t len) {
   if (sa->sa_family == AF_INET) {
     assert(len >= INET_ADDRSTRLEN);
     const struct sockaddr_in* sa4 =
         reinterpret_cast<const struct sockaddr_in*>(sa);
-    if (::inet_ntop(AF_INET, &sa4->sin_addr,
-                    buf, static_cast<socklen_t>(len)) != nullptr) {
+    if (::inet_ntop(AF_INET, &sa4->sin_addr, buf,
+                    static_cast<socklen_t>(len)) != nullptr) {
       return true;
     }
   } else if (sa->sa_family == AF_INET6) {
     assert(len >= INET6_ADDRSTRLEN);
     const struct sockaddr_in6* sa6 =
         reinterpret_cast<const struct sockaddr_in6*>(sa);
-    if (::inet_ntop(AF_INET6, &sa6->sin6_addr,
-                    buf, static_cast<socklen_t>(len)) != nullptr) {
+    if (::inet_ntop(AF_INET6, &sa6->sin6_addr, buf,
+                    static_cast<socklen_t>(len)) != nullptr) {
       return true;
     }
   }
@@ -113,8 +109,8 @@ bool SockAddr::IPPortToSockAddr(const char* ip, uint16_t port,
 struct sockaddr_storage SockAddr::LocalSockAddr(int socketfd) {
   struct sockaddr_storage sa;
   socklen_t salen = sizeof(sa);
-  if (::getsockname(socketfd,
-                    reinterpret_cast<struct sockaddr*>(&sa), &salen) == -1) {
+  if (::getsockname(socketfd, reinterpret_cast<struct sockaddr*>(&sa),
+                    &salen) == -1) {
     VOYAGER_LOG(ERROR) << "getsockname: " << strerror(errno);
   }
   return sa;
@@ -124,8 +120,8 @@ struct sockaddr_storage SockAddr::PeerSockAddr(int socketfd) {
   struct sockaddr_storage sa;
   socklen_t salen = sizeof(sa);
 
-  if (::getpeername(socketfd,
-                    reinterpret_cast<struct sockaddr*>(&sa), &salen) == -1) {
+  if (::getpeername(socketfd, reinterpret_cast<struct sockaddr*>(&sa),
+                    &salen) == -1) {
     VOYAGER_LOG(ERROR) << "getpeername: " << strerror(errno);
   }
   return sa;
@@ -141,8 +137,7 @@ int SockAddr::FormatLocal(int socketfd, char* buf, size_t len) {
   return FormatAddress(reinterpret_cast<struct sockaddr*>(&sa), buf, len);
 }
 
-int SockAddr::FormatAddress(const struct sockaddr* sa,
-                             char* buf, size_t len) {
+int SockAddr::FormatAddress(const struct sockaddr* sa, char* buf, size_t len) {
   char ip[INET6_ADDRSTRLEN];
   bool res = SockAddrToIP(sa, ip, sizeof(ip));
   if (!res) {
@@ -154,8 +149,8 @@ int SockAddr::FormatAddress(const struct sockaddr* sa,
   return FormatAddress(ip, port, buf, len);
 }
 
-int SockAddr::FormatAddress(const char* ip, uint16_t port,
-                            char* buf, size_t len) {
+int SockAddr::FormatAddress(const char* ip, uint16_t port, char* buf,
+                            size_t len) {
   return snprintf(buf, len, strchr(ip, ':') ? "[%s]:%u" : "%s:%u", ip, port);
 }
 

@@ -2,22 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/core/tcp_server.h"
-
 #include <iostream>
 
 #include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
+#include "voyager/core/tcp_server.h"
 #include "voyager/util/logging.h"
 
 class Server {
  public:
-  Server(voyager::EventLoop* ev,
-         const voyager::SockAddr& addr,
-         const std::string& name,
-         int thread_count)
+  Server(voyager::EventLoop* ev, const voyager::SockAddr& addr,
+         const std::string& name, int thread_count)
       : server_(ev, addr, name, thread_count) {
     using namespace std::placeholders;
     server_.SetConnectionCallback(
@@ -26,13 +23,10 @@ class Server {
         std::bind(&Server::MessageCallback, this, _1, _2));
   }
 
-  void Start() {
-    server_.Start();
-  }
+  void Start() { server_.Start(); }
 
  private:
-  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {
-  }
+  void ConnectCallback(const voyager::TcpConnectionPtr& ptr) {}
 
   void MessageCallback(const voyager::TcpConnectionPtr& ptr,
                        voyager::Buffer* buf) {

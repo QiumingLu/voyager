@@ -6,18 +6,19 @@
 #define VOYAGER_RPC_CODEC_H_
 
 #include <string>
+
 #include <google/protobuf/message.h>
+
 #include "voyager/core/buffer.h"
 
 namespace voyager {
 
 class RpcCodec {
  public:
-  RpcCodec() { }
-  bool ParseFromBuffer(Buffer* buf,
-                       google::protobuf::Message* message);
-  bool SerializeToString(const google::protobuf::Message& msg,
-                         std::string* s);
+  RpcCodec() {}
+  bool ParseFromBuffer(Buffer* buf, google::protobuf::Message* message);
+  bool SerializeToString(const google::protobuf::Message& msg, std::string* s);
+
  private:
   static const int kHeaderSize = 4;
 

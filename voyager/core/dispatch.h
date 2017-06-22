@@ -65,7 +65,7 @@ class Dispatch {
 
   void RemoveEvents();
 
-  EventLoop* OwnerEventLoop() const  { return eventloop_; }
+  EventLoop* OwnerEventLoop() const { return eventloop_; }
 
   void Tie(const std::shared_ptr<void>& obj);
 
@@ -91,7 +91,6 @@ class Dispatch {
   bool tied_;
   bool event_handling_;
 
-
   EventCallback read_cb_;
   EventCallback write_cb_;
   EventCallback close_cb_;
@@ -104,4 +103,4 @@ class Dispatch {
 
 }  // namespace voyager
 
-#endif   // VOYAGER_CORE_DISPATCH_H_
+#endif  // VOYAGER_CORE_DISPATCH_H_

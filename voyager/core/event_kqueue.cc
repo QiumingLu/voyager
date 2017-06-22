@@ -6,8 +6,8 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <string.h>
 #include <poll.h>
+#include <string.h>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
@@ -15,30 +15,26 @@
 namespace voyager {
 
 EventKqueue::EventKqueue(EventLoop* ev)
-    : EventPoller(ev),
-      kq_(::kqueue()),
-      events_(kInitKqueueFdSize) {
+    : EventPoller(ev), kq_(::kqueue()), events_(kInitKqueueFdSize) {
   if (kq_ == -1) {
     VOYAGER_LOG(FATAL) << "kqueue: " << strerror(errno);
   }
 }
 
-EventKqueue::~EventKqueue() {
-}
+EventKqueue::~EventKqueue() {}
 
 void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timespec out;
   out.tv_sec = timeout / 1000;
   out.tv_nsec = (timeout % 1000) * 1000 * 1000;
-  int nfds = ::kevent(kq_, nullptr, 0,
-                      &*events_.begin(), static_cast<int>(events_.size()),
-                      &out);
+  int nfds = ::kevent(kq_, nullptr, 0, &*events_.begin(),
+                      static_cast<int>(events_.size()), &out);
   if (nfds == -1) {
     VOYAGER_LOG(ERROR) << "kevent: " << strerror(errno);
   }
 
   for (int i = 0; i < nfds; ++i) {
-    Dispatch *dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
+    Dispatch* dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
     int revents = 0;
     if (events_[i].flags == EV_ERROR) {
       revents = POLLERR;

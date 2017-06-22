@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "voyager/core/tcp_server.h"
+#include "voyager/core/callback.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
-#include "voyager/core/callback.h"
+#include "voyager/core/tcp_server.h"
 #include "voyager/util/logging.h"
 
-#include <unistd.h>
 #include <inttypes.h>
+#include <unistd.h>
 
 using namespace std::placeholders;
 
@@ -24,9 +24,7 @@ class EchoServer {
     server_.SetMessageCallback(std::bind(&EchoServer::Message, this, _1, _2));
   }
 
-  void Start() {
-    server_.Start();
-  }
+  void Start() { server_.Start(); }
 
  private:
   void Connect(const TcpConnectionPtr& conn_ptr) {
@@ -55,8 +53,8 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%" PRIu64"\n",
-         getpid(), voyager::port::CurrentThread::Tid());
+  printf("pid=%d, tid=%" PRIu64 "\n", getpid(),
+         voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   // test for IPV6
   voyager::SockAddr addr("2001:da8:205:40b2:6d12:4a15:b65d:63e3", 5666);

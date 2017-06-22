@@ -16,7 +16,7 @@ class EventPoll : public EventPoller {
   explicit EventPoll(EventLoop* ev);
   virtual ~EventPoll();
 
-  virtual void Poll(int timeout, std::vector<Dispatch*> *dispatches);
+  virtual void Poll(int timeout, std::vector<Dispatch*>* dispatches);
   virtual void RemoveDispatch(Dispatch* dispatch);
   virtual void UpdateDispatch(Dispatch* dispatch);
 

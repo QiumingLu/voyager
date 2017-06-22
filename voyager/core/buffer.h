@@ -26,24 +26,18 @@ class Buffer {
   size_t ReadableSize() const { return write_index_ - read_index_; }
   size_t WritableSize() const { return buf_.size() - write_index_; }
 
-  void Append(const Slice& s) {
-    Append(s.data(), s.size());
-  }
+  void Append(const Slice& s) { Append(s.data(), s.size()); }
 
   void Append(const char* data, size_t size) {
     if (WritableSize() < size) {
       MakeSpace(size);
     }
-    std::copy(
-        data,
-        data+size,
-        buf_.begin() + static_cast<std::ptrdiff_t>(write_index_));
+    std::copy(data, data + size,
+              buf_.begin() + static_cast<std::ptrdiff_t>(write_index_));
     write_index_ += size;
   }
 
-  const char* Peek() const {
-    return PeekAt(read_index_);
-  }
+  const char* Peek() const { return PeekAt(read_index_); }
 
   const char* FindCRLF() {
     const char* crlf = std::search(PeekAt(read_index_), PeekAt(write_index_),
@@ -70,13 +64,9 @@ class Buffer {
     Retrieve(static_cast<size_t>(end - Peek()));
   }
 
-  void RetrieveAll() {
-    read_index_ = write_index_ = 0;
-  }
+  void RetrieveAll() { read_index_ = write_index_ = 0; }
 
-  std::string RetrieveAllAsString() {
-    return RetrieveAsString(ReadableSize());
-  }
+  std::string RetrieveAllAsString() { return RetrieveAsString(ReadableSize()); }
 
   std::string RetrieveAsString(size_t size) {
     assert(size <= ReadableSize());

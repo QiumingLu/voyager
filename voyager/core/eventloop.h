@@ -11,9 +11,9 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include <vector>
-#include <utility>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include "voyager/core/callback.h"
 #include "voyager/port/currentthread.h"
@@ -28,11 +28,7 @@ class TimerList;
 
 typedef std::pair<uint64_t, Timer*> TimerId;
 
-enum PollType {
-  kSelect,
-  kPoll,
-  kEpoll
-};
+enum PollType { kSelect, kPoll, kEpoll };
 
 class EventLoop {
  public:
