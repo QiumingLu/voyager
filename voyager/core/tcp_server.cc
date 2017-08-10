@@ -19,7 +19,7 @@ TcpServer::TcpServer(EventLoop* ev, const SockAddr& addr,
     : eventloop_(CHECK_NOTNULL(ev)),
       addr_(addr),
       name_(name),
-      schedule_(new Schedule(eventloop_, thread_size - 1)),
+      schedule_(new Schedule(eventloop_, thread_size)),
       acceptor_(new TcpAcceptor(eventloop_, addr, backlog, reuseport)) {
   acceptor_->SetNewConnectionCallback(std::bind(&TcpServer::NewConnection, this,
                                                 std::placeholders::_1,
@@ -39,10 +39,6 @@ void TcpServer::Start() {
       acceptor_->EnableListen();
     }
   });
-}
-
-const std::vector<EventLoop*>* TcpServer::AllLoops() const {
-  return schedule_->AllLoops();
 }
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {

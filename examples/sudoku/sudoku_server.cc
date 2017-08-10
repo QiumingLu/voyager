@@ -17,7 +17,7 @@ namespace sudoku {
 class SudukuServer {
  public:
   SudukuServer(voyager::EventLoop* ev, const voyager::SockAddr& addr)
-      : server_(ev, addr, "SudukuServer", 5) {
+      : server_(ev, addr, "SudukuServer", 4) {
     server_.SetConnectionCallback(
         std::bind(&SudukuServer::ConnectCallback, this, std::placeholders::_1));
     server_.SetMessageCallback(std::bind(&SudukuServer::MessageCallback, this,

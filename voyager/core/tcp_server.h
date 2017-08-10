@@ -27,7 +27,7 @@ class TcpServer {
  public:
   TcpServer(EventLoop* ev, const SockAddr& addr,
             const std::string& name = std::string("VoyagerServer"),
-            int thread_size = 1, int backlog = SOMAXCONN,
+            int thread_size = 0, int backlog = SOMAXCONN,
             bool reuseport = false);
   ~TcpServer();
 
@@ -52,11 +52,6 @@ class TcpServer {
   void SetMessageCallback(MessageCallback&& cb) { message_cb_ = std::move(cb); }
 
   void Start();
-
-  // All loops for schedule tcp connection
-  // Only include base loop if it's size = 1
-  // Not include base loop but include all child loops if it 's size > 1
-  const std::vector<EventLoop*>* AllLoops() const;
 
  private:
   void NewConnection(int fd, const struct sockaddr_storage& sa);

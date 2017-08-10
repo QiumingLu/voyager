@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 
   voyager::SockAddr addr(host, port);
   voyager::EventLoop ev;
-  Server server(&ev, addr, "server", thread_count);
+  Server server(&ev, addr, "server", thread_count - 1);
 
   server.Start();
   ev.Loop();

@@ -21,7 +21,6 @@ class Schedule {
   EventLoop* AssignLoop();
 
   bool Started() const { return started_; }
-  const std::vector<EventLoop*>* AllLoops() const { return &loops_; }
 
  private:
   EventLoop* baseloop_;
