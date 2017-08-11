@@ -19,7 +19,7 @@ namespace voyager {
 
 void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
-  if (level >= LOGLEVEL_ERROR) {
+  if (level >= LOGLEVEL_WARN) {
     static const char* loglevel_names[] = {"DEBUG", "INFO ", "WARN ", "ERROR",
                                            "FATAL"};
 

@@ -53,6 +53,9 @@ class TcpServer {
 
   void Start();
 
+  // All loops for schedule tcp connections.
+  const std::vector<EventLoop*>* AllLoops() const;
+
  private:
   void NewConnection(int fd, const struct sockaddr_storage& sa);
 

@@ -32,13 +32,15 @@ TcpServer::~TcpServer() {
 }
 
 void TcpServer::Start() {
-  eventloop_->RunInLoop([this]() {
-    if (seq_.GetNext() == 0) {
-      schedule_->Start();
-      assert(!acceptor_->IsListenning());
-      acceptor_->EnableListen();
-    }
-  });
+  if (seq_.GetNext() == 0) {
+    schedule_->Start();
+    assert(!acceptor_->IsListenning());
+    eventloop_->RunInLoop([this]() { acceptor_->EnableListen(); });
+  }
+}
+
+const std::vector<EventLoop*>* TcpServer::AllLoops() const {
+  return schedule_->AllLoops();
 }
 
 void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
