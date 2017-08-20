@@ -98,7 +98,7 @@ void EventEpoll::EpollCTL(int op, Dispatch* dispatch) {
   ev.data.ptr = dispatch;
 
   if (::epoll_ctl(epollfd_, op, fd, &ev) == -1) {
-    VOYAGER_LOG(ERROR) << "epoll_wait: " << strerror(errno) << " fd=" << fd;
+    VOYAGER_LOG(ERROR) << "epoll_ctl: " << strerror(errno) << " fd=" << fd;
   }
 }
 
