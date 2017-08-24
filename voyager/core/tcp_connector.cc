@@ -146,6 +146,7 @@ void TcpConnector::HandleEvent() {
       if (connect_ && newconnection_cb_) {
         socket_->SetNoAutoCloseFd();
         newconnection_cb_(socket_->SocketFd());
+        retry_time_ = kInitRetryTime;
       }
       socket_.reset();
     }

@@ -31,6 +31,7 @@ class TcpClient {
   void Close();
 
   EventLoop* GetLoop() const { return ev_; }
+  TcpConnectionPtr GetTcpConnectionPtr() { return weak_ptr_.lock(); }
 
   void SetConnectionCallback(const ConnectionCallback& cb) {
     connection_cb_ = cb;
