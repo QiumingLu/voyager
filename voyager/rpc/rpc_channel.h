@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <map>
+#include <memory>
 
 #include <google/protobuf/service.h>
 
@@ -16,6 +17,7 @@
 #include "voyager/port/atomic_sequence_num.h"
 #include "voyager/port/mutex.h"
 #include "voyager/port/mutexlock.h"
+#include "voyager/protobuf/protobuf_codec.h"
 #include "voyager/rpc/rpc.pb.h"
 #include "voyager/rpc/rpc_codec.h"
 
@@ -55,11 +57,12 @@ class RpcChannel : public google::protobuf::RpcChannel {
   };
 
   void TimeoutHandler(int id);
-  void OnResponse(const RpcMessage& msg);
+  bool OnResponse(const TcpConnectionPtr& p, std::unique_ptr<RpcMessage> msg);
+  void OnError(const TcpConnectionPtr& p, ProtoCodecError code);
 
   EventLoop* loop_;
   uint64_t micros_;
-  RpcCodec codec_;
+  ProtobufCodec<RpcMessage> codec_;
   TcpConnectionPtr conn_;
   ErrorCallback error_cb_;
   port::SequenceNumber num_;

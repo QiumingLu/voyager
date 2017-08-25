@@ -6,6 +6,7 @@
 #define VOYAGER_RPC_SERVER_H_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include <google/protobuf/service.h>
@@ -14,6 +15,7 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
 #include "voyager/core/tcp_server.h"
+#include "voyager/protobuf/protobuf_codec.h"
 #include "voyager/rpc/rpc.pb.h"
 
 namespace voyager {
@@ -26,12 +28,13 @@ class RpcServer {
   void RegisterService(google::protobuf::Service* service);
 
  private:
-  void OnMessage(const TcpConnectionPtr& p, Buffer* buf);
-  void OnRequest(const TcpConnectionPtr& p, const RpcMessage& msg);
+  bool OnRequest(const TcpConnectionPtr& p, std::unique_ptr<RpcMessage> msg);
+  void OnError(const TcpConnectionPtr& p, ProtoCodecError code);
   void Done(google::protobuf::Message* response, TcpConnectionPtr p);
 
-  TcpServer server_;
   std::map<std::string, google::protobuf::Service*> services_;
+  ProtobufCodec<RpcMessage> codec_;
+  TcpServer server_;
 
   // No copying allowed
   RpcServer(const RpcServer&);

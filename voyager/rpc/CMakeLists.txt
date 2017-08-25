@@ -4,7 +4,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS rpc.proto)
 
 set(Voyager_RPC_SRCS
-  rpc_codec.cc
   rpc_channel.cc
   rpc_server.cc
   ${PROTO_SRCS}
@@ -31,7 +30,6 @@ else()
 endif()
 
 set(Voyager_RPC_HEADERS
-  rpc_codec.h
   rpc_channel.h
   rpc_server.h
   rpc.proto

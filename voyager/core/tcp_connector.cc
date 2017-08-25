@@ -104,10 +104,11 @@ void TcpConnector::Connecting() {
 
 void TcpConnector::Retry() {
   state_ = kDisConnected;
-  if (connect_failure_cb_) {
-    connect_failure_cb_();
-  }
+
   if (!retry_) {
+    if (connect_failure_cb_) {
+      connect_failure_cb_();
+    }
     return;
   }
   if (connect_) {

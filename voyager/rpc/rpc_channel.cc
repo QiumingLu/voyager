@@ -8,7 +8,14 @@
 
 namespace voyager {
 
-RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0) {}
+RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0) {
+  codec_.SetMessageCallback(std::bind(&RpcChannel::OnResponse, this,
+                                      std::placeholders::_1,
+                                      std::placeholders::_2));
+  codec_.SetErrorCallback(std::bind(&RpcChannel::OnError, this,
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+}
 
 RpcChannel::~RpcChannel() {
   for (auto it : call_map_) {
@@ -30,9 +37,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
   msg.set_method_name(method->name());
   msg.set_data(request->SerializeAsString());
 
-  std::string s;
-  if (codec_.SerializeToString(msg, &s)) {
-    conn_->SendMessage(s);
+  if (codec_.SendMessage(conn_, msg)) {
     TimerId t;
     if (micros_ > 0) {
       t = loop_->RunAfter(micros_,
@@ -50,12 +55,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
 }
 
 void RpcChannel::OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
-  RpcMessage msg;
-  bool res = codec_.ParseFromBuffer(buf, &msg);
-  while (res) {
-    OnResponse(msg);
-    res = codec_.ParseFromBuffer(buf, &msg);
-  }
+  codec_.OnMessage(p, buf);
 }
 
 void RpcChannel::TimeoutHandler(int id) {
@@ -73,8 +73,9 @@ void RpcChannel::TimeoutHandler(int id) {
   }
 }
 
-void RpcChannel::OnResponse(const RpcMessage& msg) {
-  int id = msg.id();
+bool RpcChannel::OnResponse(const TcpConnectionPtr& p,
+                            std::unique_ptr<RpcMessage> msg) {
+  int id = msg->id();
   CallData data;
   {
     port::MutexLock lock(&mutex_);
@@ -86,20 +87,27 @@ void RpcChannel::OnResponse(const RpcMessage& msg) {
   }
   loop_->RemoveTimer(data.timer);
 
-  if (msg.error() == ERROR_CODE_OK) {
+  if (msg->error() == ERROR_CODE_OK) {
     if (data.response) {
-      data.response->ParseFromString(msg.data());
+      data.response->ParseFromString(msg->data());
     }
     if (data.done) {
       data.done->Run();
     }
   } else {
     if (error_cb_) {
-      error_cb_(msg.error());
+      error_cb_(msg->error());
     }
     delete data.done;
   }
   delete data.response;
+  return true;
+}
+
+void RpcChannel::OnError(const TcpConnectionPtr& p, ProtoCodecError code) {
+  if (code == kParseError) {
+    p->ForceClose();
+  }
 }
 
 }  // namespace voyager
