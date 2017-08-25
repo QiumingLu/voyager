@@ -19,29 +19,28 @@ namespace voyager {
 
 void DefaultLogHandler(LogLevel level, const char* filename, int line,
                        const std::string& message) {
-  if (level >= LOGLEVEL_ERROR) {
-    static const char* loglevel_names[] = {"DEBUG", "INFO ", "WARN ", "ERROR",
-                                           "FATAL"};
+  static const char* kLogLevelNames[] = {"DEBUG", "INFO ", "WARN ", "ERROR",
+                                         "FATAL"};
 
-    char log_time[64];
-    struct timeval now_tv;
-    gettimeofday(&now_tv, nullptr);
-    const time_t seconds = now_tv.tv_sec;
-    struct tm t;
-    localtime_r(&seconds, &t);
-    snprintf(log_time, sizeof(log_time), "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
-             t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min,
-             t.tm_sec, static_cast<int>(now_tv.tv_usec));
+  char log_time[64];
+  struct timeval now_tv;
+  gettimeofday(&now_tv, nullptr);
+  const time_t seconds = now_tv.tv_sec;
+  struct tm t;
+  localtime_r(&seconds, &t);
+  snprintf(log_time, sizeof(log_time), "%04d/%02d/%02d-%02d:%02d:%02d.%06d",
+           t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min,
+           t.tm_sec, static_cast<int>(now_tv.tv_usec));
 
-    fprintf(stderr, "[%s][%s %s:%d] %s\n", log_time, loglevel_names[level],
-            filename, line, message.c_str());
-  }
+  fprintf(stderr, "[%s][%s %s:%d] %s\n", log_time, kLogLevelNames[level],
+          filename, line, message.c_str());
 }
 
 void NullLogHandler(LogLevel /* level */, const char* /* filename */,
                     int /* line */, const std::string& /* message */) {}
 
 static LogHandler* log_handler_ = &DefaultLogHandler;
+static LogLevel log_level_ = LOGLEVEL_WARN;
 
 Logger::Logger(LogLevel level, const char* filename, int line)
     : level_(level), filename_(filename), line_(line) {}
@@ -100,7 +99,9 @@ DECLARE_STREAM_OPERATOR(const void*, "%p")
 #undef DECLARE_STREAM_OPERATOR
 
 void Logger::Finish() {
-  log_handler_(level_, filename_, line_, message_);
+  if (level_ >= log_level_) {
+    log_handler_(level_, filename_, line_, message_);
+  }
 
   if (level_ == LOGLEVEL_FATAL) {
 #if USE_EXCEPTIONS
@@ -124,6 +125,12 @@ LogHandler* SetLogHandler(LogHandler* new_func) {
     log_handler_ = new_func;
   }
   return old;
+}
+
+LogLevel SetLogLevel(LogLevel new_level) {
+  LogLevel old_level = log_level_;
+  log_level_ = new_level;
+  return old_level;
 }
 
 }  // namespace voyager

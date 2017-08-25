@@ -85,7 +85,9 @@ extern void DefaultLogHandler(LogLevel level, const char* filename, int line,
 extern void NullLogHandler(LogLevel /* level */, const char* /* filename */,
                            int /* line */, const std::string& /* message */);
 
-LogHandler* SetLogHandler(LogHandler* new_func);
+extern LogHandler* SetLogHandler(LogHandler* new_func);
+
+extern LogLevel SetLogLevel(LogLevel new_level);
 
 }  // namespace voyager
 
