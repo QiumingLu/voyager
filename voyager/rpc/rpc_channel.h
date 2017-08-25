@@ -19,7 +19,6 @@
 #include "voyager/port/mutexlock.h"
 #include "voyager/protobuf/protobuf_codec.h"
 #include "voyager/rpc/rpc.pb.h"
-#include "voyager/rpc/rpc_codec.h"
 
 namespace voyager {
 
