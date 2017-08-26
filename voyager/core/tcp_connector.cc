@@ -43,7 +43,7 @@ void TcpConnector::StartInLoop() {
 
 void TcpConnector::Stop() {
   TcpConnectorPtr ptr(shared_from_this());
-  ev_->QueueInLoop([ptr]() {
+  ev_->RunInLoop([ptr]() {
     ptr->connect_ = false;
     if (ptr->state_ == kConnecting) {
       ptr->state_ = kDisConnected;
