@@ -9,8 +9,9 @@
 #include <memory>
 #include <utility>
 
-#include <voyager/core/buffer.h>
-#include <voyager/core/tcp_connection.h>
+#include "voyager/core/buffer.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/util/coding.h"
 
 namespace voyager {
 
@@ -42,8 +43,8 @@ class ProtobufCodec {
       s.append(buf, kHeaderLen);
       res = message.AppendToString(&s);
       if (res) {
-        int size = static_cast<int>(s.size());
-        memcpy(buf, &size, kHeaderLen);
+        uint32_t size = static_cast<uint32_t>(s.size());
+        EncodeFixed32(buf, size);
         s.replace(s.begin(), s.begin() + kHeaderLen, buf, kHeaderLen);
         p->SendMessage(std::move(s));
       } else if (error_cb_) {
@@ -57,8 +58,7 @@ class ProtobufCodec {
     bool res = true;
     while (res) {
       if (buf->ReadableSize() >= kHeaderLen) {
-        int size;
-        memcpy(&size, buf->Peek(), kHeaderLen);
+        uint32_t size = DecodeFixed32(buf->Peek());
         if (buf->ReadableSize() >= static_cast<size_t>(size)) {
           std::unique_ptr<Message> message(new Message());
           res = message->ParseFromArray(buf->Peek() + kHeaderLen,
@@ -79,7 +79,7 @@ class ProtobufCodec {
   }
 
  private:
-  static const int kHeaderLen = 4;
+  static const uint32_t kHeaderLen = 4;
 
   MessageCallback message_cb_;
   ErrorCallback error_cb_;

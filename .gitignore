@@ -1,0 +1,6 @@
+.DS_Store
+*.swp
+benchmarks/test.txt
+tutorial/echo
+tutorial/echo.dSYM
+build/
