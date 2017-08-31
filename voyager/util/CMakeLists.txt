@@ -32,7 +32,6 @@ set(
   )
 install(FILES ${Voyager_JSON_HEADERS} DESTINATION include/voyager/util/json)
 
-
 if (BUILD_TESTS)
   add_subdirectory(tests)
 endif()
