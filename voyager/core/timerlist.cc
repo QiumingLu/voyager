@@ -27,7 +27,8 @@ class Timer {
   TimerProcCallback timerproc_cb;
 };
 
-TimerList::TimerList(EventLoop* ev) : eventloop_(CHECK_NOTNULL(ev)) {}
+TimerList::TimerList(EventLoop* ev)
+    : last_time_out_(timeops::NowMicros()), eventloop_(CHECK_NOTNULL(ev)) {}
 
 TimerList::~TimerList() {
   for (auto& t : timer_ptrs_) {
@@ -78,6 +79,9 @@ uint64_t TimerList::TimeoutMicros() const {
   }
   std::set<TimerId>::const_iterator it = timers_.begin();
   uint64_t now = timeops::NowMicros();
+  if (now < last_time_out_) {
+    return 0;
+  }
   if (it->first <= now) {
     return 0;
   } else {
@@ -95,11 +99,12 @@ void TimerList::RunTimerProcs() {
   std::set<TimerId>::iterator it;
   while (true) {
     it = timers_.begin();
-    if (it != timers_.end() && it->first <= micros_now) {
+    if (it != timers_.end() &&
+        (it->first <= micros_now || micros_now < last_time_out_)) {
       Timer* t = it->second;
       TimerProcCallback cb = t->timerproc_cb;
       if (t->micros_interval > 0) {
-        t->micros_value += t->micros_interval;
+        t->micros_value = micros_now + t->micros_interval;
         TimerId timer(t->micros_value, t);
         timers_.insert(timer);
       } else {
@@ -113,6 +118,7 @@ void TimerList::RunTimerProcs() {
       break;
     }
   }
+  last_time_out_ = micros_now;
 }
 
 }  // namespace voyager

@@ -63,9 +63,7 @@ void NewTimer::SetTime(uint64_t nanos_value, uint64_t nanos_interval) {
 void NewTimer::SetTimeInLoop(uint64_t nanos_value, uint64_t nanos_interval) {
   eventloop_->AssertInMyLoop();
   struct itimerspec new_value;
-  struct itimerspec old_value;
   memset(&new_value, 0, sizeof(new_value));
-  memset(&old_value, 0, sizeof(old_value));
 
   new_value.it_interval.tv_sec =
       static_cast<time_t>(nanos_interval / timeops::kNonasSecondsPerSecond);
@@ -76,7 +74,7 @@ void NewTimer::SetTimeInLoop(uint64_t nanos_value, uint64_t nanos_interval) {
   new_value.it_value.tv_nsec =
       static_cast<long>(nanos_value % timeops::kNonasSecondsPerSecond);
 
-  if (::timerfd_settime(timerfd_, 0, &new_value, &old_value) == -1) {
+  if (::timerfd_settime(timerfd_, 0, &new_value, nullptr) == -1) {
     VOYAGER_LOG(ERROR) << "timerfd_settime: " << strerror(errno);
   }
 

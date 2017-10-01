@@ -32,6 +32,8 @@ class TimerList {
   void InsertInLoop(TimerId timer);
   void EraseInLoop(TimerId timer);
 
+  uint64_t last_time_out_;
+
   EventLoop* eventloop_;
 
   std::set<Timer*> timer_ptrs_;
