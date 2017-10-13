@@ -10,14 +10,13 @@
 #include <string>
 #include <utility>
 
+#include "voyager/core/eventloop.h"
+#include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connection.h"
-#include "voyager/port/atomic_sequence_num.h"
 
 namespace voyager {
 
-class EventLoop;
 class TcpConnector;
-class SockAddr;
 
 typedef std::shared_ptr<TcpConnector> TcpConnectorPtr;
 
@@ -58,12 +57,13 @@ class TcpClient {
   void NewConnection(int fd);
   void ConnectFailure();
 
+  static std::atomic<int> conn_id_;
+
   EventLoop* ev_;
   SockAddr addr_;
   std::string name_;
   TcpConnectorPtr connector_;
   std::atomic<bool> connect_;
-  static port::SequenceNumber conn_id_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

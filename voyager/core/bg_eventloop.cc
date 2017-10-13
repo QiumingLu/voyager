@@ -4,34 +4,26 @@
 
 #include "voyager/core/bg_eventloop.h"
 
-#include <assert.h>
-
-#include "voyager/port/mutexlock.h"
-#include "voyager/util/logging.h"
-
 namespace voyager {
 
-BGEventLoop::BGEventLoop(PollType type, const std::string& name)
-    : type_(type),
-      eventloop_(nullptr),
-      mu_(),
-      cond_(&mu_),
-      thread_(std::bind(&BGEventLoop::ThreadFunc, this), name) {}
+BGEventLoop::BGEventLoop(PollType type) : type_(type), eventloop_(nullptr) {}
 
 BGEventLoop::~BGEventLoop() {
   if (eventloop_ != nullptr) {
     eventloop_->Exit();
-    thread_.Join();
+    thread_->join();
   }
 }
 
 EventLoop* BGEventLoop::Loop() {
-  assert(!thread_.Started());
-  thread_.Start();
+  if (eventloop_ != nullptr) {
+    return eventloop_;
+  }
+  thread_.reset(new std::thread(std::bind(&BGEventLoop::ThreadFunc, this)));
   {
-    port::MutexLock l(&mu_);
+    std::unique_lock<std::mutex> lock(mutex_);
     while (eventloop_ == nullptr) {
-      cond_.Wait();
+      cv_.wait(lock);
     }
   }
   return eventloop_;
@@ -40,9 +32,9 @@ EventLoop* BGEventLoop::Loop() {
 void BGEventLoop::ThreadFunc() {
   EventLoop ev(type_);
   {
-    port::MutexLock l(&mu_);
+    std::unique_lock<std::mutex> lock(mutex_);
     eventloop_ = &ev;
-    cond_.Signal();
+    cv_.notify_one();
   }
   eventloop_->Loop();
   eventloop_ = nullptr;

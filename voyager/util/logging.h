@@ -6,6 +6,7 @@
 #define VOYAGER_UTIL_LOGGING_H_
 
 #include <string>
+#include <thread>
 
 namespace voyager {
 
@@ -43,6 +44,7 @@ class Logger {
   Logger& operator<<(const std::string& value);
   Logger& operator<<(std::string&& value);
   Logger& operator<<(const Status& value);
+  Logger& operator<<(const std::thread::id& value);
 
  private:
   friend class LogFinisher;

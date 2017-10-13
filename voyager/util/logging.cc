@@ -10,6 +10,7 @@
 #include <time.h>
 
 #include <functional>
+#include <sstream>
 #include <utility>
 
 #include "voyager/util/slice.h"
@@ -71,6 +72,13 @@ Logger& Logger::operator<<(std::string&& value) {
 
 Logger& Logger::operator<<(const Status& value) {
   message_ += value.ToString();
+  return *this;
+}
+
+Logger& Logger::operator<<(const std::thread::id& value) {
+  std::stringstream ss;
+  ss << value;
+  message_ += ss.str();
   return *this;
 }
 

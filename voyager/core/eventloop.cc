@@ -28,7 +28,7 @@
 namespace voyager {
 namespace {
 
-__thread EventLoop* runloop = nullptr;
+thread_local EventLoop* runloop = nullptr;
 
 class IgnoreSIGPIPE {
  public:
@@ -68,10 +68,10 @@ std::atomic<int> EventLoop::all_connection_size_;
 EventLoop* EventLoop::RunLoop() { return runloop; }
 
 EventLoop::EventLoop(PollType type)
-    : type_(type),
+    : tid_(std::this_thread::get_id()),
+      type_(type),
       exit_(false),
       run_(false),
-      tid_(port::CurrentThread::Tid()),
       connection_size_(0),
       poller_(CreatePoller(type, this)),
       timers_(new TimerList(this)) {
@@ -95,7 +95,7 @@ EventLoop::EventLoop(PollType type)
 EventLoop::~EventLoop() {
   runloop = nullptr;
   VOYAGER_LOG(DEBUG) << "EventLoop " << this << " of thread " << tid_
-                     << " destructs in thread " << port::CurrentThread::Tid();
+                     << " destructs in thread " << std::this_thread::get_id();
 
   wakeup_dispatch_->DisableAll();
   wakeup_dispatch_->RemoveEvents();
@@ -125,7 +125,7 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  QueueInLoop([this]() { this->exit_ = true; });
+  RunInLoop([this]() { this->exit_ = true; });
 }
 
 void EventLoop::RunInLoop(const Func& func) {
@@ -138,7 +138,7 @@ void EventLoop::RunInLoop(const Func& func) {
 
 void EventLoop::QueueInLoop(const Func& func) {
   {
-    port::MutexLock lock(&mu_);
+    std::lock_guard<std::mutex> lock(mutex_);
     funcs_.push_back(func);
   }
 
@@ -160,7 +160,7 @@ void EventLoop::RunInLoop(Func&& func) {
 
 void EventLoop::QueueInLoop(Func&& func) {
   {
-    port::MutexLock lock(&mu_);
+    std::lock_guard<std::mutex> lock(mutex_);
     funcs_.push_back(std::move(func));
   }
   // "必要时"有两种情况：
@@ -243,7 +243,7 @@ void EventLoop::RunFuncs() {
   std::vector<Func> funcs;
   run_ = true;
   {
-    port::MutexLock lock(&mu_);
+    std::lock_guard<std::mutex> lock(mutex_);
     funcs.swap(funcs_);
   }
   for (std::vector<Func>::iterator it = funcs.begin(); it != funcs.end();
@@ -274,8 +274,8 @@ void EventLoop::HandleRead() {
 void EventLoop::Abort() {
   VOYAGER_LOG(FATAL) << "EventLoop::Abort - (EventLoop " << this
                      << ") was created in tid_ = " << tid_
-                     << ", currentthread's tid_ = "
-                     << port::CurrentThread::Tid();
+                     << ", current thread's tid_ = "
+                     << std::this_thread::get_id();
 }
 
 }  // namespace voyager

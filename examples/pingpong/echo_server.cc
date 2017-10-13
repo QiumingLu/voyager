@@ -41,8 +41,6 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%" PRIu64 "\n", getpid(),
-         voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   voyager::SockAddr addr(5666);
   voyager::EchoServer server(&ev, addr);

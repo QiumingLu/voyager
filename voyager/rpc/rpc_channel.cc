@@ -8,7 +8,7 @@
 
 namespace voyager {
 
-RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0) {
+RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0), seq_(0) {
   codec_.SetMessageCallback(std::bind(&RpcChannel::OnResponse, this,
                                       std::placeholders::_1,
                                       std::placeholders::_2));
@@ -18,7 +18,7 @@ RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0) {
 }
 
 RpcChannel::~RpcChannel() {
-  for (auto it : call_map_) {
+  for (auto& it : call_map_) {
     delete it.second.response;
     delete it.second.done;
     loop_->RemoveTimer(it.second.timer);
@@ -30,7 +30,7 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
                             const google::protobuf::Message* request,
                             google::protobuf::Message* response,
                             google::protobuf::Closure* done) {
-  int id = num_.GetNext();
+  int id = ++seq_;
   RpcMessage msg;
   msg.set_id(id);
   msg.set_service_name(method->service()->full_name());
@@ -40,10 +40,11 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
   if (codec_.SendMessage(conn_, msg)) {
     TimerId t;
     if (micros_ > 0) {
-      t = loop_->RunAfter(micros_,
-                          std::bind(&RpcChannel::TimeoutHandler, this, id));
+      t = loop_->RunAfter(micros_, std::bind(&RpcChannel::OnTimeout, this, id));
+    } else {
+      t.second = nullptr;
     }
-    port::MutexLock lock(&mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     call_map_[id] = CallData(response, done, t);
   } else {
     if (error_cb_) {
@@ -58,9 +59,9 @@ void RpcChannel::OnMessage(const TcpConnectionPtr& p, Buffer* buf) {
   codec_.OnMessage(p, buf);
 }
 
-void RpcChannel::TimeoutHandler(int id) {
+void RpcChannel::OnTimeout(int id) {
   {
-    port::MutexLock lock(&mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = call_map_.find(id);
     if (it != call_map_.end()) {
       delete it->second.response;
@@ -78,14 +79,16 @@ bool RpcChannel::OnResponse(const TcpConnectionPtr& p,
   int id = msg->id();
   CallData data;
   {
-    port::MutexLock lock(&mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = call_map_.find(id);
     if (it != call_map_.end()) {
       data = it->second;
       call_map_.erase(it);
     }
   }
-  loop_->RemoveTimer(data.timer);
+  if (data.timer.second != nullptr) {
+    loop_->RemoveTimer(data.timer);
+  }
 
   if (msg->error() == ERROR_CODE_OK) {
     if (data.response) {

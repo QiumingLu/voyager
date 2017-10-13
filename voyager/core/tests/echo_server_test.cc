@@ -53,8 +53,6 @@ class EchoServer {
 }  // namespace voyager
 
 int main(int argc, char** argv) {
-  printf("pid=%d, tid=%" PRIu64 "\n", getpid(),
-         voyager::port::CurrentThread::Tid());
   voyager::EventLoop ev;
   // test for IPV6
   voyager::SockAddr addr("2001:da8:205:40b2:6d12:4a15:b65d:63e3", 5666);

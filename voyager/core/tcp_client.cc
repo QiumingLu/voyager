@@ -3,14 +3,12 @@
 // found in the LICENSE file.
 
 #include "voyager/core/tcp_client.h"
-#include "voyager/core/eventloop.h"
-#include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_connector.h"
 #include "voyager/util/logging.h"
 
 namespace voyager {
 
-port::SequenceNumber TcpClient::conn_id_;
+std::atomic<int> TcpClient::conn_id_(0);
 
 TcpClient::TcpClient(EventLoop* ev, const SockAddr& addr,
                      const std::string& name)
@@ -62,7 +60,7 @@ void TcpClient::NewConnection(int fd) {
   SockAddr local(SockAddr::LocalSockAddr(fd));
   char conn_name[256];
   snprintf(conn_name, sizeof(conn_name), "%s-%s#%d", addr_.Ipbuf().c_str(),
-           local.Ipbuf().c_str(), conn_id_.GetNext());
+           local.Ipbuf().c_str(), ++conn_id_);
 
   VOYAGER_LOG(INFO) << "TcpClient::NewConnection[" << name_
                     << "] - new connection[" << conn_name << "] to "

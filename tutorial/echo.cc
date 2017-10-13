@@ -50,8 +50,6 @@ class EchoServer {
 int main(int argc, char** argv) {
   // ProfilerStart("MyProfile");
   voyager::SetLogHandler(nullptr);
-  printf("pid=%d, tid=%llu\n", getpid(),
-         static_cast<unsigned long long>(voyager::port::CurrentThread::Tid()));
   voyager::EventLoop ev;
   voyager::SockAddr addr("127.0.0.1", 5666);
   voyager::EchoServer server(&ev, addr);

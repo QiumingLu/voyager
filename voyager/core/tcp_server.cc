@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include "voyager/core/tcp_server.h"
-#include "voyager/core/eventloop.h"
 #include "voyager/core/schedule.h"
 #include "voyager/core/tcp_acceptor.h"
 #include "voyager/core/tcp_connection.h"
@@ -11,7 +10,7 @@
 
 namespace voyager {
 
-port::SequenceNumber TcpServer::conn_id_;
+std::atomic<int> TcpServer::conn_id_(0);
 
 TcpServer::TcpServer(EventLoop* ev, const SockAddr& addr,
                      const std::string& name, int thread_size, int backlog,
@@ -19,6 +18,7 @@ TcpServer::TcpServer(EventLoop* ev, const SockAddr& addr,
     : eventloop_(CHECK_NOTNULL(ev)),
       addr_(addr),
       name_(name),
+      started_(false),
       schedule_(new Schedule(eventloop_, thread_size)),
       acceptor_(new TcpAcceptor(eventloop_, addr, backlog, reuseport)) {
   acceptor_->SetNewConnectionCallback(std::bind(&TcpServer::NewConnection, this,
@@ -32,7 +32,8 @@ TcpServer::~TcpServer() {
 }
 
 void TcpServer::Start() {
-  if (seq_.GetNext() == 0) {
+  bool expected = false;
+  if (started_.compare_exchange_strong(expected, true)) {
     schedule_->Start();
     assert(!acceptor_->IsListenning());
     eventloop_->RunInLoop([this]() { acceptor_->EnableListen(); });
@@ -49,7 +50,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
   SockAddr peer(sa);
   char conn_name[256];
   snprintf(conn_name, sizeof(conn_name), "%s-%s#%d", addr_.Ipbuf().c_str(),
-           peer.Ipbuf().c_str(), conn_id_.GetNext());
+           peer.Ipbuf().c_str(), ++conn_id_);
 
   VOYAGER_LOG(INFO) << "TcpServer::NewConnection [" << name_
                     << "] - new connection [" << conn_name << "] from "

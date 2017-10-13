@@ -8,7 +8,6 @@
 #include "voyager/core/tcp_connection.h"
 #include "voyager/core/tcp_server.h"
 #include "voyager/core/timerlist.h"
-#include "voyager/port/currentthread.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/timeops.h"
 
@@ -35,7 +34,7 @@ class TimerServer {
   void TimerTest() {
     VOYAGER_LOG(INFO) << "TimerServer::TimerTest - "
                       << " pid=" << getpid()
-                      << " tid=" << port::CurrentThread::Tid()
+                      << " tid=" << std::this_thread::get_id()
                       << " timestamp=" << timeops::NowMicros();
     ev_->Exit();
   }

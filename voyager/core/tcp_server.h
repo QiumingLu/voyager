@@ -7,6 +7,7 @@
 
 #include <netdb.h>
 
+#include <atomic>
 #include <map>
 #include <memory>
 #include <string>
@@ -14,13 +15,12 @@
 #include <vector>
 
 #include "voyager/core/callback.h"
+#include "voyager/core/eventloop.h"
 #include "voyager/core/sockaddr.h"
-#include "voyager/port/atomic_sequence_num.h"
 
 namespace voyager {
 
 class TcpAcceptor;
-class EventLoop;
 class Schedule;
 
 class TcpServer {
@@ -59,11 +59,12 @@ class TcpServer {
  private:
   void NewConnection(int fd, const struct sockaddr_storage& sa);
 
+  static std::atomic<int> conn_id_;
+
   EventLoop* eventloop_;
   SockAddr addr_;
-  const std::string name_;
-  port::SequenceNumber seq_;
-  static port::SequenceNumber conn_id_;
+  std::string name_;
+  std::atomic<bool> started_;
 
   ConnectionCallback connection_cb_;
   CloseCallback close_cb_;

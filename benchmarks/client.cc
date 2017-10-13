@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <atomic>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -14,7 +15,6 @@
 #include "voyager/core/sockaddr.h"
 #include "voyager/core/tcp_client.h"
 #include "voyager/core/tcp_connection.h"
-#include "voyager/port/atomic_sequence_num.h"
 #include "voyager/util/logging.h"
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"
@@ -77,8 +77,8 @@ class Session {
 
 class Client {
  public:
-  Client(EventLoop* ev, const SockAddr& addr, size_t block_size,
-         size_t session_count, uint64_t timeout, int thread_count)
+  Client(EventLoop* ev, const SockAddr& addr, int block_size, int session_count,
+         uint64_t timeout, int thread_count)
       : base_ev_(ev),
         thread_count_(thread_count),
         session_count_(session_count),
@@ -86,7 +86,7 @@ class Client {
         total_bytes_written(0),
         total_bytes_read(0),
         timeout_(timeout),
-        seq_(),
+        seq_(0),
         schedule_(base_ev_, thread_count - 1) {
 #ifdef __linux__
     timer_.reset(new NewTimer(ev, [this]() { this->HandleTimeout(); }));
@@ -94,12 +94,13 @@ class Client {
 #else
     ev->RunAfter(timeout * 1000000, [this]() { this->HandleTimeout(); });
 #endif
-    for (size_t i = 0; i < block_size_; ++i) {
+    message_.resize(block_size_);
+    for (int i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
     }
 
     schedule_.Start();
-    for (size_t i = 0; i < session_count; ++i) {
+    for (int i = 0; i < session_count; ++i) {
       std::string name = StringPrintf("session %d", i + 1);
       Session* new_session =
           new Session(schedule_.AssignLoop(), addr, name, this);
@@ -113,7 +114,7 @@ class Client {
   const std::string& Message() const { return message_; }
 
   void Print(const TcpConnectionPtr& ptr) {
-    if (seq_.GetNext() < static_cast<int>(session_count_ - 1)) return;
+    if (++seq_ < session_count_) return;
 
     for (std::vector<Session*>::iterator it = sessions_.begin();
          it != sessions_.end(); ++it) {
@@ -148,12 +149,12 @@ class Client {
  private:
   EventLoop* base_ev_;
   int thread_count_;
-  size_t session_count_;
-  size_t block_size_;
+  int session_count_;
+  int block_size_;
   size_t total_bytes_written;
   size_t total_bytes_read;
   uint64_t timeout_;
-  port::SequenceNumber seq_;
+  std::atomic<int> seq_;
   Schedule schedule_;
   std::vector<Session*> sessions_;
   std::string message_;
@@ -183,8 +184,8 @@ int main(int argc, char* argv[]) {
   const char* host = argv[1];
   uint16_t port = static_cast<uint16_t>(atoi(argv[2]));
   int thread_count = atoi(argv[3]);
-  size_t block_size = atoi(argv[4]);
-  size_t session_count = atoi(argv[5]);
+  int block_size = atoi(argv[4]);
+  int session_count = atoi(argv[5]);
   int timeout = atoi(argv[6]);
   voyager::EventLoop base_ev;
   voyager::SockAddr sockaddr(host, port);

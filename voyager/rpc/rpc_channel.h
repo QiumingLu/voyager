@@ -5,18 +5,17 @@
 #ifndef VOYAGER_RPC_CHANNEL_H_
 #define VOYAGER_RPC_CHANNEL_H_
 
+#include <atomic>
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 
 #include <google/protobuf/service.h>
 
 #include "voyager/core/buffer.h"
 #include "voyager/core/eventloop.h"
 #include "voyager/core/tcp_connection.h"
-#include "voyager/port/atomic_sequence_num.h"
-#include "voyager/port/mutex.h"
-#include "voyager/port/mutexlock.h"
 #include "voyager/protobuf/protobuf_codec.h"
 #include "voyager/rpc/rpc.pb.h"
 
@@ -55,7 +54,7 @@ class RpcChannel : public google::protobuf::RpcChannel {
         : response(r), done(d), timer(t) {}
   };
 
-  void TimeoutHandler(int id);
+  void OnTimeout(int id);
   bool OnResponse(const TcpConnectionPtr& p, std::unique_ptr<RpcMessage> msg);
   void OnError(const TcpConnectionPtr& p, ProtoCodecError code);
 
@@ -64,8 +63,8 @@ class RpcChannel : public google::protobuf::RpcChannel {
   ProtobufCodec<RpcMessage> codec_;
   TcpConnectionPtr conn_;
   ErrorCallback error_cb_;
-  port::SequenceNumber num_;
-  port::Mutex mutex_;
+  std::atomic<int> seq_;
+  std::mutex mutex_;
   std::map<int, CallData> call_map_;
 
   // No copying allowed

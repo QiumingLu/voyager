@@ -5,18 +5,18 @@
 #ifndef VOYAGER_CORE_BG_EVENTLOOP_H_
 #define VOYAGER_CORE_BG_EVENTLOOP_H_
 
-#include <string>
+#include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <thread>
 
 #include "voyager/core/eventloop.h"
-#include "voyager/port/mutex.h"
-#include "voyager/port/thread.h"
 
 namespace voyager {
 
 class BGEventLoop {
  public:
-  explicit BGEventLoop(PollType type = kEpoll,
-                       const std::string& name = std::string());
+  explicit BGEventLoop(PollType type = kEpoll);
   ~BGEventLoop();
 
   EventLoop* Loop();
@@ -26,9 +26,9 @@ class BGEventLoop {
 
   PollType type_;
   EventLoop* eventloop_;
-  port::Mutex mu_;
-  port::Condition cond_;
-  port::Thread thread_;
+  std::mutex mutex_;
+  std::condition_variable cv_;
+  std::unique_ptr<std::thread> thread_;
 
   // No copying allowed
   BGEventLoop(const BGEventLoop&);

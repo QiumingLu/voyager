@@ -10,14 +10,14 @@
 #include <atomic>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "voyager/core/callback.h"
-#include "voyager/port/currentthread.h"
-#include "voyager/port/mutexlock.h"
 
 namespace voyager {
 
@@ -38,6 +38,7 @@ class EventLoop {
   ~EventLoop();
 
   void Loop();
+  void Exit();
 
   void RunInLoop(const Func& func);
   void QueueInLoop(const Func& func);
@@ -61,10 +62,8 @@ class EventLoop {
     }
   }
 
-  bool IsInMyLoop() const { return tid_ == port::CurrentThread::Tid(); }
+  bool IsInMyLoop() const { return tid_ == std::this_thread::get_id(); }
   PollType GetPollType() const { return type_; }
-
-  void Exit();
 
   // the eventloop of current thread.
   static EventLoop* RunLoop();
@@ -87,13 +86,13 @@ class EventLoop {
   void WakeUp();
 
   static std::atomic<int> all_connection_size_;
+  const std::thread::id tid_;
 
   PollType type_;
 
   bool exit_;
   bool run_;
 
-  const uint64_t tid_;
   std::atomic<int> connection_size_;
   std::unique_ptr<EventPoller> poller_;
   std::unique_ptr<TimerList> timers_;
@@ -101,7 +100,7 @@ class EventLoop {
   int wakeup_fd_[2];
   std::unique_ptr<Dispatch> wakeup_dispatch_;
 
-  port::Mutex mu_;
+  std::mutex mutex_;
   std::vector<Func> funcs_;
   std::unordered_map<std::string, TcpConnectionPtr> connections_;
 
