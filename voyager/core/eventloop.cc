@@ -28,7 +28,7 @@
 namespace voyager {
 namespace {
 
-thread_local EventLoop* runloop = nullptr;
+__thread EventLoop* runloop = nullptr;
 
 class IgnoreSIGPIPE {
  public:
