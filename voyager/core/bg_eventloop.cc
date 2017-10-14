@@ -4,6 +4,8 @@
 
 #include "voyager/core/bg_eventloop.h"
 
+#include <assert.h>
+
 namespace voyager {
 
 BGEventLoop::BGEventLoop(PollType type) : type_(type), eventloop_(nullptr) {}
@@ -16,14 +18,14 @@ BGEventLoop::~BGEventLoop() {
 }
 
 EventLoop* BGEventLoop::Loop() {
-  if (eventloop_ != nullptr) {
-    return eventloop_;
-  }
-  thread_.reset(new std::thread(std::bind(&BGEventLoop::ThreadFunc, this)));
-  {
-    std::unique_lock<std::mutex> lock(mutex_);
-    while (eventloop_ == nullptr) {
-      cv_.wait(lock);
+  assert(!thread_);
+  if (!thread_) {
+    thread_.reset(new std::thread(std::bind(&BGEventLoop::ThreadFunc, this)));
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      while (eventloop_ == nullptr) {
+        cv_.wait(lock);
+      }
     }
   }
   return eventloop_;

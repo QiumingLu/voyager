@@ -95,16 +95,26 @@ void TimerList::RunTimerProcs() {
     return;
   }
 
-  uint64_t end = timers_.rbegin()->first;
   uint64_t micros_now = timeops::NowMicros();
+
+  if (micros_now < last_time_out_) {
+    uint64_t diff = last_time_out_ - micros_now;
+    std::set<TimerId> timers;
+    for (auto& it : timers_) {
+      uint64_t value = it.first > diff ? it.first - diff : 0;
+      it.second->micros_value = value;
+      timers.insert(TimerId(value, it.second));
+    }
+    timers_.swap(timers);
+  }
+  last_time_out_ = micros_now;
 
   std::set<TimerId>::iterator it;
   while (true) {
     it = timers_.begin();
-    if (it != timers_.end() &&
-        (it->first <= micros_now || micros_now < last_time_out_) &&
-        it->first <= end) {
+    if (it != timers_.end() && it->first <= micros_now) {
       Timer* t = it->second;
+      timers_.erase(it);
       TimerProcCallback cb = t->timerproc_cb;
       if (t->micros_interval > 0) {
         t->micros_value = micros_now + t->micros_interval;
@@ -114,13 +124,11 @@ void TimerList::RunTimerProcs() {
         delete t;
         timer_ptrs_.erase(t);
       }
-      timers_.erase(it);
       cb();
     } else {
       break;
     }
   }
-  last_time_out_ = micros_now;
 }
 
 }  // namespace voyager
