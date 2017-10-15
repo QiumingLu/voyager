@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef VOYAGER_PROTOBUF_CODEC_H_
-#define VOYAGER_PROTOBUF_CODEC_H_
+#ifndef VOYAGER_PROTOBUF_PROTOBUF_CODEC_H_
+#define VOYAGER_PROTOBUF_PROTOBUF_CODEC_H_
 
 #include <functional>
 #include <memory>
@@ -91,4 +91,4 @@ class ProtobufCodec {
 
 }  // namespace voyager
 
-#endif  // VOYAGER_PROTOBUF_CODEC_H_
+#endif  // VOYAGER_PROTOBUF_PROTOBUF_CODEC_H_

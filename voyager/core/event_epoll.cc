@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include <utility>
-#include <vector>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"

@@ -97,6 +97,7 @@ void TimerList::RunTimerProcs() {
 
   uint64_t micros_now = timeops::NowMicros();
 
+  // FIXME 处理系统时钟向前调整时定时器被挂起的问题
   if (micros_now < last_time_out_) {
     uint64_t diff = last_time_out_ - micros_now;
     std::set<TimerId> timers;
