@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <algorithm>
 #include <utility>
@@ -144,7 +145,7 @@ void EventLoop::QueueInLoop(const Func& func) {
 
   // "必要时"有两种情况：
   // 1、如果调用QueueInLoop()的线程不是IO线程，那么唤醒是必需的；
-  // 2、如果在IO线程调用QueueInLoop(),而此时正在调用RunFuncQueue
+  // 2、如果在IO线程调用QueueInLoop(),而此时正在调用RunFuncs
   if (!IsInMyLoop() || run_) {
     WakeUp();
   }
@@ -257,8 +258,8 @@ void EventLoop::WakeUp() {
   uint64_t one = 0;
   ssize_t n = ::write(wakeup_fd_[1], &one, sizeof(one));
   if (n != sizeof(one)) {
-    VOYAGER_LOG(ERROR) << "EventLoop::WakeUp - " << wakeup_fd_ << " writes "
-                       << n << " bytes instead of 8";
+    VOYAGER_LOG(ERROR) << "EventLoop::WakeUp -  writes " << n
+                       << " bytes instead of 8";
   }
 }
 
@@ -266,8 +267,8 @@ void EventLoop::HandleRead() {
   uint64_t one = 0;
   ssize_t n = ::read(wakeup_fd_[0], &one, sizeof(one));
   if (n != sizeof(one)) {
-    VOYAGER_LOG(ERROR) << "EventLoop::HandleRead - " << wakeup_fd_ << " reads "
-                       << n << " bytes instead of 8";
+    VOYAGER_LOG(ERROR) << "EventLoop::HandleRead - reads " << n
+                       << " bytes instead of 8";
   }
 }
 

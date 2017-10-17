@@ -5,8 +5,6 @@
 #ifndef VOYAGER_CORE_EVENTLOOP_H_
 #define VOYAGER_CORE_EVENTLOOP_H_
 
-#include <unistd.h>
-
 #include <atomic>
 #include <functional>
 #include <memory>
@@ -86,9 +84,9 @@ class EventLoop {
   void WakeUp();
 
   static std::atomic<int> all_connection_size_;
-  const std::thread::id tid_;
 
-  PollType type_;
+  const std::thread::id tid_;
+  const PollType type_;
 
   bool exit_;
   bool run_;
