@@ -126,7 +126,10 @@ void EventLoop::Loop() {
 }
 
 void EventLoop::Exit() {
-  RunInLoop([this]() { this->exit_ = true; });
+  exit_ = true;
+  if (!IsInMyLoop()) {
+    WakeUp();
+  }
 }
 
 void EventLoop::RunInLoop(const Func& func) {
@@ -206,25 +209,25 @@ void EventLoop::RemoveTimer(TimerId t) { timers_->Erase(t); }
 
 void EventLoop::RemoveDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertInMyLoop();
+  AssertInMyLoop();
   poller_->RemoveDispatch(dispatch);
 }
 
 void EventLoop::UpdateDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertInMyLoop();
+  AssertInMyLoop();
   poller_->UpdateDispatch(dispatch);
 }
 
 bool EventLoop::HasDispatch(Dispatch* dispatch) {
   assert(dispatch->OwnerEventLoop() == this);
-  this->AssertInMyLoop();
+  AssertInMyLoop();
   return poller_->HasDispatch(dispatch);
 }
 
 void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
   assert(ptr->OwnerEventLoop() == this);
-  this->AssertInMyLoop();
+  AssertInMyLoop();
   assert(connections_.find(ptr->name()) == connections_.end());
   connections_[ptr->name()] = ptr;
   ++connection_size_;
@@ -233,7 +236,7 @@ void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
 
 void EventLoop::RemoveConnection(const TcpConnectionPtr& ptr) {
   assert(ptr->OwnerEventLoop() == this);
-  this->AssertInMyLoop();
+  AssertInMyLoop();
   assert(connections_.find(ptr->name()) != connections_.end());
   connections_.erase(ptr->name());
   --connection_size_;
