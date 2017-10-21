@@ -2,7 +2,6 @@ set(Voyager_SRCS)
 set(Voyager_LINKER_LIBS pthread)
 
 add_subdirectory(util)
-add_subdirectory(port)
 add_subdirectory(core)
 add_subdirectory(protobuf)
 if (BUILD_HTTP)
