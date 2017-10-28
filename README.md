@@ -9,13 +9,12 @@ Voyager（旅行者）是一个C++多线程网络库，可以运行在Linux，Ma
 <br/>**Voyager主要包含以下几个部分**：
 <br/>
 <br/>1. **util**: 基础库模块，主要包含日志处理，字符串处理，一个简单的JSON程序和一些工具类。
-<br/>2. **port**: 线程库模块，主要是互斥量，条件变量，线程类的封装等。
-<br/>3. **core**: 核心网络库，实现基本的网络传输功能和定时器等。
-<br/>4. **http**: HTTP服务器，在网络库的基础上搭建的一个不完善的http服务器。
-<br/>5. **rpc**:  RPC远程调用库，基于Voyager和Google Protobuf搭建的一个RPC库。
-<br/>6. **docs**: 一些文档说明。
-<br/>7. **examples**: Voyager的使用示例，如Sudoku服务器和客户端的实现。
-<br/>8. **benchmarks**: 对比测试，借鉴于Boost的asio和libevent等的测试方法，来进行吞吐量和并发量的测试。
+<br/>2. **core**: 核心网络库，实现基本的网络传输功能和定时器等。
+<br/>3. **http**: HTTP服务器，在网络库的基础上搭建的一个不完善的http服务器。
+<br/>4. **rpc**:  RPC远程调用库，基于Voyager和Google Protobuf搭建的一个RPC库。
+<br/>5. **docs**: 一些文档说明。
+<br/>6. **examples**: Voyager的使用示例，如Sudoku服务器和客户端的实现。
+<br/>7. **benchmarks**: 对比测试，借鉴于Boost的asio和libevent等的测试方法，来进行吞吐量和并发量的测试。
 
 ## 特性
 * 采用**Reactor**模式来实现，IO模型为**IO multiplexing + non-blocking IO**。
