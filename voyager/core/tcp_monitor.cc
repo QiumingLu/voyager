@@ -9,7 +9,8 @@ namespace voyager {
 
 TcpMonitor::TcpMonitor(int max_all_connections, int max_ip_connections)
     : kMaxAllConnections(max_all_connections),
-      kMaxIpConnections(max_ip_connections) {}
+      kMaxIpConnections(max_ip_connections),
+      counter_(0) {}
 
 TcpMonitor::~TcpMonitor() {}
 
