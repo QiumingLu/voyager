@@ -7,25 +7,26 @@
 
 #include <functional>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
+#include <vector>
 
+#include "voyager/core/eventloop.h"
+#include "voyager/core/tcp_connection.h"
+#include "voyager/core/tcp_monitor.h"
 #include "voyager/core/tcp_server.h"
 #include "voyager/http/http_request.h"
+#include "voyager/http/http_response.h"
+#include "voyager/http/http_server_options.h"
 
 namespace voyager {
-
-class Buffer;
-class EventLoop;
-class HttpResponse;
-class SockAddr;
 
 class HttpServer {
  public:
   typedef std::function<void(HttpRequestPtr, HttpResponse*)> HttpCallback;
 
-  HttpServer(EventLoop* ev, const SockAddr& addr,
-             const std::string& name = std::string("HttpServer"),
-             int thread_size = 4);
+  HttpServer(EventLoop* ev, const HttpServerOptions& options);
 
   void Start();
 
@@ -33,11 +34,25 @@ class HttpServer {
   void SetHttpCallback(HttpCallback&& cb) { http_cb_ = std::move(cb); }
 
  private:
-  void NewConnection(const TcpConnectionPtr& ptr);
-  void HandleClose(const TcpConnectionPtr& ptr);
-  void HandleMessage(const TcpConnectionPtr& ptr, Buffer* buf);
+  struct Context;
+  struct Entry;
+  typedef std::shared_ptr<Entry> EntryPtr;
+  typedef std::unordered_set<EntryPtr> Bucket;
+  typedef std::vector<Bucket> BucketList;
 
+  void OnConnection(const TcpConnectionPtr& ptr);
+  void OnClose(const TcpConnectionPtr& ptr);
+  void OnMessage(const TcpConnectionPtr& ptr, Buffer* buf);
+  void OnTimer();
+  void UpdateBuckets(const TcpConnectionPtr& ptr, const EntryPtr& entry);
+
+  HttpServerOptions options_;
   HttpCallback http_cb_;
+
+  int idle_ticks_;
+  std::map<voyager::EventLoop*, std::pair<BucketList, int>> buckets_;
+
+  TcpMonitor monitor_;
   TcpServer server_;
 
   HttpServer(const HttpServer&);

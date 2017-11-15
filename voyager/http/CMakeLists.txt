@@ -11,6 +11,7 @@ set(Voyager_HTTP_HEADERS
   http_request_parser.h
   http_response_parser.h
   http_server.h
+  http_server_options.h
   )
 
 install(FILES ${Voyager_HTTP_HEADERS} DESTINATION include/voyager/http)

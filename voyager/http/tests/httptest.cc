@@ -40,8 +40,8 @@ void HandleHttpRequest(HttpRequestPtr request, HttpResponse* response) {
 
 int main() {
   voyager::EventLoop ev;
-  voyager::SockAddr addr(5666);
-  voyager::HttpServer server(&ev, addr, "WebServer", 4);
+  voyager::HttpServerOptions options;
+  voyager::HttpServer server(&ev, options);
   server.SetHttpCallback(std::bind(voyager::HandleHttpRequest,
                                    std::placeholders::_1,
                                    std::placeholders::_2));

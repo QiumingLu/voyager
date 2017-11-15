@@ -26,6 +26,7 @@ set(Voygaer_CORE_HEADERS
   sockaddr.h
   tcp_client.h
   tcp_connection.h
+  tcp_monitor.h
   tcp_server.h
   )
 
