@@ -1,6 +1,7 @@
 set(Voyager_SRCS)
 set(Voyager_LINKER_LIBS pthread)
 
+add_subdirectory(public)
 add_subdirectory(util)
 add_subdirectory(core)
 add_subdirectory(protobuf)
