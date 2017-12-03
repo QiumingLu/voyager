@@ -38,14 +38,12 @@ class ProtobufCodec {
   bool SendMessage(const TcpConnectionPtr& p, const Message& message) const {
     bool res = false;
     if (p) {
-      char buf[kHeaderSize];
-      memset(buf, 0, kHeaderSize);
+      uint32_t size = kHeaderSize + message.ByteSizeLong();
       std::string s;
-      s.append(buf, kHeaderSize);
+      s.reserve(size);
+      PutFixed32(&s, size);
       res = message.AppendToString(&s);
       if (res) {
-        EncodeFixed32(buf, static_cast<uint32_t>(s.size()));
-        s.replace(s.begin(), s.begin() + kHeaderSize, buf, kHeaderSize);
         p->SendMessage(std::move(s));
       } else if (error_cb_) {
         error_cb_(p, kSerializeError);

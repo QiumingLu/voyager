@@ -73,7 +73,7 @@ uint32_t AcceleratedExtend(uint32_t crc, const char *buf, size_t size) {
   }
 
   // Process remaining bytes one at a time.
-  l = l64;
+  l = static_cast<uint32_t>(l64);
   while (p < e) {
     l = _mm_crc32_u8(l, *p);
     p++;
