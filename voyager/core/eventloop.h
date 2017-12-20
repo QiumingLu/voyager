@@ -75,15 +75,11 @@ class EventLoop {
   void RemoveConnection(const TcpConnectionPtr& ptr);
   int ConnectionSize() const { return connection_size_; }
 
-  static int AllConnectionSize() { return all_connection_size_; }
-
  private:
   void RunFuncs();
   void HandleRead();
   void Abort();
   void WakeUp();
-
-  static std::atomic<int> all_connection_size_;
 
   const std::thread::id tid_;
   const PollType type_;

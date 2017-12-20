@@ -19,13 +19,11 @@ BGEventLoop::~BGEventLoop() {
 
 EventLoop* BGEventLoop::Loop() {
   assert(!thread_);
-  if (!thread_) {
-    thread_.reset(new std::thread(std::bind(&BGEventLoop::ThreadFunc, this)));
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
-      while (eventloop_ == nullptr) {
-        cv_.wait(lock);
-      }
+  thread_.reset(new std::thread(std::bind(&BGEventLoop::ThreadFunc, this)));
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    while (eventloop_ == nullptr) {
+      cv_.wait(lock);
     }
   }
   return eventloop_;

@@ -7,9 +7,9 @@
 
 #include <atomic>
 #include <functional>
-#include <map>
 #include <memory>
 #include <mutex>
+#include <unordered_map>
 
 #include <google/protobuf/service.h>
 
@@ -65,7 +65,7 @@ class RpcChannel : public google::protobuf::RpcChannel {
   ErrorCallback error_cb_;
   std::atomic<int> seq_;
   std::mutex mutex_;
-  std::map<int, CallData> call_map_;
+  std::unordered_map<int, CallData> call_map_;
 
   // No copying allowed
   RpcChannel(const RpcChannel&);

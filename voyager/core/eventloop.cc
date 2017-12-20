@@ -64,14 +64,12 @@ static EventPoller* CreatePoller(PollType type, EventLoop* loop) {
   return poller;
 }
 
-std::atomic<int> EventLoop::all_connection_size_;
-
 EventLoop* EventLoop::RunLoop() { return runloop; }
 
 EventLoop::EventLoop(PollType type)
     : tid_(std::this_thread::get_id()),
       type_(type),
-      exit_(false),
+      exit_(true),
       run_(false),
       connection_size_(0),
       poller_(CreatePoller(type, this)),
@@ -231,7 +229,6 @@ void EventLoop::AddConnection(const TcpConnectionPtr& ptr) {
   assert(connections_.find(ptr->name()) == connections_.end());
   connections_[ptr->name()] = ptr;
   ++connection_size_;
-  ++all_connection_size_;
 }
 
 void EventLoop::RemoveConnection(const TcpConnectionPtr& ptr) {
@@ -240,7 +237,6 @@ void EventLoop::RemoveConnection(const TcpConnectionPtr& ptr) {
   assert(connections_.find(ptr->name()) != connections_.end());
   connections_.erase(ptr->name());
   --connection_size_;
-  --all_connection_size_;
 }
 
 void EventLoop::RunFuncs() {

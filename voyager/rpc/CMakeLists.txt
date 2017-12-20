@@ -9,7 +9,7 @@ set(Voyager_RPC_SRCS
   ${PROTO_SRCS}
   )
 
-set_source_files_properties(${Voyager_RPC_SRCS} PROPERTIES COMPILE_FLAGS "-Wno-conversion -Wno-shorten-64-to-32 -Wno-deprecated-declarations")
+set_source_files_properties(${Voyager_RPC_SRCS} PROPERTIES COMPILE_FLAGS "-Wno-conversion -Wno-shorten-64-to-32 -Wno-deprecated-declarations -Wno-shadow")
 
 if(BUILD_SHARED_LIBS)
   add_library(voyager_rpc SHARED ${Voyager_RPC_SRCS})
