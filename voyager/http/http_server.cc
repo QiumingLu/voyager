@@ -55,7 +55,7 @@ void HttpServer::Start() {
 void HttpServer::OnConnection(const TcpConnectionPtr& ptr) {
   bool result = monitor_.OnConnection(ptr);
   if (result) {
-    EntryPtr entry(new Entry(ptr));
+    EntryPtr entry = std::make_shared<Entry>(ptr);
     UpdateBuckets(ptr, entry);
     ptr->SetContext(new Context(entry));
   }

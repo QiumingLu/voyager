@@ -12,7 +12,7 @@
 namespace voyager {
 
 HttpRequestParser::HttpRequestParser()
-    : state_(kLine), request_(new HttpRequest()) {}
+    : state_(kLine), request_(std::make_shared<HttpRequest>()) {}
 
 bool HttpRequestParser::ParseBuffer(Buffer* buf) {
   bool ok = true;

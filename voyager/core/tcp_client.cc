@@ -15,7 +15,7 @@ TcpClient::TcpClient(EventLoop* ev, const SockAddr& addr,
     : ev_(CHECK_NOTNULL(ev)),
       addr_(addr),
       name_(name),
-      connector_(new TcpConnector(ev, addr)),
+      connector_(std::make_shared<TcpConnector>(ev, addr)),
       connect_(false) {
   connector_->SetNewConnectionCallback(
       std::bind(&TcpClient::NewConnection, this, std::placeholders::_1));

@@ -57,7 +57,7 @@ void TcpServer::NewConnection(int fd, const struct sockaddr_storage& sa) {
                     << peer.Ipbuf();
 
   EventLoop* ev = schedule_->AssignLoop();
-  TcpConnectionPtr ptr(new TcpConnection(conn_name, ev, fd, addr_, peer));
+  auto ptr = std::make_shared<TcpConnection>(conn_name, ev, fd, addr_, peer);
 
   ptr->SetConnectionCallback(connection_cb_);
   ptr->SetCloseCallback(close_cb_);
