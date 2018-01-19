@@ -63,6 +63,7 @@ void Dispatch::DisableAll() {
     modify_ = kNoModify;
     return;
   }
+  add_write_ = false;
   events_ = kNoneEvent;
   UpdateEvents();
 }
@@ -114,6 +115,7 @@ void Dispatch::HandleEventWithGuard() {
       write_cb_();
     }
   }
+  revents_ = 0;
   event_handling_ = false;
 }
 

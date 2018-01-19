@@ -122,7 +122,7 @@ void HttpServer::UpdateBuckets(const TcpConnectionPtr& ptr,
   auto it = buckets_.find(ptr->OwnerEventLoop());
   assert(it != buckets_.end());
   if (entry->index != it->second.second) {
-    it->second.first.at(it->second.second).insert(entry);
+    it->second.first.at(it->second.second).push_back(entry);
     entry->index = it->second.second;
   }
 }

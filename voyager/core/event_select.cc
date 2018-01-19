@@ -24,37 +24,31 @@ void EventSelect::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   out.tv_sec = static_cast<time_t>(timeout / 1000);
   out.tv_usec = static_cast<suseconds_t>(timeout % 1000);
 
-  fd_set readfds;
-  fd_set writefds;
-  fd_set exceptfds;
+  memcpy(&d_readfds_, &readfds_, sizeof(d_readfds_));
+  memcpy(&d_writefds_, &writefds_, sizeof(d_writefds_));
+  memcpy(&d_exceptfds_, &exceptfds_, sizeof(d_exceptfds_));
 
-  FD_ZERO(&readfds);
-  FD_ZERO(&writefds);
-  FD_ZERO(&exceptfds);
-
-  memcpy(&readfds, &readfds_, sizeof(readfds_));
-  memcpy(&writefds, &writefds_, sizeof(writefds_));
-  memcpy(&exceptfds, &exceptfds_, sizeof(exceptfds_));
-
-  int ret = ::select(nfds_, &readfds, &writefds, &exceptfds, &out);
+  int ret = ::select(nfds_, &d_readfds_, &d_writefds_, &d_exceptfds_, &out);
 
   if (ret == -1) {
     if (errno != EINTR) {
       VOYAGER_LOG(ERROR) << "poll: " << strerror(errno);
     }
     return;
+  } else if (ret == 0) {
+    return;
   }
 
   for (std::map<int, Dispatch*>::iterator it = worker_map_.begin();
        it != worker_map_.end(); ++it) {
     int revents = 0;
-    if (FD_ISSET(it->first, &readfds)) {
+    if (FD_ISSET(it->first, &d_readfds_)) {
       revents |= POLLIN;
     }
-    if (FD_ISSET(it->first, &writefds)) {
+    if (FD_ISSET(it->first, &d_writefds_)) {
       revents |= POLLOUT;
     }
-    if (FD_ISSET(it->first, &exceptfds)) {
+    if (FD_ISSET(it->first, &d_exceptfds_)) {
       revents |= POLLERR;
     }
 

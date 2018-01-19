@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <poll.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "voyager/core/dispatch.h"
 #include "voyager/util/logging.h"
@@ -21,7 +22,7 @@ EventKqueue::EventKqueue(EventLoop* ev)
   }
 }
 
-EventKqueue::~EventKqueue() {}
+EventKqueue::~EventKqueue() { ::close(kq_); }
 
 void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
   struct timespec out;
@@ -35,13 +36,13 @@ void EventKqueue::Poll(int timeout, std::vector<Dispatch*>* dispatches) {
 
   for (int i = 0; i < nfds; ++i) {
     Dispatch* dispatch = reinterpret_cast<Dispatch*>(events_[i].udata);
-    int revents = 0;
-    if (events_[i].flags == EV_ERROR) {
-      revents = POLLERR;
+    int revents = dispatch->Revents();
+    if (events_[i].flags & EV_ERROR) {
+      revents |= POLLERR;
     } else if (events_[i].filter == EVFILT_READ) {
-      revents = POLLIN;
+      revents |= POLLIN;
     } else if (events_[i].filter == EVFILT_WRITE) {
-      revents = POLLOUT;
+      revents |= POLLOUT;
     }
 
     dispatch->SetRevents(revents);
@@ -108,6 +109,7 @@ void EventKqueue::UpdateDispatch(Dispatch* dispatch) {
       break;
 
     case Dispatch::kNoModify:
+      assert(false);
       break;
   }
 

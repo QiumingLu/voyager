@@ -28,6 +28,10 @@ class EventSelect : public EventPoller {
   fd_set readfds_;
   fd_set writefds_;
   fd_set exceptfds_;
+  fd_set d_readfds_;
+  fd_set d_writefds_;
+  fd_set d_exceptfds_;
+
   std::map<int, Dispatch*> worker_map_;
 };
 

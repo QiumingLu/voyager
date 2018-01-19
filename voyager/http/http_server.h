@@ -6,9 +6,8 @@
 #define VOYAGER_HTTP_HTTP_SERVER_H_
 
 #include <functional>
+#include <map>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -37,7 +36,7 @@ class HttpServer {
   struct Context;
   struct Entry;
   typedef std::shared_ptr<Entry> EntryPtr;
-  typedef std::unordered_set<EntryPtr> Bucket;
+  typedef std::vector<EntryPtr> Bucket;
   typedef std::vector<Bucket> BucketList;
 
   void OnConnection(const TcpConnectionPtr& ptr);
