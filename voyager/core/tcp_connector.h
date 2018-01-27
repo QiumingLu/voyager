@@ -54,6 +54,7 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   static const uint64_t kInitRetryTime = 2000000;
 
   void StartInLoop();
+  void StopInLoop();
   void Connect();
   void Connecting();
   void Retry();

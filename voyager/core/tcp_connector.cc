@@ -42,14 +42,15 @@ void TcpConnector::StartInLoop() {
 }
 
 void TcpConnector::Stop() {
-  TcpConnectorPtr ptr(shared_from_this());
-  ev_->RunInLoop([ptr]() {
-    ptr->connect_ = false;
-    if (ptr->state_ == kConnecting) {
-      ptr->state_ = kDisConnected;
-      ptr->ResetDispatch();
-    }
-  });
+  ev_->RunInLoop(std::bind(&TcpConnector::StopInLoop, shared_from_this()));
+}
+
+void TcpConnector::StopInLoop() {
+  connect_ = false;
+  if (state_ == kConnecting) {
+    state_ = kDisConnected;
+    ResetDispatch();
+  }
 }
 
 void TcpConnector::Connect() {
