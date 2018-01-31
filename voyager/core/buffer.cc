@@ -14,6 +14,36 @@ const char Buffer::kCRLF[] = "\r\n";
 Buffer::Buffer(size_t init_size)
     : buf_(init_size), read_index_(0), write_index_(0) {}
 
+Buffer::Buffer(const Buffer& other) {
+  buf_ = other.buf_;
+  read_index_ = other.read_index_;
+  write_index_ = other.write_index_;
+}
+
+Buffer::Buffer(Buffer&& other) {
+  buf_ = std::move(other.buf_);
+  read_index_ = other.read_index_;
+  write_index_ = other.write_index_;
+}
+
+Buffer& Buffer::operator=(const Buffer& other) {
+  if (this != &other) {
+    buf_ = other.buf_;
+    read_index_ = other.read_index_;
+    write_index_ = other.write_index_;
+  }
+  return *this;
+}
+
+Buffer& Buffer::operator=(Buffer&& other) {
+  if (this != &other) {
+    buf_ = std::move(other.buf_);
+    read_index_ = other.read_index_;
+    write_index_ = other.write_index_;
+  }
+  return *this;
+}
+
 ssize_t Buffer::ReadV(int socketfd) {
   char backup_buf[kBackupBufferSize];
   struct iovec iov[2];

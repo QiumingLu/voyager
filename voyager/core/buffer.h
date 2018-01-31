@@ -20,6 +20,10 @@ namespace voyager {
 class Buffer {
  public:
   explicit Buffer(size_t init_size = kInitBufferSize);
+  Buffer(const Buffer& other);
+  Buffer(Buffer&& other);
+  Buffer& operator=(const Buffer& other);
+  Buffer& operator=(Buffer&& other);
 
   ssize_t ReadV(int socketfd);
 
@@ -75,6 +79,12 @@ class Buffer {
     return result;
   }
 
+  void ShrinkToFit() {
+    buf_.shrink_to_fit();
+    read_index_ = 0;
+    write_index_ = buf_.size();
+  }
+
  private:
   inline char* PeekAt(size_t index) {
     if (buf_.empty()) {
@@ -91,7 +101,7 @@ class Buffer {
   }
 
   void MakeSpace(size_t size) {
-    if (WritableSize() < size) {
+    if (WritableSize() + read_index_ < size) {
       buf_.resize(write_index_ + size);
     } else {
       size_t readable_size = ReadableSize();

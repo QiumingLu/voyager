@@ -69,6 +69,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
 
   void SendMessage(std::string&& message);
   void SendMessage(const Slice& message);
+  void SendMessage(Buffer&& message);
   void SendMessage(Buffer* message);
 
   std::string StateToString() const;
@@ -87,6 +88,7 @@ class TcpConnection : public std::enable_shared_from_this<TcpConnection> {
  private:
   enum ConnectState { kDisconnected, kDisconnecting, kConnected, kConnecting };
 
+  void SendBuffer(const Buffer& message);
   void Send(const std::string& s);
   void SendInLoop(const void* data, size_t size);
 

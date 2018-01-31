@@ -192,6 +192,17 @@ void TcpConnection::SendMessage(const Slice& message) {
   }
 }
 
+void TcpConnection::SendMessage(Buffer&& message) {
+  if (state_ == kConnected) {
+    if (eventloop_->IsInMyLoop()) {
+      SendInLoop(message.Peek(), message.ReadableSize());
+    } else {
+      eventloop_->RunInLoop(std::bind(&TcpConnection::SendBuffer,
+                                      shared_from_this(), std::move(message)));
+    }
+  }
+}
+
 void TcpConnection::SendMessage(Buffer* message) {
   CHECK_NOTNULL(message);
   if (state_ == kConnected) {
@@ -203,6 +214,10 @@ void TcpConnection::SendMessage(Buffer* message) {
                                       message->RetrieveAllAsString()));
     }
   }
+}
+
+void TcpConnection::SendBuffer(const Buffer& message) {
+  SendInLoop(message.Peek(), message.ReadableSize());
 }
 
 void TcpConnection::Send(const std::string& s) {

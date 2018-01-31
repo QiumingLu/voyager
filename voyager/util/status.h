@@ -82,7 +82,7 @@ inline Status::Status(const Status& s) {
 }
 
 inline Status::Status(Status&& s) {
-  state_ = (s.state_ == nullptr) ? nullptr : s.state_;
+  state_ = s.state_;
   s.state_ = nullptr;
 }
 
