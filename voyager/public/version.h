@@ -9,7 +9,7 @@
 
 #define VOYAGER_MAJOR_VERSION 1
 #define VOYAGER_MINOR_VERSION 0
-#define VOYAGER_PATCH_VERSION 2
+#define VOYAGER_PATCH_VERSION 3
 
 // VOYAGER_VERSION_SUFFIX is non-empty for pre-releases (e.g. "-alpha",
 // "-alpha.1",

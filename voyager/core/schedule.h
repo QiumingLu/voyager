@@ -25,9 +25,13 @@ class Schedule {
   const std::vector<EventLoop*>* AllLoops() const;
 
  private:
-  EventLoop* baseloop_;
-  size_t size_;
+  EventLoop* GetNextLoop();
+  EventLoop* GetMinLoop();
+
   bool started_;
+  EventLoop* baseloop_;
+  int size_;
+  int next_;
   std::vector<EventLoop*> loops_;
   std::vector<std::unique_ptr<BGEventLoop> > bg_loops_;
 

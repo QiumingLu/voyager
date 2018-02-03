@@ -10,12 +10,14 @@
 namespace voyager {
 
 Schedule::Schedule(EventLoop* ev, int size)
-    : baseloop_(ev), size_(size), started_(false) {}
+    : started_(false), baseloop_(ev), size_(size), next_(0) {}
 
 void Schedule::Start() {
   assert(!started_);
   started_ = true;
-  for (size_t i = 0; i < size_; ++i) {
+  loops_.reserve(size_);
+  bg_loops_.reserve(size_);
+  for (int i = 0; i < size_; ++i) {
     BGEventLoop* loop = new BGEventLoop(baseloop_->GetPollType());
     loops_.push_back(loop->Loop());
     bg_loops_.push_back(std::unique_ptr<BGEventLoop>(loop));
@@ -32,6 +34,23 @@ const std::vector<EventLoop*>* Schedule::AllLoops() const {
 
 EventLoop* Schedule::AssignLoop() {
   baseloop_->AssertInMyLoop();
+  if (size_ > 5) {
+    return GetNextLoop();
+  } else {
+    return GetMinLoop();
+  }
+}
+
+EventLoop* Schedule::GetNextLoop() {
+  assert(started_);
+  assert(!loops_.empty());
+  if (next_ >= static_cast<int>(loops_.size())) {
+    next_ = 0;
+  }
+  return loops_[next_++];
+}
+
+EventLoop* Schedule::GetMinLoop() {
   assert(started_);
   assert(!loops_.empty());
   EventLoop* loop = loops_[0];
