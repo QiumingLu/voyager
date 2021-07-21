@@ -35,7 +35,7 @@ void TcpConnector::Start(bool retry) {
 
 void TcpConnector::StartInLoop() {
   ev_->AssertInMyLoop();
-  assert(state_ == kDisconnected);
+  assert(state_ == kDisConnected);
   if (connect_) {
     Connect();
   }
