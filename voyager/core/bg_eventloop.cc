@@ -5,6 +5,7 @@
 #include "voyager/core/bg_eventloop.h"
 
 #include <assert.h>
+#include <functional>
 
 namespace voyager {
 

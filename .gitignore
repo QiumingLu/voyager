@@ -1,5 +1,6 @@
 .DS_Store
 *.swp
+.vscode/
 benchmarks/test.txt
 tutorial/echo
 tutorial/echo.dSYM

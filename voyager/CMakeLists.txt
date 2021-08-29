@@ -27,5 +27,7 @@ endif()
 
 find_package(Protobuf)
 if (PROTOBUF_FOUND)
-  add_subdirectory(rpc)
+  if (BUILD_RPC)
+    add_subdirectory(rpc)
+  endif()
 endif()

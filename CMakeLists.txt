@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.12)
 
 if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
@@ -22,22 +22,21 @@ endfunction(exclude)
 enable_testing()
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "release")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build : None Debug Release RelWithDebInfo MinSizeRel Coverage." FORCE)
 endif()
 
 if(NOT CMAKE_INSTALL_DIR)
   set(CMAKE_INSTALL_DIR "/usr/local")
 endif()
 
-option(BUILD_HTTP "Build voyager http" on)
-option(BUILD_TESTS "Build voyager perftests and unittests" on)
-option(BUILD_EXAMPLES "Build voyager examples" on)
-option(BUILD_SHARED_LIBS "Build voyager shared libraries" on)
+option(BUILD_RPC "Build voyager rpc" ON)
+option(BUILD_HTTP "Build voyager http" ON)
+option(BUILD_TESTS "Build voyager perftests and unittests" ON)
+option(BUILD_EXAMPLES "Build voyager examples" ON)
+option(BUILD_SHARED_LIBS "Build voyager shared libraries" ON)
 
 set(CXX_FLAGS
   -g
-  -DCHECK_PTHREAD_RETURN_VALUE
-  -D_FILE_OFFSET_BITS=64
   -Wall
   -Wextra
   -Wconversion
@@ -46,34 +45,11 @@ set(CXX_FLAGS
   -Wpointer-arith
   -Wwrite-strings
   -Wshadow
-  -march=native
-  -std=c++11
   -Wno-sign-conversion
+  -std=c++11
   )
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  list(APPEND CXX_FLAGS "-rdynamic")
-endif()
-
-if(CMAKE_BUILD_BITS EQUAL 32)
-  list(APPEND CXX_FLAGS "-m32")
-endif()
-
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(CMAKE_CXX_COMPILER "g++")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_CXX_COMPILER "clang++")
-endif()
-
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -finline-limit=1000 -DNDEBUG")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
-endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBARARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
