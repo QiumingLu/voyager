@@ -76,9 +76,8 @@ void Dispatch::RemoveEvents() {
 }
 
 void Dispatch::HandleEvent() {
-  std::shared_ptr<void> guard;
   if (tied_) {
-    guard = tie_.lock();
+    std::shared_ptr<void> guard = tie_.lock();
     if (guard) {
       HandleEventWithGuard();
     }
