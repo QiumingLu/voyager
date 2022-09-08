@@ -21,8 +21,8 @@ int main(int argc, char** argv) {
   SockAddr addr(5666);
   g_server = new TcpServer(&eventloop, addr, "Voyager", 4);
   g_server->Start();
-  eventloop.RunAfter(5000000, []() { DeleteServer(); });
-  eventloop.RunAfter(6000000, [&eventloop]() { eventloop.Exit(); });
+  eventloop.RunAfter(5000, []() { DeleteServer(); });
+  eventloop.RunAfter(6000, [&eventloop]() { eventloop.Exit(); });
   eventloop.Loop();
   return 0;
 }

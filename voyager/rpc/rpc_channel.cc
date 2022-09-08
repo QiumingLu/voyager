@@ -8,7 +8,7 @@
 
 namespace voyager {
 
-RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), micros_(0), seq_(0) {
+RpcChannel::RpcChannel(EventLoop* loop) : loop_(loop), ms_(0), seq_(0) {
   codec_.SetMessageCallback(std::bind(&RpcChannel::OnResponse, this,
                                       std::placeholders::_1,
                                       std::placeholders::_2));
@@ -39,8 +39,8 @@ void RpcChannel::CallMethod(const google::protobuf::MethodDescriptor* method,
 
   if (codec_.SendMessage(conn_, msg)) {
     TimerId t;
-    if (micros_ > 0) {
-      t = loop_->RunAfter(micros_, std::bind(&RpcChannel::OnTimeout, this, id));
+    if (ms_ > 0) {
+      t = loop_->RunAfter(ms_, std::bind(&RpcChannel::OnTimeout, this, id));
     } else {
       t.second = nullptr;
     }

@@ -19,13 +19,13 @@ class TimerList {
   explicit TimerList(EventLoop* ev);
   ~TimerList();
 
-  TimerId Insert(uint64_t micros_value, uint64_t micros_interval,
+  TimerId Insert(uint64_t ms_value, uint64_t ms_interval,
                  const TimerProcCallback& cb);
-  TimerId Insert(uint64_t micros_value, uint64_t micros_interval,
+  TimerId Insert(uint64_t ms_value, uint64_t ms_interval,
                  TimerProcCallback&& cb);
   void Erase(TimerId timer);
 
-  uint64_t TimeoutMicros() const;
+  uint64_t TimeoutMs() const;
   void RunTimerProcs();
 
  private:

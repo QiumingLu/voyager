@@ -117,15 +117,7 @@ void TcpConnector::Retry() {
                       << addr_.Ipbuf() << " in " << retry_time_ << " seconds.";
 
     TcpConnectorPtr ptr(shared_from_this());
-#ifdef __linux__
-    if (!timer_) {
-      timer_.reset(new NewTimer(ev_, [ptr]() { ptr->StartInLoop(); }));
-    }
-    timer_->SetTime(retry_time_ * 1000, 0);
-#else
     ev_->RunAfter(retry_time_, [ptr]() { ptr->StartInLoop(); });
-#endif
-
     retry_time_ =
         (retry_time_ * 2) < kMaxRetryTime ? retry_time_ * 2 : kMaxRetryTime;
   }

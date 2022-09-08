@@ -19,10 +19,6 @@
 #include "voyager/util/stl_util.h"
 #include "voyager/util/stringprintf.h"
 
-#ifdef __linux__
-#include "voyager/core/newtimer.h"
-#endif
-
 using namespace std::placeholders;
 
 namespace voyager {
@@ -88,12 +84,7 @@ class Client {
         timeout_(timeout),
         seq_(0),
         schedule_(base_ev_, thread_count - 1) {
-#ifdef __linux__
-    timer_.reset(new NewTimer(ev, [this]() { this->HandleTimeout(); }));
-    timer_->SetTime(timeout * 1000000000, 0);
-#else
-    ev->RunAfter(timeout * 1000000, [this]() { this->HandleTimeout(); });
-#endif
+    ev->RunAfter(timeout * 1000, [this]() { this->HandleTimeout(); });
     message_.resize(block_size_);
     for (int i = 0; i < block_size_; ++i) {
       message_.push_back(static_cast<char>(i % 128));
@@ -158,9 +149,6 @@ class Client {
   Schedule schedule_;
   std::vector<Session*> sessions_;
   std::string message_;
-#ifdef __linux__
-  std::unique_ptr<NewTimer> timer_;
-#endif
 
   // No copying allowed
   Client(const Client&);

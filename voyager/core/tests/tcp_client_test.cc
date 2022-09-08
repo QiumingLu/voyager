@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
   g_client = new voyager::TcpClient(&ev, serveraddr);
   g_client->SetMessageCallback(std::bind(voyager::OnMessage, _1, _2));
   g_client->Connect();
-  ev.RunAfter(15000000, []() { voyager::DeleteClient(); });
-  ev.RunAfter(20000000, [&ev]() { ev.Exit(); });
+  ev.RunAfter(15000, []() { voyager::DeleteClient(); });
+  ev.RunAfter(20000, [&ev]() { ev.Exit(); });
   ev.Loop();
   return 0;
 }

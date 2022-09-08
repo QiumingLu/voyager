@@ -53,12 +53,7 @@ int main(int argc, char** argv) {
   voyager::EventLoop ev;
   voyager::SockAddr addr("127.0.0.1", 5666);
   voyager::EchoServer server(&ev, addr);
-#ifdef __linux__
-  voyager::NewTimer timer(&ev, [&ev]() { ev.Exit(); });
-  timer.SetTime(180 * (voyager::timeops::kNonasSecondsPerSecond), 0);
-#else
-  ev.RunAfter(180 * 1000000, [&ev]() { ev.Exit(); });
-#endif
+  ev.RunAfter(180 * 1000, [&ev]() { ev.Exit(); });
   server.Start();
   ev.Loop();
   // ProfilerStop();

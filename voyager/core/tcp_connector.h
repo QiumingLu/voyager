@@ -17,9 +17,6 @@
 #include "voyager/core/dispatch.h"
 #include "voyager/core/sockaddr.h"
 #include "voyager/util/timeops.h"
-#ifdef __linux__
-#include "voyager/core/newtimer.h"
-#endif
 
 namespace voyager {
 
@@ -50,8 +47,8 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
  private:
   enum ConnectState { kDisConnected, kConnected, kConnecting };
 
-  static const uint64_t kMaxRetryTime = 30000000;
-  static const uint64_t kInitRetryTime = 2000000;
+  static const uint64_t kMaxRetryTime = 30000;
+  static const uint64_t kInitRetryTime = 1000;
 
   void StartInLoop();
   void StopInLoop();
@@ -75,10 +72,6 @@ class TcpConnector : public std::enable_shared_from_this<TcpConnector> {
   std::unique_ptr<ClientSocket> socket_;
   NewConnectionCallback newconnection_cb_;
   ConnectFailureCallback connect_failure_cb_;
-
-#ifdef __linux__
-  std::unique_ptr<NewTimer> timer_;
-#endif
 
   // No copying allowed
   TcpConnector(const TcpConnector&);

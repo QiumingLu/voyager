@@ -18,6 +18,8 @@ static const uint64_t kMilliSecondsPerSecond = 1000;
 static const uint64_t kMicroSecondsPerSecond = 1000 * 1000;
 static const uint64_t kNonasSecondsPerSecond = 1000 * 1000 * 1000;
 
+extern uint64_t NowMillis();
+
 extern uint64_t NowMicros();
 
 extern std::string FormatTimestamp(uint64_t micros);

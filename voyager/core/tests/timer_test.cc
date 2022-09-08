@@ -63,6 +63,6 @@ int main(int argc, char** argv) {
   voyager::SockAddr addr(5666);
   voyager::TimerServer server(&ev, addr);
   server.Start();
-  ev.RunAfter(10000000, [&server]() { server.TimerTest(); });
+  ev.RunAfter(10000, [&server]() { server.TimerTest(); });
   ev.Loop();
 }

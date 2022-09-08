@@ -13,22 +13,22 @@ class Timer {
   friend class TimerList;
 
   Timer(uint64_t value, uint64_t interval, const TimerProcCallback& cb)
-      : micros_value(value), micros_interval(interval), timerproc_cb(cb) {}
+      : ms_value(value), ms_interval(interval), timerproc_cb(cb) {}
 
   Timer(uint64_t value, uint64_t interval, TimerProcCallback&& cb)
-      : micros_value(value),
-        micros_interval(interval),
+      : ms_value(value),
+        ms_interval(interval),
         timerproc_cb(std::move(cb)) {}
 
   ~Timer() {}
 
-  uint64_t micros_value;
-  uint64_t micros_interval;
+  uint64_t ms_value;
+  uint64_t ms_interval;
   TimerProcCallback timerproc_cb;
 };
 
 TimerList::TimerList(EventLoop* ev)
-    : last_time_out_(timeops::NowMicros()), eventloop_(CHECK_NOTNULL(ev)) {}
+    : last_time_out_(timeops::NowMillis()), eventloop_(CHECK_NOTNULL(ev)) {}
 
 TimerList::~TimerList() {
   for (auto& t : timer_ptrs_) {
@@ -36,17 +36,17 @@ TimerList::~TimerList() {
   }
 }
 
-TimerId TimerList::Insert(uint64_t micros_value, uint64_t micros_interval,
+TimerId TimerList::Insert(uint64_t ms_value, uint64_t ms_interval,
                           const TimerProcCallback& cb) {
-  TimerId timer(micros_value, new Timer(micros_value, micros_interval, cb));
+  TimerId timer(ms_value, new Timer(ms_value, ms_interval, cb));
   eventloop_->RunInLoop([this, timer]() { InsertInLoop(timer); });
   return timer;
 }
 
-TimerId TimerList::Insert(uint64_t micros_value, uint64_t micros_interval,
+TimerId TimerList::Insert(uint64_t ms_value, uint64_t ms_interval,
                           TimerProcCallback&& cb) {
-  TimerId timer(micros_value,
-                new Timer(micros_value, micros_interval, std::move(cb)));
+  TimerId timer(ms_value,
+                new Timer(ms_value, ms_interval, std::move(cb)));
   eventloop_->RunInLoop([this, timer]() { InsertInLoop(timer); });
   return timer;
 }
@@ -65,20 +65,20 @@ void TimerList::EraseInLoop(TimerId timer) {
   eventloop_->AssertInMyLoop();
   std::set<Timer*>::iterator it = timer_ptrs_.find(timer.second);
   if (it != timer_ptrs_.end()) {
-    timer.first = timer.second->micros_value;
+    timer.first = timer.second->ms_value;
     timers_.erase(timer);
     delete *it;
     timer_ptrs_.erase(it);
   }
 }
 
-uint64_t TimerList::TimeoutMicros() const {
+uint64_t TimerList::TimeoutMs() const {
   eventloop_->AssertInMyLoop();
   if (timers_.empty()) {
     return -1;
   }
   std::set<TimerId>::const_iterator it = timers_.begin();
-  uint64_t now = timeops::NowMicros();
+  uint64_t now = timeops::NowMillis();
   if (now < last_time_out_) {
     return 0;
   }
@@ -95,31 +95,31 @@ void TimerList::RunTimerProcs() {
     return;
   }
 
-  uint64_t micros_now = timeops::NowMicros();
+  uint64_t ms_now = timeops::NowMillis();
 
   // FIXME 处理系统时钟向前调整时定时器被挂起的问题
-  if (micros_now < last_time_out_) {
-    uint64_t diff = last_time_out_ - micros_now;
+  if (ms_now < last_time_out_) {
+    uint64_t diff = last_time_out_ - ms_now;
     std::set<TimerId> timers;
     for (auto& it : timers_) {
       uint64_t value = it.first > diff ? it.first - diff : 0;
-      it.second->micros_value = value;
+      it.second->ms_value = value;
       timers.insert(TimerId(value, it.second));
     }
     timers_.swap(timers);
   }
-  last_time_out_ = micros_now;
+  last_time_out_ = ms_now;
 
   std::set<TimerId>::iterator it;
   while (true) {
     it = timers_.begin();
-    if (it != timers_.end() && it->first <= micros_now) {
+    if (it != timers_.end() && it->first <= ms_now) {
       Timer* t = it->second;
       timers_.erase(it);
       TimerProcCallback cb = t->timerproc_cb;
-      if (t->micros_interval > 0) {
-        t->micros_value = micros_now + t->micros_interval;
-        TimerId timer(t->micros_value, t);
+      if (t->ms_interval > 0) {
+        t->ms_value = ms_now + t->ms_interval;
+        TimerId timer(t->ms_value, t);
         timers_.insert(timer);
       } else {
         delete t;

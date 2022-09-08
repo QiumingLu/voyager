@@ -59,7 +59,7 @@ void HttpClient::FirstRequest(const HttpRequestPtr& request) {
   client_->SetMessageCallback(std::bind(&HttpClient::HandleMessage, this,
                                         std::placeholders::_1,
                                         std::placeholders::_2));
-  timer_ = eventloop_->RunAfter(timeout_ * 1000000,
+  timer_ = eventloop_->RunAfter(timeout_,
                                 std::bind(&HttpClient::HandleTimeout, this));
   client_->Connect();
 }

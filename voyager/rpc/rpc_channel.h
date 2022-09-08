@@ -30,7 +30,7 @@ class RpcChannel : public google::protobuf::RpcChannel {
 
   void SetTcpConnectionPtr(const TcpConnectionPtr& p) { conn_ = p; }
 
-  void SetTimeout(uint64_t micros) { micros_ = micros; }
+  void SetTimeout(uint64_t ms) { ms_ = ms; }
 
   void SetErrorCallback(const ErrorCallback& cb) { error_cb_ = cb; }
 
@@ -59,7 +59,7 @@ class RpcChannel : public google::protobuf::RpcChannel {
   void OnError(const TcpConnectionPtr& p, ProtoCodecError code);
 
   EventLoop* loop_;
-  uint64_t micros_;
+  uint64_t ms_;
   ProtobufCodec<RpcMessage> codec_;
   TcpConnectionPtr conn_;
   ErrorCallback error_cb_;
